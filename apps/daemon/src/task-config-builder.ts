@@ -1,9 +1,3 @@
-/**
- * Environment and CLI configuration builders for TaskService.
- * Extracted to keep task-service.ts under 200 lines.
- *
- * NO electron imports — this runs as plain Node.js.
- */
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import {
@@ -20,6 +14,7 @@ import {
   syncApiKeysToOpenCodeAuth,
 } from '@myboteam/agent-core';
 import { getDatabase } from '@myboteam/agent-core/storage/database';
+import { buildConfigFileName, getPort } from './task-config-builder-utils.js';
 
 export interface TaskConfigBuilderOptions {
   userDataPath: string;
@@ -56,43 +51,6 @@ export async function isCliAvailable(opts: TaskConfigBuilderOptions): Promise<bo
     appPath: opts.appPath,
   };
   return coreIsCliAvailable(cliConfig);
-}
-
-/**
- * Read a port number from the given env var, returning `undefined` when the
- * var is unset or not an integer. Sole remaining caller is the WhatsApp API
- * port that the daemon emits into the WhatsApp MCP tool child process.
- */
-function getPort(envVar: string): number | undefined {
-  const val = process.env[envVar];
-  if (!val) {
-    return undefined;
-  }
-  const parsed = parseInt(val, 10);
-  return Number.isNaN(parsed) ? undefined : parsed;
-}
-
-/**
- * Build the per-task config filename from the adapter-supplied taskId,
- * scrubbed to a safe character set. `task.start` accepts an optional
- * caller-provided `taskId` as an arbitrary string, and `generateConfig`
- * joins `configFileName` straight into a filesystem path — a value
- * containing `/`, `..`, or NUL could write outside the opencode config
- * directory. Replace anything outside `[A-Za-z0-9_-]` with `_`.
- *
- * Returns `undefined` when no taskId is supplied (the transient OAuth
- * path passes an empty `ctx`) so `generateConfig` falls back to its
- * default `opencode.json` filename.
- */
-function buildConfigFileName(taskId: string | undefined): string | undefined {
-  if (!taskId) {
-    return undefined;
-  }
-  const safe = taskId.replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 128);
-  if (!safe) {
-    return undefined;
-  }
-  return `opencode-${safe}.json`;
 }
 
 /**

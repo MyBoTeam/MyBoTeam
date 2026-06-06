@@ -1,45 +1,29 @@
-/**
- * TaskBridge — routes incoming WhatsApp messages to MyBoTeam task creation.
- *
- * Contributed by aryan877 (PR #595 feat/whatsapp-integration).
- * - Rate-limiting (per-sender and global)
- * - Self-chat-only access control via ownerJid/ownerLid
- * - Session continuity across conversations
- * - Prompt injection protection (sanitizeString)
- */
 import { sanitizeString } from '@myboteam/agent-core';
 import { log } from '../logger.js';
 import {
   createRateLimitState,
   getSessionForSender,
-  type InboundMessage,
   isGlobalRateLimited,
   isRateLimited,
-  type MessageTransport,
   type RateLimitState,
   recordMessage,
   type SenderSession,
   setSessionForSender,
 } from './task-bridge-rate-limit.js';
+import {
+  type InboundMessage,
+  isLidUser,
+  MAX_MESSAGE_LENGTH,
+  type MessageTransport,
+} from './taskBridge-types.js';
 
-export type { InboundMessage, MessageTransport };
-
-export const MAX_MESSAGE_LENGTH = 4096;
-
-/**
- * Check whether a JID is in LID (linked-identity) format.
- * Inline implementation to avoid importing the entire Baileys package
- * in a module that may be loaded before Baileys is installed.
- */
-function isLidUser(jid: string): boolean {
-  return jid.endsWith('@lid');
-}
+export type { InboundMessage, MessageTransport } from './taskBridge-types.js';
+export { isLidUser, MAX_MESSAGE_LENGTH } from './taskBridge-types.js';
 
 export class TaskBridge {
   private rateLimitState: RateLimitState = createRateLimitState();
   private activeTasks = new Map<string, string>();
   private senderSessions = new Map<string, SenderSession>();
-  /** Per-sender message queue for messages that arrive while a task is running. */
   private pendingMessages = new Map<string, InboundMessage[]>();
   private transport: MessageTransport;
   private onTaskRequest: (
@@ -66,7 +50,6 @@ export class TaskBridge {
   ) {
     this.transport = transport;
     this.onTaskRequest = onTaskRequest;
-
     this.messageHandler = (msg) => {
       this.handleMessage(msg).catch((err) => {
         log.error('[TaskBridge] Error handling message:', err);
@@ -101,16 +84,12 @@ export class TaskBridge {
 
   clearActiveTask(senderId: string): void {
     this.activeTasks.delete(senderId);
-
-    // Process next queued message for this sender (if any).
-    // Handles offline batches where multiple messages arrived while a task was running.
     const queue = this.pendingMessages.get(senderId);
     if (queue && queue.length > 0) {
       const next = queue.shift()!;
       if (queue.length === 0) {
         this.pendingMessages.delete(senderId);
       }
-      // Re-enter handleMessage for the queued message
       this.handleMessage(next).catch((err) => {
         log.error('[TaskBridge] Error processing queued message:', err);
       });
@@ -132,11 +111,6 @@ export class TaskBridge {
     if (msg.isGroup) {
       return;
     }
-
-    // Self-only access control (fail-closed): only accept self-chat messages.
-    // WhatsApp uses two identity formats: JID (phone@s.whatsapp.net) and
-    // LID (linked-identity@lid). Self-chat messages arrive in LID format,
-    // so we compare the sender against whichever format matches.
     if (!this.ownerJid && !this.ownerLid) {
       return;
     }
@@ -186,21 +160,16 @@ export class TaskBridge {
     }
 
     if (this.hasActiveTask(msg.senderId)) {
-      // Queue the message instead of dropping it — process when current task completes.
-      // This handles offline message batches where multiple messages arrive at once.
       const queue = this.pendingMessages.get(msg.senderId) ?? [];
       queue.push(msg);
       this.pendingMessages.set(msg.senderId, queue);
       return;
     }
 
-    // Sanitize senderName before locking the sender as active, so a throw here
-    // does not leave the sender stuck behind the "previous task is still running" guard
     const safeSenderName = msg.senderName
       ? sanitizeString(msg.senderName, 'senderName', 128)
       : undefined;
 
-    // Mark task as active immediately to prevent duplicates before onTaskRequest resolves
     this.setActiveTask(msg.senderId, 'pending');
 
     try {
