@@ -80,7 +80,7 @@ const oauthCallbackMock = vi.fn(async (_params: unknown, options?: { signal?: Ab
   });
 });
 
-vi.mock('../../../src/opencode/server-manager.js', () => ({
+vi.mock('../../../src/opencode/server-transient.js', () => ({
   createTransientOpencodeClient: vi.fn(async () => ({
     client: {
       provider: {
