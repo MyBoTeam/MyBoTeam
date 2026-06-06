@@ -9,34 +9,23 @@ import {
 } from './azure-foundry-proxy-transform.js';
 
 export { transformRequestBody } from './azure-foundry-proxy-transform.js';
+
+import {
+  AZURE_FOUNDRY_PROXY_PORT,
+  getProxyBaseUrl,
+  HOP_BY_HOP_HEADERS,
+  MAX_REQUEST_SIZE,
+  sendJson,
+} from './azure-foundry-types.js';
+
 export type { AzureFoundryProxyInfo } from './azure-foundry-types.js';
 
 import type { AzureFoundryProxyInfo } from './azure-foundry-types.js';
 
 const log = createConsoleLogger({ prefix: 'AzureFoundryProxy' });
-const AZURE_FOUNDRY_PROXY_PORT = 9228;
-const MAX_REQUEST_SIZE = 10 * 1024 * 1024;
 let server: http.Server | null = null;
 let targetBaseUrl: string | null = null;
 let serverStartupPromise: Promise<void> | null = null;
-const HOP_BY_HOP_HEADERS = [
-  'connection',
-  'keep-alive',
-  'proxy-authenticate',
-  'proxy-authorization',
-  'te',
-  'trailers',
-  'transfer-encoding',
-  'upgrade',
-];
-
-function getProxyBaseUrl(): string {
-  return `http://127.0.0.1:${AZURE_FOUNDRY_PROXY_PORT}`;
-}
-function sendJson(res: http.ServerResponse, status: number, body: object): void {
-  res.writeHead(status, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(body));
-}
 
 function forwardRequest(
   req: http.IncomingMessage,
@@ -139,7 +128,6 @@ function proxyRequest(req: http.IncomingMessage, res: http.ServerResponse): void
     }
   });
 }
-
 async function startProxyServer(): Promise<void> {
   const newServer = http.createServer(proxyRequest);
   return new Promise<void>((resolve, reject) => {
