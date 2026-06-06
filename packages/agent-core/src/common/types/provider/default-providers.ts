@@ -1,6 +1,7 @@
+import { DEFAULT_PROVIDERS_EXTRAS } from './default-providers-extras.js';
 import type { ProviderConfig } from './provider-types.js';
 
-export const DEFAULT_PROVIDERS: ProviderConfig[] = [
+const DEFAULT_PROVIDERS_CORE: ProviderConfig[] = [
   {
     id: 'anthropic',
     name: 'Anthropic',
@@ -127,154 +128,9 @@ export const DEFAULT_PROVIDERS: ProviderConfig[] = [
     requiresApiKey: false,
     models: [],
   },
-  {
-    id: 'minimax',
-    name: 'MiniMax',
-    requiresApiKey: true,
-    apiKeyEnvVar: 'MINIMAX_API_KEY',
-    baseUrl: 'https://api.minimax.io/v1',
-    editableBaseUrl: true,
-    defaultModelId: 'minimax/MiniMax-M2.5',
-    models: [
-      {
-        id: 'MiniMax-M2',
-        displayName: 'MiniMax M2',
-        provider: 'minimax',
-        fullId: 'minimax/MiniMax-M2',
-        contextWindow: 196608,
-        supportsVision: false,
-      },
-      {
-        id: 'MiniMax-M2.1',
-        displayName: 'MiniMax M2.1',
-        provider: 'minimax',
-        fullId: 'minimax/MiniMax-M2.1',
-        contextWindow: 204800,
-        supportsVision: false,
-      },
-      {
-        id: 'MiniMax-M2.1-highspeed',
-        displayName: 'MiniMax M2.1 Highspeed',
-        provider: 'minimax',
-        fullId: 'minimax/MiniMax-M2.1-highspeed',
-        contextWindow: 204800,
-        supportsVision: false,
-      },
-      {
-        id: 'MiniMax-M2.5',
-        displayName: 'MiniMax M2.5',
-        provider: 'minimax',
-        fullId: 'minimax/MiniMax-M2.5',
-        contextWindow: 204800,
-        supportsVision: false,
-      },
-      {
-        id: 'MiniMax-M2.5-highspeed',
-        displayName: 'MiniMax M2.5 Highspeed',
-        provider: 'minimax',
-        fullId: 'minimax/MiniMax-M2.5-highspeed',
-        contextWindow: 204800,
-        supportsVision: false,
-      },
-    ],
-  },
-  {
-    id: 'nebius',
-    name: 'Nebius AI',
-    requiresApiKey: true,
-    apiKeyEnvVar: 'NEBIUS_API_KEY',
-    baseUrl: 'https://api.studio.nebius.ai/v1',
-    modelsEndpoint: {
-      url: 'https://api.studio.nebius.ai/v1/models',
-      authStyle: 'bearer',
-      responseFormat: 'openai',
-      modelIdPrefix: 'nebius/',
-    },
-    models: [],
-    defaultModelId: 'nebius/meta-llama/Meta-Llama-3.1-70B-Instruct',
-  },
-  {
-    id: 'together',
-    name: 'Together AI',
-    requiresApiKey: true,
-    apiKeyEnvVar: 'TOGETHER_API_KEY',
-    baseUrl: 'https://api.together.xyz/v1',
-    modelsEndpoint: {
-      url: 'https://api.together.xyz/v1/models',
-      authStyle: 'bearer',
-      responseFormat: 'openai',
-      modelIdPrefix: 'together/',
-    },
-    models: [],
-    defaultModelId: 'together/meta-llama/Llama-3-70b-chat-hf',
-  },
-  {
-    id: 'fireworks',
-    name: 'Fireworks AI',
-    requiresApiKey: true,
-    apiKeyEnvVar: 'FIREWORKS_API_KEY',
-    baseUrl: 'https://api.fireworks.ai/inference/v1',
-    modelsEndpoint: {
-      url: 'https://api.fireworks.ai/inference/v1/models',
-      authStyle: 'bearer',
-      responseFormat: 'openai',
-      modelIdPrefix: 'fireworks/',
-    },
-    models: [],
-    defaultModelId: 'fireworks/accounts/fireworks/models/llama-v3-70b-instruct',
-  },
-  {
-    id: 'groq',
-    name: 'Groq',
-    requiresApiKey: true,
-    apiKeyEnvVar: 'GROQ_API_KEY',
-    baseUrl: 'https://api.groq.com/openai/v1',
-    modelsEndpoint: {
-      url: 'https://api.groq.com/openai/v1/models',
-      authStyle: 'bearer',
-      responseFormat: 'openai',
-      modelIdPrefix: 'groq/',
-    },
-    models: [],
-    defaultModelId: 'groq/llama3-70b-8192',
-  },
-  {
-    id: 'venice',
-    name: 'Venice AI',
-    requiresApiKey: true,
-    apiKeyEnvVar: 'VENICE_API_KEY',
-    baseUrl: 'https://api.venice.ai/api/v1',
-    defaultModelId: 'venice/llama-3.3-70b',
-    modelsEndpoint: {
-      url: 'https://api.venice.ai/api/v1/models',
-      authStyle: 'bearer',
-      responseFormat: 'openai',
-      modelIdPrefix: 'venice/',
-    },
-    models: [],
-  },
-  {
-    id: 'copilot',
-    name: 'GitHub Copilot',
-    requiresApiKey: false,
-    defaultModelId: 'copilot/gpt-4o',
-    models: [],
-  },
-  {
-    id: 'myboteam-ai',
-    name: 'MyBoTeam AI',
-    requiresApiKey: false,
-    defaultModelId: 'myboteam-ai/myboteam-free',
-    models: [
-      {
-        id: 'myboteam-free',
-        displayName: 'MyBoTeam',
-        provider: 'myboteam-ai',
-        fullId: 'myboteam-ai/myboteam-free',
-        contextWindow: 128_000,
-        maxOutputTokens: 32_000,
-        supportsVision: true,
-      },
-    ],
-  },
+];
+
+export const DEFAULT_PROVIDERS: ProviderConfig[] = [
+  ...DEFAULT_PROVIDERS_CORE,
+  ...DEFAULT_PROVIDERS_EXTRAS,
 ];

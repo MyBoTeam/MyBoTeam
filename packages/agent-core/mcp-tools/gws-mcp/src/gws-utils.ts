@@ -1,7 +1,7 @@
+import { execFile } from 'node:child_process';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import { execFile } from 'node:child_process';
 import type { AccountEntry, TokenData } from './gws-types.js';
 
 export function loadManifest(): AccountEntry[] {
@@ -113,7 +113,10 @@ export function tokenizeCommand(command: string): string[] {
   return args;
 }
 
-export function runGws(command: string, token: string): Promise<{ stdout: string; stderr: string }> {
+export function runGws(
+  command: string,
+  token: string,
+): Promise<{ stdout: string; stderr: string }> {
   if (!GWS_BIN) {
     return Promise.reject(
       new Error(

@@ -4,9 +4,7 @@ import type {
 } from '@opencode-ai/sdk/v2';
 import { EventEmitter } from 'events';
 import type { PermissionResponse } from '../../common/types/permission.js';
-import { DEFAULT_SANDBOX_CONFIG } from '../../common/types/sandbox.js';
 import type { Task, TaskConfig } from '../../common/types/task.js';
-import { DisabledSandboxProvider } from '../../sandbox/disabled-provider.js';
 import { createCompletionEnforcer, setupLogWatcher } from './adapter-config.js';
 import {
   handleMessageUpdated as execHandleMessageUpdated,
@@ -19,6 +17,7 @@ import {
   prepareEnvAndClient,
 } from './adapter-execution.js';
 import { handlePermissionAsked as execHandlePermissionAsked } from './adapter-permissions.js';
+import { resolveSandboxConfig, resolveSandboxProvider } from './adapter-sandbox.js';
 import {
   abortSession,
   handleWatchdogHardTimeout as execHandleWatchdogHardTimeout,
@@ -147,108 +146,64 @@ export class OpenCodeAdapter extends EventEmitter<OpenCodeAdapterEvents> {
     this.removeAllListeners();
   }
 
-  /** @internal */
   get options(): AdapterOptions {
     return this.state.options;
   }
-  /** @internal */
   set options(val: AdapterOptions) {
     this.state.options = val;
   }
-  /** @internal */
   get currentTaskId(): string | null {
     return this.state.currentTaskId;
   }
-  /** @internal */
   set currentTaskId(val: string | null) {
     this.state.currentTaskId = val;
   }
-  /** @internal */
   get currentSessionId(): string | null {
     return this.state.currentSessionId;
   }
-  /** @internal */
   set currentSessionId(val: string | null) {
     this.state.currentSessionId = val;
   }
-  /** @internal */
   get watchdogActivityCounter(): number {
     return this.state.watchdogActivityCounter;
   }
-  /** @internal */
   set watchdogActivityCounter(val: number) {
     this.state.watchdogActivityCounter = val;
   }
-  /** @internal */
   get pendingRequest() {
     return this.state.pendingRequest;
   }
-  /** @internal */
   set pendingRequest(val) {
     this.state.pendingRequest = val;
   }
-  /** @internal */
   get hasCompleted(): boolean {
     return this.state.hasCompleted;
   }
-  /** @internal */
   set hasCompleted(val: boolean) {
     this.state.hasCompleted = val;
   }
-  /** @internal */
   get watchdog() {
     return this.state.watchdog;
   }
-  /** @internal */
   startWatchdog(): void {
     execStartWatchdog(this.state);
   }
-  /** @internal */
   teardown(): void {
     execTeardown(this.state);
   }
-  /** @internal */
   sampleWatchdogState(): TaskInactivityWatchdogSnapshot {
     return execSampleWatchdogState(this.state);
   }
-  /** @internal */
   handleWatchdogHardTimeout(ctx: TaskInactivityWatchdogTimeoutContext): void {
     execHandleWatchdogHardTimeout(this.state, ctx);
   }
-  /** @internal */
   handleMessageUpdated(info: unknown): void {
     execHandleMessageUpdated(this.state, info as never);
   }
-  /** @internal */
   handlePartUpdated(part: OpenCodeSdkPart): void {
     execHandlePartUpdated(this.state, part);
   }
-  /** @internal */
   handlePermissionAsked(request: OpenCodeSdkPermissionRequest): void {
     execHandlePermissionAsked(this.state, request);
   }
-}
-
-function resolveSandboxProvider(options: AdapterOptions) {
-  if (options.sandboxFactory) {
-    return options.sandboxFactory().provider;
-  }
-  if (
-    options.sandboxConfig &&
-    options.sandboxConfig.mode !== 'disabled' &&
-    !options.sandboxProvider
-  ) {
-    throw new Error(
-      `sandboxProvider must be supplied when sandboxConfig.mode is "${options.sandboxConfig.mode}". ` +
-        'Omitting it causes the task to run unsandboxed on the host.',
-    );
-  }
-  return options.sandboxProvider ?? new DisabledSandboxProvider();
-}
-
-function resolveSandboxConfig(options: AdapterOptions) {
-  if (options.sandboxFactory) {
-    return options.sandboxFactory().config;
-  }
-  return options.sandboxConfig ?? DEFAULT_SANDBOX_CONFIG;
 }

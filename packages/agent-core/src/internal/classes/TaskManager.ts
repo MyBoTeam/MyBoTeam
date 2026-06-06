@@ -1,23 +1,8 @@
-import type { BrowserFramePayload } from '../../common/types/browser-view.js';
-import type { OpenCodeMessage } from '../../common/types/opencode.js';
 import type { PermissionResponse } from '../../common/types/permission.js';
-import type {
-  Task,
-  TaskConfig,
-  TaskMessage,
-  TaskResult,
-  TaskStatus,
-} from '../../common/types/task.js';
-import type { TodoItem } from '../../common/types/todo.js';
+import type { Task, TaskConfig } from '../../common/types/task.js';
 import { createConsoleLogger } from '../../utils/logging.js';
-import type { AdapterOptions } from './adapter-types.js';
 import { type OpenCodeAdapter, OpenCodeCliNotFoundError } from './open-code-adapter.js';
-import {
-  executeTask,
-  type ManagedTask,
-  type QueuedTask,
-  queueTask,
-} from './task-manager-execution.js';
+import { executeTask, queueTask } from './task-manager-execution.js';
 import {
   cancelAllTasks as lifecycleCancelAllTasks,
   cancelQueuedTask as lifecycleCancelQueuedTask,
@@ -27,59 +12,14 @@ import {
   interruptTask as lifecycleInterruptTask,
   processQueue as lifecycleProcessQueue,
 } from './task-manager-lifecycle.js';
+import type {
+  ManagedTask,
+  QueuedTask,
+  TaskCallbacks,
+  TaskManagerOptions,
+} from './task-manager-types.js';
 
 const log = createConsoleLogger({ prefix: 'TaskManager' });
-
-export interface TaskProgressEvent {
-  stage: string;
-  message?: string;
-  isFirstTask?: boolean;
-  modelName?: string;
-}
-
-export interface TaskCallbacks {
-  onMessage?: (message: OpenCodeMessage) => void;
-  onBatchedMessages?: (messages: TaskMessage[]) => void;
-  onProgress: (progress: TaskProgressEvent) => void;
-  onPermissionRequest: (
-    request: import('../../common/types/permission.js').PermissionRequest,
-  ) => void;
-  onComplete: (result: TaskResult) => void;
-  onError: (error: Error) => void;
-  onStatusChange?: (status: TaskStatus) => void;
-  onDebug?: (log: { type: string; message: string; data?: unknown }) => void;
-  onTodoUpdate?: (todos: TodoItem[]) => void;
-  onAuthError?: (error: { providerId: string; message: string }) => void;
-  onBrowserFrame?: (data: BrowserFramePayload) => void;
-  onReasoning?: (text: string) => void;
-  onToolUse?: (toolName: string, toolInput: unknown) => void;
-  onToolCallComplete?: (data: {
-    toolName: string;
-    toolInput: unknown;
-    toolOutput: string;
-    sessionId?: string;
-  }) => void;
-  onStepFinish?: (data: {
-    reason: string;
-    model?: string;
-    tokens?: {
-      input: number;
-      output: number;
-      reasoning: number;
-      cache?: { read: number; write: number };
-    };
-    cost?: number;
-  }) => void;
-}
-
-export interface TaskManagerOptions {
-  adapterOptions: AdapterOptions;
-  defaultWorkingDirectory: string;
-  maxConcurrentTasks?: number;
-  isCliAvailable: () => Promise<boolean>;
-  onBeforeTaskStart?: (callbacks: TaskCallbacks, isFirstTask: boolean) => Promise<void>;
-}
-
 const DEFAULT_MAX_CONCURRENT_TASKS = 10;
 
 export class TaskManager {

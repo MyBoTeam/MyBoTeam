@@ -1,7 +1,5 @@
 export const WHATSAPP_API_PORT = process.env.MYBOTEAM_WHATSAPP_API_PORT;
-export const WHATSAPP_API_BASE = WHATSAPP_API_PORT
-  ? `http://localhost:${WHATSAPP_API_PORT}`
-  : '';
+export const WHATSAPP_API_BASE = WHATSAPP_API_PORT ? `http://localhost:${WHATSAPP_API_PORT}` : '';
 export const AUTH_TOKEN = process.env.MYBOTEAM_DAEMON_AUTH_TOKEN;
 
 export function getHeaders(): Record<string, string> {
@@ -103,7 +101,10 @@ export const WHATSAPP_TOOLS = [
   },
 ];
 
-export async function callApi(path: string, body: Record<string, unknown>): Promise<WhatsAppApiResponse> {
+export async function callApi(
+  path: string,
+  body: Record<string, unknown>,
+): Promise<WhatsAppApiResponse> {
   const response = await fetch(`${WHATSAPP_API_BASE}${path}`, {
     method: 'POST',
     headers: getHeaders(),

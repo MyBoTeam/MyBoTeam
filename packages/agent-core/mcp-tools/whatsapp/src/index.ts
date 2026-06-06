@@ -7,12 +7,12 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import {
+  callApi,
+  type GetWhatsAppMessagesInput,
+  type ListWhatsAppChatsInput,
+  type SendWhatsAppMessageInput,
   WHATSAPP_API_PORT,
   WHATSAPP_TOOLS,
-  callApi,
-  type SendWhatsAppMessageInput,
-  type ListWhatsAppChatsInput,
-  type GetWhatsAppMessagesInput,
 } from './whatsapp-types.js';
 
 if (!WHATSAPP_API_PORT) {

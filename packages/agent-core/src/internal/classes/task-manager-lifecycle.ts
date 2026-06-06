@@ -2,7 +2,7 @@ import { flushAndCleanupBatcher } from '../../opencode/message-processor.js';
 import { stopAzureFoundryProxy } from '../../opencode/proxies/azure-foundry-proxy.js';
 import { stopMoonshotProxy } from '../../opencode/proxies/moonshot-proxy.js';
 import { createConsoleLogger } from '../../utils/logging.js';
-import type { ManagedTask, QueuedTask } from './task-manager-execution.js';
+import type { ManagedTask, QueuedTask } from './task-manager-types.js';
 
 const log = createConsoleLogger({ prefix: 'TaskManager' });
 
@@ -78,7 +78,7 @@ export async function processQueue(
   executeTaskFn: (
     taskId: string,
     config: import('../../common/types/task.js').TaskConfig,
-    callbacks: import('./TaskManager.js').TaskCallbacks,
+    callbacks: import('./task-manager-types.js').TaskCallbacks,
   ) => Promise<import('../../common/types/task.js').Task>,
 ): Promise<void> {
   while (taskQueue.length > 0 && activeTasks.size < maxConcurrentTasks) {

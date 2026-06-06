@@ -11,7 +11,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 import type { ToolDef } from './gws-types.js';
-import { loadManifest, resolveAccount, readToken, runGws } from './gws-utils.js';
+import { loadManifest, readToken, resolveAccount, runGws } from './gws-utils.js';
 
 // ── MCP server ────────────────────────────────────────────────────────────────
 

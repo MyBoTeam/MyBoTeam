@@ -16,8 +16,8 @@ import {
   cmdRsvp,
   cmdUpdate,
 } from './calendar.js';
+import { CALENDAR_TOOL, tokenizeCommand } from './calendar-types.js';
 import { handleApiError, parseFlags } from './calendar-utils.js';
-import { tokenizeCommand, CALENDAR_TOOL } from './calendar-types.js';
 
 const server = new Server(
   { name: 'google-calendar', version: '1.0.0' },
