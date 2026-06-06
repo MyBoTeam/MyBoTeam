@@ -47,6 +47,12 @@
       },
       "correctness": {
         "noUnusedVariables": "error"
+      },
+      "nursery": {
+        "noExcessiveLinesPerFile": {
+          "level": "error",
+          "options": { "maxLines": 200, "skipBlankLines": true }
+        }
       }
     }
   },
@@ -132,6 +138,19 @@
         "rules": {
           "suspicious": {
             "noUnknownAtRules": "off"
+          },
+          "nursery": {
+            "noExcessiveLinesPerFile": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/agent-core/src/index.ts"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noExcessiveLinesPerFile": "off"
           }
         }
       }
