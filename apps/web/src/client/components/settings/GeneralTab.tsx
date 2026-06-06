@@ -4,6 +4,7 @@ import { DebugSection } from '@/components/settings/DebugSection';
 import { LanguageSelector } from '@/components/settings/LanguageSelector';
 import { NotificationsSection } from '@/components/settings/NotificationsSection';
 import { ThemeSelector } from '@/components/settings/ThemeSelector';
+import { SpeechSettingsForm } from './SpeechSettingsForm';
 
 interface GeneralTabProps {
   notificationsEnabled: boolean;
@@ -38,6 +39,14 @@ export function GeneralTab({
           {t('developer.title')}
         </h4>
         <DebugSection debugMode={debugMode} onDebugToggle={onDebugToggle} />
+      </section>
+      <section>
+        <div className="pt-5 pb-3">
+          <h4 className="text-xs font-medium uppercase tracking-wide text-foreground mb-3">
+            Voice Input
+          </h4>
+        </div>
+        <SpeechSettingsForm />
       </section>
     </div>
   );
