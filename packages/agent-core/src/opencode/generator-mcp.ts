@@ -1,58 +1,10 @@
-/**
- * MCP server configuration builder for OpenCode config generation.
- * Extracted from config-generator.ts to keep that file focused on high-level orchestration.
- */
-
-import fs from 'node:fs';
-import path from 'node:path';
 import { MCP_TOOL_TIMEOUT_MS } from '../common/constants.js';
 import { OPENCODE_SLACK_MCP_CLIENT_ID, OPENCODE_SLACK_MCP_SERVER_URL } from './auth.js';
+import type { BrowserConfig, McpServerConfig } from './generator-mcp-tools.js';
+import { resolveMcpCommand } from './generator-mcp-tools.js';
 
-/** Browser automation mode for task execution. */
-export interface BrowserConfig {
-  /** 'builtin' = dev-browser HTTP server (default), 'remote' = connect to CDP endpoint, 'none' = no browser */
-  mode: 'builtin' | 'remote' | 'none';
-  /** For 'remote': the CDP endpoint URL */
-  cdpEndpoint?: string;
-  /** For 'remote': auth headers (e.g. { 'X-CDP-Secret': '...' }) */
-  cdpHeaders?: Record<string, string>;
-  /** For 'builtin': run headless */
-  headless?: boolean;
-}
-
-export interface McpServerConfig {
-  type?: 'local' | 'remote';
-  command?: string[];
-  url?: string;
-  headers?: Record<string, string>;
-  enabled?: boolean;
-  environment?: Record<string, string>;
-  timeout?: number;
-  oauth?:
-    | false
-    | {
-        clientId?: string;
-        clientSecret?: string;
-        scope?: string;
-      };
-}
-
-function resolveMcpCommand(
-  mcpToolsPath: string,
-  mcpName: string,
-  distRelPath: string,
-  nodePath: string,
-): string[] {
-  const mcpDir = path.join(mcpToolsPath, mcpName);
-  const distPath = path.join(mcpDir, distRelPath);
-  if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `[OpenCode Config] Missing MCP dist entry: ${distPath}. ` +
-        'Run "pnpm -F @myboteam/desktop build:mcp-tools:dev" before launching.',
-    );
-  }
-  return [nodePath, distPath];
-}
+export type { BrowserConfig, McpServerConfig } from './generator-mcp-tools.js';
+export { resolveMcpCommand } from './generator-mcp-tools.js';
 
 export interface BuildMcpServersOptions {
   mcpToolsPath: string;
