@@ -10,18 +10,6 @@ export type {
   TypedJsonRpcRequest,
   TypedJsonRpcResponse,
 } from './daemon/daemon-types.js';
-
-export type {
-  HealthCheckResult,
-  JsonRpcError,
-  JsonRpcMessage,
-  JsonRpcNotification,
-  JsonRpcRequest,
-  JsonRpcResponse,
-  WhatsAppDaemonConfig,
-} from './daemon/json-rpc-types.js';
-export { JSON_RPC_ERRORS } from './daemon/json-rpc-types.js';
-
 export type {
   DaemonNotification,
   DaemonNotificationMap,
@@ -35,6 +23,16 @@ export type {
   WorkspaceDeleteResult,
   WorkspaceSetActiveResult,
 } from './daemon/event-types.js';
+export type {
+  HealthCheckResult,
+  JsonRpcError,
+  JsonRpcMessage,
+  JsonRpcNotification,
+  JsonRpcRequest,
+  JsonRpcResponse,
+  WhatsAppDaemonConfig,
+} from './daemon/json-rpc-types.js';
+export { JSON_RPC_ERRORS } from './daemon/json-rpc-types.js';
 
 export type {
   PermissionRespondParams,

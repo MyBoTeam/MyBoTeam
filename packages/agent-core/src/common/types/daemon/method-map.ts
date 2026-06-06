@@ -39,6 +39,7 @@ import type {
   WorkspaceDeleteResult,
   WorkspaceSetActiveResult,
 } from './event-types.js';
+import type { HealthCheckResult, WhatsAppDaemonConfig } from './json-rpc-types.js';
 import type {
   ScheduledTask,
   SessionResumeParams,
@@ -49,7 +50,6 @@ import type {
   TaskScheduleParams,
   TaskStartParams,
 } from './task-types.js';
-import type { HealthCheckResult, WhatsAppDaemonConfig } from './json-rpc-types.js';
 
 export interface DaemonMethodMap {
   'task.start': { params: TaskStartParams; result: Task };

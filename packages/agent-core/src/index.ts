@@ -93,7 +93,7 @@ export type {
 // -----------------------------------------------------------------------------
 
 // Error classes (still exported - these are safe)
-export { OpenCodeCliNotFoundError } from './internal/classes/OpenCodeAdapter.js';
+export { OpenCodeCliNotFoundError } from './internal/classes/adapter-types.js';
 // Adapter types - AdapterOptions/OpenCodeAdapterEvents are internal (use TaskAdapterOptions)
 // createLogWatcher/OpenCodeLogError are internal (used by OpenCodeAdapter internally)
 

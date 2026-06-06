@@ -7,13 +7,8 @@
 
 import type { ApiKeyProvider } from '../common/types/provider.js';
 import { createConsoleLogger } from '../utils/logging.js';
-import {
-  callAnthropic,
-  callGoogle,
-  callOpenAI,
-  callXAI,
-  truncatePrompt,
-} from './summarizer-providers.js';
+import { callAnthropic, callGoogle, callOpenAI, callXAI } from './summarizer-providers.js';
+import { truncatePrompt } from './summarizer-providers-types.js';
 
 const log = createConsoleLogger({ prefix: 'Summarizer' });
 
