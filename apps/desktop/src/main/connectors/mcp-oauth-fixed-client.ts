@@ -1,31 +1,23 @@
-/**
- * MCP OAuth Strategies
- *
- * Implements the mcp-dcr (Dynamic Client Registration + PKCE) and
- * mcp-fixed-client (pre-registered client + PKCE) OAuth flows.
- */
-
 import crypto from 'node:crypto';
-import type { ConnectorDefinition, OAuthProviderId } from '@myboteam/agent-core/common';
+import type { OAuthProviderId } from '@myboteam/agent-core/common';
 import { getConnectorDefinition } from '@myboteam/agent-core/common';
 import {
   buildAuthorizationUrl,
   discoverOAuthMetadata,
   exchangeCodeForTokens,
   generatePkceChallenge,
-  registerOAuthClient,
 } from '@myboteam/agent-core/desktop-main';
 import { shell } from 'electron';
 import { createOAuthCallbackServer } from '../oauth-callback-server';
 import { getConnectorAuthStore } from './connector-auth-registry';
 import type { ConnectorOAuthResult } from './connector-token-resolver';
 
-export async function performMcpDcrFlow(
+export async function performMcpFixedClientFlow(
   providerId: OAuthProviderId,
-  def: ConnectorDefinition,
 ): Promise<ConnectorOAuthResult> {
+  const def = getConnectorDefinition(providerId)!;
   const oauth = def.desktopOAuth;
-  if (oauth.kind !== 'mcp-dcr') {
+  if (oauth.kind !== 'mcp-fixed-client') {
     return { ok: false, error: 'not-configured' };
   }
 
@@ -36,7 +28,7 @@ export async function performMcpDcrFlow(
 
   const serverUrl = await store.getServerUrl();
   if (!serverUrl) {
-    return { ok: false, error: 'no-server-url', message: 'Server URL not configured' };
+    return { ok: false, error: 'no-server-url' };
   }
 
   try {
@@ -44,28 +36,17 @@ export async function performMcpDcrFlow(
       throw new Error(oauth.discoveryError);
     });
 
-    let clientReg = await store.getClientRegistration();
-    if (!clientReg) {
-      clientReg = await registerOAuthClient(metadata, store.callbackUrl, def.displayName).catch(
-        () => {
-          throw new Error(oauth.registrationError);
-        },
-      );
-      await store.setClientRegistration(clientReg);
-    }
-
     const pkce = generatePkceChallenge();
     const state = crypto.randomUUID();
+    const clientId = oauth.clientId;
 
-    const extraParams = oauth.extraAuthParams ?? {};
     const authUrl = buildAuthorizationUrl({
       authorizationEndpoint: metadata.authorizationEndpoint,
-      clientId: clientReg.clientId,
+      clientId,
       redirectUri: store.callbackUrl,
       codeChallenge: pkce.codeChallenge,
       state,
       scope: metadata.scopesSupported?.join(' '),
-      ...extraParams,
     });
 
     const callbackServer = await createOAuthCallbackServer({
@@ -91,8 +72,7 @@ export async function performMcpDcrFlow(
         tokenEndpoint: metadata.tokenEndpoint,
         code,
         codeVerifier: pkce.codeVerifier,
-        clientId: clientReg.clientId,
-        clientSecret: clientReg.clientSecret,
+        clientId,
         redirectUri: store.callbackUrl,
       }).catch(() => {
         throw new Error(oauth.tokenExchangeError);
@@ -103,7 +83,6 @@ export async function performMcpDcrFlow(
       return { ok: true, accessToken: tokens.accessToken };
     } finally {
       if (!authSucceeded) {
-        // clears codeVerifier/oauthState so pendingAuthorization resets
         await store.clearTokens();
       }
       callbackServer.shutdown();
@@ -116,5 +95,3 @@ export async function performMcpDcrFlow(
     };
   }
 }
-
-export { performMcpFixedClientFlow } from './mcp-oauth-fixed-client';

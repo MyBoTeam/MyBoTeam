@@ -70,7 +70,7 @@ export async function setupWindowServices(
       } else if (decision === 'stop-daemon') {
         logMain('INFO', '[Main] Closing app and stopping daemon');
         try {
-          const { suppressReconnect } = await import('./daemon/daemon-connector');
+          const { suppressReconnect } = await import('./daemon/daemon-connector-events');
           suppressReconnect();
         } catch {
           /* connector may not be loaded */

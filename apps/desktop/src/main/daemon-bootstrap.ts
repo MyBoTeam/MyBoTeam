@@ -9,13 +9,9 @@
 import type { DaemonClient } from '@myboteam/agent-core/desktop-main';
 import { createSocketTransport } from '@myboteam/agent-core/desktop-main';
 import type { BrowserWindow } from 'electron';
-import {
-  ensureDaemonRunning,
-  getDataDir,
-  onReconnect,
-  setupDisconnectHandler,
-  tailDaemonLog,
-} from './daemon/daemon-connector';
+import { ensureDaemonRunning, getDataDir } from './daemon/daemon-connector';
+import { onReconnect, setupDisconnectHandler } from './daemon/daemon-connector-events';
+import { tailDaemonLog } from './daemon/daemon-connector-transport';
 import { getDaemonClient, setClient, setMode } from './daemon/daemon-lifecycle';
 import {
   rebindWorkspaceManager,

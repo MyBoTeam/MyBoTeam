@@ -27,7 +27,9 @@ export function registerDaemonControlHandlers(handle: HandleFn): void {
     const { getDaemonClient, shutdownDaemon, bootstrapDaemon } = await import(
       '../../../daemon-bootstrap'
     );
-    const { suppressReconnect, enableReconnect } = await import('../../../daemon/daemon-connector');
+    const { suppressReconnect, enableReconnect } = await import(
+      '../../../daemon/daemon-connector-events'
+    );
 
     suppressReconnect();
     try {
@@ -84,7 +86,7 @@ export function registerDaemonControlHandlers(handle: HandleFn): void {
 
   handle('daemon:stop', async () => {
     const { getDaemonClient, shutdownDaemon } = await import('../../../daemon-bootstrap');
-    const { suppressReconnect } = await import('../../../daemon/daemon-connector');
+    const { suppressReconnect } = await import('../../../daemon/daemon-connector-events');
 
     suppressReconnect();
     try {
@@ -124,7 +126,7 @@ export function registerDaemonControlHandlers(handle: HandleFn): void {
 
   handle('daemon:start', async () => {
     const { bootstrapDaemon } = await import('../../../daemon-bootstrap');
-    const { enableReconnect } = await import('../../../daemon/daemon-connector');
+    const { enableReconnect } = await import('../../../daemon/daemon-connector-events');
 
     await bootstrapDaemon();
     enableReconnect();

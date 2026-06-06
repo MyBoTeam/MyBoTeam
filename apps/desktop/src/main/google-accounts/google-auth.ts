@@ -5,48 +5,25 @@
  * Without it, the OAuth redirect will fail at the Google consent screen.
  */
 import crypto from 'node:crypto';
-import http from 'node:http';
-import type { GoogleAccountToken } from '@myboteam/agent-core/common';
+import type http from 'node:http';
 import { shell } from 'electron';
 import { getLogCollector } from '../logging/index.js';
 import {
   GOOGLE_AUTH_ENDPOINT,
   GOOGLE_OAUTH_SCOPES,
-  GOOGLE_TOKEN_ENDPOINT,
-  GOOGLE_USERINFO_EP,
   OAUTH_CALLBACK_PORT_FALLBACK,
   OAUTH_CALLBACK_PORT_PRIMARY,
 } from './constants.js';
+import type { GoogleAuthResult } from './google-auth-utils';
+import {
+  b64url,
+  exchangeCodeForResult,
+  OAUTH_FLOW_TTL_MS,
+  pendingFlows,
+  startCallbackServer,
+} from './google-auth-utils';
 
-export interface GoogleAuthResult {
-  googleAccountId: string;
-  email: string;
-  displayName: string;
-  pictureUrl: string | null;
-  token: GoogleAccountToken;
-}
-
-interface PendingFlow {
-  resolve: (code: string) => void;
-  reject: (err: Error) => void;
-  codeVerifier: string;
-  server: http.Server;
-}
-
-const OAUTH_FLOW_TTL_MS = 10 * 60 * 1000;
-const pendingFlows = new Map<string, PendingFlow & { createdAt: number }>();
-
-function b64url(buf: Buffer): string {
-  return buf.toString('base64url');
-}
-
-function startCallbackServer(port: number, _state: string): Promise<http.Server> {
-  return new Promise((resolve, reject) => {
-    const server = http.createServer();
-    server.listen(port, '127.0.0.1', () => resolve(server));
-    server.on('error', reject);
-  });
-}
+export type { GoogleAuthResult } from './google-auth-utils';
 
 export async function startGoogleOAuth(label: string): Promise<{
   state: string;
@@ -181,92 +158,4 @@ export function cancelGoogleOAuth(state: string): void {
   pendingFlows.delete(state);
   flow.server.close();
   flow.reject(new Error('OAuth cancelled by user'));
-}
-
-async function exchangeCodeForResult(
-  code: string,
-  codeVerifier: string,
-  redirectUri: string,
-  clientId: string,
-  _label: string,
-): Promise<GoogleAuthResult> {
-  const tokenRes = await fetch(GOOGLE_TOKEN_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      code,
-      client_id: clientId,
-      redirect_uri: redirectUri,
-      code_verifier: codeVerifier,
-      grant_type: 'authorization_code',
-    }).toString(),
-  });
-
-  if (!tokenRes.ok) {
-    const body = await tokenRes.text();
-    throw new Error(`Token exchange failed (${tokenRes.status}): ${body}`);
-  }
-
-  const tokenData = (await tokenRes.json()) as {
-    access_token: string;
-    refresh_token?: string;
-    expires_in: number;
-    scope: string;
-  };
-
-  // Milestone 5 review finding P2.3: Google omits the refresh token
-  // whenever it believes the user already has one (e.g. a prior consent
-  // that wasn't revoked, the account's third-party-access tile still
-  // listing MyBoTeam). Pre-M5 we silently accepted `refreshToken: ''`,
-  // which meant `TokenManager.refreshToken` had nothing to send to the
-  // token endpoint — the account would look connected until the first
-  // expiry, then go permanently expired with no explanation. Post-M5
-  // the daemon's `gwsAccount.add` route validates `refreshToken` as
-  // non-empty; without this throw the RPC fails silently (its error is
-  // caught + swallowed by the background `waitForCallback` consumer),
-  // so the renderer never learns the connection failed and polls until
-  // timeout.
-  //
-  // The explicit throw lets the handler's `.catch()` surface this to the
-  // user — it suggests revoking app access at myaccount.google.com and
-  // reconnecting, which is the only fix Google offers here. `prompt=consent`
-  // + `access_type=offline` in the authorize URL already set us up to
-  // *request* a refresh token; this branch runs only on the edge-case
-  // response.
-  if (!tokenData.refresh_token || tokenData.refresh_token.trim() === '') {
-    throw new Error(
-      'Google did not return a refresh token. Please revoke access at ' +
-        'https://myaccount.google.com/permissions and try connecting again.',
-    );
-  }
-
-  const token: GoogleAccountToken = {
-    accessToken: tokenData.access_token,
-    refreshToken: tokenData.refresh_token,
-    expiresAt: Date.now() + tokenData.expires_in * 1000,
-    scopes: tokenData.scope.split(' '),
-  };
-
-  const infoRes = await fetch(GOOGLE_USERINFO_EP, {
-    headers: { Authorization: `Bearer ${token.accessToken}` },
-  });
-
-  if (!infoRes.ok) {
-    throw new Error(`Userinfo fetch failed (${infoRes.status})`);
-  }
-
-  const info = (await infoRes.json()) as {
-    sub: string;
-    email: string;
-    name: string;
-    picture?: string;
-  };
-
-  return {
-    googleAccountId: info.sub,
-    email: info.email,
-    displayName: info.name,
-    pictureUrl: info.picture ?? null,
-    token,
-  };
 }

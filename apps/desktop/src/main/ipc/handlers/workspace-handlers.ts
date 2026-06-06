@@ -6,7 +6,7 @@ import type {
 } from '@myboteam/agent-core/desktop-main';
 import type { IpcMainInvokeEvent } from 'electron';
 import { BrowserWindow } from 'electron';
-import { isDaemonStopped } from '../../daemon/daemon-connector';
+import { isDaemonStopped } from '../../daemon/daemon-connector-events';
 import { getDaemonClient } from '../../daemon-bootstrap';
 import * as workspaceManager from '../../store/workspaceManager';
 import { handle } from './utils';
