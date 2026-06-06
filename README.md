@@ -9,7 +9,7 @@ Open-source desktop app to run your personal team of AI agents — locally, priv
 
 ## What Is MyBoTeam?
 <p align="center">
-  <img src="Screenshot 2026-06-06 at 15.54.27.png" alt="MyBoTeam App Screenshot" width="75%" />
+  <img src="docs/images/v0.3.0-app-screenshot.png" alt="MyBoTeam App Screenshot" width="75%" />
 </p>
 
 MyBoTeam is a premium, open-source, local-first desktop application that empowers you to assemble, orchestrate, and deploy your own private team of specialized AI agents. Unlike standard context-isolated chatbots, MyBoTeam shifts the paradigm from _chatting with an AI_ to _collaborating with an autonomous workforce_.
