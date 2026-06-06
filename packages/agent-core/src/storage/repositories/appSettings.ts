@@ -18,51 +18,9 @@ import type {
 import { safeParseJsonWithFallback } from '../../utils/json.js';
 import { flushDatabase, getDatabase } from '../database.js';
 import { rowFromResult } from '../query-helpers.js';
+import { getLanguage as _getLanguage, VALID_THEME_COLORS } from './ui-settings.js';
 
-// Provider setting getters/setters
-export {
-  getAzureFoundryConfig,
-  getHuggingFaceLocalConfig,
-  getLiteLLMConfig,
-  getLMStudioConfig,
-  getNimConfig,
-  getOllamaConfig,
-  getOpenAiBaseUrl,
-  getSelectedModel,
-  setAzureFoundryConfig,
-  setHuggingFaceLocalConfig,
-  setLiteLLMConfig,
-  setLMStudioConfig,
-  setNimConfig,
-  setOllamaConfig,
-  setOpenAiBaseUrl,
-  setSelectedModel,
-} from './provider-settings.js';
-
-// UI setting getters/setters
-export {
-  getCloseBehavior,
-  getDebugMode,
-  getLanguage,
-  getNotificationsEnabled,
-  getOnboardingComplete,
-  getTheme,
-  getThemeColor,
-  setCloseBehavior,
-  setDebugMode,
-  setLanguage,
-  setNotificationsEnabled,
-  setOnboardingComplete,
-  setTheme,
-  setThemeColor,
-  VALID_LANGUAGES,
-  VALID_THEME_COLORS,
-  VALID_THEMES,
-} from './ui-settings.js';
-
-import { getLanguage as _getLanguage } from './ui-settings.js';
-
-export type { CloseBehavior } from './ui-settings.js';
+export * from './app-settings-types.js';
 
 interface AppSettingsRow {
   id: number;
@@ -100,14 +58,6 @@ export interface AppSettings {
 }
 
 const VALID_THEMES_LOCAL: ThemePreference[] = ['system', 'light', 'dark'];
-const VALID_THEME_COLORS: ThemeColorPreference[] = [
-  'mint',
-  'blue',
-  'lemon',
-  'peach',
-  'lavender',
-  'neutral',
-];
 
 function getRow(): AppSettingsRow {
   const db = getDatabase();
@@ -119,8 +69,6 @@ function getRow(): AppSettingsRow {
 export function getSandboxConfig(): SandboxConfig {
   const row = getRow();
   const parsed = safeParseJsonWithFallback<Partial<SandboxConfig>>(row.sandbox_config);
-  // Validate required fields before merging — bare {} passes JSON.parse but
-  // would return an incomplete config if spread directly.
   if (
     parsed &&
     (parsed.mode === 'disabled' || parsed.mode === 'native' || parsed.mode === 'docker') &&
@@ -177,8 +125,6 @@ export function setMessagingConfig(config: MessagingConfig | null): void {
 
 export function getAppSettings(): AppSettings {
   const row = getRow();
-  // Import getLanguage from ui-settings.js
-  // (already imported above as getLanguage)
   return {
     debugMode: row.debug_mode === 1,
     onboardingComplete: row.onboarding_complete === 1,
