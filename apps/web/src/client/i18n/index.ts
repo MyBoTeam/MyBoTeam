@@ -11,44 +11,15 @@
  */
 
 import i18n from 'i18next';
-import { createLogger } from '../lib/logger';
-
-const logger = createLogger('i18n');
-
-// Static English locale imports
-import enCommon from '@locales/en/common.json';
-import enErrors from '@locales/en/errors.json';
-import enExecution from '@locales/en/execution.json';
-import enHistory from '@locales/en/history.json';
-import enHome from '@locales/en/home.json';
-import enSettings from '@locales/en/settings.json';
-import enSidebar from '@locales/en/sidebar.json';
-// Static French locale imports
-import frCommon from '@locales/fr/common.json';
-import frErrors from '@locales/fr/errors.json';
-import frExecution from '@locales/fr/execution.json';
-import frHistory from '@locales/fr/history.json';
-import frHome from '@locales/fr/home.json';
-import frSettings from '@locales/fr/settings.json';
-import frSidebar from '@locales/fr/sidebar.json';
-// Static Russian locale imports
-import ruCommon from '@locales/ru/common.json';
-import ruErrors from '@locales/ru/errors.json';
-import ruExecution from '@locales/ru/execution.json';
-import ruHistory from '@locales/ru/history.json';
-import ruHome from '@locales/ru/home.json';
-import ruSettings from '@locales/ru/settings.json';
-import ruSidebar from '@locales/ru/sidebar.json';
-// Static Chinese locale imports
-import zhCNCommon from '@locales/zh-CN/common.json';
-import zhCNErrors from '@locales/zh-CN/errors.json';
-import zhCNExecution from '@locales/zh-CN/execution.json';
-import zhCNHistory from '@locales/zh-CN/history.json';
-import zhCNHome from '@locales/zh-CN/home.json';
-import zhCNSettings from '@locales/zh-CN/settings.json';
-import zhCNSidebar from '@locales/zh-CN/sidebar.json';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
+import { createLogger } from '../lib/logger';
+import { enResources } from './locales/en';
+import { frResources } from './locales/fr';
+import { ruResources } from './locales/ru';
+import { zhCNResources } from './locales/zh-CN';
+
+const logger = createLogger('i18n');
 
 // Supported languages and namespaces
 export const SUPPORTED_LANGUAGES = ['en', 'zh-CN', 'ru', 'fr'] as const;
@@ -123,42 +94,10 @@ export async function initI18n(): Promise<void> {
       .use(initReactI18next)
       .init({
         resources: {
-          en: {
-            common: enCommon as Record<string, unknown>,
-            home: enHome as Record<string, unknown>,
-            settings: enSettings as Record<string, unknown>,
-            execution: enExecution as Record<string, unknown>,
-            history: enHistory as Record<string, unknown>,
-            errors: enErrors as Record<string, unknown>,
-            sidebar: enSidebar as Record<string, unknown>,
-          },
-          'zh-CN': {
-            common: zhCNCommon as Record<string, unknown>,
-            home: zhCNHome as Record<string, unknown>,
-            settings: zhCNSettings as Record<string, unknown>,
-            execution: zhCNExecution as Record<string, unknown>,
-            history: zhCNHistory as Record<string, unknown>,
-            errors: zhCNErrors as Record<string, unknown>,
-            sidebar: zhCNSidebar as Record<string, unknown>,
-          },
-          ru: {
-            common: ruCommon as Record<string, unknown>,
-            home: ruHome as Record<string, unknown>,
-            settings: ruSettings as Record<string, unknown>,
-            execution: ruExecution as Record<string, unknown>,
-            history: ruHistory as Record<string, unknown>,
-            errors: ruErrors as Record<string, unknown>,
-            sidebar: ruSidebar as Record<string, unknown>,
-          },
-          fr: {
-            common: frCommon as Record<string, unknown>,
-            home: frHome as Record<string, unknown>,
-            settings: frSettings as Record<string, unknown>,
-            execution: frExecution as Record<string, unknown>,
-            history: frHistory as Record<string, unknown>,
-            errors: frErrors as Record<string, unknown>,
-            sidebar: frSidebar as Record<string, unknown>,
-          },
+          en: enResources,
+          'zh-CN': zhCNResources,
+          ru: ruResources,
+          fr: frResources,
         },
         lng: initialLanguage,
         fallbackLng: 'en',

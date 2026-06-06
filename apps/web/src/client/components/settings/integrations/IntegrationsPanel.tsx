@@ -1,21 +1,13 @@
-import { OAuthProviderId } from '@myboteam/agent-core/common';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ConnectorAddForm } from '@/components/settings/connectors/ConnectorAddForm';
 import { ConnectorList } from '@/components/settings/connectors/ConnectorList';
-import { DatadogConnectorCard } from '@/components/settings/connectors/DatadogConnectorCard';
-import { LightdashConnectorCard } from '@/components/settings/connectors/LightdashConnectorCard';
-import { OAuthConnectorCard } from '@/components/settings/connectors/OAuthConnectorCard';
 import { SlackConnectorSection } from '@/components/settings/connectors/SlackConnectorSection';
 import { useConnectorsPanel } from '@/components/settings/connectors/useConnectorsPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { settingsTransitions, settingsVariants } from '@/lib/animations';
-import githubIcon from '/assets/icons/integrations/github.svg';
-import jiraIcon from '/assets/icons/integrations/jira.svg';
-import mondayIcon from '/assets/icons/integrations/monday.svg';
-import notionIcon from '/assets/icons/integrations/notion.svg';
-import { GoogleAccountsSection } from '../google-accounts/GoogleAccountsSection';
+import { ConnectorCardsSection } from './ConnectorCardsSection';
 import { WhatsAppCard } from './WhatsAppCard';
 
 export function IntegrationsPanel() {
@@ -45,15 +37,6 @@ export function IntegrationsPanel() {
     handleUrlChange,
     refetch,
   } = useConnectorsPanel();
-
-  const getAuthState = (providerId: OAuthProviderId) =>
-    builtInAuthStates[providerId] ?? {
-      connected: false,
-      pendingAuthorization: false,
-    };
-
-  const isActionLoading = (providerId: OAuthProviderId) =>
-    builtInActionLoading[providerId] ?? false;
 
   return (
     <div data-testid="integrations-panel">
@@ -127,66 +110,13 @@ export function IntegrationsPanel() {
         </TabsContent>
 
         <TabsContent value="connectors">
-          <div className="flex flex-col gap-3">
-            <GoogleAccountsSection />
-
-            <OAuthConnectorCard
-              iconSrc={jiraIcon}
-              displayName={t('connectors.jira.title')}
-              authState={getAuthState(OAuthProviderId.Jira)}
-              actionLoading={isActionLoading(OAuthProviderId.Jira)}
-              onAuthenticate={() => handleBuiltInAuthenticate(OAuthProviderId.Jira)}
-              onDisconnect={() => handleBuiltInDisconnect(OAuthProviderId.Jira)}
-              testId="jira-auth-card"
-            />
-
-            <OAuthConnectorCard
-              iconSrc={githubIcon}
-              displayName={t('connectors.github.title')}
-              authState={getAuthState(OAuthProviderId.GitHub)}
-              actionLoading={isActionLoading(OAuthProviderId.GitHub)}
-              onAuthenticate={() => handleBuiltInAuthenticate(OAuthProviderId.GitHub)}
-              onDisconnect={() => handleBuiltInDisconnect(OAuthProviderId.GitHub)}
-              testId="github-auth-card"
-            />
-
-            <OAuthConnectorCard
-              iconSrc={notionIcon}
-              displayName={t('connectors.notion.title')}
-              authState={getAuthState(OAuthProviderId.Notion)}
-              actionLoading={isActionLoading(OAuthProviderId.Notion)}
-              onAuthenticate={() => handleBuiltInAuthenticate(OAuthProviderId.Notion)}
-              onDisconnect={() => handleBuiltInDisconnect(OAuthProviderId.Notion)}
-              testId="notion-auth-card"
-            />
-
-            <OAuthConnectorCard
-              iconSrc={mondayIcon}
-              displayName={t('connectors.monday.title')}
-              authState={getAuthState(OAuthProviderId.Monday)}
-              actionLoading={isActionLoading(OAuthProviderId.Monday)}
-              onAuthenticate={() => handleBuiltInAuthenticate(OAuthProviderId.Monday)}
-              onDisconnect={() => handleBuiltInDisconnect(OAuthProviderId.Monday)}
-              marketplaceUrl="https://monday.com/marketplace"
-              testId="monday-auth-card"
-            />
-
-            <DatadogConnectorCard
-              authState={getAuthState(OAuthProviderId.Datadog)}
-              actionLoading={isActionLoading(OAuthProviderId.Datadog)}
-              onAuthenticate={() => handleBuiltInAuthenticate(OAuthProviderId.Datadog)}
-              onDisconnect={() => handleBuiltInDisconnect(OAuthProviderId.Datadog)}
-              refetch={refetch}
-            />
-
-            <LightdashConnectorCard
-              authState={getAuthState(OAuthProviderId.Lightdash)}
-              actionLoading={isActionLoading(OAuthProviderId.Lightdash)}
-              onAuthenticate={() => handleBuiltInAuthenticate(OAuthProviderId.Lightdash)}
-              onDisconnect={() => handleBuiltInDisconnect(OAuthProviderId.Lightdash)}
-              refetch={refetch}
-            />
-          </div>
+          <ConnectorCardsSection
+            builtInAuthStates={builtInAuthStates}
+            builtInActionLoading={builtInActionLoading}
+            onAuthenticate={handleBuiltInAuthenticate}
+            onDisconnect={handleBuiltInDisconnect}
+            refetch={refetch}
+          />
         </TabsContent>
 
         <TabsContent value="custom">

@@ -4,10 +4,9 @@ import { useTranslation } from 'react-i18next';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu-sub';
 import { getMyBoTeam } from '@/lib/myboteam';
 import { applyTheme } from '@/lib/theme';
 import { THEME_KEY } from '@/lib/theme-core';

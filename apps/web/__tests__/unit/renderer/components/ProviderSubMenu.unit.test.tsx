@@ -7,23 +7,23 @@ import type { ConnectedProvider } from '@myboteam/agent-core/common';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Render Radix sub-menu primitives as plain markup so we can test content
-vi.mock('@/components/ui/dropdown-menu', () => ({
-  DropdownMenuSub: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  DropdownMenuSubTrigger: ({
-    children,
-    disabled,
-  }: {
-    children: React.ReactNode;
-    disabled?: boolean;
-  }) => (
+const mockSub = vi.hoisted(() => ({
+  subTrigger: ({ children, disabled }: { children: React.ReactNode; disabled?: boolean }) => (
     <button data-testid="sub-trigger" disabled={disabled}>
       {children}
     </button>
   ),
-  DropdownMenuSubContent: ({ children }: { children: React.ReactNode }) => (
+  subContent: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="sub-content">{children}</div>
   ),
+  sub: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
+// Render Radix sub-menu primitives as plain markup so we can test content
+vi.mock('@/components/ui/dropdown-menu', () => ({
+  DropdownMenuSub: mockSub.sub,
+  DropdownMenuSubTrigger: mockSub.subTrigger,
+  DropdownMenuSubContent: mockSub.subContent,
   DropdownMenuItem: ({
     children,
     onClick,
@@ -37,6 +37,12 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
       {children}
     </button>
   ),
+}));
+
+vi.mock('@/components/ui/dropdown-menu-sub', () => ({
+  DropdownMenuSub: mockSub.sub,
+  DropdownMenuSubTrigger: mockSub.subTrigger,
+  DropdownMenuSubContent: mockSub.subContent,
 }));
 
 import { ProviderSubMenu } from '@/components/ui/ProviderSubMenu';

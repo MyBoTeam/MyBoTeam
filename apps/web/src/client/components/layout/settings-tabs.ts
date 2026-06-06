@@ -1,14 +1,4 @@
-import {
-  ChatCircle,
-  FolderSimple,
-  GearSix,
-  Globe,
-  Info,
-  Key,
-  Lightning,
-  Microphone,
-  Timer,
-} from '@phosphor-icons/react';
+import { FolderSimple, GearSix, Info, Key } from '@phosphor-icons/react';
 
 export type SettingsTabId =
   | 'providers'

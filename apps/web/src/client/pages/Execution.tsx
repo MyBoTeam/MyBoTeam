@@ -1,34 +1,21 @@
-import { Clock, WarningCircle } from '@phosphor-icons/react';
-import { motion } from 'framer-motion';
+import { WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { CreditExhaustedChatBanner } from '../components/execution/CreditExhaustedChatBanner';
 import { DebugPanel } from '../components/execution/DebugPanel';
-import { MessageBubble } from '../components/execution/MessageList';
 import { SpinningIcon } from '../components/execution/SpinningIcon';
 import { DefaultFallback, ErrorBoundary } from '../components/ui/ErrorBoundary';
 import { ModelIndicator } from '../components/ui/ModelIndicator';
 import { useCreditsState } from '../hooks/useCreditsState';
-import { springs } from '../lib/animations';
 import { BrowserInstallModal } from './execution/BrowserInstallModal';
 import { ConversationView } from './execution/ConversationView';
 import { ExecutionCompleteFooter } from './execution/ExecutionCompleteFooter';
 import { ExecutionHeader } from './execution/ExecutionHeader';
+import { isMyBoTeamCreditExhaustedError } from './execution/execution-utils';
 import { FollowUpInput } from './execution/FollowUpInput';
+import { QueuedEmptyState, QueuedWithMessages } from './execution/QueuedState';
 import { useExecutionPage } from './execution/useExecutionPage';
-
-/** Detects MyBoTeam AI free-tier credit exhaustion errors specifically. */
-function isMyBoTeamCreditExhaustedError(message?: string): boolean {
-  if (!message) return false;
-  const lower = message.toLowerCase();
-  // Only match MyBoTeam-specific error codes, not generic provider billing errors
-  return (
-    lower.includes('credits_exhausted') ||
-    lower.includes('monthly_credit_limit_reached') ||
-    (lower.includes('myboteam') && lower.includes('free credits'))
-  );
-}
 
 export default function ExecutionPage() {
   const s = useExecutionPage();
@@ -69,52 +56,12 @@ export default function ExecutionPage() {
         setupDownloadStep={s.setupDownloadStep}
       />
 
-      {/* Queued — full page */}
       {s.currentTask.status === 'queued' && s.currentTask.messages.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={springs.gentle}
-          className="flex-1 flex flex-col items-center justify-center gap-6 px-6"
-        >
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10">
-            <Clock className="h-8 w-8 text-amber-600" />
-          </div>
-          <div className="text-center max-w-md">
-            <h2 className="text-xl font-semibold text-foreground mb-2">{t('waiting.title')}</h2>
-            <p className="text-muted-foreground">{t('waiting.description')}</p>
-          </div>
-        </motion.div>
+        <QueuedEmptyState />
       )}
 
-      {/* Queued — inline with messages */}
       {s.currentTask.status === 'queued' && s.currentTask.messages.length > 0 && (
-        <div className="flex-1 overflow-y-auto px-6 py-6">
-          <div className="mx-auto space-y-4">
-            {s.currentTask.messages
-              .filter((m) => !(m.type === 'tool' && m.toolName?.toLowerCase() === 'bash'))
-              .map((message) => (
-                <MessageBubble key={message.id} message={message} />
-              ))}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={springs.gentle}
-              className="flex flex-col items-center gap-4 py-8"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10">
-                <Clock className="h-6 w-6 text-amber-600" />
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-medium text-foreground">{t('waiting.title')}</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {t('waiting.followUpDescription')}
-                </p>
-              </div>
-            </motion.div>
-            <div ref={messagesEndRef} />
-          </div>
-        </div>
+        <QueuedWithMessages messages={s.currentTask.messages} messagesEndRef={messagesEndRef} />
       )}
 
       {/* Running messages */}

@@ -1,11 +1,11 @@
 import type { ConnectedProvider, ProviderId } from '@myboteam/agent-core/common';
 import { DEFAULT_PROVIDERS, getModelDisplayName, PROVIDER_META } from '@myboteam/agent-core/common';
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import {
-  DropdownMenuItem,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu-sub';
 
 interface ProviderSubMenuProps {
   providerId: ProviderId;

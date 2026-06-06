@@ -1,8 +1,9 @@
 import type { OAuthProviderId } from '@myboteam/agent-core/common';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createLogger } from '@/lib/logger';
 import { useConnectors } from './useConnectors';
+import { useOAuthCallback } from './useOAuthCallback';
 
 const logger = createLogger('ConnectorsPanel');
 
@@ -33,27 +34,7 @@ export function useConnectorsPanel() {
   const [addError, setAddError] = useState<string | null>(null);
   const [oauthError, setOauthError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const unsubscribe = window.myboteam?.onMcpAuthCallback?.((callbackUrl: string) => {
-      try {
-        const parsed = new URL(callbackUrl);
-        const code = parsed.searchParams.get('code');
-        const state = parsed.searchParams.get('state');
-        if (code && state) {
-          completeOAuth(state, code).catch((err) => {
-            logger.error('Failed to complete OAuth:', err);
-            setOauthError(
-              err instanceof Error ? err.message : t('connectors.oauthCompletionFailed'),
-            );
-          });
-        }
-      } catch (err) {
-        logger.error('Failed to parse OAuth callback URL:', err);
-        setOauthError(t('connectors.invalidOauthCallback'));
-      }
-    });
-    return () => unsubscribe?.();
-  }, [completeOAuth, t]);
+  useOAuthCallback(completeOAuth, (error) => setOauthError(error));
 
   const deriveNameFromUrl = useCallback(
     (serverUrl: string): string => {

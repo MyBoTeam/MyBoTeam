@@ -4,10 +4,9 @@ import { useTranslation } from 'react-i18next';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu-sub';
 import { changeLanguage, getLanguagePreference } from '@/i18n';
 import { cn } from '@/lib/utils';
 

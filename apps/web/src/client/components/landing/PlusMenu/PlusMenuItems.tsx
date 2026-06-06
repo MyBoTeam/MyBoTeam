@@ -5,10 +5,12 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu-sub';
 import { ConnectorsSubmenu } from './ConnectorsSubmenu';
 import { SkillsSubmenu } from './SkillsSubmenu';
 

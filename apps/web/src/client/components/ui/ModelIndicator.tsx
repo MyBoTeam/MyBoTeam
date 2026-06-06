@@ -24,19 +24,7 @@ import {
 import { ProviderSubMenu } from '@/components/ui/ProviderSubMenu';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
-
-interface ModelIndicatorProps {
-  /** Whether a task is currently running */
-  isRunning?: boolean;
-  /**
-   * @deprecated No longer used inside the dropdown. Kept for call-site compatibility.
-   */
-  onOpenSettings?: () => void;
-  /** Additional CSS classes */
-  className?: string;
-  /** Hide the indicator when no model is selected (instead of showing warning) */
-  hideWhenNoModel?: boolean;
-}
+import type { ModelIndicatorProps } from './ModelIndicator.types';
 
 export function ModelIndicator({
   isRunning = false,
