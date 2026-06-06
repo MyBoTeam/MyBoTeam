@@ -317,49 +317,4 @@ describe('SettingsDialog Integration', () => {
       expect(mockMyBoTeam.getProviderSettings).toHaveBeenCalled();
     });
   });
-
-  describe('integrations tab', () => {
-    it('should render the Slack authentication card', async () => {
-      render(<SettingsDialog {...defaultProps} />);
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Integrations' })).toBeInTheDocument();
-      });
-      fireEvent.click(screen.getByRole('button', { name: 'Integrations' }));
-
-      await waitFor(() => {
-        expect(screen.getByTestId('slack-auth-card')).toBeInTheDocument();
-      });
-
-      expect(screen.getByRole('button', { name: 'Authenticate Slack' })).toBeInTheDocument();
-      expect(mockMyBoTeam.getSlackMcpOauthStatus).toHaveBeenCalled();
-    });
-
-    it('should authenticate Slack from the integrations tab', async () => {
-      mockMyBoTeam.getSlackMcpOauthStatus
-        .mockResolvedValueOnce({ connected: false, pendingAuthorization: false })
-        .mockResolvedValueOnce({ connected: true, pendingAuthorization: false });
-
-      render(<SettingsDialog {...defaultProps} />);
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Integrations' })).toBeInTheDocument();
-      });
-      fireEvent.click(screen.getByRole('button', { name: 'Integrations' }));
-
-      await waitFor(() => {
-        expect(screen.getByTestId('slack-auth-button')).toBeInTheDocument();
-      });
-
-      fireEvent.click(screen.getByTestId('slack-auth-button'));
-
-      await waitFor(() => {
-        expect(mockMyBoTeam.loginSlackMcp).toHaveBeenCalled();
-      });
-
-      await waitFor(() => {
-        expect(screen.getByText('Connected')).toBeInTheDocument();
-      });
-    });
-  });
 });

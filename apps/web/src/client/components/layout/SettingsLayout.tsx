@@ -40,7 +40,7 @@ export default function SettingsLayout() {
                 'flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-left',
                 isActive
                   ? 'bg-background text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-background/50',
+                  : 'text-foreground hover:text-foreground hover:bg-background/50',
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />
