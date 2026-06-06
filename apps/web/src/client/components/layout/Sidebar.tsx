@@ -75,7 +75,7 @@ export default function Sidebar({ isTitleBarHidden = false }: SidebarProps) {
         isCollapsed ? 'w-16' : 'w-64',
       )}
     >
-      <div className="flex items-center justify-center shrink-0 p-3">
+      <div className="flex items-center justify-start shrink-0 p-3">
         <img src="/assets/loading-symbol.svg" alt="MyBot Team Logo" className="w-8" />
         {!isCollapsed && <span className="font-bold text-lg ml-2">MyBotTeam</span>}
       </div>
@@ -102,7 +102,7 @@ export default function Sidebar({ isTitleBarHidden = false }: SidebarProps) {
 
       {/* Bottom Section - only visible when expanded */}
       {!isCollapsed && (
-        <div className="flex flex-col gap-2 px-3 py-3 border-t border-border">
+        <div className="flex flex-col gap-2 px-3 py-3">
           <WorkspaceSelector onManageWorkspaces={() => navigate('/settings/workspaces')} />
         </div>
       )}

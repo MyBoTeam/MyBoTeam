@@ -181,7 +181,7 @@ export function DaemonSection() {
 
   return (
     <>
-      <h4 className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-3">
+      <h4 className="text-xs font-medium uppercase tracking-wide text-foreground mb-3">
         {t('daemon.title')}
       </h4>
 
