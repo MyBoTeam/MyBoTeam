@@ -1,6 +1,11 @@
+import { createOpencodeClient } from '@opencode-ai/sdk/v2';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { OpenCodeAdapter } from '../../../../src/internal/classes/OpenCodeAdapter.js';
+import { OpenCodeAdapter } from '../../../../src/internal/classes/open-code-adapter.js';
 import { MYBOTEAM_AGENT_NAME } from '../../../../src/opencode/config-generator.js';
+
+vi.mock('@opencode-ai/sdk/v2', () => ({
+  createOpencodeClient: vi.fn(),
+}));
 
 /**
  * REGRESSION: the adapter used to pass `{ title }` to `session.create`
@@ -101,25 +106,8 @@ describe('OpenCodeAdapter agent selection on session.prompt', () => {
     config: { prompt: string; sessionId?: string },
     fake: ReturnType<typeof buildFakeClient>,
   ): Promise<void> {
-    const adapterOpts = (
-      adapter as unknown as {
-        options: {
-          getServerUrl: (taskId: string) => Promise<string>;
-        };
-      }
-    ).options;
-    adapterOpts.getServerUrl = async () => 'http://127.0.0.1:4096';
-
-    let clientAssigned = false;
-    Object.defineProperty(adapter, 'client', {
-      configurable: true,
-      get() {
-        return clientAssigned ? fake.client : null;
-      },
-      set(_value: unknown) {
-        clientAssigned = true;
-      },
-    });
+    adapter.options.getServerUrl = async () => 'http://127.0.0.1:4096';
+    vi.mocked(createOpencodeClient).mockReturnValue(fake.client as never);
 
     const startPromise = adapter.startTask({ ...config, taskId: 'tsk_agent_test' });
     await Promise.race([

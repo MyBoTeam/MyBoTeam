@@ -1,5 +1,10 @@
+import { createOpencodeClient } from '@opencode-ai/sdk/v2';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { OpenCodeAdapter } from '../../../../src/internal/classes/OpenCodeAdapter.js';
+import { OpenCodeAdapter } from '../../../../src/internal/classes/open-code-adapter.js';
+
+vi.mock('@opencode-ai/sdk/v2', () => ({
+  createOpencodeClient: vi.fn(),
+}));
 
 /**
  * REGRESSION: the adapter used to call `client.session.create(...)`
@@ -96,31 +101,9 @@ describe('OpenCodeAdapter session resume (sessionId reuse)', () => {
     config: { prompt: string; sessionId?: string; modelId?: string },
     fake: ReturnType<typeof buildFakeClient>,
   ): Promise<void> {
-    // Inject the fake SDK client via the "createOpencodeClient" private
-    // path. The adapter's `startTask` constructs the client from
-    // `options.getServerUrl`, so we stub the options and patch
-    // `createOpencodeClient` indirectly by overwriting the property
-    // right before the call resolves.
-    (
-      adapter as unknown as {
-        options: { getServerUrl: (taskId: string) => Promise<string> };
-      }
-    ).options.getServerUrl = async () => 'http://127.0.0.1:4096';
-
-    // Patch the adapter's client assignment. `startTask` assigns
-    // `this.client = createOpencodeClient(...)`; we intercept by
-    // installing a getter/setter on `client` that routes to our fake
-    // the first time it's set.
-    let clientAssigned = false;
-    Object.defineProperty(adapter, 'client', {
-      configurable: true,
-      get() {
-        return clientAssigned ? fake.client : null;
-      },
-      set(_value: unknown) {
-        clientAssigned = true;
-      },
-    });
+    // Inject the fake SDK client via the mocked "createOpencodeClient".
+    adapter.options.getServerUrl = async () => 'http://127.0.0.1:4096';
+    vi.mocked(createOpencodeClient).mockReturnValue(fake.client as never);
 
     // Kick off startTask in the background — it will block on the
     // never-resolving event iterator. Race against a short timer so

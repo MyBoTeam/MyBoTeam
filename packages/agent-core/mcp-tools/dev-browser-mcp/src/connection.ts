@@ -1,27 +1,8 @@
 import { type Browser, type CDPSession, chromium, type Page } from 'playwright';
 import { BrowserManager, isRecoverableConnectionError } from './browser-manager.js';
+import type { ConnectionConfig, ConnectionMode } from './connection-config.js';
 
 export { isRecoverableConnectionError };
-
-export type ConnectionMode = 'builtin' | 'remote';
-
-export interface BuiltinConnectionConfig {
-  mode: 'builtin';
-  devBrowserUrl: string;
-  taskId: string;
-  cdpHeaders?: never;
-  cdpEndpoint?: never;
-}
-
-export interface RemoteConnectionConfig {
-  mode: 'remote';
-  cdpEndpoint: string;
-  cdpHeaders?: Record<string, string>;
-  taskId: string;
-  devBrowserUrl?: never;
-}
-
-export type ConnectionConfig = BuiltinConnectionConfig | RemoteConnectionConfig;
 
 // ─── Singleton state ────────────────────────────────────────────────────────
 
