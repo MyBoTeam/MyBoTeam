@@ -13,6 +13,10 @@ MyBoTeam is a premium, open-source, local-first desktop application that empower
 
 The platform features an embedded **agent marketplace** where you can download and hot-swap micro-agents customized for highly specific domains — nutritionists, tax advisors, fitness coaches, and more. These agents don't just output text; they operate on your desktop environment via secure, programmatic **Computer Use** (mouse control, keyboard inputs, screen parsing) to automate complex professional and personal workflows.
 
+<p align="center">
+  <img src="Screenshot 2026-06-06 at 15.54.27.png" alt="MyBoTeam App Screenshot" width="75%" />
+</p>
+
 ## Features
 
 - **💬 Conversations (Chat)** — Full conversation UI with real-time streaming, auto-title generation, conversation history, archive/delete, and i18n support
