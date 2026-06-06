@@ -12,6 +12,7 @@ import { getMyBoTeam } from '@/lib/myboteam';
 import { applyTheme } from '@/lib/theme';
 import { THEME_KEY } from '@/lib/theme-core';
 import { cn } from '@/lib/utils';
+import { ThemeColorSelector } from '../ui/ThemeColorSelector';
 
 const THEME_OPTIONS = [
   {
@@ -161,6 +162,8 @@ export function ThemeSelector() {
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
+          <br />
+          <ThemeColorSelector />
         </div>
       </div>
     </div>
