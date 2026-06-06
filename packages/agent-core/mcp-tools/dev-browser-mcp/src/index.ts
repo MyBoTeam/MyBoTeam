@@ -8,8 +8,8 @@ console.error('[dev-browser-mcp] MYBOTEAM_TASK_ID:', process.env.MYBOTEAM_TASK_I
 
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { configureFromEnv } from './connection.js';
-import { ensureConnected, loadToolDebug } from './session-manager.js';
 import { server } from './server.js';
+import { ensureConnected, loadToolDebug } from './session-manager.js';
 
 console.error('[dev-browser-mcp] All imports completed successfully');
 

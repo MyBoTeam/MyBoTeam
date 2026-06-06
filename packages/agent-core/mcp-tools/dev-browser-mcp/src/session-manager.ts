@@ -1,10 +1,10 @@
-import type { Page } from 'playwright';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import type { Page } from 'playwright';
 import { detectAuthPage } from './auth-detection.js';
 import {
+  backgroundPageWindow,
   ensureConnected as ensureConnectedRaw,
   focusPageWindow,
-  backgroundPageWindow,
   getCDPSession,
   getConnectionMode,
   getFullPageName,

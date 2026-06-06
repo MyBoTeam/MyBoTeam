@@ -1,7 +1,7 @@
 import type { ElementHandle, Page } from 'playwright';
-import type { SnapshotOptions } from './types.js';
 import { getSnapshotManager } from './snapshot/index.js';
 import { SNAPSHOT_SCRIPT } from './snapshot-script.js';
+import type { SnapshotOptions } from './types.js';
 
 export async function getAISnapshot(page: Page, options: SnapshotOptions = {}): Promise<string> {
   const isInjected = await page.evaluate(() => {
@@ -55,7 +55,10 @@ export async function selectSnapshotRef(page: Page, ref: string): Promise<Elemen
   return element;
 }
 
-export async function getSnapshotWithHistory(page: Page, options: SnapshotOptions = {}): Promise<string> {
+export async function getSnapshotWithHistory(
+  page: Page,
+  options: SnapshotOptions = {},
+): Promise<string> {
   const rawSnapshot = await getAISnapshot(page, options);
   const url = page.url();
   const title = await page.title();

@@ -15,55 +15,9 @@ import {
   cmdList,
   cmdRsvp,
   cmdUpdate,
-  handleApiError,
-  parseFlags,
 } from './calendar.js';
-
-/**
- * Tokenize a command string while preserving quoted sequences.
- * Handles both single and double quotes.
- * Example: 'create --title "Team Sync" --start 2024-01-01' → ['create', '--title', 'Team Sync', '--start', '2024-01-01']
- */
-function tokenizeCommand(command: string): string[] {
-  const tokens: string[] = [];
-  let current = '';
-  let inQuote: '"' | "'" | null = null;
-
-  for (let i = 0; i < command.length; i++) {
-    const char = command[i];
-
-    if (inQuote) {
-      // Inside a quoted string
-      if (char === inQuote) {
-        // End of quoted string
-        inQuote = null;
-      } else {
-        current += char;
-      }
-    } else {
-      // Outside quotes
-      if (char === '"' || char === "'") {
-        // Start of quoted string
-        inQuote = char;
-      } else if (char === ' ' || char === '\t') {
-        // Whitespace: push current token if non-empty
-        if (current.length > 0) {
-          tokens.push(current);
-          current = '';
-        }
-      } else {
-        current += char;
-      }
-    }
-  }
-
-  // Push final token if any
-  if (current.length > 0) {
-    tokens.push(current);
-  }
-
-  return tokens;
-}
+import { handleApiError, parseFlags } from './calendar-utils.js';
+import { tokenizeCommand, CALENDAR_TOOL } from './calendar-types.js';
 
 const server = new Server(
   { name: 'google-calendar', version: '1.0.0' },
@@ -71,28 +25,7 @@ const server = new Server(
 );
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
-  tools: [
-    {
-      name: 'google_calendar',
-      description:
-        'Manage Google Calendar events across connected accounts. Supports listing, creating, updating, deleting events, responding to invitations, and finding free time slots.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          command: {
-            type: 'string',
-            description:
-              'Subcommand and flags. Examples: "list --start 2024-01-01T00:00:00Z --end 2024-01-07T00:00:00Z", "get <eventId>", "create --title Meeting --start 2024-01-02T10:00:00Z --end 2024-01-02T11:00:00Z", "update --eventId <id> --title NewTitle", "delete <eventId>", "rsvp --eventId <id> --status accepted", "free-time --start 2024-01-01T00:00:00Z --end 2024-01-07T00:00:00Z --duration 30"',
-          },
-          account: {
-            type: 'string',
-            description: 'Account label or email to use. Omit to query all accounts (read ops).',
-          },
-        },
-        required: ['command'],
-      },
-    },
-  ],
+  tools: [CALENDAR_TOOL],
 }));
 
 server.setRequestHandler(CallToolRequestSchema, async (request): Promise<CallToolResult> => {
