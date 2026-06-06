@@ -124,7 +124,7 @@ export function HomePage() {
         </div>
       </div>
 
-      <div className="absolute bottom-4 right-4">
+      <div className="absolute bottom-4 right-6">
         <Button variant="default" size="sm" onClick={() => navigate('/examples')} className="gap-2">
           <Lightbulb className="h-4 w-4" />
           Examples

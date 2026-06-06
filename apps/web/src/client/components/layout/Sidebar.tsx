@@ -76,7 +76,7 @@ export default function Sidebar({ isTitleBarHidden = false }: SidebarProps) {
       )}
     >
       <div className="flex items-center justify-center shrink-0 p-3">
-        <img src="/assets/loading-symbol.svg" alt="MyBot Team Logo" className="size-8" />
+        <img src="/assets/loading-symbol.svg" alt="MyBot Team Logo" className="w-8" />
         {!isCollapsed && <span className="font-bold text-lg ml-2">MyBotTeam</span>}
       </div>
       {/* Nav Items */}
