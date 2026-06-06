@@ -1,0 +1,74 @@
+{
+  "name": "myboteam",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The open source AI coworker that lives on your desktop",
+  "author": "Maor Innovations LTD",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/myboteam-ai/myboteam.git"
+  },
+  "scripts": {
+    "predev": "node scripts/predev.cjs",
+    "dev": "node scripts/dev.cjs",
+    "predev:check": "node scripts/predev.cjs",
+    "dev:check": "node scripts/dev.cjs --check",
+    "predev:clean": "node scripts/predev.cjs",
+    "dev:clean": "node scripts/dev.cjs --clean",
+    "predev:clean:check": "node scripts/predev.cjs",
+    "dev:clean:check": "node scripts/dev.cjs --clean --check",
+    "dev:kill": "node scripts/dev-kill.cjs",
+    "dev:remote": "node scripts/dev-remote.cjs",
+    "postinstall": "node scripts/save-lockfile-hash.cjs",
+    "build": "pnpm -r --workspace-concurrency=1 build",
+    "build:desktop": "pnpm -F @myboteam/desktop build",
+    "dev:web": "pnpm -F @myboteam/web dev",
+    "build:web": "pnpm -F @myboteam/web build",
+    "test:web": "pnpm -F @myboteam/web test",
+    "test:web:unit": "pnpm -F @myboteam/web test:unit",
+    "test:web:integration": "pnpm -F @myboteam/web test:integration",
+    "test": "pnpm -r run test:unit",
+    "check": "biome check --write apps packages && pnpm -r exec tsc --noEmit",
+    "typecheck": "pnpm -r exec tsc --noEmit",
+    "test:coverage": "pnpm -r run test:coverage",
+    "test:integration": "pnpm -r run test:integration",
+    "test:e2e": "pnpm --filter @myboteam/desktop test:e2e",
+    "clean": "pnpm -r clean && rm -rf node_modules",
+    "prepare": "husky"
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=10.33.0"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "pnpm": {
+    "overrides": {
+      "fast-xml-parser": ">=5.3.4",
+      "tar": ">=7.5.8",
+      "@electron/rebuild>node-gyp": "^12.1.0",
+      "flatted": ">=3.4.2",
+      "minimatch": ">=9.0.6",
+      "music-metadata": ">=11.12.3",
+      "file-type": ">=21.3.1",
+      "audio-decode": "npm:empty-npm-package@1.0.0"
+    },
+    "ignoredOptionalDependencies": [
+      "audio-decode",
+      "sharp"
+    ],
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "electron",
+      "esbuild",
+      "opencode-ai",
+      "sharp"
+    ]
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.16",
+    "@types/sql.js": "^1.4.11",
+    "husky": "^9.1.7",
+    "wait-on": "^9.0.4"
+  }
+}

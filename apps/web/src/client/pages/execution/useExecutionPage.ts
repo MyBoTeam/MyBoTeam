@@ -1,0 +1,12 @@
+import { useExecutionActions } from './useExecutionActions';
+import { useExecutionCore } from './useExecutionCore';
+
+/**
+ * Orchestrates all state and actions for the ExecutionPage.
+ * Combines useExecutionCore (state/effects) and useExecutionActions (callbacks).
+ */
+export function useExecutionPage() {
+  const core = useExecutionCore();
+  const actions = useExecutionActions(core);
+  return { ...core, ...actions };
+}

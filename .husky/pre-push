@@ -1,0 +1,5 @@
+pnpm install --frozen-lockfile
+pnpm check
+pnpm build
+pnpm test:coverage
+pnpm test:integration

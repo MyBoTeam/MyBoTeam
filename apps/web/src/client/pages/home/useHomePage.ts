@@ -1,0 +1,176 @@
+import { hasAnyReadyProvider } from '@myboteam/agent-core/common';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router';
+import { createLogger } from '@/lib/logger';
+import { getMyBoTeam } from '@/lib/myboteam';
+import { useTaskStore } from '@/stores/taskStore';
+import { FAVORITES_PREVIEW_COUNT, USE_CASE_KEYS } from './homeConstants';
+import { usePromptAttachments } from './usePromptAttachments';
+
+export { FAVORITES_PREVIEW_COUNT } from './homeConstants';
+
+const logger = createLogger('Home');
+
+export function useHomePage() {
+  const [prompt, setPrompt] = useState('');
+  const [showAllFavorites, setShowAllFavorites] = useState(false);
+  const [workingDirectory, setWorkingDirectory] = useState<string | undefined>(undefined);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { t } = useTranslation('home');
+
+  const favorites = useTaskStore((state) => state.favorites);
+  const favoritesList = Array.isArray(favorites) ? favorites : [];
+  const loadFavorites = useTaskStore((state) => state.loadFavorites);
+  const removeFavorite = useTaskStore((state) => state.removeFavorite);
+  const startTask = useTaskStore((state) => state.startTask);
+  const interruptTask = useTaskStore((state) => state.interruptTask);
+  const isLoading = useTaskStore((state) => state.isLoading);
+  const addTaskUpdate = useTaskStore((state) => state.addTaskUpdate);
+  const setPermissionRequest = useTaskStore((state) => state.setPermissionRequest);
+
+  const myboteam = useMemo(() => getMyBoTeam(), []);
+
+  const useCaseExamples = useMemo(
+    () =>
+      USE_CASE_KEYS.map(({ key, icons }) => ({
+        key,
+        title: t(`useCases.${key}.title`),
+        description: t(`useCases.${key}.description`),
+        prompt: t(`useCases.${key}.prompt`),
+        icons,
+      })),
+    [t],
+  );
+
+  useEffect(() => {
+    if (location.pathname === '/' && typeof loadFavorites === 'function') {
+      void loadFavorites();
+    }
+  }, [location.pathname, loadFavorites]);
+
+  useEffect(() => {
+    const unsubscribeTask = myboteam.onTaskUpdate((event) => {
+      addTaskUpdate(event);
+    });
+    const unsubscribePermission = myboteam.onPermissionRequest((request) => {
+      setPermissionRequest(request);
+    });
+    return () => {
+      unsubscribeTask();
+      unsubscribePermission();
+    };
+  }, [addTaskUpdate, setPermissionRequest, myboteam]);
+
+  const {
+    attachments,
+    attachmentError,
+    setAttachments,
+    buildPromptWithAttachments,
+    handleExampleClick,
+    handleSkillSelect,
+    handleAttachFiles,
+    addFiles,
+    MAX_FILES,
+  } = usePromptAttachments({ setPrompt });
+
+  const executeTask = useCallback(async () => {
+    if ((!prompt.trim() && attachments.length === 0) || isLoading) {
+      return;
+    }
+    const taskId = `task_${Date.now()}`;
+    const enrichedPrompt = buildPromptWithAttachments(prompt.trim(), attachments);
+    const task = await startTask({
+      prompt: enrichedPrompt,
+      taskId,
+      files: attachments,
+      workingDirectory,
+    });
+    if (task) {
+      setAttachments([]);
+      setWorkingDirectory(undefined);
+      navigate(`/execution/${task.id}`);
+    }
+  }, [
+    prompt,
+    attachments,
+    workingDirectory,
+    isLoading,
+    startTask,
+    setAttachments,
+    navigate,
+    buildPromptWithAttachments,
+  ]);
+
+  const handleOpenSpeechSettings = useCallback(() => {
+    navigate('/settings/voice');
+  }, [navigate]);
+
+  const handleOpenModelSettings = useCallback(() => {
+    navigate('/settings/providers');
+  }, [navigate]);
+
+  const handleOpenSettings = useCallback(
+    (_tab: string) => {
+      navigate('/settings/general');
+    },
+    [navigate],
+  );
+
+  const handleSubmit = useCallback(async () => {
+    if (isLoading) {
+      void interruptTask();
+      return;
+    }
+    if (!prompt.trim() && attachments.length === 0) {
+      return;
+    }
+    try {
+      const isE2EMode = await myboteam.isE2EMode();
+      if (!isE2EMode) {
+        const settings = await myboteam.getProviderSettings();
+        if (!hasAnyReadyProvider(settings)) {
+          navigate('/settings/providers');
+          return;
+        }
+      }
+      await executeTask();
+    } catch (err) {
+      logger.error('Failed to submit task:', err);
+    }
+  }, [isLoading, prompt, attachments, myboteam, executeTask, interruptTask, navigate]);
+
+  const displayedFavorites = showAllFavorites
+    ? favoritesList
+    : favoritesList.slice(0, FAVORITES_PREVIEW_COUNT);
+  const hasMoreFavorites = favoritesList.length > FAVORITES_PREVIEW_COUNT;
+
+  return {
+    prompt,
+    setPrompt,
+    showAllFavorites,
+    setShowAllFavorites,
+    attachments,
+    attachmentError,
+    setAttachments,
+    workingDirectory,
+    setWorkingDirectory,
+    favoritesList,
+    removeFavorite,
+    isLoading,
+    useCaseExamples,
+    displayedFavorites,
+    hasMoreFavorites,
+    handleSubmit,
+    handleOpenSpeechSettings,
+    handleOpenModelSettings,
+    handleOpenSettings,
+    handleExampleClick,
+    handleSkillSelect,
+    handleAttachFiles,
+    addFiles,
+    MAX_FILES,
+  };
+}

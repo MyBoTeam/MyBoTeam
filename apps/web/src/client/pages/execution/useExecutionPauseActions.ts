@@ -1,0 +1,79 @@
+import { getOAuthProviderDisplayName, hasAnyReadyProvider } from '@myboteam/agent-core/common';
+import { useCallback, useMemo } from 'react';
+import type { useExecutionCore } from './useExecutionCore';
+
+type CoreState = ReturnType<typeof useExecutionCore>;
+
+export function useExecutionPauseActions(s: CoreState) {
+  const { myboteam, t } = s;
+
+  const resumePausedTask = useCallback(
+    async (message: string): Promise<boolean> => {
+      const isE2EMode = await myboteam.isE2EMode();
+      if (!isE2EMode) {
+        const settings = await myboteam.getProviderSettings();
+        if (!hasAnyReadyProvider(settings)) {
+          s.setPendingFollowUp(message);
+          s.setSettingsInitialTab('providers');
+          s.setShowSettingsDialog(true);
+          return false;
+        }
+      }
+      return await s.sendFollowUp(message, []);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- s is a stable hook result; individual actions are listed
+    [
+      myboteam,
+      s.setPendingFollowUp,
+      s.setSettingsInitialTab,
+      s.setShowSettingsDialog,
+      s.sendFollowUp,
+    ],
+  );
+
+  const handleContinue = useCallback(async () => {
+    return await resumePausedTask('continue');
+  }, [resumePausedTask]);
+
+  const { pauseAction, setTaskActionError, setIsTaskActionRunning } = s;
+
+  const handlePauseAction = useCallback(async () => {
+    if (pauseAction?.type !== 'oauth-connect') {
+      return;
+    }
+    const providerName = getOAuthProviderDisplayName(pauseAction.providerId);
+    setTaskActionError(null);
+    setIsTaskActionRunning(true);
+    try {
+      // Slack MCP is currently the only supported oauth-connect provider.
+      const status = await myboteam.getSlackMcpOauthStatus();
+      if (status.pendingAuthorization) {
+        await myboteam.logoutSlackMcp();
+      }
+      if (!status.connected) {
+        await myboteam.loginSlackMcp();
+      }
+      const refreshed = await myboteam.getSlackMcpOauthStatus();
+      if (!refreshed.connected) {
+        throw new Error(t('questionPrompt.oauthStillDisconnected', { provider: providerName }));
+      }
+      return await resumePausedTask(pauseAction.successText ?? `${providerName} is connected.`);
+    } catch (error) {
+      setTaskActionError(
+        error instanceof Error
+          ? error.message
+          : t('questionPrompt.oauthFailed', { provider: providerName }),
+      );
+      return false;
+    } finally {
+      setIsTaskActionRunning(false);
+    }
+  }, [myboteam, t, resumePausedTask, pauseAction, setTaskActionError, setIsTaskActionRunning]);
+
+  const handleTaskAction = useMemo(
+    () => (s.isConnectorAuthPause ? handlePauseAction : handleContinue),
+    [s.isConnectorAuthPause, handlePauseAction, handleContinue],
+  );
+
+  return { handleContinue, handlePauseAction, handleTaskAction, resumePausedTask };
+}

@@ -1,0 +1,23 @@
+{
+  "conversations": "Conversations",
+  "examples": "Examples",
+  "newTask": "New task",
+  "searchTasks": "Search Tasks (Cmd+K)",
+  "noConversations": "No conversations yet",
+  "settings": "Settings",
+  "searchPlaceholder": "Search tasks...",
+  "results": "Results",
+  "lastSevenDays": "Last 7 days",
+  "noTasksFound": "No tasks found",
+  "navigate": "Navigate",
+  "select": "Select",
+  "close": "Close",
+  "confirmDelete": "Are you sure you want to delete this task?",
+  "deleteTask": "Delete task",
+  "expandSidebar": "Expand sidebar",
+  "collapseSidebar": "Collapse sidebar",
+  "favorite": {
+    "add": "Add to favorites",
+    "remove": "Remove from favorites"
+  }
+}

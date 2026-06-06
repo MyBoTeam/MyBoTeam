@@ -1,0 +1,23 @@
+{
+  "conversations": "Conversations",
+  "examples": "Exemples",
+  "newTask": "Nouvelle tâche",
+  "searchTasks": "Rechercher (Cmd+K)",
+  "noConversations": "Aucune conversation",
+  "settings": "Paramètres",
+  "searchPlaceholder": "Rechercher des tâches...",
+  "results": "Résultats",
+  "lastSevenDays": "7 derniers jours",
+  "noTasksFound": "Aucune tâche trouvée",
+  "navigate": "Naviguer",
+  "select": "Sélectionner",
+  "close": "Fermer",
+  "confirmDelete": "Voulez-vous vraiment supprimer cette tâche ?",
+  "deleteTask": "Supprimer la tâche",
+  "expandSidebar": "Agrandir le panneau",
+  "collapseSidebar": "Réduire le panneau",
+  "favorite": {
+    "add": "Ajouter aux favoris",
+    "remove": "Retirer des favoris"
+  }
+}

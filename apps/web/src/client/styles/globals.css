@@ -1,0 +1,601 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@plugin "tailwindcss-animate";
+
+/* Geist Font Faces */
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/Geist-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/Geist-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/Geist-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/Geist-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/Geist-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* KMR Apparat Font */
+@font-face {
+  font-family: "KMR Apparat";
+  src: url("/fonts/KMR-Apparat-Light.ttf") format("truetype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "KMR Apparat";
+  src: url("/fonts/KMR-Apparat-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "KMR Apparat";
+  src: url("/fonts/KMR-Apparat-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background-card: hsl(var(--card));
+  --color-text: hsl(var(--foreground));
+  --color-text-secondary: hsl(var(--foreground));
+  --color-text-muted: hsl(var(--muted-foreground));
+  --color-danger: hsl(var(--destructive));
+  --color-danger-foreground: hsl(var(--destructive-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-success: hsl(var(--success));
+  --color-provider-bg: hsl(var(--provider-bg));
+  --color-provider-bg-active: hsl(var(--provider-bg-active));
+  --color-provider-bg-hover: hsl(var(--provider-bg-hover));
+  --color-provider-border-active: hsl(var(--provider-border-active));
+  --color-provider-accent: hsl(var(--provider-accent));
+  --color-provider-accent-text: hsl(var(--provider-accent-text));
+  --color-todo-progress-pending: hsl(var(--todo-progress-pending));
+  --color-todo-item-completed: hsl(var(--todo-item-completed));
+  --color-todo-item-in-progress: hsl(var(--todo-item-in-progress));
+
+  --font-sans:
+    "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-apparat: "KMR Apparat", "Geist", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
+  --radius-xl: var(--radius);
+  --radius-2xl: var(--radius);
+  --radius-3xl: var(--radius);
+
+  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
+  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+  --shadow-card: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow-card-hover: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+  --shadow-glass: var(--glass-shadow);
+  --theme-bg-gradient: ;
+
+  --ease-myboteam: cubic-bezier(0.64, 0, 0.78, 0);
+
+  --animate-shimmer: shimmer 2s infinite;
+  --animate-spin-ccw: spinCcw 1s linear infinite;
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  @keyframes spinCcw {
+    0% {
+      transform: rotate(360deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+}
+
+/* Shadcn-inspired theme variables */
+:root {
+  --background: 60 15% 96.3%; /* #F7F7F4 */
+  --foreground: 0 0% 12.5%; /* #202020 */
+  --card: 0 0% 98.8%; /* #fcfcfc */
+  --card-foreground: 0 0% 12.5%; /* #202020 */
+  --popover: 0 0% 98.8%; /* #fcfcfc */
+  --popover-foreground: 0 0% 12.5%; /* #202020 */
+  --primary: 123 30% 20%; /* #213c20 */
+  --primary-foreground: 0 0% 100%; /* #ffffff */
+  --secondary: 120 14% 85%; /* #d8dfd7 */
+  --secondary-foreground: 100 20% 18%; /* #2b391e */
+  --muted: 0 0% 93.7%; /* #efefef */
+  --muted-foreground: 0 0% 39.2%; /* #646464 */
+  --accent: 60 15% 96.3%; /* #F7F7F4 */
+  --accent-foreground: 0 0% 12.5%; /* #202020 */
+  --destructive: 8 78% 54%; /* #e54d2e */
+  --destructive-foreground: 0 0% 100%; /* #ffffff */
+  --border: 12 8% 90%; /* #eae2e1 */
+  --input: 0 0% 84.7%; /* #d8d8d8 */
+  --ring: 20 25% 33%; /* #644a40 */
+  --radius: 0.25rem;
+  --warning: 30 93% 48%;
+  --success: 153 99% 31%;
+  --warning-subtle: 36 95% 95%;
+  --success-subtle: 152 60% 93%;
+  --provider-bg: 40 20% 93%;
+  --provider-bg-active: 130 40% 93%;
+  --provider-bg-hover: 40 15% 96%;
+  --provider-border-active: 40 30% 25%;
+  --provider-accent: 123 30% 30%;
+  --provider-accent-text: 123 30% 15%;
+  --todo-progress-pending: 0 0% 85%;
+  --todo-item-completed: 36 11% 95%;
+  --todo-item-in-progress: 0 0% 98%;
+
+  /* Glass UI variables - Light mode */
+  --glass-bg: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.12) 25%,
+    rgba(240, 248, 255, 0.13) 50%,
+    rgba(255, 255, 255, 0.11) 75%,
+    rgba(230, 240, 255, 0.12) 100%
+  );
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04),
+    0 0 0 0.5px rgba(255, 255, 255, 0.08) inset, 0 0 12px rgba(255, 255, 255, 0.1) inset;
+  --glass-shadow-lg:
+    0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06),
+    0 0 0 0.5px rgba(255, 255, 255, 0.1) inset, 0 0 20px rgba(255, 255, 255, 0.12) inset;
+  --glass-shadow-sm:
+    0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.03),
+    0 0 0 0.5px rgba(255, 255, 255, 0.06) inset, 0 0 8px rgba(255, 255, 255, 0.08) inset;
+  --gradient: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
+  --blur: 10px;
+  --blur-sm: 10px;
+  --blur-lg: 10px;
+  --glass-frosted-bg: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.22) 25%,
+    rgba(240, 248, 255, 0.23) 50%,
+    rgba(255, 255, 255, 0.21) 75%,
+    rgba(230, 240, 255, 0.22) 100%
+  );
+  --glass-frosted-border: rgba(255, 255, 255, 0.3);
+  --glass-frosted-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08),
+    0 0 0 0.5px rgba(255, 255, 255, 0.15) inset, 0 0 20px rgba(255, 255, 255, 0.18) inset;
+  --blur-frosted: 25px;
+  --glass-fluted-pattern: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.08) 0px,
+    rgba(255, 255, 255, 0.15) 4px,
+    rgba(255, 255, 255, 0.08) 8px,
+    rgba(255, 255, 255, 0.02) 10px,
+    rgba(255, 255, 255, 0.08) 12px
+  );
+  --glass-crystal-bg: rgba(255, 255, 255, 0.3);
+  --glass-crystal-border: rgba(255, 255, 255, 0.3);
+  --glass-crystal-shadow: 0 0 20px rgba(0, 0, 0, 0.2), 0 0 30px rgba(255, 255, 255, 0.1);
+  --glass-crystal-shadow-hover: 0 0 25px rgba(0, 0, 0, 0.3), 0 0 35px rgba(255, 255, 255, 0.15);
+  --blur-crystal: 2px;
+}
+
+.theme-mint {
+  --primary: 163 54% 42%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 163 40% 90%;
+  --accent-foreground: 163 54% 20%;
+  --ring: 163 54% 42%;
+  --theme-bg-gradient: linear-gradient(135deg, #a3e7d3 0%, #53d3b1 100%);
+}
+
+.theme-blue {
+  --primary: 221 56% 55%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 221 56% 92%;
+  --accent-foreground: 221 56% 20%;
+  --ring: 221 56% 55%;
+  --theme-bg-gradient: linear-gradient(135deg, #b9daff 0%, #7fb9ff 100%);
+}
+
+.theme-lemon {
+  --primary: 66 72% 40%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 66 72% 90%;
+  --accent-foreground: 66 72% 20%;
+  --ring: 66 72% 40%;
+  --theme-bg-gradient: linear-gradient(135deg, #ffffb3 0%, #e6ff66 100%);
+}
+
+.theme-peach {
+  --primary: 0 56% 58%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 0 56% 92%;
+  --accent-foreground: 0 56% 20%;
+  --ring: 0 56% 58%;
+  --theme-bg-gradient: linear-gradient(135deg, #ffd0b3 0%, #ffa07a 100%);
+}
+
+.theme-lavender {
+  --primary: 248 74% 63%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 248 74% 92%;
+  --accent-foreground: 248 74% 20%;
+  --ring: 248 74% 63%;
+  --theme-bg-gradient: linear-gradient(135deg, #dcd3ff 0%, #b3a3ff 100%);
+}
+
+.theme-neutral {
+  --primary: 220 9% 46%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 220 9% 93%;
+  --accent-foreground: 220 9% 30%;
+  --ring: 220 9% 46%;
+  --theme-bg-gradient: ;
+}
+
+.dark {
+  --background: 0 0% 9%;
+  --foreground: 0 0% 95%;
+  --card: 0 0% 11%;
+  --card-foreground: 0 0% 95%;
+  --popover: 0 0% 11%;
+  --popover-foreground: 0 0% 95%;
+  --primary: 123 30% 45%;
+  --primary-foreground: 0 0% 9%;
+  --secondary: 120 10% 20%;
+  --secondary-foreground: 120 14% 85%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 64%;
+  --accent: 0 0% 18%;
+  --accent-foreground: 0 0% 95%;
+  --destructive: 8 78% 54%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 20%;
+  --input: 0 0% 25%;
+  --ring: 20 25% 55%;
+  --warning: 30 93% 48%;
+  --success: 153 99% 31%;
+  --warning-subtle: 30 60% 15%;
+  --success-subtle: 150 40% 12%;
+  --provider-bg: 0 0% 15%;
+  --provider-bg-active: 130 20% 15%;
+  --provider-bg-hover: 0 0% 13%;
+  --provider-border-active: 40 30% 50%;
+  --provider-accent: 123 30% 45%;
+  --provider-accent-text: 123 30% 75%;
+  --todo-progress-pending: 0 0% 24%;
+  --todo-item-completed: 0 0% 14%;
+  --todo-item-in-progress: 0 0% 11%;
+
+  /* Glass UI variables - Dark mode */
+  --glass-bg: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.06) 25%,
+    rgba(240, 248, 255, 0.07) 50%,
+    rgba(255, 255, 255, 0.05) 75%,
+    rgba(230, 240, 255, 0.06) 100%
+  );
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.15),
+    0 0 0 0.5px rgba(255, 255, 255, 0.12) inset, 0 0 12px rgba(255, 255, 255, 0.15) inset;
+  --glass-shadow-lg:
+    0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2),
+    0 0 0 0.5px rgba(255, 255, 255, 0.15) inset, 0 0 20px rgba(255, 255, 255, 0.18) inset;
+  --glass-shadow-sm:
+    0 2px 8px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.12),
+    0 0 0 0.5px rgba(255, 255, 255, 0.1) inset, 0 0 8px rgba(255, 255, 255, 0.12) inset;
+  --gradient: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
+  --blur: 10px;
+  --blur-sm: 10px;
+  --blur-lg: 10px;
+  --glass-frosted-bg: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.12) 25%,
+    rgba(240, 248, 255, 0.13) 50%,
+    rgba(255, 255, 255, 0.11) 75%,
+    rgba(230, 240, 255, 0.12) 100%
+  );
+  --glass-frosted-border: rgba(255, 255, 255, 0.25);
+  --glass-frosted-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3),
+    0 0 0 0.5px rgba(255, 255, 255, 0.2) inset, 0 0 20px rgba(255, 255, 255, 0.22) inset;
+  --blur-frosted: 25px;
+  --glass-fluted-pattern: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0px,
+    rgba(255, 255, 255, 0.12) 4px,
+    rgba(255, 255, 255, 0.05) 8px,
+    rgba(255, 255, 255, 0.01) 10px,
+    rgba(255, 255, 255, 0.05) 12px
+  );
+  --glass-crystal-bg: rgba(255, 255, 255, 0.1);
+  --glass-crystal-border: rgba(255, 255, 255, 0.3);
+  --glass-crystal-shadow: 0 0 20px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 255, 255, 0.15);
+  --glass-crystal-shadow-hover: 0 0 25px rgba(0, 0, 0, 0.5), 0 0 35px rgba(255, 255, 255, 0.2);
+  --blur-crystal: 2px;
+}
+
+.dark.theme-mint {
+  --primary: 163 54% 55%;
+  --primary-foreground: 0 0% 8%;
+  --accent: 163 30% 18%;
+  --accent-foreground: 163 40% 80%;
+  --ring: 163 54% 55%;
+  --theme-bg-gradient: linear-gradient(135deg, #a3e7d3 0%, #53d3b1 100%);
+}
+
+.dark.theme-blue {
+  --primary: 221 56% 65%;
+  --primary-foreground: 0 0% 8%;
+  --accent: 221 30% 18%;
+  --accent-foreground: 221 40% 80%;
+  --ring: 221 56% 65%;
+  --theme-bg-gradient: linear-gradient(135deg, #b9daff 0%, #7fb9ff 100%);
+}
+
+.dark.theme-lemon {
+  --primary: 66 72% 55%;
+  --primary-foreground: 0 0% 8%;
+  --accent: 66 40% 18%;
+  --accent-foreground: 66 50% 80%;
+  --ring: 66 72% 55%;
+  --theme-bg-gradient: linear-gradient(135deg, #ffffb3 0%, #e6ff66 100%);
+}
+
+.dark.theme-peach {
+  --primary: 0 56% 68%;
+  --primary-foreground: 0 0% 8%;
+  --accent: 0 30% 18%;
+  --accent-foreground: 0 40% 80%;
+  --ring: 0 56% 68%;
+  --theme-bg-gradient: linear-gradient(135deg, #ffd0b3 0%, #ffa07a 100%);
+}
+
+.dark.theme-lavender {
+  --primary: 248 74% 73%;
+  --primary-foreground: 0 0% 8%;
+  --accent: 248 30% 18%;
+  --accent-foreground: 248 50% 80%;
+  --ring: 248 74% 73%;
+  --theme-bg-gradient: linear-gradient(135deg, #dcd3ff 0%, #b3a3ff 100%);
+}
+
+.dark.theme-neutral {
+  --primary: 220 9% 56%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 220 9% 18%;
+  --accent-foreground: 220 9% 80%;
+  --ring: 220 9% 56%;
+  --theme-bg-gradient: ;
+}
+
+/* Custom scrollbar — auto-hide, shown only while scrolling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+*:hover {
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+}
+
+*:hover::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Drag region for frameless window - these work when loaded in Electron BrowserView */
+.drag-region {
+  -webkit-app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Focus visible for accessibility */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: none;
+}
+
+/* Base styles */
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply text-foreground;
+    background: var(--theme-bg-gradient, hsl(var(--background)));
+  }
+
+  /* Prevent text selection in UI elements */
+  button,
+  [role="button"] {
+    @apply select-none;
+  }
+}
+
+/* Placeholder font family for textareas */
+textarea::-webkit-input-placeholder {
+  font-family:
+    "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+textarea:-ms-input-placeholder {
+  font-family:
+    "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+textarea:-moz-placeholder {
+  font-family:
+    "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+textarea::-moz-placeholder {
+  font-family:
+    "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+textarea::placeholder {
+  font-family:
+    "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Glass UI utilities */
+@layer utilities {
+  .glass-bg {
+    background-image: var(--glass-bg);
+    background-color: transparent;
+    backdrop-filter: blur(var(--blur)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(180%);
+    border: 0.5px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-frosted {
+    background-image: var(--glass-frosted-bg);
+    background-color: transparent;
+    backdrop-filter: blur(var(--blur-frosted)) saturate(200%);
+    -webkit-backdrop-filter: blur(var(--blur-frosted)) saturate(200%);
+    border: 0.5px solid var(--glass-frosted-border);
+    box-shadow: var(--glass-frosted-shadow);
+  }
+
+  .glass-fluted {
+    background-image: var(--glass-fluted-pattern), var(--glass-bg);
+    background-color: transparent;
+    backdrop-filter: blur(var(--blur)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(180%);
+    border: 0.5px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-crystal {
+    position: relative;
+    background-color: var(--glass-crystal-bg);
+    backdrop-filter: blur(var(--blur-crystal));
+    -webkit-backdrop-filter: blur(var(--blur-crystal));
+    border: 1px solid var(--glass-crystal-border);
+    box-shadow: var(--glass-crystal-shadow);
+    transition: all 0.3s ease;
+    background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.15), transparent 50%);
+    background-size: 200% 200%;
+  }
+
+  .glass-crystal::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
+    opacity: 0.7;
+    pointer-events: none;
+    height: 30%;
+  }
+
+  .glass-crystal::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at 50% 120%, rgba(255, 255, 255, 0.2), transparent 70%);
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  .glass-crystal:hover {
+    box-shadow: var(--glass-crystal-shadow-hover);
+    background-position: 100% 100%;
+  }
+}

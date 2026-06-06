@@ -1,0 +1,282 @@
+.floating-robot {
+  --floating-robot-size: clamp(220px, 72vmin, 720px);
+  --floating-robot-float-duration: 4.8s;
+  --floating-robot-wave-duration: 3.4s;
+  --floating-robot-head-duration: 5.2s;
+  --floating-robot-shadow-duration: 4.8s;
+  --floating-robot-eye-duration: 4.6s;
+  --floating-robot-mouth-duration: 3.8s;
+  --floating-robot-face-dark: #052f3f;
+  --floating-robot-face-cyan: #6fdae8;
+
+  width: min(100%, var(--floating-robot-size));
+  max-width: 100%;
+  aspect-ratio: 1;
+}
+
+.floating-robot__stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  isolation: isolate;
+}
+
+.floating-robot__float,
+.floating-robot__layer,
+.floating-robot__layer img,
+.floating-robot__face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.floating-robot__float {
+  z-index: 2;
+  animation: floating-robot-float var(--floating-robot-float-duration) ease-in-out infinite;
+  transform-origin: 50% 54%;
+  will-change: transform;
+}
+
+.floating-robot__layer {
+  pointer-events: none;
+  transform-box: fill-box;
+  will-change: transform;
+}
+
+.floating-robot__layer img {
+  display: block;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.floating-robot__shadow {
+  z-index: 1;
+  animation: floating-robot-shadow var(--floating-robot-shadow-duration) ease-in-out infinite;
+  transform-origin: 50% 91%;
+  will-change: transform, opacity;
+}
+
+.floating-robot__arm-left {
+  z-index: 2;
+  animation: floating-robot-wave-left var(--floating-robot-wave-duration) ease-in-out infinite;
+  transform-origin: 31.5% 49%;
+}
+
+.floating-robot__arm-right {
+  z-index: 2;
+  animation: floating-robot-wave-right calc(var(--floating-robot-wave-duration) * 1.08) ease-in-out
+    infinite;
+  transform-origin: 68.5% 49%;
+}
+
+.floating-robot__body {
+  z-index: 3;
+}
+
+.floating-robot__head {
+  z-index: 4;
+  animation: floating-robot-head-look var(--floating-robot-head-duration) ease-in-out infinite;
+  transform-origin: 50% 36%;
+}
+
+.floating-robot__face {
+  z-index: 5;
+  pointer-events: none;
+  animation: floating-robot-head-look var(--floating-robot-head-duration) ease-in-out infinite;
+  transform-origin: 50% 36%;
+  will-change: transform;
+}
+
+.floating-robot__eye,
+.floating-robot__mouth {
+  position: absolute;
+  display: block;
+}
+
+.floating-robot__eye {
+  width: 7%;
+  height: 5.4%;
+  top: 26.4%;
+  border-radius: 48% 48% 42% 42%;
+  background:
+    radial-gradient(circle at 50% 70%, rgba(83, 204, 224, 0.32), transparent 68%),
+    var(--floating-robot-face-dark);
+}
+
+.floating-robot__eye::after {
+  content: "";
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  bottom: 20%;
+  height: 54%;
+  border-radius: 50% 50% 40% 40%;
+  background: linear-gradient(180deg, #8ee9f1 0%, var(--floating-robot-face-cyan) 100%);
+  box-shadow: 0 0 18px rgba(111, 218, 232, 0.52);
+  animation: floating-robot-blink var(--floating-robot-eye-duration) ease-in-out infinite;
+  transform-origin: 50% 70%;
+  will-change: transform, opacity;
+}
+
+.floating-robot__eye--left {
+  left: 37.1%;
+}
+
+.floating-robot__eye--right {
+  left: 55.9%;
+}
+
+.floating-robot__mouth {
+  width: 6.4%;
+  height: 4.8%;
+  left: 46.8%;
+  top: 33.9%;
+  border-radius: 18% 18% 48% 48%;
+  background:
+    radial-gradient(circle at 50% 72%, rgba(83, 204, 224, 0.24), transparent 68%),
+    var(--floating-robot-face-dark);
+}
+
+.floating-robot__mouth::after {
+  content: "";
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: 14%;
+  height: 62%;
+  border-radius: 0 0 50% 50%;
+  background: linear-gradient(180deg, #83e5ee 0%, var(--floating-robot-face-cyan) 100%);
+  box-shadow: 0 0 14px rgba(111, 218, 232, 0.4);
+  animation: floating-robot-smile var(--floating-robot-mouth-duration) ease-in-out infinite;
+  transform-origin: 50% 25%;
+  will-change: transform;
+}
+
+@keyframes floating-robot-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-0.4deg);
+  }
+
+  50% {
+    transform: translate3d(0, -3.4%, 0) rotate(0.6deg);
+  }
+}
+
+@keyframes floating-robot-shadow {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scaleX(0.9) scaleY(0.96);
+  }
+
+  50% {
+    opacity: 0.42;
+    transform: scaleX(1.15) scaleY(0.82);
+  }
+}
+
+@keyframes floating-robot-wave-left {
+  0%,
+  100% {
+    transform: rotate(-4deg) translate3d(0, 0, 0);
+  }
+
+  34% {
+    transform: rotate(7deg) translate3d(-0.5%, 0.3%, 0);
+  }
+
+  68% {
+    transform: rotate(-8deg) translate3d(0.3%, -0.2%, 0);
+  }
+}
+
+@keyframes floating-robot-wave-right {
+  0%,
+  100% {
+    transform: rotate(4deg) translate3d(0, 0, 0);
+  }
+
+  36% {
+    transform: rotate(-7deg) translate3d(0.5%, 0.3%, 0);
+  }
+
+  72% {
+    transform: rotate(8deg) translate3d(-0.3%, -0.2%, 0);
+  }
+}
+
+@keyframes floating-robot-head-look {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-1.2deg);
+  }
+
+  42% {
+    transform: translate3d(-0.7%, -0.35%, 0) rotate(2.6deg);
+  }
+
+  72% {
+    transform: translate3d(0.45%, 0.2%, 0) rotate(-2deg);
+  }
+}
+
+@keyframes floating-robot-blink {
+  0%,
+  8%,
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+
+  10%,
+  12% {
+    opacity: 0.9;
+    transform: scaleY(0.1);
+  }
+
+  14%,
+  58% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+
+  60%,
+  61.5% {
+    opacity: 0.9;
+    transform: scaleY(0.14);
+  }
+
+  64% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes floating-robot-smile {
+  0%,
+  100% {
+    transform: translateY(0) scaleX(1) scaleY(1);
+  }
+
+  38% {
+    transform: translateY(8%) scaleX(1.08) scaleY(0.88);
+  }
+
+  68% {
+    transform: translateY(-4%) scaleX(0.96) scaleY(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-robot__float,
+  .floating-robot__layer,
+  .floating-robot__face,
+  .floating-robot__eye::after,
+  .floating-robot__mouth::after {
+    animation-duration: 1ms;
+    animation-iteration-count: 1;
+  }
+}

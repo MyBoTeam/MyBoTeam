@@ -1,0 +1,90 @@
+{
+  "name": "@myboteam/agent-core",
+  "version": "0.4.0",
+  "private": true,
+  "description": "Core logic for MyBoTeam - OpenCode adapter, storage, providers, MCP tools, and skills",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/myboteam-ai/myboteam.git",
+    "directory": "packages/agent-core"
+  },
+  "homepage": "https://github.com/myboteam-ai/myboteam/tree/main/packages/agent-core#readme",
+  "bugs": {
+    "url": "https://github.com/myboteam-ai/myboteam/issues"
+  },
+  "keywords": [
+    "automation",
+    "agent",
+    "opencode",
+    "task-manager",
+    "mcp",
+    "ai",
+    "electron"
+  ],
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./common": {
+      "types": "./dist/common.d.ts",
+      "import": "./dist/common.js",
+      "default": "./dist/common.js"
+    },
+    "./desktop-main": {
+      "types": "./dist/desktop-main.d.ts",
+      "import": "./dist/desktop-main.js",
+      "default": "./dist/desktop-main.js"
+    },
+    "./runtime-types": {
+      "types": "./dist/myboteam-runtime-types.d.ts",
+      "import": "./dist/myboteam-runtime-types.js",
+      "default": "./dist/myboteam-runtime-types.js"
+    }
+  },
+  "files": [
+    "dist",
+    "mcp-tools/*/dist",
+    "mcp-tools/*/package.json",
+    "mcp-tools/*/*.cjs",
+    "mcp-tools/*/*.md",
+    "mcp-tools/package.json"
+  ],
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "check": "biome check --write . && tsc --noEmit",
+    "test": "vitest run tests/unit/",
+    "test:unit": "vitest run tests/unit/",
+    "test:integration": "vitest run tests/integration/",
+    "test:coverage": "vitest --coverage"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock": "^3.971.0",
+    "@aws-sdk/credential-providers": "^3.971.0",
+    "@azure/identity": "^4.13.0",
+    "@opencode-ai/sdk": "1.14.18",
+    "gray-matter": "^4.0.3",
+    "sql.js": "catalog:",
+    "proxy-from-env": "^2.1.0",
+    "undici": "^8.0.3",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/proxy-from-env": "^1.0.4",
+    "@vitest/coverage-v8": "^4.1.0",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.0"
+  }
+}

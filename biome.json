@@ -1,0 +1,278 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/dist-electron",
+      "!**/node_modules",
+      "!**/release",
+      "!**/.pnpm-store",
+      "!**/.worktrees",
+      "!**/coverage",
+      "!**/playwright-report",
+      "!**/bundled-skills"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noDebugger": "error",
+        "noEmptyBlockStatements": "off",
+        "noConsole": { "level": "error" }
+      },
+      "style": {
+        "noDefaultExport": "error"
+      },
+      "correctness": {
+        "noUnusedVariables": "error"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "**/__tests__/**",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/e2e/**",
+        "**/e2e-test*/**"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noConsole": "off",
+            "noAssignInExpressions": "off",
+            "noImplicitAnyLet": "off",
+            "noControlCharactersInRegex": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedPrivateClassMembers": "off",
+            "noUnusedImports": "off",
+            "noEmptyPattern": "off"
+          },
+          "style": {
+            "noDefaultExport": "off",
+            "noNonNullAssertion": "off"
+          },
+          "a11y": {
+            "useButtonType": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/tsup.config.ts",
+        "**/vitest.config.ts",
+        "**/vitest.integration.config.ts",
+        "**/vitest.unit.config.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/postcss.config.*",
+        "**/tailwind.config.*",
+        "**/vite.config.*",
+        "**/electron-vite.config.*",
+        "**/playwright.config.*"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.html"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noInnerDeclarations": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.css"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noUnknownAtRules": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/desktop/src/main/**/*.ts", "apps/desktop/src/preload/**/*.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off",
+            "noExplicitAny": "off",
+            "noImplicitAnyLet": "off"
+          },
+          "style": {
+            "noNonNullAssertion": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/daemon/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off",
+            "noExplicitAny": "off",
+            "useIterableCallbackReturn": "off"
+          },
+          "style": {
+            "useNodejsImportProtocol": "off",
+            "useTemplate": "off",
+            "noNonNullAssertion": "off"
+          },
+          "complexity": {
+            "useLiteralKeys": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/scripts/**/*.cjs", "**/scripts/**/*.mjs", "**/scripts/**/*.js"],
+      "formatter": { "enabled": false },
+      "linter": { "enabled": false }
+    },
+    {
+      "includes": ["packages/agent-core/mcp-tools/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off",
+            "noExplicitAny": "off",
+            "useIterableCallbackReturn": "off"
+          },
+          "security": {
+            "noGlobalEval": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off"
+          },
+          "style": {
+            "noNonNullAssertion": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/web/src/client/**"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useButtonType": "off",
+            "noSvgWithoutTitle": "off",
+            "noLabelWithoutControl": "off",
+            "noStaticElementInteractions": "off",
+            "useAriaPropsSupportedByRole": "off",
+            "useSemanticElements": "off",
+            "useKeyWithClickEvents": "off"
+          },
+          "style": {
+            "noDefaultExport": "off",
+            "noNonNullAssertion": "off"
+          },
+          "suspicious": {
+            "noArrayIndexKey": "off",
+            "noConsole": "off",
+            "noExplicitAny": "off",
+            "noAssignInExpressions": "off",
+            "noImplicitAnyLet": "off",
+            "useIterableCallbackReturn": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/agent-core/src/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off",
+            "noExplicitAny": "off",
+            "noImplicitAnyLet": "off",
+            "noAssignInExpressions": "off",
+            "useIterableCallbackReturn": "off",
+            "noControlCharactersInRegex": "off",
+            "noConfusingVoidType": "off"
+          },
+          "style": {
+            "noNonNullAssertion": "off",
+            "useNodejsImportProtocol": "off"
+          },
+          "correctness": {
+            "noUnusedPrivateClassMembers": "off"
+          },
+          "complexity": {
+            "useOptionalChain": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/public/theme-init.js",
+        "**/mcp-tools/dev-browser/server.cjs",
+        "**/mcp-tools/dev-browser/server.mjs",
+        "**/mcp-tools/dev-browser/.browser-data/**"
+      ],
+      "formatter": { "enabled": false },
+      "linter": { "enabled": false }
+    }
+  ],
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    }
+  }
+}

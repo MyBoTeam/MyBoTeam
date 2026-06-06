@@ -1,0 +1,6 @@
+FILES=$(git diff --cached --name-only --diff-filter=ACM | tr '\n' ' ' || true)
+if [ -n "$FILES" ]; then
+  echo "Running Biome on staged files: $FILES"
+  pnpm biome check --write $FILES && git add -- $FILES
+fi
+pnpm -r exec tsc --noEmit
