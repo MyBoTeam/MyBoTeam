@@ -27,7 +27,7 @@ export { API_KEY_VALIDATION_TIMEOUT_MS } from './utils';
 // been repointed onto the daemon's `provider.*` / `settings.*` RPCs.
 
 // Re-export ProviderOptions type for consumers that need it
-export type { ProviderOptions } from './api-key-handlers/api-key-validation-handlers';
+export type { ProviderOptions } from './api-key-handlers/api-key-validation-types';
 
 export function registerApiKeyHandlers(): void {
   registerSettingsApiKeyHandlers();

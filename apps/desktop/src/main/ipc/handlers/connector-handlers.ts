@@ -1,9 +1,5 @@
 import crypto from 'node:crypto';
-import type {
-  McpConnector,
-  OAuthClientRegistration,
-  OAuthMetadata,
-} from '@myboteam/agent-core/desktop-main';
+import type { McpConnector } from '@myboteam/agent-core/desktop-main';
 import {
   buildAuthorizationUrl,
   discoverOAuthMetadata,
@@ -15,39 +11,8 @@ import {
 import type { IpcMainInvokeEvent } from 'electron';
 import { shell } from 'electron';
 import { getDaemonClient } from '../../daemon-bootstrap';
+import { cleanupExpiredOAuthFlows, pendingOAuthFlows } from './connector-oauth';
 import { handle } from './utils';
-
-// Milestone 3 sub-chunk 3e: user-added MCP connector CRUD + OAuth lifecycle
-// now go through the daemon's `connectors.*` RPC surface. The OAuth loopback
-// itself stays in main (the daemon has no access to `shell.openExternal`),
-// but every storage-touching step — connector row, tokens, status — is an
-// RPC call.
-
-// In-memory store for pending OAuth flows (keyed by state parameter).
-// Stays in main because it's transient (lives only between start-oauth
-// and complete-oauth) and the flow pairs the callback state with locally
-// generated PKCE values — nothing persistent.
-const OAUTH_FLOW_TTL_MS = 10 * 60 * 1000; // 10 minutes
-
-const pendingOAuthFlows = new Map<
-  string,
-  {
-    connectorId: string;
-    codeVerifier: string;
-    metadata: OAuthMetadata;
-    clientRegistration: OAuthClientRegistration;
-    createdAt: number;
-  }
->();
-
-function cleanupExpiredOAuthFlows(): void {
-  const now = Date.now();
-  for (const [state, flow] of pendingOAuthFlows) {
-    if (now - flow.createdAt > OAUTH_FLOW_TTL_MS) {
-      pendingOAuthFlows.delete(state);
-    }
-  }
-}
 
 export function registerConnectorHandlers(): void {
   handle('connectors:list', async () => {

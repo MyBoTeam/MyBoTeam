@@ -1,4 +1,3 @@
-import type { ZaiRegion } from '@myboteam/agent-core/desktop-main';
 import {
   ALLOWED_API_KEY_PROVIDERS,
   STANDARD_VALIDATION_PROVIDERS,
@@ -12,41 +11,9 @@ import { getDaemonClient } from '../../../daemon-bootstrap';
 import { getLogCollector } from '../../../logging';
 import { deleteApiKey, getApiKey, hasAnyApiKey, storeApiKey } from '../../../store/secureStorage';
 import { API_KEY_VALIDATION_TIMEOUT_MS, handle } from '../utils';
-
-/**
- * Allowed shape of the `options` parameter for provider validation.
- * Extra fields are ignored; all fields are optional.
- */
-export interface ProviderOptions {
-  baseUrl?: string;
-  zaiRegion?: ZaiRegion;
-  /** Legacy alias — normalised to zaiRegion before use */
-  region?: ZaiRegion;
-  deploymentName?: string;
-  authType?: string;
-}
-
-/** Normalise a raw options object coming from IPC into a typed ProviderOptions. */
-export function normalizeProviderOptions(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  raw: Record<string, any> | undefined,
-): ProviderOptions {
-  if (!raw || typeof raw !== 'object') return {};
-  const opts: ProviderOptions = {};
-  if (typeof raw.baseUrl === 'string') opts.baseUrl = raw.baseUrl;
-  // Support both field names; zaiRegion wins if both are present
-  const regionValue = raw.zaiRegion ?? raw.region;
-  if (typeof regionValue === 'string') opts.zaiRegion = regionValue as ZaiRegion;
-  if (typeof raw.deploymentName === 'string') opts.deploymentName = raw.deploymentName;
-  if (typeof raw.authType === 'string') opts.authType = raw.authType;
-  return opts;
-}
+import { normalizeProviderOptions } from './api-key-validation-types';
 
 export function registerApiKeyValidationHandlers(): void {
-  // Milestone 5: OpenAI base URL and Azure Foundry config now come from
-  // the daemon. The validation flow pulls them in-line so each call gets
-  // a current snapshot without holding a stale reference.
-
   handle('api-key:exists', async (_event: IpcMainInvokeEvent) => {
     const apiKey = await getApiKey('anthropic');
     return Boolean(apiKey);
@@ -104,9 +71,6 @@ export function registerApiKeyValidationHandlers(): void {
           return { valid: false, error: e instanceof Error ? e.message : 'Invalid API key' };
         }
 
-        // OpenAI-compatible providers fall back to the user-configured
-        // base URL when the renderer didn't supply one in `options`. The
-        // URL lives in the daemon's app-settings (`settings.getOpenAiBaseUrl`).
         let openAiBaseUrlFallback: string | undefined;
         if (provider === 'openai') {
           const rawBaseUrl = options?.baseUrl;
@@ -195,9 +159,6 @@ export function registerApiKeyValidationHandlers(): void {
     }
     const hasKey = await hasAnyApiKey();
     if (hasKey) return true;
-    // Phase 4a of the SDK cutover port: OAuth status is owned by the daemon.
-    // Route this check through `auth.openai.status` rather than reading the
-    // auth.json directly, so desktop and daemon agree on the status surface.
     const client = await ensureDaemonRunning();
     const status = await client.call('auth.openai.status');
     return status.connected;
