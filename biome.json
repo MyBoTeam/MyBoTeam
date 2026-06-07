@@ -176,12 +176,11 @@
         "rules": {
           "suspicious": {
             "noConsole": "off",
-
             "noImplicitAnyLet": "off"
           },
-          "style": {
-            "noNonNullAssertion": "off"
-          }
+        },
+        "style": {
+          "noNonNullAssertion": "off"
         }
       }
     },
@@ -191,7 +190,6 @@
         "rules": {
           "suspicious": {
             "noConsole": "off",
-
             "useIterableCallbackReturn": "off"
           },
           "style": {
@@ -228,7 +226,6 @@
         "rules": {
           "suspicious": {
             "noConsole": "off",
-
             "useIterableCallbackReturn": "off"
           },
           "security": {
@@ -266,7 +263,6 @@
           "suspicious": {
             "noArrayIndexKey": "off",
             "noConsole": "off",
-
             "noAssignInExpressions": "off",
             "noImplicitAnyLet": "off",
             "useIterableCallbackReturn": "off"
@@ -283,7 +279,6 @@
         "rules": {
           "suspicious": {
             "noConsole": "off",
-
             "noImplicitAnyLet": "off",
             "noAssignInExpressions": "off",
             "useIterableCallbackReturn": "off",
