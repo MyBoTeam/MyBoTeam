@@ -48,7 +48,7 @@ app.setName('MyBoTeam');
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const envPath = app.isPackaged
   ? path.join(process.resourcesPath, '.env')
-  : path.join(__dirname, '../../.env');
+  : path.join(__dirname, '../../../../.env');
 config({ path: envPath });
 
 process.env.APP_ROOT = path.join(__dirname, '../..');

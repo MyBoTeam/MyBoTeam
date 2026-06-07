@@ -1,4 +1,4 @@
-import { FolderSimple, GearSix, Info, Key } from '@phosphor-icons/react';
+import { ChatCircle, FolderSimple, GearSix, Info, Key } from '@phosphor-icons/react';
 
 export type SettingsTabId =
   | 'providers'
@@ -20,7 +20,11 @@ export const SETTINGS_TABS = [
     labelKey: 'tabs.workspaces',
     icon: FolderSimple,
   },
-  // { id: 'integrations' as const, labelKey: 'tabs.integrations', icon: ChatCircle },
+  {
+    id: 'integrations' as const,
+    labelKey: 'tabs.integrations',
+    icon: ChatCircle,
+  },
   // { id: 'scheduler' as const, labelKey: 'tabs.scheduler', icon: Timer },
   // { id: 'voice' as const, labelKey: 'tabs.voiceInput', icon: Microphone },
   { id: 'general' as const, labelKey: 'tabs.general', icon: GearSix },

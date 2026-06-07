@@ -65,15 +65,21 @@ export async function readOrRefreshToken(
     return token;
   }
 
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET ?? '';
+
   try {
+    const params: Record<string, string> = {
+      client_id: clientId,
+      refresh_token: token.refreshToken,
+      grant_type: 'refresh_token',
+    };
+    if (clientSecret) {
+      params.client_secret = clientSecret;
+    }
     const res = await fetch(GOOGLE_TOKEN_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        client_id: clientId,
-        refresh_token: token.refreshToken,
-        grant_type: 'refresh_token',
-      }).toString(),
+      body: new URLSearchParams(params).toString(),
     });
 
     if (!res.ok) {
