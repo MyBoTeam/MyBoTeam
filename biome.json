@@ -178,9 +178,9 @@
             "noConsole": "off",
             "noImplicitAnyLet": "off"
           },
-        },
-        "style": {
-          "noNonNullAssertion": "off"
+          "style": {
+            "noNonNullAssertion": "off"
+          }
         }
       }
     },
