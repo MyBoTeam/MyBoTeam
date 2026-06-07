@@ -121,13 +121,29 @@ export function CodeBlock({ language, children, inline = false }: CodeBlockProps
               fontFamily: 'ui-monospace, "Cascadia Code", Menlo, Monaco, "Courier New", monospace',
             }}
           >
-            {tokens.map((line, i) => (
-              <div key={i} {...getLineProps({ line })}>
-                {line.map((token, key) => (
-                  <span key={key} {...getTokenProps({ token })} />
-                ))}
-              </div>
-            ))}
+            {tokens.map((line, i) => {
+              const lineProps = getLineProps({ line });
+              return (
+                <div
+                  key={i}
+                  className={lineProps.className}
+                  style={lineProps.style as React.CSSProperties}
+                >
+                  {line.map((token, key) => {
+                    const tokenProps = getTokenProps({ token });
+                    return (
+                      <span
+                        key={key}
+                        className={tokenProps.className}
+                        style={tokenProps.style as React.CSSProperties}
+                      >
+                        {tokenProps.children ?? token.content}
+                      </span>
+                    );
+                  })}
+                </div>
+              );
+            })}
           </pre>
         )}
       </Highlight>

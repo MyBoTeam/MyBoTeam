@@ -22,12 +22,15 @@ import type {
 export type { EnsuredPage };
 
 export class BrowserPageService {
-  private readonly lifecycle = new PageLifecycleManager(this.options);
-  private readonly pageStateReader = new BrowserPageStateReader({
-    ensureBrowserContext: this.options.ensureBrowserContext,
-  });
+  private readonly lifecycle: PageLifecycleManager;
+  private readonly pageStateReader: BrowserPageStateReader;
 
-  constructor(private readonly options: BrowserPageServiceOptions) {}
+  constructor(private readonly options: BrowserPageServiceOptions) {
+    this.lifecycle = new PageLifecycleManager(this.options);
+    this.pageStateReader = new BrowserPageStateReader({
+      ensureBrowserContext: this.options.ensureBrowserContext,
+    });
+  }
 
   private get registry() {
     return this.lifecycle.registry;

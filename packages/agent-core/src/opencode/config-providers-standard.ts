@@ -43,7 +43,10 @@ export async function buildOpenRouterConfig(
             id: 'openrouter',
             npm: '@ai-sdk/openai-compatible',
             name: 'OpenRouter',
-            options: { baseURL: 'https://openrouter.ai/api/v1' },
+            options: {
+              baseURL: 'https://openrouter.ai/api/v1',
+              apiKey: openrouterKey,
+            },
             models: { [modelId]: { name: modelId, tools: true } },
           },
         ],

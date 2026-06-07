@@ -1,7 +1,10 @@
+const fs = require('fs');
+const path = require('path');
 const {
   clearPort,
   formatChildExit,
   killChildProcess,
+  killProcessTree,
   resolveExitCode,
   spawnPnpm,
   waitForResources,
@@ -14,6 +17,43 @@ const env = { ...process.env };
 if (isClean) {
   env.CLEAN_START = '1';
 }
+
+function killExistingDaemon(timeoutMs = 5000) {
+  const daemonDir = path.join(require('os').homedir(), '.myboteam');
+  const pidPath = path.join(daemonDir, 'daemon.pid');
+  const sockPath = process.platform === 'win32'
+    ? null
+    : path.join(daemonDir, 'daemon.sock');
+
+  try {
+    if (!fs.existsSync(pidPath)) return;
+    const content = fs.readFileSync(pidPath, 'utf8');
+    const { pid } = JSON.parse(content);
+    if (typeof pid === 'number' && pid > 0) {
+      try {
+        process.kill(pid, 0);
+        console.log(`[dev] Stopping existing daemon (pid ${pid})...`);
+        killProcessTree(pid, { force: true });
+        const deadline = Date.now() + timeoutMs;
+        while (Date.now() < deadline) {
+          try {
+            process.kill(pid, 0);
+          } catch { break; }
+          require('child_process').spawnSync(
+            process.platform === 'win32' ? 'timeout' : 'sleep',
+            process.platform === 'win32' ? ['/t', '0', '/nobreak'] : ['0.05'],
+            { stdio: 'ignore' },
+          );
+        }
+      } catch {}
+    }
+  } catch {}
+
+  try { fs.unlinkSync(pidPath); } catch {}
+  if (sockPath) { try { fs.unlinkSync(sockPath); } catch {} }
+}
+
+killExistingDaemon();
 
 const clearedPortCount = clearPort(5173);
 if (clearedPortCount > 0) {

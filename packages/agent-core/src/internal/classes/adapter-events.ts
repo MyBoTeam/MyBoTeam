@@ -47,12 +47,20 @@ export function handleSdkEvent(state: AdapterState, event: OpenCodeSdkEvent): vo
       return;
     }
     case 'session.error': {
-      const err = (event.properties as { error?: { message?: string; name?: string } }).error;
-      if (err) {
-        const msg = err.message ?? 'Session error';
-        state.emit('error', new Error(msg));
-        markTaskComplete(state, 'error', msg);
-      }
+      const props = event.properties as Record<string, unknown>;
+      const err = (props.error ?? props) as
+        | { message?: string; name?: string; data?: { message?: string }; [k: string]: unknown }
+        | undefined;
+      const msg =
+        (err as { data?: { message?: string } } | undefined)?.data?.message ??
+        err?.message ??
+        'Session error';
+      const modelCtx = state.currentModelId
+        ? ` (provider=${state.currentProviderId ?? 'unknown'}, model=${state.currentModelId})`
+        : '';
+      const fullMsg = `${msg}${modelCtx}`;
+      state.emit('error', new Error(fullMsg));
+      markTaskComplete(state, 'error', fullMsg);
       return;
     }
     case 'session.idle': {

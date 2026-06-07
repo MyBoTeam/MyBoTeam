@@ -13,8 +13,14 @@ export function deriveTitle(prompt: string): string {
 export function buildModelParam(
   config: TaskConfig,
 ): { providerID: string; modelID: string } | null {
-  if (!config.modelId || !config.provider) return null;
-  return { providerID: config.provider, modelID: config.modelId };
+  if (!config.modelId || !config.provider) {
+    return null;
+  }
+  const prefix = `${config.provider}/`;
+  const modelID = config.modelId.startsWith(prefix)
+    ? config.modelId.slice(prefix.length)
+    : config.modelId;
+  return { providerID: config.provider, modelID };
 }
 
 export function buildWorkspaceInstructionRuntimeBlock(
