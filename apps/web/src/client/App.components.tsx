@@ -1,14 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import { useLocation, useOutlet } from 'react-router';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router';
 import { springs, variants } from '@/lib/animations';
 import { getMyBoTeam, isRunningInElectron } from '@/lib/myboteam';
-
-function AnimatedOutlet() {
-  const outlet = useOutlet();
-  const [frozenOutlet] = useState(outlet);
-  return frozenOutlet;
-}
+import { AnimatedOutlet } from './pages/execution/AnimatedOutlet';
 
 export function AnimatedOutletWrapper() {
   const location = useLocation();

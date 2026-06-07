@@ -5,7 +5,6 @@
 
 import {
   Camera,
-  CaretRight,
   Clock,
   Code,
   Cursor,
@@ -103,27 +102,8 @@ export function formatActionLabel(
   return label;
 }
 
-export function ActionChip({
-  action,
-  t,
-}: {
-  action: BrowserAction;
-  t: (key: string, options?: { [key: string]: string | number }) => string;
-}) {
-  const Icon = ACTION_ICONS[action.action] || Code;
-  const label = formatActionLabel(action, t);
-
-  return (
-    <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium bg-muted text-muted-foreground border border-border whitespace-nowrap">
-      <Icon className="h-3 w-3 shrink-0" />
-      <span>{label}</span>
-    </span>
-  );
-}
-
-export function Arrow() {
-  return <CaretRight className="h-3 w-3 text-muted-foreground/50 shrink-0" />;
-}
+export { ActionChip } from './ActionChip';
+export { Arrow } from './Arrow';
 
 // Generate stable key for action based on content, not index
 export function getActionKey(action: BrowserAction, index: number): string {
