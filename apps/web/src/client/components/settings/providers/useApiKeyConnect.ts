@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createLogger } from '@/lib/logger';
 import { getMyBoTeam } from '@/lib/myboteam';
+import type { ProviderUnion } from '@/lib/myboteam-types';
 import { useProviderModels } from './useProviderModels';
 
 const logger = createLogger('useApiKeyConnect');
@@ -134,7 +135,7 @@ export function useApiKeyConnect({
         return;
       }
 
-      await myboteam.addApiKey(providerId as any, apiKey.trim());
+      await myboteam.addApiKey(providerId as ProviderUnion, apiKey.trim());
       let models: Array<{ id: string; name: string }> | undefined;
       if (providerConfig?.modelsEndpoint) {
         const fetchResult = await myboteam.fetchProviderModels(providerId, {
