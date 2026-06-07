@@ -62,7 +62,15 @@ if (!useBundledMcp) {
   // will reinstall with --omit=dev during packaged builds.
   // Phase 3 of the SDK cutover port removed `file-permission` and
   // `ask-user-question` MCP packages — don't try to install their deps.
-  const tools = ['dev-browser', 'dev-browser-mcp', 'complete-task', 'start-task'];
+  const tools = [
+    'dev-browser',
+    'dev-browser-mcp',
+    'complete-task',
+    'start-task',
+    'gws-mcp',
+    'gmail-mcp',
+    'calendar-mcp',
+  ];
   for (const tool of tools) {
     runCommand(
       `npm --prefix "${mcpToolsPath}/${tool}" install --no-package-lock`,
