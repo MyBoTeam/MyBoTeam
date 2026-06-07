@@ -77,6 +77,7 @@ export interface MyBoTeamAPITasks {
     taskStatus?: string;
     taskCreatedAt?: string;
     taskCompletedAt?: string;
+    taskError?: string;
     messages?: unknown[];
     debugLogs?: unknown[];
     screenshot?: string;

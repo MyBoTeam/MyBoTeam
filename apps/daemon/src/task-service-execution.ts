@@ -61,6 +61,9 @@ export function buildStartTaskConfig(
   if (selectedModel?.model && !validatedConfig.modelId) {
     validatedConfig.modelId = selectedModel.model;
   }
+  if (selectedModel?.provider && !validatedConfig.provider) {
+    validatedConfig.provider = selectedModel.provider;
+  }
 
   const initialUserMessage: TaskMessage = {
     id: createMessageId(),

@@ -23,6 +23,7 @@ export function registerBugReportHandlers(): void {
         taskStatus?: string;
         taskCreatedAt?: string;
         taskCompletedAt?: string;
+        taskError?: string;
         messages?: unknown[];
         debugLogs?: unknown[];
         screenshot?: string;
@@ -87,6 +88,7 @@ export function registerBugReportHandlers(): void {
             createdAt: reportData.taskCreatedAt,
             completedAt: reportData.taskCompletedAt,
             messageCount: Array.isArray(reportData.messages) ? reportData.messages.length : 0,
+            ...(reportData.taskError ? { error: reportData.taskError } : {}),
           },
           messages: reportData.messages,
           debugLogs: reportData.debugLogs,

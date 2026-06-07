@@ -111,12 +111,14 @@ export function useExecutionActions(s: CoreState) {
         myboteam.captureScreenshot(),
         myboteam.captureAxtree(),
       ]);
+      const taskError = s.currentTask.result?.error;
       const result = await myboteam.generateBugReport({
         taskId: s.currentTask.id,
         taskPrompt: s.currentTask.prompt,
         taskStatus: s.currentTask.status,
         taskCreatedAt: s.currentTask.createdAt,
         taskCompletedAt: s.currentTask.completedAt,
+        taskError,
         messages: s.currentTask.messages as unknown[],
         debugLogs: s.debugLogs as unknown[],
         screenshot: screenshotResult.success ? screenshotResult.data : undefined,
