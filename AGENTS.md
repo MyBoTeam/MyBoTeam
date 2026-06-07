@@ -95,6 +95,9 @@ Key packages:
 - **Avoid nested ternaries** - Use mapper objects or if/else for readability
 - **No unnecessary comments** - Don't add comments that restate what the code does. Comments should explain _why_, not _what_
 - **Reuse UI components** - Check `apps/web/src/client/components/ui/` before creating new ones
+- **One component per `.tsx` file** — shadcn/ui multi-component files are exempt
+- **One class per `.ts` file** — tightly coupled error subclasses are exempt
+- **Max 5 exported functions per `.ts` file** — types, interfaces, and non-function constants are excluded; group additional functions into separate files by logical concern
 
 ### Image Assets in Web UI
 
