@@ -9,7 +9,9 @@ export interface ProviderOptions {
   authType?: string;
 }
 
-export function normalizeProviderOptions(raw: Record<string, any> | undefined): ProviderOptions {
+export function normalizeProviderOptions(
+  raw: Record<string, unknown> | undefined,
+): ProviderOptions {
   if (!raw || typeof raw !== 'object') return {};
   const opts: ProviderOptions = {};
   if (typeof raw.baseUrl === 'string') opts.baseUrl = raw.baseUrl;

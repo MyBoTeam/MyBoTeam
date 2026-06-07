@@ -53,7 +53,7 @@ export function registerApiKeyValidationHandlers(): void {
       provider: string,
       key: string,
 
-      rawOptions?: Record<string, any>,
+      rawOptions?: Record<string, unknown>,
     ) => {
       if (!ALLOWED_API_KEY_PROVIDERS.has(provider)) {
         return { valid: false, error: 'Unsupported provider' };
