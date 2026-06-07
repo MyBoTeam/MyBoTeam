@@ -2,6 +2,7 @@ import path from 'node:path';
 import { app } from 'electron';
 import { getDaemonClient } from '../../daemon-bootstrap';
 import { getLogCollector } from '../../logging';
+import type { HfPreTrainedModel, HfTokenizer } from './hf-types';
 import {
   activeGenerations,
   type ChatMessage,
@@ -50,23 +51,21 @@ export async function loadModel(modelId: string): Promise<void> {
         devicePreference = snap.huggingFaceLocalConfig?.devicePreference ?? null;
       } catch {}
 
-      const envAny = env as any;
-      envAny.backends ??= {};
-      envAny.backends.onnx ??= {};
+      const onnxBackend = env.backends.onnx as Record<string, unknown>;
       if (devicePreference && devicePreference !== 'auto') {
-        envAny.backends.onnx.device = devicePreference;
+        onnxBackend.device = devicePreference;
       } else {
-        delete envAny.backends.onnx.device;
+        delete onnxBackend.device;
       }
 
       const dtypesToTry: string[] = quantization ? [quantization] : ['q4'];
 
-      let model: any;
+      let model: HfPreTrainedModel | undefined;
       for (const dtype of dtypesToTry) {
         try {
-          model = await AutoModelForCausalLM.from_pretrained(modelId, {
-            dtype: dtype as any,
-          });
+          model = (await AutoModelForCausalLM.from_pretrained(modelId, {
+            dtype: dtype as never,
+          })) as unknown as HfPreTrainedModel;
           break;
         } catch (err) {
           if (dtype === dtypesToTry[dtypesToTry.length - 1] && dtype !== 'fp32') {
@@ -75,9 +74,9 @@ export async function loadModel(modelId: string): Promise<void> {
               `[HF Server] Failed to load ${dtype} model, trying fp32: ${err}`,
             );
 
-            model = await AutoModelForCausalLM.from_pretrained(modelId, {
+            model = (await AutoModelForCausalLM.from_pretrained(modelId, {
               dtype: 'fp32',
-            });
+            })) as unknown as HfPreTrainedModel;
           } else {
             throw err;
           }
@@ -105,8 +104,8 @@ export async function loadModel(modelId: string): Promise<void> {
         } catch {}
       }
 
-      state.tokenizer = tokenizer;
-      state.model = model;
+      state.tokenizer = tokenizer as unknown as HfTokenizer;
+      state.model = model ?? null;
 
       state.loadedModelId = modelId;
       getLogCollector().logEnv('INFO', `[HF Server] Model loaded: ${modelId}`);
@@ -128,15 +127,13 @@ export async function loadModel(modelId: string): Promise<void> {
   return promise;
 }
 
-export function formatChatPrompt(messages: ChatMessage[], tokenizer: any): string {
+export function formatChatPrompt(messages: ChatMessage[], tokenizer: HfTokenizer): string {
   try {
-    if (tokenizer.apply_chat_template) {
-      const formatted = tokenizer.apply_chat_template(messages, {
-        tokenize: false,
-        add_generation_prompt: true,
-      });
-      return formatted;
-    }
+    const formatted = tokenizer.apply_chat_template(messages, {
+      tokenize: false,
+      add_generation_prompt: true,
+    });
+    return formatted;
   } catch {}
 
   return `${messages

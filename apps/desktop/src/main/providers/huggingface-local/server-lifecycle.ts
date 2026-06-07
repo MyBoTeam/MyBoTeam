@@ -108,8 +108,9 @@ export async function stopServer(): Promise<void> {
     await new Promise<void>((resolve) => {
       const srv = state.server!;
 
-      if ('closeAllConnections' in srv && typeof (srv as any).closeAllConnections === 'function') {
-        (srv as any).closeAllConnections();
+      const srvWithClose = srv as typeof srv & { closeAllConnections: () => void };
+      if ('closeAllConnections' in srv && typeof srvWithClose.closeAllConnections === 'function') {
+        srvWithClose.closeAllConnections();
       }
       srv.close(() => {
         getLogCollector().logEnv('INFO', '[HF Server] Server stopped');

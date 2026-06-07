@@ -69,10 +69,11 @@ export function createRequestHandler(): (
         }
 
         for (const message of chatReq.messages) {
+          const msg = message as unknown as Record<string, unknown>;
           if (
             !message ||
-            (message as any).role === undefined ||
-            (message as any).content === undefined ||
+            msg.role === undefined ||
+            msg.content === undefined ||
             typeof message.content !== 'string' ||
             !['system', 'user', 'assistant'].includes(message.role)
           ) {
@@ -102,10 +103,10 @@ export function createRequestHandler(): (
       }
 
       writeJsonError(res, 404, 'Not found', 'invalid_request');
-    } catch (error: any) {
+    } catch (error: unknown) {
       getLogCollector().logEnv('ERROR', '[HF Server] Request error:', { error: String(error) });
 
-      if (error.message === 'PayloadTooLarge') {
+      if (error instanceof Error && error.message === 'PayloadTooLarge') {
         if (!res.headersSent) {
           writeJsonError(res, 413, 'Request entity too large');
         }
