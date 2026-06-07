@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo } from 'react';
+import { SpinningIcon } from '@/components/common/SpinningIcon';
 import { springs } from '@/utils/animations';
 import { getToolDisplayInfo, THINKING_PHRASES } from '@/utils/tool-mappings';
-import { SpinningIcon } from './SpinningIcon';
 
 interface ToolProgressProps {
   isRunning: boolean;

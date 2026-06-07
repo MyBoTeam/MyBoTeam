@@ -1,5 +1,6 @@
 import { WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { SpinningIcon } from '@/components/common/SpinningIcon';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { DefaultFallback, ErrorBoundary } from '@/components/ui/ErrorBoundary';
@@ -11,7 +12,6 @@ import { ConversationHeader } from './ConversationHeader';
 import { ConversationView } from './ConversationView';
 import { CreditExhaustedChatBanner } from './components/CreditExhaustedChatBanner';
 import { DebugPanel } from './components/DebugPanel';
-import { SpinningIcon } from './components/SpinningIcon';
 import { isMyBoTeamCreditExhaustedError } from './conversation-utils';
 import { FollowUpInput } from './FollowUpInput';
 import { useExecutionPage } from './hooks/useExecutionPage';
