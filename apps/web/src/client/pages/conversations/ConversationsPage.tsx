@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { staggerContainer } from '@/lib/animations';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { staggerContainer } from '@/utils/animations';
+import { getMyBoTeam } from '@/config/myboteam';
 import { useTaskStore } from '@/stores/taskStore';
-import ConversationListItem from '../components/layout/ConversationListItem';
+import ConversationListItem from '@/layouts/main/components/ConversationListItem';
 
 export default function ConversationsPage() {
   const navigate = useNavigate();

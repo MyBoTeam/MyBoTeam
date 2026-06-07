@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { ExamplesSection } from './home/ExamplesSection';
-import { USE_CASE_KEYS } from './home/homeConstants';
+import { ExamplesSection } from '@/pages/home/ExamplesSection';
+import { USE_CASE_KEYS } from '@/pages/home/homeConstants';
 
 export default function ExamplesPage() {
   const { t } = useTranslation('home');

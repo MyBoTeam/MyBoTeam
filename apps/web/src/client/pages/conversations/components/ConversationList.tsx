@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { useTaskStore } from '../../stores/taskStore';
-import { TaskHistoryItem } from './TaskHistoryItem';
+import { useTaskStore } from '@/stores/taskStore';
+import { ConversationListItem } from './ConversationListItem';
 
-interface TaskHistoryProps {
+interface ConversationListProps {
   limit?: number;
   showTitle?: boolean;
 }
 
-export default function TaskHistory({ limit, showTitle = true }: TaskHistoryProps) {
+export default function ConversationList({ limit, showTitle = true }: ConversationListProps) {
   const {
     tasks,
     favorites,
@@ -66,7 +66,7 @@ export default function TaskHistory({ limit, showTitle = true }: TaskHistoryProp
 
       <div className="space-y-2">
         {displayedTasks.map((task) => (
-          <TaskHistoryItem
+          <ConversationListItem
             key={task.id}
             task={task}
             isFavorited={favoritesList.some((f) => f.taskId === task.id)}

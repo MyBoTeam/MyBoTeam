@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import TaskHistory from '../components/history/TaskHistory';
-import Header from '../components/layout/Header';
-import { useTaskStore } from '../stores/taskStore';
+import { useTranslation } from 'react-i18next';
+import ConversationList from './components/ConversationList';
+import Header from '@/layouts/main/components/Header';
+import { useTaskStore } from '@/stores/taskStore';
 
 export default function HistoryPage() {
   const { t } = useTranslation('history');
@@ -32,7 +33,7 @@ export default function HistoryPage() {
             </button>
           )}
         </div>
-        <TaskHistory showTitle={false} />
+        <ConversationList showTitle={false} />
       </main>
     </div>
   );
