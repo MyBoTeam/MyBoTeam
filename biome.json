@@ -48,7 +48,8 @@
         "noEmptyBlockStatements": "off",
         "noConsole": {
           "level": "error"
-        }
+        },
+        "noExplicitAny": "error"
       },
       "style": {
         "noDefaultExport": "error"
@@ -175,7 +176,7 @@
         "rules": {
           "suspicious": {
             "noConsole": "off",
-            "noExplicitAny": "off",
+
             "noImplicitAnyLet": "off"
           },
           "style": {
@@ -190,7 +191,7 @@
         "rules": {
           "suspicious": {
             "noConsole": "off",
-            "noExplicitAny": "off",
+
             "useIterableCallbackReturn": "off"
           },
           "style": {
@@ -227,7 +228,7 @@
         "rules": {
           "suspicious": {
             "noConsole": "off",
-            "noExplicitAny": "off",
+
             "useIterableCallbackReturn": "off"
           },
           "security": {
@@ -265,7 +266,7 @@
           "suspicious": {
             "noArrayIndexKey": "off",
             "noConsole": "off",
-            "noExplicitAny": "off",
+
             "noAssignInExpressions": "off",
             "noImplicitAnyLet": "off",
             "useIterableCallbackReturn": "off"
@@ -282,7 +283,7 @@
         "rules": {
           "suspicious": {
             "noConsole": "off",
-            "noExplicitAny": "off",
+
             "noImplicitAnyLet": "off",
             "noAssignInExpressions": "off",
             "useIterableCallbackReturn": "off",
