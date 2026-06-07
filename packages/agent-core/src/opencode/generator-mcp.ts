@@ -1,5 +1,5 @@
 import { MCP_TOOL_TIMEOUT_MS } from '../common/constants.js';
-import { OPENCODE_SLACK_MCP_CLIENT_ID, OPENCODE_SLACK_MCP_SERVER_URL } from './auth.js';
+import { OPENCODE_SLACK_MCP_CLIENT_ID, OPENCODE_SLACK_MCP_SERVER_URL } from './auth-slack-mcp.js';
 import type { BrowserConfig, McpServerConfig } from './generator-mcp-tools.js';
 import { resolveMcpCommand } from './generator-mcp-tools.js';
 

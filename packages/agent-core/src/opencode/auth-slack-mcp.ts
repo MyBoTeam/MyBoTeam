@@ -5,7 +5,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import type { OAuthTokens } from '../common/types/connector.js';
-import { getOpenCodeDataHome } from './auth.js';
+import { getOpenCodeDataHome } from './auth-paths.js';
 
 interface OpenCodeMcpOauthAuthEntry {
   tokens?: {
