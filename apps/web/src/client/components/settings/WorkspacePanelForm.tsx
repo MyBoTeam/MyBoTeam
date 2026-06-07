@@ -4,6 +4,9 @@ import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ColorPicker } from './ColorPicker';
 
+export { WORKSPACE_COLORS } from './ColorPicker';
+export { CreateWorkspaceForm } from './CreateWorkspaceForm';
+
 interface EditWorkspaceFormProps {
   name: string;
   description: string;

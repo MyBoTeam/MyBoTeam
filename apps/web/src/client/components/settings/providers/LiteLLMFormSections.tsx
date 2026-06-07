@@ -1,4 +1,7 @@
 import type { ConnectedProvider, LiteLLMCredentials } from '@myboteam/agent-core';
+
+export { LiteLLMDisconnectedForm } from './LiteLLMDisconnectedForm';
+
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { settingsTransitions, settingsVariants } from '@/lib/animations';

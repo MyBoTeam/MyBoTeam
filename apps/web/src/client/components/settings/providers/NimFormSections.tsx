@@ -1,4 +1,8 @@
 import type { ConnectedProvider, NimCredentials } from '@myboteam/agent-core';
+import { DisconnectedNimForm, NIM_DEFAULT_BASE_URL } from './DisconnectedNimForm';
+
+export { DisconnectedNimForm, NIM_DEFAULT_BASE_URL };
+
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { settingsTransitions, settingsVariants } from '@/lib/animations';
