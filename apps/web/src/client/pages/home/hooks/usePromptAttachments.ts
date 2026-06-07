@@ -1,7 +1,7 @@
 import type { FileAttachmentInfo } from '@myboteam/agent-core';
 import { type Dispatch, type SetStateAction, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MAX_FILES, processFileAttachments } from '@/lib/fileUtils';
+import { MAX_FILES, processFileAttachments } from '@/utils/fileUtils';
 
 interface UsePromptAttachmentsParams {
   setPrompt: Dispatch<SetStateAction<string>>;

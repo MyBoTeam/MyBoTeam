@@ -2,12 +2,12 @@ import { Lightbulb } from '@phosphor-icons/react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { PlusMenu } from '@/components/landing/PlusMenu';
-import { TaskInputBar } from '@/components/landing/TaskInputBar';
+import { PlusMenu } from './components/PlusMenu';
+import { TaskInputBar } from './components/TaskInputBar';
 import { Button } from '@/components/ui/button';
-import { springs } from '@/lib/animations';
-import FloatingRobot from '@/robot/FloatingRobot';
-import { useHomePage } from './home/useHomePage';
+import { springs } from '@/utils/animations';
+import FloatingRobot from '@/components/common/robot/FloatingRobot';
+import { useHomePage } from './hooks/useHomePage';
 
 export function HomePage() {
   const { t } = useTranslation('home');

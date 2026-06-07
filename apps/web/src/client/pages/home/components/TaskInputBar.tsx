@@ -5,7 +5,7 @@ import { WarningCircle } from '@phosphor-icons/react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 import { TaskInputAttachmentList } from './TaskInputAttachmentList';
 import { TaskInputTextarea } from './TaskInputTextarea';
 import { TaskInputToolbar } from './TaskInputToolbar';

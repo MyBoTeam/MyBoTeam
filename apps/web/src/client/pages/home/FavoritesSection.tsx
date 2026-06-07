@@ -2,8 +2,8 @@ import type { StoredFavorite } from '@myboteam/agent-core';
 import { X } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { springs } from '@/lib/animations';
-import { FAVORITES_PREVIEW_COUNT } from './useHomePage';
+import { springs } from '@/utils/animations';
+import { FAVORITES_PREVIEW_COUNT } from './hooks/useHomePage';
 
 interface FavoritesSectionProps {
   favoritesList: StoredFavorite[];

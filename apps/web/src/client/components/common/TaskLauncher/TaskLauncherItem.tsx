@@ -1,7 +1,7 @@
 import type { Task } from '@myboteam/agent-core/common';
 import { SpinnerGap } from '@phosphor-icons/react';
 import { useMemo } from 'react';
-import { getFaviconUrl } from '@/components/landing/IntegrationIcons';
+import { getFaviconUrl } from '@/pages/home/components/IntegrationIcons';
 import { extractDomains, STATUS_COLORS } from '@/lib/task-utils';
 import { cn } from '@/lib/utils';
 
