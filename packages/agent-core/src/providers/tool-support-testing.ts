@@ -4,21 +4,16 @@ import { createConsoleLogger } from '../utils/logging.js';
 
 const log = createConsoleLogger({ prefix: 'ToolSupportTesting' });
 
-/**
- * Options for testing tool support on a local LLM model
- */
 export interface ToolSupportTestOptions {
-  /** Base URL of the LLM server (e.g., 'http://localhost:11434') */
   baseUrl: string;
-  /** Model ID to test */
+
   modelId: string;
-  /** Provider name for logging (e.g., 'Ollama', 'LM Studio') */
+
   providerName: string;
-  /** Request timeout in milliseconds (default: 10000) */
+
   timeoutMs?: number;
 }
 
-/** Response type from OpenAI-compatible chat completions endpoint */
 interface ChatCompletionResponse {
   choices?: Array<{
     message?: {
@@ -28,16 +23,6 @@ interface ChatCompletionResponse {
   }>;
 }
 
-/**
- * Tests whether a local LLM model supports tool calling.
- *
- * Makes a test API request to the OpenAI-compatible /v1/chat/completions endpoint
- * with a simple tool definition and tool_choice: 'required' to determine if the
- * model can make tool calls.
- *
- * @param options - Test configuration options
- * @returns The tool support status: 'supported', 'unsupported', or 'unknown'
- */
 export async function testModelToolSupport(
   options: ToolSupportTestOptions,
 ): Promise<ToolSupportStatus> {
@@ -131,14 +116,6 @@ export async function testModelToolSupport(
   }
 }
 
-/**
- * Check tool support for an Ollama model using the /api/show endpoint.
- * Returns the capabilities from model metadata instead of making inference calls.
- *
- * @param baseUrl - Ollama server base URL
- * @param modelId - Model ID to test
- * @returns The tool support status
- */
 export async function testOllamaModelToolSupport(
   baseUrl: string,
   modelId: string,
@@ -181,13 +158,6 @@ export async function testOllamaModelToolSupport(
   }
 }
 
-/**
- * Tests whether an LM Studio model supports tool calling.
- *
- * @param baseUrl - LM Studio server base URL
- * @param modelId - Model ID to test
- * @returns The tool support status
- */
 export async function testLMStudioModelToolSupport(
   baseUrl: string,
   modelId: string,

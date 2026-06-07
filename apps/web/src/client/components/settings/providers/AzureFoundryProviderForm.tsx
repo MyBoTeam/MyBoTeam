@@ -2,7 +2,7 @@ import type { AzureFoundryCredentials, ConnectedProvider } from '@myboteam/agent
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getMyBoTeam } from '@/lib/myboteam';
-// Import Azure logo
+
 import azureLogo from '/assets/ai-logos/azure.svg';
 import { ProviderFormHeader } from '../shared';
 import { AzureFoundryConnectedSection } from './AzureFoundryConnectedSection';
@@ -50,7 +50,6 @@ export function AzureFoundryProviderForm({
     try {
       const myboteam = getMyBoTeam();
 
-      // Validate connection
       const validation = await myboteam.testAzureFoundryConnection({
         endpoint: endpoint.trim(),
         deploymentName: deploymentName.trim(),
@@ -64,7 +63,6 @@ export function AzureFoundryProviderForm({
         return;
       }
 
-      // Save credentials
       await myboteam.saveAzureFoundryConfig({
         endpoint: endpoint.trim(),
         deploymentName: deploymentName.trim(),
@@ -72,14 +70,13 @@ export function AzureFoundryProviderForm({
         apiKey: authType === 'api-key' ? apiKey.trim() : undefined,
       });
 
-      // Build the model entry - Azure Foundry uses deployment name as model
       const modelId = `azure-foundry/${deploymentName.trim()}`;
       const models = [{ id: modelId, name: deploymentName.trim() }];
 
       const provider: ConnectedProvider = {
         providerId: 'azure-foundry',
         connectionStatus: 'connected',
-        selectedModelId: modelId, // Auto-select the deployment as model
+        selectedModelId: modelId,
         credentials: {
           type: 'azure-foundry',
           authMethod: authType,
@@ -94,7 +91,7 @@ export function AzureFoundryProviderForm({
       };
 
       onConnect(provider);
-      setApiKey(''); // Clear sensitive data
+      setApiKey('');
     } catch (err) {
       setError(err instanceof Error ? err.message : t('status.connectionFailed'));
     } finally {

@@ -1,7 +1,3 @@
-/**
- * MyBoTeam AI usage IPC handlers — usage fetching, reconnection, and status.
- */
-
 import type { CreditUsage, MyboteamAiCredentials } from '@myboteam/agent-core/desktop-main';
 import { getDaemonClient } from '../../../daemon-bootstrap';
 import { isDaemonUnavailableError } from '../utils';
@@ -34,7 +30,6 @@ export function registerMyboteamAiUsageHandlers(handle: HandleFn): void {
       };
     }
 
-    // Not connected yet — connect without stealing active model
     let result: MyBoTeamConnectRpcResult;
     try {
       result = await client.call('myboteam-ai.connect');
@@ -58,7 +53,6 @@ export function registerMyboteamAiUsageHandlers(handle: HandleFn): void {
       },
     });
 
-    // Don't steal active if user already has a ready provider
     if (
       !Object.values(settings.connectedProviders).some(
         (p) => p?.connectionStatus === 'connected' && !!p.selectedModelId,

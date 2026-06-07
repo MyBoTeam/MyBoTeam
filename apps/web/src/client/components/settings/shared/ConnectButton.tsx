@@ -1,5 +1,3 @@
-// apps/desktop/src/renderer/components/settings/shared/ConnectButton.tsx
-
 import { useTranslation } from 'react-i18next';
 import connectIcon from '/assets/icons/connect.svg';
 

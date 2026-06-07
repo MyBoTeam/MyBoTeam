@@ -1,10 +1,6 @@
 import { EventEmitter } from 'events';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// ---------------------------------------------------------------------------
-// Mocks — must be declared before dynamic imports
-// ---------------------------------------------------------------------------
-
 vi.mock('@myboteam/agent-core', async () => {
   const actual =
     await vi.importActual<typeof import('@myboteam/agent-core')>('@myboteam/agent-core');
@@ -13,10 +9,6 @@ vi.mock('@myboteam/agent-core', async () => {
     createTaskId: vi.fn(() => 'test-task-id'),
   };
 });
-
-// ---------------------------------------------------------------------------
-// Mock factories
-// ---------------------------------------------------------------------------
 
 class MockWhatsAppService extends EventEmitter {
   readonly channelType = 'whatsapp';
@@ -48,18 +40,13 @@ class MockWhatsAppService extends EventEmitter {
 class MockTaskService extends EventEmitter {
   tasks: Array<{ id: string; sessionId?: string; status: string }> = [];
   startTaskMock = vi.fn();
-  /**
-   * Phase 2 of the SDK cutover port: `wireTaskBridge` auto-deny routes
-   * through `taskService.sendResponse` instead of the deleted
-   * `permissionService.resolvePermission/resolveQuestion`. Expose a mock so
-   * assertions can verify the structured payload.
-   */
+
   sendResponseMock = vi.fn(async () => {});
 
   async startTask(params: { prompt: string; taskId: string; sessionId?: string; source?: string }) {
     this.startTaskMock(params);
     this.tasks.push({ id: params.taskId, status: 'running' });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     return { id: params.taskId, status: 'running' } as any;
   }
 
@@ -68,16 +55,10 @@ class MockTaskService extends EventEmitter {
   }
 
   listTasks() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.tasks as any;
   }
 }
 
-// Request-ID prefixes used in tests below. Must match the constants exported
-// from `@myboteam/agent-core/common/types/permission`; wireTaskBridge
-// uses those for auto-deny classification after the Phase 2 PermissionService
-// deletion. We rely on real strings rather than the mocked module's actual
-// constants so the test module graph stays simple.
 const TEST_FILE_PERMISSION_PREFIX = 'filereq_';
 const TEST_QUESTION_PREFIX = 'questionreq_';
 
@@ -101,10 +82,6 @@ function createMockStorage() {
   };
 }
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
-
 describe('wireTaskBridge (daemon version)', () => {
   let service: MockWhatsAppService;
   let taskService: MockTaskService;
@@ -117,14 +94,10 @@ describe('wireTaskBridge (daemon version)', () => {
     mockStorage = createMockStorage();
   });
 
-  // Helper to create the bridge via dynamic import (avoids mock ordering issues).
-  // Phase 2 of the SDK cutover port dropped the `permissionService` parameter
-  // — wireTaskBridge now auto-denies via `taskService.sendResponse`.
   async function createBridge() {
     const { wireTaskBridge } = await import('../../../src/whatsapp/wireTaskBridge.js');
-    /* eslint-disable @typescript-eslint/no-explicit-any */
+
     return wireTaskBridge(service as any, taskService as any, mockStorage as any);
-    /* eslint-enable @typescript-eslint/no-explicit-any */
   }
 
   describe('permission auto-deny (P1 fix)', () => {
@@ -133,7 +106,6 @@ describe('wireTaskBridge (daemon version)', () => {
       bridge.setEnabled(true);
       bridge.setOwnerJid('1234@s.whatsapp.net');
 
-      // Simulate a message that triggers a task
       service.emit('message', {
         messageId: 'msg-1',
         senderId: '1234@s.whatsapp.net',
@@ -143,15 +115,10 @@ describe('wireTaskBridge (daemon version)', () => {
         isFromMe: true,
       });
 
-      // Wait for task to start
       await vi.waitFor(() => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Simulate a file permission request from the task.
-      // TaskService emits raw PermissionRequest with id at top level.
-      // Phase 2 auto-deny routes through taskService.sendResponse — the id
-      // prefix gates whether wireTaskBridge treats it as auto-deniable.
       const requestId = `${TEST_FILE_PERMISSION_PREFIX}123`;
       taskService.emit('permission', {
         id: requestId,
@@ -189,7 +156,6 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Simulate a question request (Phase 2 auto-deny via sendResponse).
       const requestId = `${TEST_QUESTION_PREFIX}456`;
       taskService.emit('permission', {
         id: requestId,
@@ -260,14 +226,11 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Listeners should have been added
       expect(taskService.listenerCount('complete')).toBeGreaterThan(initialListeners);
 
-      // Complete the task
       taskService.tasks[0] = { id: 'test-task-id', status: 'completed', sessionId: 'sess-1' };
       taskService.emit('complete', { taskId: 'test-task-id' });
 
-      // After nextTick, listeners should be cleaned up
       await new Promise((resolve) => process.nextTick(resolve));
       expect(taskService.listenerCount('complete')).toBe(initialListeners);
     });
@@ -317,16 +280,12 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Simulate task-callbacks.ts behavior: complete fires, then storage updates
       taskService.emit('complete', { taskId: 'test-task-id' });
 
-      // Simulate storage being updated synchronously after emit (like task-callbacks does)
       taskService.tasks[0] = { id: 'test-task-id', status: 'completed', sessionId: 'sess-abc' };
 
-      // The bridge reads storage on nextTick — so it should find the sessionId
       await new Promise((resolve) => process.nextTick(resolve));
 
-      // Verify session was stored (by checking the bridge internals via getSessionForSender)
       const nextSessionId = bridge.getSessionForSender('1234@s.whatsapp.net');
       expect(nextSessionId).toBe('sess-abc');
     });
@@ -334,7 +293,6 @@ describe('wireTaskBridge (daemon version)', () => {
 
   describe('message watermark (offline dedup)', () => {
     it('should skip messages older than the stored watermark', async () => {
-      // Set watermark to "now" — any message before this should be skipped
       const now = Date.now();
       mockStorage.setMessagingConfig({
         integrations: {
@@ -352,20 +310,17 @@ describe('wireTaskBridge (daemon version)', () => {
       bridge.setEnabled(true);
       bridge.setOwnerJid('1234@s.whatsapp.net');
 
-      // Send a message with timestamp BEFORE the watermark
       service.emit('message', {
         messageId: 'old-msg',
         senderId: '1234@s.whatsapp.net',
         text: 'old message',
-        timestamp: now - 10_000, // 10 seconds before watermark
+        timestamp: now - 10_000,
         isGroup: false,
         isFromMe: true,
       });
 
-      // Give it time to process
       await new Promise((r) => setTimeout(r, 100));
 
-      // Task should NOT have been started
       expect(taskService.startTaskMock).not.toHaveBeenCalled();
     });
 
@@ -377,7 +332,7 @@ describe('wireTaskBridge (daemon version)', () => {
             platform: 'whatsapp',
             enabled: true,
             tunnelEnabled: false,
-            lastProcessedAt: now - 60_000, // watermark is 1 minute ago
+            lastProcessedAt: now - 60_000,
             lastProcessedMessageId: null,
           },
         },
@@ -391,7 +346,7 @@ describe('wireTaskBridge (daemon version)', () => {
         messageId: 'new-msg',
         senderId: '1234@s.whatsapp.net',
         text: 'new message',
-        timestamp: now, // newer than watermark
+        timestamp: now,
         isGroup: false,
         isFromMe: true,
       });
@@ -423,7 +378,7 @@ describe('wireTaskBridge (daemon version)', () => {
         messageId: 'dup-msg-id',
         senderId: '1234@s.whatsapp.net',
         text: 'duplicate',
-        timestamp: now, // exact same timestamp as watermark
+        timestamp: now,
         isGroup: false,
         isFromMe: true,
       });
@@ -451,7 +406,6 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Watermark should have been updated in storage
       expect(mockStorage.setMessagingConfig).toHaveBeenCalledWith(
         expect.objectContaining({
           integrations: expect.objectContaining({
@@ -502,7 +456,6 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Emit error for a DIFFERENT taskId — the handler should skip it
       const sendCount = service.sentMessages.length;
       taskService.emit('error', { taskId: 'other-task-id' });
 
@@ -515,7 +468,6 @@ describe('wireTaskBridge (daemon version)', () => {
       bridge.setEnabled(true);
       bridge.setOwnerJid('1234@s.whatsapp.net');
 
-      // Make the next startTask call reject
       taskService.startTask = vi.fn().mockRejectedValue(new Error('server error'));
 
       service.emit('message', {
@@ -529,7 +481,6 @@ describe('wireTaskBridge (daemon version)', () => {
 
       await new Promise((r) => setTimeout(r, 100));
 
-      // Should have sent an error message back
       const errorReply = service.sentMessages.find((m) => m.text.includes('could not process'));
       expect(errorReply).toBeDefined();
     });
@@ -552,12 +503,11 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Emit a permission event for a different task — should be ignored
       const sendCount = service.sentMessages.length;
       taskService.emit('permission', { taskId: 'other-task', id: 'filereq_999' });
 
       await new Promise((r) => setTimeout(r, 50));
-      // No new messages sent because the event was for a different task
+
       expect(service.sentMessages.length).toBe(sendCount);
     });
 
@@ -579,12 +529,11 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Emit complete for a different task — should be a no-op
       const initialCount = service.sentMessages.length;
       taskService.emit('complete', { taskId: 'other-task' });
 
       await new Promise((r) => setTimeout(r, 50));
-      // No reply sent since the event was for a different task
+
       expect(service.sentMessages.length).toBe(initialCount);
     });
 
@@ -606,7 +555,6 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Send a very long assistant message (> 4096 chars)
       const longContent = 'A'.repeat(5000);
       taskService.emit('message', {
         taskId: 'test-task-id',
@@ -620,20 +568,17 @@ describe('wireTaskBridge (daemon version)', () => {
         ],
       });
 
-      // Now complete the task
       taskService.tasks[0] = { id: 'test-task-id', status: 'completed' };
       taskService.emit('complete', { taskId: 'test-task-id' });
 
       await new Promise((r) => setImmediate(r));
       await new Promise((r) => setTimeout(r, 50));
 
-      // The reply should have a truncation suffix
       const reply = service.sentMessages.find((m) => m.text.includes('[Response truncated]'));
       expect(reply).toBeDefined();
     });
 
     it('handles missing whatsapp integration in setWatermark gracefully', async () => {
-      // Storage config without whatsapp integration
       mockStorage.setMessagingConfig({ integrations: {} });
 
       const { bridge } = await createBridge();
@@ -649,7 +594,6 @@ describe('wireTaskBridge (daemon version)', () => {
         isFromMe: true,
       });
 
-      // Task should still start successfully — setWatermark just returns early
       await vi.waitFor(() => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
@@ -673,13 +617,10 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Emit a message event for a different task — the handler should skip it
       taskService.emit('message', {
         taskId: 'unrelated-task',
         messages: [{ type: 'assistant', content: 'should be ignored' }],
       });
-
-      // No error thrown — the handler just returns early
     });
 
     it('uses default completion text when no assistant messages were received', async () => {
@@ -700,14 +641,12 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Complete the task WITHOUT emitting any assistant message first
       taskService.tasks[0] = { id: 'test-task-id', status: 'completed' };
       taskService.emit('complete', { taskId: 'test-task-id' });
 
       await new Promise((r) => setImmediate(r));
       await new Promise((r) => setTimeout(r, 50));
 
-      // Should send "Task completed successfully." since no assistant content
       const reply = service.sentMessages.find((m) =>
         m.text.includes('Task completed successfully'),
       );
@@ -731,7 +670,6 @@ describe('wireTaskBridge (daemon version)', () => {
 
       await new Promise((r) => setTimeout(r, 100));
 
-      // The "Task started" message should contain the ellipsis from truncation
       const reply = service.sentMessages.find((m) => m.text.includes('\u2026'));
       expect(reply).toBeDefined();
     });
@@ -754,7 +692,6 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Task status is still 'running' (not 'completed') when complete fires
       taskService.tasks[0] = { id: 'test-task-id', status: 'interrupted' };
       taskService.emit('complete', { taskId: 'test-task-id' });
 
@@ -783,7 +720,6 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Permission with no ID — handler returns early without denying
       const sendResponseCalls = taskService.sendResponseMock.mock.calls.length;
       taskService.emit('permission', { taskId: 'test-task-id' });
 
@@ -809,7 +745,6 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Permission with an ID that doesn't match file or question prefix
       const sendResponseCalls = taskService.sendResponseMock.mock.calls.length;
       taskService.emit('permission', { id: 'unknown_prefix_123', taskId: 'test-task-id' });
 
@@ -835,7 +770,6 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Send a SHORT assistant message (< 200 chars — no truncation)
       taskService.emit('message', {
         taskId: 'test-task-id',
         messages: [
@@ -872,7 +806,6 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // First assistant message triggers progress
       taskService.emit('message', {
         taskId: 'test-task-id',
         messages: [
@@ -886,12 +819,11 @@ describe('wireTaskBridge (daemon version)', () => {
       });
 
       await new Promise((r) => setTimeout(r, 50));
-      // Count only messages containing "First progress" or "Second progress"
+
       const progressMessages = service.sentMessages.filter(
         (m) => m.text.includes('First progress') || m.text.includes('Second progress'),
       );
 
-      // Second assistant message IMMEDIATELY — should NOT send progress (rate limited)
       taskService.emit('message', {
         taskId: 'test-task-id',
         messages: [
@@ -909,7 +841,6 @@ describe('wireTaskBridge (daemon version)', () => {
         (m) => m.text.includes('First progress') || m.text.includes('Second progress'),
       );
 
-      // Only one progress notification should have been sent (the first one)
       expect(progressMessagesAfter.length).toBe(1);
       expect(progressMessages.length).toBe(1);
     });
@@ -932,7 +863,6 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Make sendResponse reject with a STRING (not an Error instance)
       taskService.sendResponseMock.mockRejectedValue('network failure string');
 
       taskService.emit('permission', {
@@ -943,7 +873,6 @@ describe('wireTaskBridge (daemon version)', () => {
 
       await new Promise((r) => setTimeout(r, 50));
 
-      // The warning is logged — no unhandled rejection
       expect(taskService.sendResponseMock).toHaveBeenCalled();
     });
 
@@ -965,14 +894,12 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Task with NO status property
       taskService.tasks[0] = { id: 'test-task-id' } as { id: string; status?: string };
       taskService.emit('complete', { taskId: 'test-task-id' });
 
       await new Promise((r) => setImmediate(r));
       await new Promise((r) => setTimeout(r, 50));
 
-      // Should use 'unknown' as fallback
       const reply = service.sentMessages.find((m) => m.text.includes('unknown'));
       expect(reply).toBeDefined();
     });
@@ -995,10 +922,8 @@ describe('wireTaskBridge (daemon version)', () => {
         expect(taskService.startTaskMock).toHaveBeenCalled();
       });
 
-      // Make sendResponse reject
       taskService.sendResponseMock.mockRejectedValue(new Error('network error'));
 
-      // Trigger a permission request — auto-deny will call sendResponse which will reject
       taskService.emit('permission', {
         id: 'filereq_123',
         taskId: 'test-task-id',
@@ -1007,8 +932,6 @@ describe('wireTaskBridge (daemon version)', () => {
 
       await new Promise((r) => setTimeout(r, 50));
 
-      // The rejection is caught and logged — no unhandled rejection
-      // sendResponseMock should have been called (even though it rejected)
       expect(taskService.sendResponseMock).toHaveBeenCalled();
     });
   });

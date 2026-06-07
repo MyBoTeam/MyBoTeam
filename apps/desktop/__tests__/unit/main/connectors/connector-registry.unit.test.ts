@@ -1,14 +1,3 @@
-/**
- * Unit tests for connector-registry.ts (via agent-core/common)
- *
- * Validates:
- * - All 8 built-in connectors are defined
- * - Callback ports are unique and within expected range (3118–3125)
- * - monday.com has force_install_if_needed in extraAuthParams
- * - getConnectorDefinition returns correct entries
- * - getMcpConnectorDefinitions excludes desktop-google and desktop-github
- */
-
 import {
   getConnectorDefinition,
   getConnectorDefinitions,

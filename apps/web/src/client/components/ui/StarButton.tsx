@@ -9,11 +9,6 @@ interface StarButtonProps {
   'data-testid'?: string;
 }
 
-/**
- * Reusable star/favorite toggle button.
- * Uses a stable accessible name ("Favorite") with aria-pressed to signal state,
- * so screen readers don't treat the on/off states as different controls.
- */
 export function StarButton({
   isFavorite,
   onToggle,

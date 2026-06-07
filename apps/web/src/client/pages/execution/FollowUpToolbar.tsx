@@ -21,7 +21,6 @@ interface FollowUpToolbarProps {
   onOpenSpeechSettings: () => void;
 }
 
-/** Bottom toolbar row: PlusMenu, model indicator, speech, and send button. */
 export function FollowUpToolbar({
   followUp,
   setFollowUp,

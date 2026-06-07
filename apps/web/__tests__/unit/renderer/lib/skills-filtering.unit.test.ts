@@ -100,7 +100,7 @@ describe('getFilteredSkills', () => {
 
   it('combines filter and search', () => {
     const result = getFilteredSkills(skills, 'active', 'read');
-    expect(result).toHaveLength(0); // Read is inactive, so no active+read match
+    expect(result).toHaveLength(0);
   });
 
   it('returns empty array when no match', () => {

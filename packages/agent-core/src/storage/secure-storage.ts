@@ -65,9 +65,7 @@ export class SecureStorage {
     } catch (error) {
       try {
         fs.unlinkSync(tempPath);
-      } catch {
-        // Ignore cleanup errors
-      }
+      } catch {}
       throw error;
     }
   }

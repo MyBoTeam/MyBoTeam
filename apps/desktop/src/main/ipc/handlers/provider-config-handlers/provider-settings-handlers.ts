@@ -53,9 +53,6 @@ export function registerProviderSettingsHandlers(handle: IpcHandler): void {
   handle(
     'provider-settings:get-connected',
     async (_event: IpcMainInvokeEvent, providerId: ProviderId) => {
-      // No dedicated `provider.getConnected` RPC — extract from the full
-      // `provider.getSettings()` snapshot. A single-field grab from a small
-      // JSON blob is not worth its own route.
       const settings = await getDaemonClient().call('provider.getSettings');
       return settings.connectedProviders[providerId] ?? null;
     },
@@ -73,8 +70,6 @@ export function registerProviderSettingsHandlers(handle: IpcHandler): void {
     async (_event: IpcMainInvokeEvent, providerId: ProviderId) => {
       await getDaemonClient().call('provider.removeConnected', { providerId });
       if (providerId === 'vertex') {
-        // Vertex service-account-key cleanup is a local filesystem operation
-        // (touches a key file the adapter writes); stays Electron-side.
         cleanupVertexServiceAccountKey();
       }
     },
@@ -95,6 +90,5 @@ export function registerProviderSettingsHandlers(handle: IpcHandler): void {
     return getDaemonClient().call('provider.getDebugMode');
   });
 
-  // Vertex AI handlers
   registerVertexHandlers(handle);
 }

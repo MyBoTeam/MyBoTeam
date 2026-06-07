@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Must use vi.hoisted so the mock fn is available when vi.mock factory runs (hoisted)
 const { mockExecFile } = vi.hoisted(() => ({
   mockExecFile: vi.fn(),
 }));
@@ -15,10 +14,6 @@ import {
   validateVertexCredentials,
 } from '../../../src/providers/vertex.js';
 
-/**
- * Helper: make mockExecFile resolve with a given stdout value.
- * promisify(execFile) calls execFile(cmd, args, opts, callback)
- */
 function mockExecFileSuccess(stdout: string) {
   mockExecFile.mockImplementation(
     (
@@ -32,9 +27,6 @@ function mockExecFileSuccess(stdout: string) {
   );
 }
 
-/**
- * Helper: make mockExecFile reject with a given error.
- */
 function mockExecFileError(error: Error) {
   mockExecFile.mockImplementation(
     (
@@ -161,7 +153,7 @@ describe('Vertex AI Provider', () => {
     describe('ADC flow', () => {
       it('should validate successfully with ADC token', async () => {
         mockExecFileSuccess('fake-adc-token\n');
-        // testAccess call
+
         mockFetchResponses({ ok: true, json: { candidates: [] } });
 
         const result = await validateVertexCredentials(makeAdcCredentialsJson());
@@ -284,12 +276,11 @@ describe('Vertex AI Provider', () => {
 
     describe('service account flow', () => {
       it('should propagate error when private key is invalid', async () => {
-        // crypto.createSign().sign() rejects fake keys before any fetch occurs
         const result = await validateVertexCredentials(makeServiceAccountCredentialsJson());
 
         expect(result.valid).toBe(false);
         expect(result.error).toBeDefined();
-        // fetch should never be called since signing fails first
+
         expect(fetch).not.toHaveBeenCalled();
       });
 
@@ -297,7 +288,7 @@ describe('Vertex AI Provider', () => {
         const result = await validateVertexCredentials(makeServiceAccountCredentialsJson());
 
         expect(result.valid).toBe(false);
-        // Should NOT fall back to gcloud for service account auth
+
         expect(mockExecFile).not.toHaveBeenCalled();
       });
     });
@@ -356,7 +347,6 @@ describe('Vertex AI Provider', () => {
       expect(result.success).toBe(true);
       expect(result.models.length).toBeGreaterThan(0);
 
-      // Verify model ID format
       for (const model of result.models) {
         expect(model.id).toMatch(/^vertex\/.+\/.+$/);
         expect(model.name).toBeTruthy();

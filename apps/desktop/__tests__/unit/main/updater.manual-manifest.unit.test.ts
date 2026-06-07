@@ -1,9 +1,3 @@
-/**
- * Unit tests for the manual-manifest path used on Windows and non-AppImage Linux
- * (deb, extracted tarballs). Covers: release-contract filenames, YAML parse
- * robustness via js-yaml, semver edge cases, dialog button routing.
- */
-
 import { EventEmitter } from 'node:events';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -84,7 +78,7 @@ describe('manual-manifest', () => {
       ...emptyConfig,
       myboteamUpdaterUrl: 'https://d.myboteam.app',
     });
-    // Default manifest — version 1.0.0 is newer than mocked app 0.3.8.
+
     mockHttpsGet.mockImplementation((_url: string, cb: (res: unknown) => void) => {
       cb(
         mockHttpResponse(
@@ -196,9 +190,6 @@ describe('manual-manifest', () => {
     });
 
     it('unparseable remote version non-silent: tracks invalid_version AND shows failure dialog (never "No Updates")', async () => {
-      // Release ships a manifest whose version string cannot be coerced to semver.
-      // Must NOT fold into trackUpdateNotAvailable — that would tell the user they
-      // are up to date when in fact the release system is broken.
       mockHttpsGet.mockImplementation((_url: string, cb: (res: unknown) => void) => {
         cb(
           mockHttpResponse(
@@ -275,9 +266,6 @@ describe('manual-manifest', () => {
     });
 
     it('does NOT record when manifest path is off-apex (so next launch retries if server is fixed)', async () => {
-      // Poisoned manifest with a newer version but an attacker-controlled download URL.
-      // The app rejects the manifest — and must NOT throttle the next check, because
-      // the server may fix the manifest within minutes.
       mockHttpsGet.mockImplementation((_url: string, cb: (res: unknown) => void) => {
         cb(mockHttpResponse(200, `version: 9.9.9\npath: https://evil.example.com/malware.exe\n`));
         return { on: vi.fn() };
@@ -291,7 +279,6 @@ describe('manual-manifest', () => {
 
   describe('manifest path origin validation', () => {
     it('rejects absolute path on a different apex (poisoned manifest defense)', async () => {
-      // Simulated attack: manifest looks legitimate but `path:` redirects to evil host.
       mockHttpsGet.mockImplementation((_url: string, cb: (res: unknown) => void) => {
         cb(mockHttpResponse(200, `version: 9.9.9\npath: https://evil.example.com/malware.exe\n`));
         return { on: vi.fn() };
@@ -336,7 +323,7 @@ describe('manual-manifest', () => {
       });
       const analytics = await import('../../../src/main/analytics/events');
       const { checkForUpdatesManual } = await import('../../../src/main/updater/manual-manifest');
-      // Must not reject — contract says "never throws" regardless of URL shape.
+
       await expect(checkForUpdatesManual(true, 'win')).resolves.toBeUndefined();
       expect(analytics.trackUpdateFailed).toHaveBeenCalledWith('fetch_failed', expect.any(String));
     });
@@ -428,7 +415,7 @@ describe('manual-manifest', () => {
   describe('URL is empty', () => {
     it('returns early without network call', async () => {
       const { getBuildConfig } = await import('../../../src/main/config/build-config');
-      vi.mocked(getBuildConfig).mockReturnValue({ ...emptyConfig }); // URL empty
+      vi.mocked(getBuildConfig).mockReturnValue({ ...emptyConfig });
       const { checkForUpdatesManual } = await import('../../../src/main/updater/manual-manifest');
       await checkForUpdatesManual(false, 'win');
       expect(mockHttpsGet).not.toHaveBeenCalled();

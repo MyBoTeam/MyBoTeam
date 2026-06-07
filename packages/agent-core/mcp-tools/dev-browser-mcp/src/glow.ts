@@ -2,7 +2,6 @@ import type { Page } from 'playwright';
 import {
   ensureConnected as ensureConnectedRaw,
   getConnectionMode,
-  getFullPageName,
   getPage as getPageRaw,
 } from './connection.js';
 
@@ -39,9 +38,7 @@ async function injectGlowElements(page: Page): Promise<void> {
         'position: fixed; inset: 0; pointer-events: none; z-index: 2147483647; border: 5px solid rgba(59, 130, 246, 0.9); border-radius: 4px; box-shadow: inset 0 0 30px rgba(59, 130, 246, 0.6), 0 0 20px rgba(59, 130, 246, 0.4); animation: devBrowserGlowColor 6s ease-in-out infinite;';
       document.body.appendChild(overlay);
     });
-  } catch {
-    // intentionally empty
-  }
+  } catch {}
 }
 
 export async function injectActiveTabGlow(page: Page): Promise<void> {
@@ -70,9 +67,7 @@ export async function removeActiveTabGlow(page: Page): Promise<void> {
       document.getElementById('__dev-browser-active-glow')?.remove();
       document.getElementById('__dev-browser-active-glow-style')?.remove();
     });
-  } catch {
-    // intentionally empty
-  }
+  } catch {}
   if (glowingPage === page) glowingPage = null;
 }
 
@@ -88,9 +83,7 @@ export async function ensureConnected() {
             if (!page.isClosed()) {
               await injectActiveTabGlow(page);
             }
-          } catch {
-            // intentionally empty
-          }
+          } catch {}
         }, 100);
       });
 
@@ -98,9 +91,7 @@ export async function ensureConnected() {
         if (!page.isClosed() && !glowingPage) {
           try {
             await injectActiveTabGlow(page);
-          } catch {
-            // intentionally empty
-          }
+          } catch {}
         }
       }
     }

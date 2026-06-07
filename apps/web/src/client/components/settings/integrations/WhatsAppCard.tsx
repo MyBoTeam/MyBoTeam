@@ -1,9 +1,3 @@
-/**
- * WhatsAppCard — connection management UI for WhatsApp integration
- *
- * Contributed by aryan877 (PR #595 feat/whatsapp-integration).
- * State logic extracted to useWhatsAppCard hook for modularity.
- */
 import { QRCodeDisplay } from './QRCodeDisplay';
 import { useWhatsAppCard } from './useWhatsAppCard';
 

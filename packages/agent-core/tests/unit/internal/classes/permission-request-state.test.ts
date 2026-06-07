@@ -117,7 +117,6 @@ describe('createPendingPermissionRequest', () => {
     expect(typeof pending.resolve).toBe('function');
     expect(typeof pending.reject).toBe('function');
 
-    // Resolve before timeout
     pending.resolve(true);
     const result = await promise;
     expect(result).toBe(true);

@@ -49,13 +49,6 @@ export function getFormattedKnowledgeNotes(workspaceId: string): FormattedKnowle
   };
 }
 
-/**
- * Legacy single-string formatter kept for backward compatibility with any
- * caller that still injects all types into one soft `<workspace-knowledge>`
- * block. New callers should prefer `getFormattedKnowledgeNotes` so
- * instruction-type notes can be rendered under a binding wrapper per the
- * PR #847 review (Codex P2).
- */
 export function getKnowledgeNotesForPrompt(workspaceId: string): string {
   const { instructions, context } = getFormattedKnowledgeNotes(workspaceId);
   const sections: string[] = [];

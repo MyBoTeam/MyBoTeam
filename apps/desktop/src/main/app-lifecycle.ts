@@ -18,9 +18,7 @@ function logMain(level: 'INFO' | 'WARN' | 'ERROR', msg: string, data?: Record<st
     if (l?.log) {
       l.log(level, 'main', msg, data);
     }
-  } catch (_e) {
-    /* best-effort logging */
-  }
+  } catch (_e) {}
 }
 
 async function stopDetachedDaemonForCleanStart(
@@ -95,14 +93,10 @@ async function stopDetachedDaemonForCleanStart(
   } finally {
     try {
       client.close();
-    } catch {
-      /* best-effort */
-    }
+    } catch {}
     try {
       transport.close();
-    } catch {
-      /* best-effort */
-    }
+    } catch {}
   }
 }
 
@@ -147,17 +141,13 @@ export function registerLifecycleHooks(): void {
         stack: error.stack,
       });
       trackAppCrash(error.name || 'uncaughtException', error.message || 'Unknown error');
-    } catch {
-      /* ignore */
-    }
+    } catch {}
   });
   process.on('unhandledRejection', (reason) => {
     try {
       getLogCollector()?.log?.('ERROR', 'main', 'Unhandled promise rejection', { reason });
       trackAppCrash('unhandledRejection', String(reason).substring(0, 500));
-    } catch {
-      /* ignore */
-    }
+    } catch {}
   });
 
   app.on('window-all-closed', () => {
@@ -174,9 +164,7 @@ export function registerLifecycleHooks(): void {
     let logger: ReturnType<typeof getLogCollector> | null = null;
     try {
       logger = getLogCollector();
-    } catch {
-      /* logger may not be initialized on early quit paths */
-    }
+    } catch {}
     void shutdownApp(logger);
   });
 }

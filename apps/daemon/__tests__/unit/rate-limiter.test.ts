@@ -67,20 +67,15 @@ describe('RateLimiter', () => {
     const limiter = new RateLimiter(60_000, 10);
     const requests = (limiter as unknown as { requests: Map<string, number[]> }).requests;
 
-    // First request at time 0
     expect(limiter.isAllowed('127.0.0.1')).toBe(true);
 
-    // Second request at time 55s — still within the same window
     vi.advanceTimersByTime(55_000);
     expect(limiter.isAllowed('127.0.0.1')).toBe(true);
 
     expect(requests.get('127.0.0.1')).toHaveLength(2);
 
-    // Advance to 60s — cleanup fires. First timestamp is stale (60s old),
-    // second is still fresh (5s old), so entry is kept with filtered timestamps
     vi.advanceTimersByTime(5_000);
 
-    // After cleanup, only the newer timestamp should remain
     expect(requests.get('127.0.0.1')).toHaveLength(1);
 
     limiter.dispose();

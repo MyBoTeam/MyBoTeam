@@ -149,17 +149,13 @@ export function findCommandInPath(command: string, searchPath: string): string |
             try {
               fs.accessSync(fullPath, fs.constants.X_OK);
               return fullPath;
-            } catch {
-              // intentionally empty
-            }
+            } catch {}
           } else {
             return fullPath;
           }
         }
       }
-    } catch {
-      // intentionally empty
-    }
+    } catch {}
   }
 
   return null;

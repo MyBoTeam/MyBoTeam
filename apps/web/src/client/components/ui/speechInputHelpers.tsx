@@ -1,9 +1,6 @@
 import { Microphone } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
-/**
- * Format milliseconds to MM:SS display
- */
 export function formatDuration(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
@@ -11,9 +8,6 @@ export function formatDuration(ms: number): string {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
-/**
- * Standalone microphone icon button (for use in other places)
- */
 export function MicrophoneIcon({
   isRecording,
   className,

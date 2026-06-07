@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-// Test fetchWithTimeout by stubbing global fetch
 import {
   discoverOAuthMetadata,
   discoverOAuthProtectedResourceMetadata,
@@ -23,9 +22,7 @@ describe('fetchWithTimeout', () => {
       'fetch',
       vi.fn((_url: string, opts: RequestInit) => {
         abortSignal = opts.signal as AbortSignal;
-        abortSignal?.addEventListener('abort', () => {
-          // Simulate abort by rejecting
-        });
+        abortSignal?.addEventListener('abort', () => {});
         return new Promise((_resolve, reject) => {
           const onAbort = () => {
             reject(abortError);

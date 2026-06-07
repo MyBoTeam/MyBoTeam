@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { testOllamaConnection } from '../../../src/providers/ollama.js';
 
-// Mock tool-support-testing module so we can control testOllamaModelToolSupport
 vi.mock('../../../src/providers/tool-support-testing.js', () => ({
   testOllamaModelToolSupport: vi.fn(),
 }));
@@ -57,7 +56,6 @@ describe('testOllamaConnection', () => {
   });
 
   it('should batch model checks in groups of 5', async () => {
-    // Create 7 models
     const rawModels = Array.from({ length: 7 }, (_, i) => ({
       name: `model-${i}`,
       size: (i + 1) * 100,
@@ -68,11 +66,10 @@ describe('testOllamaConnection', () => {
       json: async () => ({ models: rawModels }),
     } as Response);
 
-    // Track the order of calls to verify batching behaviour
     const callTimestamps: number[] = [];
     mockedToolSupport.mockImplementation(async () => {
       callTimestamps.push(Date.now());
-      // Small delay to make concurrent calls measurably close in time
+
       await new Promise((r) => setTimeout(r, 20));
       return 'supported';
     });
@@ -83,15 +80,11 @@ describe('testOllamaConnection', () => {
     expect(result.models).toHaveLength(7);
     expect(mockedToolSupport).toHaveBeenCalledTimes(7);
 
-    // First 5 calls should have started at roughly the same time (within 10ms of each other)
-    // indicating they ran concurrently in the first batch
     const firstBatchStart = callTimestamps[0]!;
     for (let i = 0; i < 5; i++) {
       expect(callTimestamps[i]! - firstBatchStart).toBeLessThan(15);
     }
 
-    // The 6th and 7th calls should have started after the first batch completed
-    // (at least ~20ms after the first batch started, because of the delay)
     expect(callTimestamps[5]! - firstBatchStart).toBeGreaterThanOrEqual(15);
   });
 

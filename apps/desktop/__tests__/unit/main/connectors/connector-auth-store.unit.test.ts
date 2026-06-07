@@ -1,26 +1,8 @@
-/**
- * Unit tests for ConnectorAuthStore
- *
- * Milestone 3 sub-chunk 3e of the daemon-only-SQLite migration converted
- * ConnectorAuthStore's methods to async daemon RPCs. These tests now
- * assert against the `connectors.authEntry.*` RPC surface on
- * `getDaemonClient().call(...)` rather than `getStorage()` directly.
- *
- * Validates:
- * - Tokens stored and read correctly
- * - Optional lastOAuthValidatedAt handled when absent
- * - clearTokens() retains serverUrl (for Lightdash/Datadog)
- * - clearTokens() retains clientRegistration (for DCR providers)
- * - clearAuth() removes everything
- * - getOAuthStatus() reflects connected/disconnected/pending state
- */
-
 import { ConnectorAuthStore } from '@main/connectors/connector-auth-store';
 import type { StoredAuthEntry } from '@main/connectors/connector-auth-types';
 import type { ConnectorAuthStoreConfig } from '@myboteam/agent-core/common';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Shared in-memory state for the daemon-mock. Each test resets it in beforeEach.
 let mockEntryStore: Record<string, StoredAuthEntry | null> = {};
 const mockDaemonCall = vi.fn(async (method: string, params?: unknown) => {
   if (method === 'connectors.authEntry.read') {
@@ -170,7 +152,7 @@ describe('ConnectorAuthStore', () => {
     it('does nothing when entry is absent', async () => {
       const store = makeStore();
       await store.clearTokens();
-      expect(mockDaemonCall).toHaveBeenCalledTimes(1); // read only
+      expect(mockDaemonCall).toHaveBeenCalledTimes(1);
       expect(mockDaemonCall).not.toHaveBeenCalledWith(
         'connectors.authEntry.write',
         expect.anything(),

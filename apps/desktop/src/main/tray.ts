@@ -57,7 +57,6 @@ export function createTray(mainWindow: BrowserWindow | null): Tray {
   const iconPath = getIconPath();
   const icon = nativeImage.createFromPath(iconPath);
 
-  // Resize for tray (16x16 on most platforms, 22x22 on Linux)
   const trayIcon =
     process.platform === 'linux'
       ? icon.resize({ width: 22, height: 22 })
@@ -96,10 +95,7 @@ export function destroyTray(): void {
     tray = null;
   }
 }
-/**
- * Update the tray icon/tooltip to reflect current task state.
- * Called when a task starts, completes, or fails.
- */
+
 export function updateTray(): void {
   if (tray && !tray.isDestroyed()) {
     tray.setContextMenu(buildContextMenu(null));

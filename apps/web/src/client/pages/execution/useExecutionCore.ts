@@ -11,7 +11,6 @@ import { useExecutionDebugState } from './useExecutionDebugState';
 import { useExecutionEvents } from './useExecutionEvents';
 import { useExecutionScroll } from './useExecutionScroll';
 
-/** Core state and effects for the execution page. */
 export function useExecutionCore() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -107,7 +106,6 @@ export function useExecutionCore() {
     if (scroll.isAtBottom) {
       scroll.scrollToBottom();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- scroll object reference changes on every render; individual properties are stable
   }, [scroll.scrollToBottom, scroll.isAtBottom]);
 
   const permissionRequest = (id ? permissionRequests[id] : undefined) ?? null;
@@ -194,9 +192,9 @@ export function useExecutionCore() {
     taskActionLabel,
     taskActionPendingLabel,
     isFollowUpOverLimit,
-    // scroll
+
     ...scroll,
-    // debug
+
     ...debug,
   };
 }

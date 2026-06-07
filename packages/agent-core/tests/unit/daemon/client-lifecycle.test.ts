@@ -41,18 +41,15 @@ describe('DaemonClient offNotification', () => {
 
     client.onNotification('task.progress' as never, handler);
 
-    // Send first notification — should be received
     server.notify('task.progress', { taskId: 'tsk-1', stage: 'running' });
     await new Promise((r) => setTimeout(r, 100));
     expect(received).toHaveLength(1);
 
-    // Remove handler
     client.offNotification('task.progress' as never, handler);
 
-    // Send second notification — should NOT be received
     server.notify('task.progress', { taskId: 'tsk-2', stage: 'done' });
     await new Promise((r) => setTimeout(r, 100));
-    expect(received).toHaveLength(1); // still 1, not 2
+    expect(received).toHaveLength(1);
 
     client.close();
   });
@@ -74,14 +71,13 @@ describe('DaemonClient offNotification', () => {
     client.onNotification('task.progress' as never, handlerA);
     client.onNotification('task.progress' as never, handlerB);
 
-    // Remove only handlerA
     client.offNotification('task.progress' as never, handlerA);
 
     server.notify('task.progress', { taskId: 'tsk-1' });
     await new Promise((r) => setTimeout(r, 100));
 
-    expect(receivedA).toHaveLength(0); // removed
-    expect(receivedB).toHaveLength(1); // still active
+    expect(receivedA).toHaveLength(0);
+    expect(receivedB).toHaveLength(1);
 
     client.close();
   });
@@ -94,7 +90,6 @@ describe('DaemonClient offNotification', () => {
     const transport = await createSocketTransport({ socketPath });
     const client = new DaemonClient({ transport });
 
-    // Should not throw
     client.offNotification('task.progress' as never, () => {});
 
     client.close();
@@ -108,7 +103,6 @@ describe('DaemonClient.call per-call timeoutMs', () => {
     server.registerMethod(
       'auth.openai.awaitCompletion' as never,
       (async () => {
-        // Never resolve — simulates the daemon blocking on the OAuth flow.
         await new Promise(() => {});
       }) as never,
     );
@@ -129,13 +123,6 @@ describe('DaemonClient.call per-call timeoutMs', () => {
   });
 
   it('per-call timeoutMs overrides the client-wide default — required for OAuth', async () => {
-    // REGRESSION (manual OAuth test, post-Phase-4a): the desktop OAuth IPC
-    // handler calls `auth.openai.awaitCompletion` which can legitimately
-    // block for up to 2 minutes while the user finishes the browser flow.
-    // The DaemonClient's default 30s timeout was firing first, surfacing
-    // `RPC timeout: auth.openai.awaitCompletion (30000ms)` in the desktop
-    // main log even though the daemon-side flow eventually succeeded.
-    // Fix: let `call()` accept an `options.timeoutMs` per-call override.
     const socketPath = createTempSocketPath();
     server = new DaemonRpcServer({ socketPath });
     let resolveServerSide: (value: unknown) => void = () => {};
@@ -150,21 +137,15 @@ describe('DaemonClient.call per-call timeoutMs', () => {
     await server.start();
 
     const transport = await createSocketTransport({ socketPath });
-    // Aggressively low default to prove the per-call override actually
-    // wins. If `options.timeoutMs` were ignored, this call would reject
-    // at ~50ms with "RPC timeout: ...50ms".
+
     const client = new DaemonClient({ transport, timeout: 50 });
 
     const callPromise = client.call('auth.openai.awaitCompletion' as never, undefined as never, {
       timeoutMs: 5_000,
     });
 
-    // Wait longer than the client-wide default — proves the per-call
-    // timeout is in effect.
     await new Promise((r) => setTimeout(r, 200));
 
-    // Now resolve the server-side handler. The call should succeed
-    // because the per-call 5s budget hasn't expired.
     resolveServerSide({ ok: true, plan: 'paid' });
     await expect(callPromise).resolves.toEqual({ ok: true, plan: 'paid' });
 

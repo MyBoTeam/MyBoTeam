@@ -1,11 +1,3 @@
-/**
- * PreviewBody — Main content/frame area for BrowserPreview.
- *
- * Renders the live browser frame image or a placeholder state view
- * depending on the current ViewStatus.
- * Extracted from BrowserPreview as part of ENG-982 refactor.
- */
-
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, Loader2, Monitor } from 'lucide-react';
 import type { ViewStatus } from './StatusBadge';

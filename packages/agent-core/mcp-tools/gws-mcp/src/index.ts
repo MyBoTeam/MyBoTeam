@@ -1,19 +1,10 @@
 #!/usr/bin/env node
-/**
- * GWS MCP server — Google Docs, Sheets, Slides via @googleworkspace/cli.
- *
- * Supports multi-account via GWS_ACCOUNTS_MANIFEST env var (manifest JSON
- * produced by AccountManager.writeAccountsManifest). Each tool accepts an
- * optional `account` parameter (label or email) to select which account's
- * token to use. When only one account is connected it is used automatically.
- */
+
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 import type { ToolDef } from './gws-types.js';
 import { loadManifest, readToken, resolveAccount, runGws } from './gws-utils.js';
-
-// ── MCP server ────────────────────────────────────────────────────────────────
 
 const SCOPE_NOTE =
   'Only operates on files created by this app or explicitly selected by the user via Google Picker. ' +

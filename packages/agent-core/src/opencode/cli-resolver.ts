@@ -119,9 +119,6 @@ export async function getCliVersion(cliPath: string): Promise<string | null> {
       }
     }
 
-    // Use execFileSync (no shell) so paths that contain spaces are passed
-    // directly to CreateProcess/execvp without cmd.exe quoting ambiguity.
-    // See: https://github.com/myboteam-ai/myboteam/issues/596
     const output = execFileSync(cliPath, ['--version'], {
       encoding: 'utf-8',
       timeout: 5000,

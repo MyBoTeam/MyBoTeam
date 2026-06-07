@@ -14,7 +14,6 @@ import { hasReadyProviderViaDaemon } from './task-helpers';
 import { assertTrustedWindow, handle } from './utils';
 
 export function registerTaskSessionHandlers(): void {
-  // ─── Browser Preview IPC handlers (ENG-695) ─────────────────────────────────
   handle(
     'browser-preview:start',
     async (_event: IpcMainInvokeEvent, taskId: string, pageName?: string) => {
@@ -37,8 +36,6 @@ export function registerTaskSessionHandlers(): void {
   handle('browser-preview:status', async () => {
     return { active: isScreencastActive() };
   });
-
-  // ─── Session resume (proxied to daemon) ──────────────────────────────────────
 
   handle(
     'session:resume',
@@ -77,8 +74,6 @@ export function registerTaskSessionHandlers(): void {
       return task;
     },
   );
-
-  // ─── Permission response (proxied to daemon) ────────────────────────────────
 
   handle(
     'permission:respond',

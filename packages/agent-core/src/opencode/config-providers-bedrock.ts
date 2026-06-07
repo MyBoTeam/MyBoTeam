@@ -1,4 +1,3 @@
-/** Bedrock provider config builder. */
 import type { BedrockCredentials } from '../common/types/auth.js';
 import { createConsoleLogger } from '../utils/logging.js';
 import type { ProviderModelConfig } from './config-generator.js';
@@ -47,7 +46,6 @@ export async function buildBedrockConfig(ctx: ProviderBuildContext): Promise<Pro
     };
   }
 
-  // Legacy path: API key stored as JSON
   const bedrockCredsJson = getApiKey('bedrock');
   if (!bedrockCredsJson) {
     return { configs: [], enableToAdd: [] };

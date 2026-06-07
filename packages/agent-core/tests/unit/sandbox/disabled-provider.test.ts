@@ -47,8 +47,6 @@ describe('DisabledSandboxProvider', () => {
       env: { COMSPEC: 'cmd.exe' },
     };
 
-    // Deep-clone nested arrays/objects so the assertion catches mutations to
-    // original.args and original.env references (shallow spread would miss these).
     const frozen: SpawnArgs = {
       file: original.file,
       args: [...original.args],

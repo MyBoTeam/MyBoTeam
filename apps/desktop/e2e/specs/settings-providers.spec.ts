@@ -3,24 +3,13 @@ import { expect, test } from '../fixtures';
 import { SettingsPage } from '../pages';
 import { captureForAI } from '../utils';
 
-/**
- * Comprehensive E2E tests for all provider settings permutations
- *
- * Provider order (4 columns per row):
- * Row 1: OpenAI, Anthropic, Google (Gemini), Bedrock
- * Row 2: Moonshot AI, Azure AI Foundry, DeepSeek, Z-AI
- * Row 3: Ollama, LM Studio, xAI, OpenRouter
- * Row 4: LiteLLM, MiniMax
- */
 test.describe('Settings - All Providers', () => {
-  // ===== GOOGLE (GEMINI) PROVIDER =====
   test.describe('Google (Gemini) Provider', () => {
     test('should display Google provider card in first row', async ({ window }) => {
       const settingsPage = new SettingsPage(window);
       await window.waitForLoadState('domcontentloaded');
       await settingsPage.navigateToSettings();
 
-      // Google is in first 4, should be visible without Show All
       const googleCard = settingsPage.getProviderCard('google');
       await expect(googleCard).toBeVisible({ timeout: TEST_TIMEOUTS.NAVIGATION });
 
@@ -62,7 +51,6 @@ test.describe('Settings - All Providers', () => {
     });
   });
 
-  // ===== XAI PROVIDER =====
   test.describe('xAI Provider', () => {
     test('should display xAI provider card in expanded view', async ({ window }) => {
       const settingsPage = new SettingsPage(window);
@@ -71,7 +59,6 @@ test.describe('Settings - All Providers', () => {
 
       await settingsPage.toggleShowAll();
 
-      // xAI is not in first 4, should be visible after Show All
       const xaiCard = settingsPage.getProviderCard('xai');
       await expect(xaiCard).toBeVisible({ timeout: TEST_TIMEOUTS.NAVIGATION });
 
@@ -117,14 +104,12 @@ test.describe('Settings - All Providers', () => {
     });
   });
 
-  // ===== OPENAI PROVIDER =====
   test.describe('OpenAI Provider', () => {
     test('should display OpenAI provider card in first row', async ({ window }) => {
       const settingsPage = new SettingsPage(window);
       await window.waitForLoadState('domcontentloaded');
       await settingsPage.navigateToSettings();
 
-      // OpenAI is in first 4
       const openaiCard = settingsPage.getProviderCard('openai');
       await expect(openaiCard).toBeVisible({ timeout: TEST_TIMEOUTS.NAVIGATION });
 
@@ -164,20 +149,17 @@ test.describe('Settings - All Providers', () => {
     });
   });
 
-  // ===== GRID LAYOUT TESTS =====
   test.describe('Provider Grid Layout', () => {
     test('should display 4 providers in collapsed view', async ({ window }) => {
       const settingsPage = new SettingsPage(window);
       await window.waitForLoadState('domcontentloaded');
       await settingsPage.navigateToSettings();
 
-      // First 4 providers should be visible
       await expect(settingsPage.getProviderCard('openai')).toBeVisible();
       await expect(settingsPage.getProviderCard('anthropic')).toBeVisible();
       await expect(settingsPage.getProviderCard('google')).toBeVisible();
       await expect(settingsPage.getProviderCard('bedrock')).toBeVisible();
 
-      // 5th provider (moonshot) should NOT be visible in collapsed view
       await expect(settingsPage.getProviderCard('moonshot')).not.toBeVisible();
 
       await captureForAI(window, 'settings-grid', 'collapsed-view', [
@@ -193,7 +175,6 @@ test.describe('Settings - All Providers', () => {
 
       await settingsPage.toggleShowAll();
 
-      // All providers should be visible
       const allProviders = [
         'openai',
         'anthropic',
@@ -226,18 +207,14 @@ test.describe('Settings - All Providers', () => {
       await window.waitForLoadState('domcontentloaded');
       await settingsPage.navigateToSettings();
 
-      // Initial state - Show All button visible
       await expect(settingsPage.showAllButton).toBeVisible();
 
-      // Click Show All
       await settingsPage.toggleShowAll();
       await expect(settingsPage.hideButton).toBeVisible();
 
-      // Click Hide
       await settingsPage.toggleShowAll();
       await expect(settingsPage.showAllButton).toBeVisible();
 
-      // Moonshot should be hidden again (5th provider)
       await expect(settingsPage.getProviderCard('moonshot')).not.toBeVisible();
 
       await captureForAI(window, 'settings-grid', 'toggle-behavior', [
@@ -247,22 +224,18 @@ test.describe('Settings - All Providers', () => {
     });
   });
 
-  // ===== PROVIDER SELECTION FLOW =====
   test.describe('Provider Selection Flow', () => {
     test('should switch between providers in first row', async ({ window }) => {
       const settingsPage = new SettingsPage(window);
       await window.waitForLoadState('domcontentloaded');
       await settingsPage.navigateToSettings();
 
-      // Select Anthropic
       await settingsPage.selectProvider('anthropic');
       await expect(settingsPage.apiKeyInput).toBeVisible();
 
-      // Switch to OpenAI
       await settingsPage.selectProvider('openai');
       await expect(settingsPage.apiKeyInput).toBeVisible();
 
-      // Switch to Google
       await settingsPage.selectProvider('google');
       await expect(settingsPage.apiKeyInput).toBeVisible();
 
@@ -277,16 +250,13 @@ test.describe('Settings - All Providers', () => {
       await window.waitForLoadState('domcontentloaded');
       await settingsPage.navigateToSettings();
 
-      // Select Anthropic (classic API key provider)
       await settingsPage.selectProvider('anthropic');
       await expect(settingsPage.apiKeyInput).toBeVisible();
 
-      // Expand and switch to Ollama (URL-based provider)
       await settingsPage.toggleShowAll();
       await settingsPage.selectProvider('ollama');
       await expect(settingsPage.ollamaServerUrlInput).toBeVisible();
 
-      // API key input should not be visible for Ollama
       await expect(settingsPage.apiKeyInput).not.toBeVisible();
 
       await captureForAI(window, 'settings-selection', 'switch-provider-types', [
@@ -300,16 +270,13 @@ test.describe('Settings - All Providers', () => {
       await window.waitForLoadState('domcontentloaded');
       await settingsPage.navigateToSettings();
 
-      // Expand and select Ollama first
       await settingsPage.toggleShowAll();
       await settingsPage.selectProvider('ollama');
       await expect(settingsPage.ollamaServerUrlInput).toBeVisible();
 
-      // Switch back to Anthropic
       await settingsPage.selectProvider('anthropic');
       await expect(settingsPage.apiKeyInput).toBeVisible();
 
-      // Ollama URL should not be visible
       await expect(settingsPage.ollamaServerUrlInput).not.toBeVisible();
 
       await captureForAI(window, 'settings-selection', 'switch-back-to-classic', [
@@ -319,7 +286,6 @@ test.describe('Settings - All Providers', () => {
     });
   });
 
-  // ===== PROVIDER SETTINGS PANEL =====
   test.describe('Provider Settings Panel', () => {
     test('should display provider header with logo and name', async ({ window }) => {
       const settingsPage = new SettingsPage(window);
@@ -328,7 +294,6 @@ test.describe('Settings - All Providers', () => {
 
       await settingsPage.selectProvider('anthropic');
 
-      // Verify settings panel is visible
       const settingsPanel = window.getByTestId('provider-settings-panel');
       await expect(settingsPanel).toBeVisible();
 

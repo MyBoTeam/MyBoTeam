@@ -1,40 +1,20 @@
-/**
- * Socket Transport
- *
- * A DaemonTransport implementation that communicates over a Unix socket
- * (macOS/Linux) or Windows named pipe. Connects to a DaemonRpcServer
- * using the same newline-delimited JSON protocol.
- *
- * ESM module — use .js extensions on imports.
- */
-
 import { connect, type Socket } from 'node:net';
 import type { DaemonTransport, JsonRpcMessage } from '../common/types/daemon.js';
 import { getSocketPath } from './socket-path.js';
 
-const MAX_BUFFER_BYTES = 1 * 1024 * 1024; // 1 MB — matches DaemonRpcServer
+const MAX_BUFFER_BYTES = 1 * 1024 * 1024;
 
 type MessageHandler = (message: JsonRpcMessage) => void;
 type DisconnectHandler = () => void;
 
 export interface SocketTransportOptions {
-  /** Override the default socket path derived from dataDir / global default. */
   socketPath?: string;
-  /** Data directory — used to derive socket path if socketPath not provided. */
+
   dataDir?: string;
-  /** Connection timeout in ms (default: 5000). */
+
   connectTimeout?: number;
 }
 
-/**
- * Create a DaemonTransport backed by a socket connection.
- *
- * Resolves when the socket is connected and ready. Rejects on connection
- * error or timeout.
- *
- * The returned transport has an additional `onDisconnect` method for
- * reconnection logic.
- */
 export async function createSocketTransport(
   options: SocketTransportOptions = {},
 ): Promise<DaemonTransport & { onDisconnect: (handler: DisconnectHandler) => void }> {
@@ -44,8 +24,6 @@ export async function createSocketTransport(
   const socket = await connectToSocket(socketPath, connectTimeout);
   return createTransportFromSocket(socket);
 }
-
-// ── Internal helpers ──────────────────────────────────────────────────────────
 
 function connectToSocket(socketPath: string, timeoutMs: number): Promise<Socket> {
   return new Promise<Socket>((resolve, reject) => {
@@ -83,13 +61,11 @@ function createTransportFromSocket(
 
     buffer += chunk;
 
-    // Guard against runaway payloads
     if (buffer.length > MAX_BUFFER_BYTES) {
       socket.destroy();
       return;
     }
 
-    // Newline-delimited JSON: split on \n, keep incomplete last segment
     const lines = buffer.split('\n');
     buffer = lines.pop() ?? '';
 

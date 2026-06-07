@@ -1,8 +1,3 @@
-/**
- * HTTP routing handler for the HuggingFace Local inference server.
- * Routes requests to the appropriate sub-handler and sets CORS headers.
- */
-
 import type http from 'node:http';
 import { getLogCollector } from '../../logging';
 import { handleChatCompletion, handleStreamingCompletion } from './chat-completions';
@@ -12,9 +7,6 @@ import { type ChatCompletionRequest, state } from './server-state';
 export { handleChatCompletion, handleStreamingCompletion } from './chat-completions';
 export { readBody } from './request-helpers';
 
-/**
- * Create the HTTP request handler for the inference server.
- */
 export function createRequestHandler(): (
   req: http.IncomingMessage,
   res: http.ServerResponse,
@@ -31,7 +23,6 @@ export function createRequestHandler(): (
     const url = req.url || '';
 
     try {
-      // GET /v1/models
       if (req.method === 'GET' && url === '/v1/models') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(
@@ -52,7 +43,6 @@ export function createRequestHandler(): (
         return;
       }
 
-      // POST /v1/chat/completions
       if (req.method === 'POST' && url === '/v1/chat/completions') {
         if (state.isLoading) {
           writeJsonError(res, 503, 'Model is loading, please wait', 'server_error');
@@ -81,9 +71,7 @@ export function createRequestHandler(): (
         for (const message of chatReq.messages) {
           if (
             !message ||
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (message as any).role === undefined ||
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (message as any).content === undefined ||
             typeof message.content !== 'string' ||
             !['system', 'user', 'assistant'].includes(message.role)
@@ -101,7 +89,6 @@ export function createRequestHandler(): (
         return;
       }
 
-      // Health check
       if (req.method === 'GET' && (url === '/health' || url === '/')) {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(
@@ -114,9 +101,7 @@ export function createRequestHandler(): (
         return;
       }
 
-      // 404 for everything else
       writeJsonError(res, 404, 'Not found', 'invalid_request');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       getLogCollector().logEnv('ERROR', '[HF Server] Request error:', { error: String(error) });
 

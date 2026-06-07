@@ -1,5 +1,3 @@
-// apps/desktop/src/renderer/components/settings/shared/FormError.tsx
-
 import { AnimatePresence, motion } from 'framer-motion';
 import { settingsTransitions, settingsVariants } from '@/lib/animations';
 

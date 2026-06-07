@@ -27,9 +27,7 @@ export function getDaemonNodePath(): string {
           return nested;
         }
       }
-    } catch {
-      // intentionally empty
-    }
+    } catch {}
   }
   return process.execPath;
 }

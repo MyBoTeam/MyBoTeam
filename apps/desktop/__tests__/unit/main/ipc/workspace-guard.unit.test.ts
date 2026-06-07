@@ -1,16 +1,5 @@
-/**
- * Tests for the workspace daemon guard (hasDaemonActiveTasks).
- *
- * Verifies three states:
- * 1. Daemon reachable + tasks running → block workspace changes
- * 2. Daemon reachable + no tasks → allow workspace changes
- * 3. Daemon unreachable + explicitly stopped → allow (no tasks possible)
- * 4. Daemon unreachable + not stopped (crash/disconnect) → block (fail closed)
- */
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Prevent undici from crashing on Node 20 (undici 8 requires Node 22 APIs)
 vi.mock('undici', () => ({
   ProxyAgent: class ProxyAgent {},
   Agent: class Agent {},
@@ -19,7 +8,6 @@ vi.mock('undici', () => ({
   getGlobalDispatcher: vi.fn(),
 }));
 
-// Mock electron
 vi.mock('electron', () => ({
   ipcMain: {
     handle: vi.fn(),
@@ -36,7 +24,6 @@ vi.mock('electron', () => ({
   app: { getPath: vi.fn(() => '/mock/userData') },
 }));
 
-// Track mock state
 let mockActiveCount = 0;
 let mockDaemonReachable = true;
 let mockDaemonStopped = false;
@@ -90,10 +77,8 @@ vi.mock('@myboteam/agent-core', async (importOriginal) => {
   };
 });
 
-// Import after mocks
 const { registerWorkspaceHandlers } = await import('@main/ipc/handlers/workspace-handlers');
 
-// Get the registered handler
 const { ipcMain } = await import('electron');
 const mockedIpcMain = ipcMain as unknown as {
   handle: ReturnType<typeof vi.fn>;

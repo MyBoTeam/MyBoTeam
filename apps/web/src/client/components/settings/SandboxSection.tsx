@@ -30,8 +30,6 @@ export function SandboxSection({ visible }: SandboxSectionProps) {
     const newEnabled = !sandboxEnabled;
     const newMode = newEnabled ? 'native' : 'disabled';
 
-    // Round-trip the full existing config, only mutating the mode, so
-    // allowedPaths / allowedHosts / networkRestricted are preserved.
     const updated: SandboxConfig = {
       ...(sandboxConfig ?? {
         allowedPaths: [],

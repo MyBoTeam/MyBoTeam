@@ -32,7 +32,7 @@ export function LiteLLMConnectedSection({
       transition={settingsTransitions.enter}
       className="space-y-3"
     >
-      {/* Display saved connection details */}
+      {}
       <div className="space-y-3">
         <div>
           <label className="mb-2 block text-sm font-medium text-foreground">

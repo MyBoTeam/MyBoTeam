@@ -90,9 +90,7 @@ export function uninstallLaunchAgent(): void {
   try {
     execSync(`launchctl unload "${agentPath}" 2>/dev/null || true`, { stdio: 'pipe' });
     logD('INFO', '[ServiceManager] LaunchAgent unloaded');
-  } catch {
-    // May not be loaded
-  }
+  } catch {}
 
   if (fs.existsSync(agentPath)) {
     fs.unlinkSync(agentPath);
@@ -110,7 +108,5 @@ function logD(level: 'INFO' | 'WARN' | 'ERROR', msg: string): void {
     if (l?.log) {
       l.log(level, 'daemon', msg);
     }
-  } catch (_e) {
-    /* best-effort */
-  }
+  } catch (_e) {}
 }

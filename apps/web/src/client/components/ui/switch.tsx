@@ -38,7 +38,7 @@ export interface SwitchProps
   extends React.ComponentPropsWithoutRef<typeof SwitchPrimitive.Root>,
     VariantProps<typeof switchVariants> {
   checked?: boolean;
-  /** Called with the new checked state when the switch is toggled. */
+
   onCheckedChange?: (checked: boolean) => void;
   ariaLabel?: string;
 }

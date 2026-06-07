@@ -33,7 +33,7 @@ export function OpenRouterConnectedSection({
       transition={settingsTransitions.enter}
       className="space-y-3"
     >
-      {/* Connected: Show masked key + Connected button + Model */}
+      {}
       <div className="flex items-center justify-between">
         <label className="text-sm font-medium text-foreground">{t('apiKey.title')}</label>
         {meta.helpUrl && (

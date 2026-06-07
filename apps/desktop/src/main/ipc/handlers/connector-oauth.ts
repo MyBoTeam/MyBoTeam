@@ -1,10 +1,6 @@
 import type { OAuthClientRegistration, OAuthMetadata } from '@myboteam/agent-core/desktop-main';
 
-// In-memory store for pending OAuth flows (keyed by state parameter).
-// Stays in main because it's transient (lives only between start-oauth
-// and complete-oauth) and the flow pairs the callback state with locally
-// generated PKCE values — nothing persistent.
-export const OAUTH_FLOW_TTL_MS = 10 * 60 * 1000; // 10 minutes
+export const OAUTH_FLOW_TTL_MS = 10 * 60 * 1000;
 
 export const pendingOAuthFlows = new Map<
   string,

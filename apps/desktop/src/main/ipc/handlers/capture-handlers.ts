@@ -4,9 +4,6 @@ import { getDaemonClient } from '../../daemon-bootstrap';
 import { assertTrustedWindow, handle } from './utils';
 
 export function registerCaptureHandlers(): void {
-  // Milestone 3 sub-chunk 3c: `storage.getDebugMode()` now routes through
-  // the daemon via `settings.getAll`. Each debug-mode gate is an RPC; the
-  // handlers are user-triggered (Cmd+Shift+I capture), not hot loops.
   const assertDebugModeEnabled = async () => {
     const snap = await getDaemonClient().call('settings.getAll');
     if (!snap.app.debugMode) {

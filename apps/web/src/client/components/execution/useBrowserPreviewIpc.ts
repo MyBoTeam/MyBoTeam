@@ -1,13 +1,3 @@
-/**
- * useBrowserPreviewIpc — IPC subscription sub-hook for useBrowserPreview.
- *
- * Handles subscribing/unsubscribing to browser:frame, browser:navigate, and
- * browser:status events from the main process, and stops the preview stream
- * when taskId changes or the component unmounts.
- *
- * Extracted from useBrowserPreview.ts to keep file size under 200 lines.
- */
-
 import { useEffect } from 'react';
 import type { ViewStatus } from './StatusBadge';
 
@@ -28,17 +18,12 @@ interface UseBrowserPreviewIpcOptions {
   }) => void;
 }
 
-/**
- * Subscribes to IPC events (frame / navigate / status) and cleans up on unmount.
- * Also stops the browser preview stream when taskId changes or component unmounts.
- */
 export function useBrowserPreviewIpc({
   taskId,
   handleFrame,
   handleNavigate,
   handleStatus,
 }: UseBrowserPreviewIpcOptions): void {
-  // Register IPC listeners — re-run when any handler reference changes (e.g. pageName change).
   useEffect(() => {
     const api = window.myboteam;
     if (!api) {
@@ -64,8 +49,6 @@ export function useBrowserPreviewIpc({
     };
   }, [handleFrame, handleNavigate, handleStatus]);
 
-  // Stop the browser preview only when taskId changes or the component unmounts,
-  // not when the IPC listener callbacks are rebound (e.g. on pageName change).
   useEffect(() => {
     const api = window.myboteam;
     return () => {
@@ -74,5 +57,4 @@ export function useBrowserPreviewIpc({
   }, [taskId]);
 }
 
-// Re-export ViewStatus so callers don't need an extra import
 export type { ViewStatus };

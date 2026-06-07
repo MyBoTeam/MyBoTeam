@@ -99,7 +99,7 @@ describe('scheduled-tasks repository', () => {
       expect(result.enabled).toBe(true);
       expect(mockDb.run).toHaveBeenCalled();
       const args = mockDb.run.mock.calls[0][1];
-      expect(args[0]).toBeTypeOf('string'); // id (uuid)
+      expect(args[0]).toBeTypeOf('string');
       expect(args[1]).toBe('0 9 * * 1-5');
       expect(args[2]).toBe('Daily report');
       expect(args[3]).toBe('ws-1');
@@ -131,8 +131,8 @@ describe('scheduled-tasks repository', () => {
       setScheduledTaskEnabled('task-1', true);
       expect(mockDb.run).toHaveBeenCalled();
       const args = mockDb.run.mock.calls[0][1];
-      expect(args[0]).toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/); // next_run_at is ISO date
-      expect(args[1]).toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/); // updated_at is ISO date
+      expect(args[0]).toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
+      expect(args[1]).toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
       expect(args[2]).toBe('task-1');
     });
 
@@ -140,12 +140,12 @@ describe('scheduled-tasks repository', () => {
       setScheduledTaskEnabled('task-1', false);
       expect(mockDb.run).toHaveBeenCalled();
       const args = mockDb.run.mock.calls[0][1];
-      expect(args[0]).toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/); // updated_at is ISO date
+      expect(args[0]).toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
       expect(args[1]).toBe('task-1');
     });
 
     it('throws when enabling a task with unresolvable cron', () => {
-      mockDb.exec.mockReturnValueOnce(qResult({ cron: '0 0 30 2 *' })); // Feb 30
+      mockDb.exec.mockReturnValueOnce(qResult({ cron: '0 0 30 2 *' }));
       expect(() => setScheduledTaskEnabled('task-1', true)).toThrow('Cannot enable schedule');
     });
   });

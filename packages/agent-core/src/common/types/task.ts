@@ -10,13 +10,6 @@ export type TaskStatus =
   | 'cancelled'
   | 'interrupted';
 
-/**
- * Originating surface for a task. Drives the no-UI auto-deny safeguard for
- * file-permission and question prompts:
- *   - `'ui'` (default): prompt the UI if connected; auto-deny if no UI client is attached.
- *   - `'whatsapp'`: route through the WhatsApp task-bridge, which auto-denies all prompts.
- *   - `'scheduler'`: scheduled/headless task; prompt UI only when connected, otherwise auto-deny.
- */
 export type TaskSource = 'ui' | 'whatsapp' | 'scheduler';
 
 export interface TaskConfig {
@@ -27,41 +20,29 @@ export interface TaskConfig {
   systemPromptAppend?: string;
   outputSchema?: object;
   sessionId?: string;
-  /** Model ID for display name or CLI override */
+
   modelId?: string;
-  /** Provider ID for CLI override */
+
   provider?: string;
-  /**
-   * User-attached files (drag-and-drop or file picker). Ephemeral — paths reference
-   * the host filesystem at submission time and are not persisted with the task.
-   */
+
   files?: FileAttachmentInfo[];
-  /**
-   * Originating surface. Callers (UI RPC, WhatsApp bridge, scheduler) set this so the
-   * daemon can apply the right permission-prompt policy. Defaults to `'ui'` when omitted.
-   */
+
   source?: TaskSource;
-  /**
-   * Workspace this task belongs to. Threaded into the daemon's `onBeforeStart`
-   * so `resolveTaskConfig` can load per-workspace knowledge notes. Optional —
-   * scheduler/WhatsApp tasks may run without a workspace context.
-   */
+
   workspaceId?: string;
 }
 
-/** Metadata for a user-attached file in a task. */
 export interface FileAttachmentInfo {
-  /** Unique identifier for this attachment */
   id: string;
-  /** Original filename */
+
   name: string;
-  /** Absolute or working-directory-relative file path */
+
   path: string;
-  /** Categorized file type based on extension */
+
   type: 'image' | 'text' | 'code' | 'pdf' | 'other';
-  /** File size in bytes */
+
   size: number;
-  /** Pre-read file content for text/code files (populated by IPC handler in Electron) */
+
   content?: string;
 }
 
@@ -90,23 +71,14 @@ export interface TaskMessage {
   type: 'assistant' | 'user' | 'tool' | 'system';
   content: string;
   toolName?: string;
-  /**
-   * Tool-execution state for `type: 'tool'` messages. Populated by the SDK adapter from
-   * `message.part.updated` events so the UI can render live state transitions:
-   *   - `'running'`: tool invocation in progress (spinner)
-   *   - `'completed'`: tool finished successfully (checkmark)
-   *   - `'error'`: tool failed (red)
-   *
-   * Consumers should merge tool messages by stable `id` and preserve the latest `toolStatus`
-   * rather than appending a new row per state transition.
-   */
+
   toolStatus?: 'running' | 'completed' | 'error';
   toolInput?: unknown;
   timestamp: string;
   attachments?: TaskAttachment[];
-  /** Model ID that produced this message (populated by the SDK adapter). */
+
   modelId?: string;
-  /** Provider ID that produced this message (populated by the SDK adapter). */
+
   providerId?: string;
 }
 
@@ -122,11 +94,11 @@ export type TaskPauseAction =
       type: 'google-file-picker';
       label: string;
       pendingLabel?: string;
-      /** Pre-filled search query for the file picker UI */
+
       query?: string;
-      /** Label of the Google account to open the picker for */
+
       accountLabel?: string;
-      /** Email of the Google account to open the picker for */
+
       accountEmail?: string;
     };
 
@@ -162,11 +134,6 @@ export type StartupStage =
   | 'connecting'
   | 'waiting';
 
-/**
- * Array of all valid startup stage values.
- * Order reflects the typical startup progression.
- * Typed as readonly string[] for easy use with .includes() on string values.
- */
 export const STARTUP_STAGES: readonly string[] = [
   'starting',
   'browser',

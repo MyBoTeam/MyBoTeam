@@ -10,11 +10,6 @@ import {
   generateSalt,
 } from './secure-storage-crypto.js';
 
-/**
- * AES-256-GCM encryption using machine-derived keys. Less secure than OS Keychain
- * (key derivation is reversible) but avoids permission prompts on macOS.
- * Suitable for API keys that can be rotated if compromised.
- */
 export interface SecureStorageOptions {
   storagePath: string;
   appId: string;

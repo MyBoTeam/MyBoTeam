@@ -16,9 +16,7 @@ function logD(level: 'INFO' | 'WARN' | 'ERROR', msg: string): void {
     if (l?.log) {
       l.log(level, 'daemon', msg);
     }
-  } catch (_e) {
-    /* best-effort */
-  }
+  } catch (_e) {}
 }
 
 function getSystemdServiceDir(): string {
@@ -83,9 +81,7 @@ export function uninstallSystemdService(): void {
     execSync(`systemctl --user disable ${SYSTEMD_SERVICE_NAME}`, { stdio: 'pipe' });
     execSync(`systemctl --user stop ${SYSTEMD_SERVICE_NAME}`, { stdio: 'pipe' });
     logD('INFO', '[ServiceManager] systemd user service disabled and stopped');
-  } catch {
-    // Service might not be running
-  }
+  } catch {}
 
   if (fs.existsSync(servicePath)) {
     fs.unlinkSync(servicePath);
@@ -94,9 +90,7 @@ export function uninstallSystemdService(): void {
 
   try {
     execSync('systemctl --user daemon-reload', { stdio: 'pipe' });
-  } catch {
-    // Best effort
-  }
+  } catch {}
 }
 
 export function isSystemdServiceEnabled(): boolean {

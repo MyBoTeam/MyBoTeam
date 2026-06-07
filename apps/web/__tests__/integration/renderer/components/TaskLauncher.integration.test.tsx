@@ -1,21 +1,12 @@
-/**
- * Integration tests for TaskLauncher and TaskLauncherItem components
- * Tests rendering, filtering, keyboard navigation, and task selection
- * @module __tests__/integration/renderer/components/TaskLauncher.integration.test
- * @vitest-environment jsdom
- */
-
 import type { Task, TaskStatus } from '@myboteam/agent-core';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Create mock functions outside of mock factory
 const mockStartTask = vi.fn();
 const mockCloseLauncher = vi.fn();
 const mockHasAnyApiKey = vi.fn();
 
-// Helper to create mock tasks
 function createMockTask(
   id: string,
   prompt: string = 'Test task',
@@ -31,7 +22,6 @@ function createMockTask(
   };
 }
 
-// Mock myboteam API
 const mockMyBoTeam = {
   hasAnyApiKey: mockHasAnyApiKey,
   getSelectedModel: vi.fn().mockResolvedValue({ provider: 'anthropic', id: 'claude-3-opus' }),
@@ -49,7 +39,7 @@ const mockMyBoTeam = {
     },
     debugMode: false,
   }),
-  // Provider settings methods
+
   setActiveProvider: vi.fn().mockResolvedValue(undefined),
   setConnectedProvider: vi.fn().mockResolvedValue(undefined),
   removeConnectedProvider: vi.fn().mockResolvedValue(undefined),
@@ -66,13 +56,11 @@ const mockMyBoTeam = {
   onThemeColorChange: vi.fn().mockReturnValue(() => {}),
 };
 
-// Mock the myboteam module
 vi.mock('@/lib/myboteam', () => ({
   getMyBoTeam: () => mockMyBoTeam,
   useMyBoTeam: () => mockMyBoTeam,
 }));
 
-// Create a store state holder for testing
 let mockStoreState = {
   isLauncherOpen: false,
   closeLauncher: mockCloseLauncher,
@@ -80,12 +68,10 @@ let mockStoreState = {
   startTask: mockStartTask,
 };
 
-// Mock the task store
 vi.mock('@/stores/taskStore', () => ({
   useTaskStore: () => mockStoreState,
 }));
 
-// Mock framer-motion to simplify testing animations
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => (
@@ -95,7 +81,6 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-// Need to import after mocks are set up
 import { TaskLauncher } from '@/components/TaskLauncher/TaskLauncher';
 import { TaskLauncherItem } from '@/components/TaskLauncher/TaskLauncherItem';
 
@@ -108,26 +93,20 @@ describe('TaskLauncherItem', () => {
 
   describe('rendering', () => {
     it('should render task prompt', () => {
-      // Arrange
       const task = createMockTask('task-1', 'Check my email inbox');
 
-      // Act
       render(<TaskLauncherItem task={task} isSelected={false} onClick={mockOnClick} />);
 
-      // Assert
       expect(screen.getByText('Check my email inbox')).toBeInTheDocument();
     });
 
     it('should render task with truncated long prompt', () => {
-      // Arrange
       const longPrompt =
         'This is a very long task prompt that should be truncated when displayed in the UI to prevent overflow';
       const task = createMockTask('task-1', longPrompt);
 
-      // Act
       render(<TaskLauncherItem task={task} isSelected={false} onClick={mockOnClick} />);
 
-      // Assert
       const promptElement = screen.getByText(longPrompt);
       expect(promptElement.className).toContain('truncate');
     });
@@ -135,72 +114,57 @@ describe('TaskLauncherItem', () => {
 
   describe('status icons', () => {
     it('should show spinning loader for running tasks', () => {
-      // Arrange
       const task = createMockTask('task-1', 'Running task', 'running');
 
-      // Act
       const { container } = render(
         <TaskLauncherItem task={task} isSelected={false} onClick={mockOnClick} />,
       );
 
-      // Assert - Check for spinning loader icon
       const spinner = container.querySelector('.animate-spin');
       expect(spinner).toBeInTheDocument();
       expect(spinner?.getAttribute('class')).toContain('text-muted-foreground');
     });
 
     it('should show green dot for completed tasks', () => {
-      // Arrange
       const task = createMockTask('task-1', 'Completed task', 'completed');
 
-      // Act
       const { container } = render(
         <TaskLauncherItem task={task} isSelected={false} onClick={mockOnClick} />,
       );
 
-      // Assert - Status dot should have green color
       const dot = container.querySelector('.bg-green-500');
       expect(dot).toBeInTheDocument();
     });
 
     it('should show destructive dot for failed tasks', () => {
-      // Arrange
       const task = createMockTask('task-1', 'Failed task', 'failed');
 
-      // Act
       const { container } = render(
         <TaskLauncherItem task={task} isSelected={false} onClick={mockOnClick} />,
       );
 
-      // Assert - Status dot should have destructive color
       const dot = container.querySelector('.bg-destructive');
       expect(dot).toBeInTheDocument();
     });
 
     it('should show muted dot for cancelled tasks', () => {
-      // Arrange
       const task = createMockTask('task-1', 'Cancelled task', 'cancelled');
 
-      // Act
       const { container } = render(
         <TaskLauncherItem task={task} isSelected={false} onClick={mockOnClick} />,
       );
 
-      // Assert - Status dot should have muted-foreground color
       const dot = container.querySelector('.bg-muted-foreground');
       expect(dot).toBeInTheDocument();
     });
 
     it('should show yellow dot for interrupted tasks', () => {
-      // Arrange
       const task = createMockTask('task-1', 'Interrupted task', 'interrupted');
 
-      // Act
       const { container } = render(
         <TaskLauncherItem task={task} isSelected={false} onClick={mockOnClick} />,
       );
 
-      // Assert - Status dot should have yellow color
       const dot = container.querySelector('.bg-yellow-500');
       expect(dot).toBeInTheDocument();
     });
@@ -208,30 +172,24 @@ describe('TaskLauncherItem', () => {
 
   describe('selection state', () => {
     it('should highlight when isSelected is true', () => {
-      // Arrange
       const task = createMockTask('task-1', 'Selected task');
 
-      // Act
       const { container } = render(
         <TaskLauncherItem task={task} isSelected={true} onClick={mockOnClick} />,
       );
 
-      // Assert
       const button = container.querySelector('button');
       expect(button?.className).toContain('bg-primary');
       expect(button?.className).toContain('text-primary-foreground');
     });
 
     it('should not highlight when isSelected is false', () => {
-      // Arrange
       const task = createMockTask('task-1', 'Unselected task');
 
-      // Act
       const { container } = render(
         <TaskLauncherItem task={task} isSelected={false} onClick={mockOnClick} />,
       );
 
-      // Assert
       const button = container.querySelector('button');
       expect(button?.className).toContain('text-foreground');
       expect(button?.className).toContain('hover:bg-accent');
@@ -240,26 +198,20 @@ describe('TaskLauncherItem', () => {
 
   describe('interaction', () => {
     it('should call onClick when clicked', () => {
-      // Arrange
       const task = createMockTask('task-1', 'Clickable task');
 
-      // Act
       render(<TaskLauncherItem task={task} isSelected={false} onClick={mockOnClick} />);
       const button = screen.getByRole('button');
       fireEvent.click(button);
 
-      // Assert
       expect(mockOnClick).toHaveBeenCalledTimes(1);
     });
 
     it('should be a button element', () => {
-      // Arrange
       const task = createMockTask('task-1', 'Task');
 
-      // Act
       render(<TaskLauncherItem task={task} isSelected={false} onClick={mockOnClick} />);
 
-      // Assert
       const button = screen.getByRole('button');
       expect(button.tagName).toBe('BUTTON');
     });
@@ -269,14 +221,14 @@ describe('TaskLauncherItem', () => {
 describe('TaskLauncher', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset store state
+
     mockStoreState = {
       isLauncherOpen: false,
       closeLauncher: mockCloseLauncher,
       tasks: [],
       startTask: mockStartTask,
     };
-    // Set up default provider settings with a ready provider
+
     mockMyBoTeam.getProviderSettings.mockResolvedValue({
       activeProviderId: 'anthropic',
       connectedProviders: {
@@ -293,10 +245,8 @@ describe('TaskLauncher', () => {
 
   describe('opening and closing', () => {
     it('should not render when isLauncherOpen is false', () => {
-      // Arrange
       mockStoreState.isLauncherOpen = false;
 
-      // Act
       render(
         <MemoryRouter>
           <TaskLauncher />
@@ -356,10 +306,8 @@ describe('TaskLauncher', () => {
     });
 
     it('should call closeLauncher when Escape is pressed', () => {
-      // Arrange
       mockStoreState.isLauncherOpen = true;
 
-      // Act
       render(
         <MemoryRouter>
           <TaskLauncher />
@@ -387,17 +335,14 @@ describe('TaskLauncher', () => {
       const closeButton = screen.getByRole('button', { name: /close/i });
       fireEvent.click(closeButton);
 
-      // Assert
       expect(mockCloseLauncher).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('new task option', () => {
     it('should show "New task" option', () => {
-      // Arrange
       mockStoreState.isLauncherOpen = true;
 
-      // Act
       render(
         <MemoryRouter>
           <TaskLauncher />
@@ -427,10 +372,8 @@ describe('TaskLauncher', () => {
     });
 
     it('should not show search query preview when search is empty', () => {
-      // Arrange
       mockStoreState.isLauncherOpen = true;
 
-      // Act
       render(
         <MemoryRouter>
           <TaskLauncher />

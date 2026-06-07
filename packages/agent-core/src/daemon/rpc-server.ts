@@ -1,24 +1,9 @@
-/**
- * DaemonRpcServer
- *
- * A Unix socket (or Windows named pipe) based JSON-RPC 2.0 server for the
- * standalone daemon process. Accepts multiple client connections and dispatches
- * registered method handlers.
- *
- * Unlike the in-process `DaemonServer`, this class is intentionally loosely
- * typed so that it can serve any JSON-RPC method without requiring every
- * method to be pre-declared in `DaemonMethodMap`.
- *
- * ESM module — use .js extensions on imports.
- */
-
 import { randomUUID } from 'node:crypto';
 import { createServer, type Server, type Socket } from 'node:net';
 import { type AnyMethodHandler, handleRpcLine } from './rpc-message-handler.js';
 import { getSocketPath } from './socket-path.js';
 
 export interface DaemonRpcServerOptions {
-  /** Override the default Unix socket / named pipe path. */
   socketPath?: string;
   onConnection?: (clientId: string) => void;
   onDisconnection?: (clientId: string) => void;
@@ -45,7 +30,6 @@ export class DaemonRpcServer {
     this.onConnection = options.onConnection;
     this.onDisconnection = options.onDisconnection;
 
-    // Register built-in health check (buildId used for version-guard on app upgrade)
     this.registerMethod('daemon.ping', () => ({
       status: 'ok' as const,
       uptime: Date.now() - this.startTime,
@@ -53,17 +37,10 @@ export class DaemonRpcServer {
     }));
   }
 
-  /**
-   * Register a handler for a JSON-RPC method.
-   */
   registerMethod(method: string, handler: AnyMethodHandler): void {
     this.handlers.set(method, handler);
   }
 
-  /**
-   * Whether any clients are currently connected.
-   * Used to fast-fail permission requests when no UI can respond.
-   */
   hasConnectedClients(): boolean {
     for (const client of this.clients.values()) {
       if (!client.socket.destroyed) {
@@ -73,10 +50,6 @@ export class DaemonRpcServer {
     return false;
   }
 
-  /**
-   * Push a notification to all connected clients.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   notify(method: string, params: any): void {
     const notification = { jsonrpc: '2.0' as const, method, params };
     const data = `${JSON.stringify(notification)}\n`;
@@ -87,12 +60,7 @@ export class DaemonRpcServer {
     }
   }
 
-  /**
-   * Start listening on the socket path.
-   * Removes any stale socket file before binding.
-   */
   async start(): Promise<void> {
-    // Remove stale socket
     await this.removeStaleSocket();
 
     return new Promise<void>((resolve, reject) => {
@@ -134,9 +102,6 @@ export class DaemonRpcServer {
     });
   }
 
-  /**
-   * Stop the server and disconnect all clients.
-   */
   async stop(): Promise<void> {
     for (const client of this.clients.values()) {
       client.socket.destroy();
@@ -157,8 +122,6 @@ export class DaemonRpcServer {
     const { unlink } = await import('node:fs/promises');
     try {
       await unlink(this.socketPath);
-    } catch {
-      // File doesn't exist — that's fine
-    }
+    } catch {}
   }
 }

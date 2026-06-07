@@ -3,15 +3,6 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
-/**
- * Consolidated-DB CRUD test. After v030, the workspaces / workspace_meta /
- * knowledge_notes tables live in `myboteam.db` and are accessed via the
- * shared `getDatabase()` singleton. This test walks the repositories against
- * a fresh v30 DB to prove the repoint from `getMetaDatabase` → `getDatabase`
- * is functionally correct and that no deep import into `workspace-meta-db`
- * remains.
- */
-
 type DbModule = typeof import('../../../src/storage/database.js');
 type WorkspacesModule = typeof import('../../../src/storage/repositories/workspaces.js');
 type KnowledgeNotesModule = typeof import('../../../src/storage/repositories/knowledgeNotes.js');
@@ -32,9 +23,7 @@ describe('workspaces + knowledgeNotes repositories (consolidated DB)', () => {
     if (dbModule) {
       try {
         dbModule.closeDatabase();
-      } catch {
-        /* ignore */
-      }
+      } catch {}
     }
     testDir = path.join(
       os.tmpdir(),
@@ -51,15 +40,11 @@ describe('workspaces + knowledgeNotes repositories (consolidated DB)', () => {
     if (dbModule) {
       try {
         dbModule.closeDatabase();
-      } catch {
-        /* ignore */
-      }
+      } catch {}
     }
     try {
       fs.rmSync(testDir, { recursive: true, force: true });
-    } catch {
-      /* best effort */
-    }
+    } catch {}
   });
 
   it('createDefaultWorkspace, listWorkspaces, getWorkspace round-trip', () => {
@@ -105,18 +90,14 @@ describe('workspaces + knowledgeNotes repositories (consolidated DB)', () => {
     const listed = knModule.listKnowledgeNotes(ws.id);
     expect(listed).toHaveLength(1);
 
-    // deleteWorkspaceRecord should cascade per FK ON DELETE CASCADE.
     wsModule.deleteWorkspace(ws.id);
     const after = knModule.listKnowledgeNotes(ws.id);
     expect(after).toHaveLength(0);
 
-    // Default workspace untouched.
     expect(wsModule.getWorkspace(def.id)).not.toBeNull();
   });
 
   it('no src/ file imports from workspace-meta-db', async () => {
-    // Fail-fast check: if anyone re-adds a deep import to the retired file,
-    // this test surfaces it. Reads source files directly; no runtime needed.
     const srcDir = path.resolve(__dirname, '../../../src');
     const offenders: string[] = [];
     function walk(dir: string) {
@@ -126,7 +107,7 @@ describe('workspaces + knowledgeNotes repositories (consolidated DB)', () => {
           walk(full);
         } else if (entry.isFile() && /\.(ts|tsx|js|mjs)$/.test(entry.name)) {
           const content = fs.readFileSync(full, 'utf8');
-          // Skip the v030 migration file's intentional comment references.
+
           if (full.endsWith('v030-workspace-meta-consolidation.ts')) continue;
           if (
             content.includes('workspace-meta-db') ||

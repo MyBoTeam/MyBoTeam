@@ -6,7 +6,6 @@ import type { TaskState } from './taskStore';
 type SetFn = (partial: Partial<TaskState> | ((state: TaskState) => Partial<TaskState>)) => void;
 type GetFn = () => TaskState;
 
-/** Permission request/response slice of the task store. */
 export function createTaskPermissionActions(set: SetFn, get: GetFn) {
   return {
     setPermissionRequest: (request: PermissionRequest) => {
@@ -25,7 +24,7 @@ export function createTaskPermissionActions(set: SetFn, get: GetFn) {
     respondToPermission: async (response: PermissionResponse) => {
       const myboteam = getMyBoTeam();
       const taskStateToken = get()._taskStateToken;
-      // Save the requestId before the await to detect if a newer request arrived
+
       const requestId = response.requestId;
       void myboteam.logEvent({
         level: 'info',
@@ -38,7 +37,7 @@ export function createTaskPermissionActions(set: SetFn, get: GetFn) {
       }
       set((state) => {
         const existingRequest = state.permissionRequests[response.taskId];
-        // Only clear if the stored request still matches the one we responded to
+
         if (!existingRequest || existingRequest.id !== requestId) {
           return state;
         }

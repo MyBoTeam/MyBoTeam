@@ -63,7 +63,6 @@ function isLockStale(payload: PidLockPayload | null): boolean {
     return !isPidAlive(payload.pid);
   }
 
-  // Unparseable lock file — treat as stale
   return true;
 }
 
@@ -82,9 +81,7 @@ function writeTempLockFile(dir: string, payload: PidLockPayload): string {
 function cleanupTempFile(tmpPath: string): void {
   try {
     unlinkSync(tmpPath);
-  } catch {
-    // Temp file may already be removed
-  }
+  } catch {}
 }
 
 export function acquirePidLock(pidPath?: string): PidLockHandle {
@@ -116,9 +113,7 @@ export function acquirePidLock(pidPath?: string): PidLockHandle {
       if (isLockStale(existingPayload)) {
         try {
           unlinkSync(resolvedPath);
-        } catch {
-          // Another process may have already removed it
-        }
+        } catch {}
         continue;
       }
 
@@ -138,9 +133,7 @@ export function acquirePidLock(pidPath?: string): PidLockHandle {
       released = true;
       try {
         unlinkSync(resolvedPath);
-      } catch {
-        // File may already be removed
-      }
+      } catch {}
     };
 
     return { pidPath: resolvedPath, release };

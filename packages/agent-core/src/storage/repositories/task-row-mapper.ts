@@ -60,14 +60,12 @@ export function getMessagesForTask(taskId: string): TaskMessage[] {
     return [];
   }
 
-  // Fetch all attachments in a single query to avoid N+1
   const messageIds = messageRows.map((r) => r.id);
   const placeholders = messageIds.map(() => '?').join(',');
   const allAttachmentRows = rowsFromResult<AttachmentRow>(
     db.exec(`SELECT * FROM task_attachments WHERE message_id IN (${placeholders})`, messageIds),
   );
 
-  // Group attachments by message_id
   const attachmentsByMessageId = new Map<string, AttachmentRow[]>();
   for (const row of allAttachmentRows) {
     const existing = attachmentsByMessageId.get(row.message_id);

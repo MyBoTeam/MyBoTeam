@@ -6,7 +6,6 @@ import {
   ensureConnected,
   getPage,
   injectActiveTabGlow,
-  removeActiveTabGlow,
   setActivePageOverride,
   startScreencast,
 } from './session-manager.js';

@@ -38,7 +38,7 @@ export function getMyBoTeam() {
       credentials: BedrockCredentials,
     ): Promise<{ valid: boolean; error?: string }> => {
       const result = await window.myboteam!.validateBedrockCredentials(JSON.stringify(credentials));
-      return { valid: result.success, error: result.error };
+      return { valid: result.valid, error: result.error };
     },
 
     saveBedrockCredentials: async (credentials: BedrockCredentials): Promise<ApiKeyConfig> => {
@@ -55,7 +55,7 @@ export function getMyBoTeam() {
       credentials: VertexCredentials,
     ): Promise<{ valid: boolean; error?: string }> => {
       const result = await window.myboteam!.validateVertexCredentials(JSON.stringify(credentials));
-      return { valid: result.success, error: result.error };
+      return { valid: result.valid, error: result.error };
     },
 
     saveVertexCredentials: async (credentials: VertexCredentials): Promise<ApiKeyConfig> => {

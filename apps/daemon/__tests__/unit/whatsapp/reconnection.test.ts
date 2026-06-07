@@ -90,7 +90,6 @@ describe('reconnection', () => {
       expect(state.timer).not.toBeNull();
       expect(onMaxReached).not.toHaveBeenCalled();
 
-      // First attempt: delay = INITIAL_RECONNECT_DELAY_MS * 2^(1-1) = 2000ms
       vi.advanceTimersByTime(INITIAL_RECONNECT_DELAY_MS - 1);
       expect(onConnect).not.toHaveBeenCalled();
 
@@ -108,7 +107,7 @@ describe('reconnection', () => {
       scheduleReconnect(state, onConnect, onMaxReached);
 
       expect(state.attempts).toBe(3);
-      // Third attempt: delay = 2000 * 2^(3-1) = 2000 * 4 = 8000ms
+
       vi.advanceTimersByTime(8000);
       expect(onConnect).toHaveBeenCalledOnce();
     });
@@ -124,7 +123,6 @@ describe('reconnection', () => {
 
       vi.advanceTimersByTime(INITIAL_RECONNECT_DELAY_MS);
 
-      // Should not throw — error is caught and logged
       expect(onConnect).toHaveBeenCalledOnce();
     });
 
@@ -138,7 +136,6 @@ describe('reconnection', () => {
 
       scheduleReconnect(state, onConnect, onMaxReached);
 
-      // Old timer should have been cleared
       expect(state.timer).not.toBe(oldTimer);
     });
   });

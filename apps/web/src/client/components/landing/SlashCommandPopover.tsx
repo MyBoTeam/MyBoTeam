@@ -6,24 +6,18 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { getCaretPosition } from './caretPosition';
 
-/** Props for the {@link SlashCommandPopover} component. */
 interface SlashCommandPopoverProps {
   isOpen: boolean;
   skills: Skill[];
   selectedIndex: number;
   query: string;
   textareaRef: React.RefObject<HTMLTextAreaElement | null>;
-  /** Character index of the `/` trigger inside the textarea value. */
+
   triggerStart: number;
   onSelect: (skill: Skill) => void;
   onDismiss: () => void;
 }
 
-/**
- * Floating popover that renders a filtered list of available skills.
- * Positioned near the textarea caret using a mirror-element measurement.
- * Supports mouse selection, outside-click dismissal, and keyboard hints.
- */
 export function SlashCommandPopover({
   isOpen,
   skills,

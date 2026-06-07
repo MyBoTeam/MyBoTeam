@@ -1,11 +1,3 @@
-/**
- * DaemonSection — Settings UI for daemon monitoring and control.
- *
- * Reads daemon status from the global daemonStore (single source of truth).
- * All status changes go through the store so sidebar dot, toast, and this
- * section always agree.
- */
-
 import { Warning } from '@phosphor-icons/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,12 +15,10 @@ export function DaemonSection() {
   const myboteam = useMyBoTeam();
   const { t } = useTranslation('settings');
 
-  // Read status from global store — single source of truth
   const storeStatus = useDaemonStore((s) => s.status);
   const setGlobalStatus = useDaemonStore((s) => s.setStatus);
   const displayStatus = getDisplayStatus(storeStatus);
 
-  // Local state for section-specific data (not daemon connection state)
   const [uptime, setUptime] = useState(0);
   const [lastPing, setLastPing] = useState<Date | null>(null);
   const [actionInProgress, setActionInProgress] = useState<string | null>(null);
@@ -39,7 +29,7 @@ export function DaemonSection() {
       const result = await myboteam.daemonPing();
       if (result.status === 'ok') {
         setUptime(result.uptime);
-        // Only set connected if not in a transitional state
+
         const currentStatus = useDaemonStore.getState().status;
         if (!TRANSITIONAL_STATES.has(currentStatus)) {
           setGlobalStatus('connected');
@@ -54,8 +44,6 @@ export function DaemonSection() {
       setLastPing(new Date());
     } catch {
       setUptime(0);
-      // Don't override store status on poll failure — store handles
-      // disconnect/reconnect events with more nuance
     }
   }, [myboteam, setGlobalStatus]);
 
@@ -69,16 +57,13 @@ export function DaemonSection() {
     };
   }, [pollStatus]);
 
-  // Control actions — update global store for all state changes.
-  // After successful start/restart, explicitly set 'connected' before
-  // calling pollStatus(), since the poll guard skips transitional states.
   const handleRestart = async () => {
     setActionInProgress('restart');
     setGlobalStatus('reconnecting');
     try {
       await myboteam.daemonRestart();
-      setGlobalStatus('connected'); // Explicit: daemon is healthy
-      await pollStatus(); // Updates uptime/lastPing
+      setGlobalStatus('connected');
+      await pollStatus();
     } catch {
       setGlobalStatus('reconnect-failed');
     } finally {
@@ -105,8 +90,8 @@ export function DaemonSection() {
     setGlobalStatus('starting');
     try {
       await myboteam.daemonStart();
-      setGlobalStatus('connected'); // Explicit: daemon is healthy
-      await pollStatus(); // Updates uptime/lastPing
+      setGlobalStatus('connected');
+      await pollStatus();
     } catch {
       setGlobalStatus('reconnect-failed');
     } finally {

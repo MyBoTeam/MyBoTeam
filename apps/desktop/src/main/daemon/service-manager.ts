@@ -1,16 +1,3 @@
-/**
- * Service Manager
- *
- * Cross-platform daemon auto-start registration.
- * "Start at Login" now starts the **daemon binary** (not the full Electron app).
- *
- *   - macOS: LaunchAgent plist with KeepAlive
- *   - Windows: Electron login item (starts Electron hidden, which spawns daemon)
- *   - Linux: systemd user service for the daemon binary
- *
- * This file MUST use `path.join()` for all file paths (Windows CI compatibility).
- */
-
 import { app } from 'electron';
 import { getLogCollector } from '../logging';
 import {
@@ -31,12 +18,9 @@ function logD(level: 'INFO' | 'WARN' | 'ERROR', msg: string): void {
     if (l?.log) {
       l.log(level, 'daemon', msg);
     }
-  } catch (_e) {
-    /* best-effort logging */
-  }
+  } catch (_e) {}
 }
 
-/** Whether the daemon is registered to auto-start on login. */
 export function isAutoStartEnabled(): boolean {
   if (process.platform === 'linux') {
     return isSystemdServiceEnabled();
@@ -49,7 +33,6 @@ export function isAutoStartEnabled(): boolean {
   return settings.openAtLogin;
 }
 
-/** Register the daemon to auto-start on login. */
 export function enableAutoStart(): void {
   logD('INFO', `[ServiceManager] Enabling auto-start for platform: ${process.platform}`);
 
@@ -90,7 +73,6 @@ export function enableAutoStart(): void {
   }
 }
 
-/** Unregister the daemon from auto-starting on login. */
 export function disableAutoStart(): void {
   logD('INFO', `[ServiceManager] Disabling auto-start for platform: ${process.platform}`);
 

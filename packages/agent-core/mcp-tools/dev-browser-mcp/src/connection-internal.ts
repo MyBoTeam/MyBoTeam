@@ -72,7 +72,6 @@ export async function getBuiltinPage(
       };
       if (targetInfo.targetId === data.targetId) return page;
     } catch {
-      // try next
     } finally {
       if (session) await session.detach().catch(() => {});
     }
@@ -83,7 +82,7 @@ export async function getBuiltinPage(
 }
 
 export async function getRemotePage(
-  config: ConnectionConfig,
+  _config: ConnectionConfig,
   ensureConnected: () => Promise<Browser>,
   getLocalPageRegistry: () => Map<string, import('playwright').Page>,
   fullName: string,

@@ -21,7 +21,6 @@ describe('OpenCodeLogWatcher', () => {
     logDir = path.join(testDir, 'log');
     fs.mkdirSync(logDir, { recursive: true });
 
-    // Suppress console output
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -33,7 +32,6 @@ describe('OpenCodeLogWatcher', () => {
     }
     vi.restoreAllMocks();
 
-    // Clean up test directory
     if (fs.existsSync(testDir)) {
       fs.rmSync(testDir, { recursive: true, force: true });
     }
@@ -56,9 +54,8 @@ describe('OpenCodeLogWatcher', () => {
       watcher = new OpenCodeLogWatcher(logDir);
 
       await watcher.start();
-      await watcher.start(); // Should be a no-op
+      await watcher.start();
 
-      // No errors thrown
       expect(true).toBe(true);
     });
 
@@ -66,7 +63,6 @@ describe('OpenCodeLogWatcher', () => {
       watcher = new OpenCodeLogWatcher(logDir);
       await watcher.start();
 
-      // Should not throw
       expect(true).toBe(true);
     });
   });
@@ -77,14 +73,13 @@ describe('OpenCodeLogWatcher', () => {
       await watcher.start();
       await watcher.stop();
 
-      // Can start again after stop
       await watcher.start();
       expect(true).toBe(true);
     });
 
     it('should handle stop when not started', async () => {
       watcher = new OpenCodeLogWatcher(logDir);
-      await watcher.stop(); // Should not throw
+      await watcher.stop();
 
       expect(true).toBe(true);
     });

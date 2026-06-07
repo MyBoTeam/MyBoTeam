@@ -69,7 +69,6 @@ describe('TaskBridge', () => {
   });
 
   it('rejects messages when no owner is configured', async () => {
-    // ownerJid and ownerLid are both null by default
     transport.emit('message', makeMsg());
     await new Promise((r) => setTimeout(r, 50));
 
@@ -148,7 +147,6 @@ describe('TaskBridge', () => {
     transport.emit('message', makeMsg({ messageId: 'queued-msg', text: 'queued' }));
     await new Promise((r) => setTimeout(r, 50));
 
-    // Now clear the active task — the queued message should be processed
     bridge.clearActiveTask('1234@s.whatsapp.net');
     await new Promise((r) => setTimeout(r, 50));
 
@@ -175,7 +173,6 @@ describe('TaskBridge', () => {
     transport.emit('message', makeMsg({ text: 'will fail' }));
     await new Promise((r) => setTimeout(r, 50));
 
-    // After failure, active task should be cleared
     expect(bridge.hasActiveTask('1234@s.whatsapp.net')).toBe(false);
   });
 
@@ -255,14 +252,11 @@ describe('TaskBridge', () => {
     bridge.setOwnerJid('1234@s.whatsapp.net');
     onTaskRequest.mockResolvedValue(undefined);
 
-    // Send 11 messages in quick succession. The first 10 pass through and
-    // call recordMessage; the 11th triggers isRateLimited.
     for (let i = 0; i < 11; i++) {
       transport.emit('message', makeMsg({ messageId: `msg-${i}`, text: `msg ${i}` }));
     }
     await new Promise((r) => setTimeout(r, 200));
 
-    // The rate-limited message should get a "too fast" reply
     const tooFast = transport.sentMessages.find((m) =>
       m.text.includes('sending messages too quickly'),
     );

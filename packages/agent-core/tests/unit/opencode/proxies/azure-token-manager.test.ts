@@ -8,7 +8,6 @@ import {
 
 describe('Azure Token Manager', () => {
   beforeEach(() => {
-    // Clear cache before each test
     clearAzureTokenCache();
 
     vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -43,7 +42,6 @@ describe('Azure Token Manager', () => {
 
   describe('getAzureEntraToken', () => {
     it('should return error when Azure Identity not available', async () => {
-      // Mock the dynamic import to fail
       vi.doMock('@azure/identity', () => {
         throw new Error('Module not found');
       });
@@ -57,14 +55,8 @@ describe('Azure Token Manager', () => {
     });
 
     it('should return cached token if valid', async () => {
-      // First, we need to successfully get a token to cache it
-      // Since we can't easily mock the Azure SDK, we'll test the caching logic indirectly
-
-      // Without a real Azure environment, getAzureEntraToken will fail
-      // but we can verify it attempts to get a token
       const result = await getAzureEntraToken();
 
-      // In a test environment without Azure credentials, this should fail
       expect(result.success).toBe(false);
     });
 
@@ -72,7 +64,6 @@ describe('Azure Token Manager', () => {
       const result = await getAzureEntraToken();
 
       if (!result.success) {
-        // The error should contain helpful information
         expect(result.error).toContain('Failed to acquire Azure Entra ID token');
       }
     });

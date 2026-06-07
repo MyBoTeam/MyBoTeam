@@ -9,10 +9,8 @@ import type { GlassCustomization } from '@/lib/glass-utils';
 import { getGlassStyles } from '@/lib/glass-utils';
 import { cn } from '@/lib/utils';
 
-// Context to share animation state with content
 const DialogAnimationContext = React.createContext<{ isOpen: boolean }>({ isOpen: false });
 
-// Animation duration for exit (keep in sync with motion transitions below)
 const EXIT_ANIMATION_DURATION = 100;
 
 const glassDialogVariants = cva('', {
@@ -30,20 +28,17 @@ const glassDialogVariants = cva('', {
   },
 });
 
-// Dialog with exit animation support
 function Dialog({
   open,
   onOpenChange,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root>) {
-  // Track if we should show the dialog (delays close for exit animation)
   const [shouldShow, setShouldShow] = React.useState(!!open);
 
   React.useEffect(() => {
     if (open) {
       setShouldShow(true);
     } else if (shouldShow) {
-      // Only delay if we were previously showing
       const timer = setTimeout(() => setShouldShow(false), EXIT_ANIMATION_DURATION);
       return () => clearTimeout(timer);
     }
@@ -72,8 +67,6 @@ function DialogPortal({ ...props }: React.ComponentProps<typeof DialogPrimitive.
 function DialogClose({ ...props }: React.ComponentProps<typeof DialogPrimitive.Close>) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
-
-// DialogOverlay is handled inline in DialogContent for animation coordination
 
 interface DialogContentProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,

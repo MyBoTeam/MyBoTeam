@@ -15,29 +15,17 @@ import type { LMStudioConnectionResult } from './lmstudio-models.js';
 
 const log = createConsoleLogger({ prefix: 'LMStudio' });
 
-/** Options for LM Studio connection test */
 export interface LMStudioConnectionOptions {
-  /** The LM Studio server URL */
   url: string;
-  /** Request timeout in milliseconds (default: 15000) */
+
   timeoutMs?: number;
 }
 
-/**
- * Tests connection to an LM Studio server and fetches available models.
- *
- * Makes a GET request to /v1/models to verify connectivity and retrieve
- * the list of loaded models. For each model, tests tool support capability.
- *
- * @param options - Connection test options
- * @returns Connection result with models if successful
- */
 export async function testLMStudioConnection(
   options: LMStudioConnectionOptions,
 ): Promise<LMStudioConnectionResult> {
   const { url, timeoutMs = LMSTUDIO_REQUEST_TIMEOUT_MS } = options;
 
-  // Sanitize and validate URL
   const sanitizedUrl = sanitizeString(url, 'lmstudioUrl', 256);
 
   try {
@@ -79,12 +67,6 @@ export async function testLMStudioConnection(
   }
 }
 
-/**
- * Validates LM Studio configuration object structure.
- *
- * @param config - Configuration to validate
- * @throws Error if configuration is invalid
- */
 export function validateLMStudioConfig(config: LMStudioConfig): void {
   if (typeof config.baseUrl !== 'string' || typeof config.enabled !== 'boolean') {
     throw new Error('Invalid LM Studio configuration');

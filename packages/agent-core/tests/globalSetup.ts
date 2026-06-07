@@ -1,12 +1,3 @@
-/**
- * Vitest global setup — runs once in the main process before any test workers start.
- *
- * Handles:
- *
- * 1. Port 9228 left bound from a previous interrupted test run (azure-foundry-proxy tests).
- *    We kill any process holding that port so the proxy tests can bind it cleanly.
- */
-
 import { execSync } from 'node:child_process';
 
 export async function setup(): Promise<void> {
@@ -32,7 +23,5 @@ function freePort(port: number): void {
     } else {
       execSync(`lsof -ti tcp:${port} | xargs kill -9 2>/dev/null || true`, { shell: true });
     }
-  } catch {
-    // Port not in use or command unavailable — nothing to do
-  }
+  } catch {}
 }

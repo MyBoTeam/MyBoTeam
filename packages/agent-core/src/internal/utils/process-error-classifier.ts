@@ -1,14 +1,6 @@
-/**
- * Classifies a process error based on the recent stdout/stderr output buffered
- * from the OpenCode CLI.
- *
- * Returns a human-readable error message that can be shown directly in the UI
- * instead of the generic "Task failed" text.
- */
 export function classifyProcessError(exitCode: number | undefined, outputBuffer: string): string {
   const output = outputBuffer.toLowerCase();
 
-  // Quota / billing errors
   if (
     output.includes('insufficient_quota') ||
     output.includes('exceeded your current quota') ||
@@ -19,7 +11,6 @@ export function classifyProcessError(exitCode: number | undefined, outputBuffer:
     return 'API quota exceeded. Check your billing and usage limits, then try again.';
   }
 
-  // Rate limit errors
   if (
     output.includes('rate limit') ||
     output.includes('ratelimit') ||
@@ -29,7 +20,6 @@ export function classifyProcessError(exitCode: number | undefined, outputBuffer:
     return 'Rate limit reached. Please wait a moment before retrying.';
   }
 
-  // Authentication / API key errors
   if (
     output.includes('invalid_api_key') ||
     output.includes('incorrect api key') ||
@@ -41,7 +31,6 @@ export function classifyProcessError(exitCode: number | undefined, outputBuffer:
     return 'Invalid or missing API key. Check your credentials in Settings.';
   }
 
-  // Model not found errors
   if (
     output.includes('model_not_found') ||
     output.includes('model does not exist') ||
@@ -52,7 +41,6 @@ export function classifyProcessError(exitCode: number | undefined, outputBuffer:
     return 'Model not found or not available. Try selecting a different model in Settings.';
   }
 
-  // Context length errors
   if (
     output.includes('context_length_exceeded') ||
     output.includes('maximum context length') ||
@@ -62,7 +50,6 @@ export function classifyProcessError(exitCode: number | undefined, outputBuffer:
     return 'The conversation is too long for this model. Start a new task to continue.';
   }
 
-  // Network errors
   if (
     output.includes('econnrefused') ||
     output.includes('enotfound') ||

@@ -1,10 +1,3 @@
-/**
- * HuggingFace Local Model Manager
- *
- * Lists, caches, and manages ONNX-format HuggingFace models.
- * Download logic is in model-downloader.ts.
- */
-
 import fs from 'node:fs';
 import path from 'node:path';
 import type { HuggingFaceLocalModelInfo } from '@myboteam/agent-core/common';
@@ -13,10 +6,6 @@ import { app } from 'electron';
 export type { DownloadProgress, ProgressCallback } from './model-downloader';
 export { cancelDownload, downloadModel } from './model-downloader';
 
-/**
- * Suggested ONNX-compatible models for quick setup.
- * These are small models known to work well with Transformers.js.
- */
 export const SUGGESTED_MODELS: HuggingFaceLocalModelInfo[] = [
   {
     id: 'onnx-community/Llama-3.2-1B-Instruct-ONNX',
@@ -40,12 +29,10 @@ export const SUGGESTED_MODELS: HuggingFaceLocalModelInfo[] = [
   },
 ];
 
-/** Default cache directory for HuggingFace models */
 function getDefaultCachePath(): string {
   return path.join(app.getPath('userData'), 'hf-models');
 }
 
-/** Ensure cache directory exists */
 function ensureCacheDir(cachePath?: string): string {
   const dir = cachePath || getDefaultCachePath();
   if (!fs.existsSync(dir)) {
@@ -54,9 +41,6 @@ function ensureCacheDir(cachePath?: string): string {
   return dir;
 }
 
-/**
- * List all cached models in the cache directory.
- */
 export function listCachedModels(cachePath?: string): HuggingFaceLocalModelInfo[] {
   const cacheDir = cachePath || getDefaultCachePath();
   if (!fs.existsSync(cacheDir)) {
@@ -66,8 +50,6 @@ export function listCachedModels(cachePath?: string): HuggingFaceLocalModelInfo[
   const models: HuggingFaceLocalModelInfo[] = [];
 
   try {
-    // Transformers.js caches models in subdirectories named after the model
-    // Structure: cacheDir/<org>/<model>/
     const entries = fs.readdirSync(cacheDir, { withFileTypes: true });
     for (const orgEntry of entries) {
       if (!orgEntry.isDirectory()) {
@@ -97,9 +79,6 @@ export function listCachedModels(cachePath?: string): HuggingFaceLocalModelInfo[
   return models;
 }
 
-/**
- * Delete a cached model.
- */
 export function deleteModel(
   modelId: string,
   cachePath?: string,
@@ -107,7 +86,6 @@ export function deleteModel(
   const cacheDir = ensureCacheDir(cachePath);
   const resolvedCache = path.resolve(cacheDir);
 
-  // Normalize and pre-validate modelId to block path-traversal sequences
   const normalizedId = path.normalize(modelId);
   if (
     !normalizedId ||
@@ -120,7 +98,6 @@ export function deleteModel(
 
   const modelDir = path.resolve(resolvedCache, normalizedId);
 
-  // Guard against path traversal: modelDir must be strictly inside cacheDir
   const rel = path.relative(resolvedCache, modelDir);
   if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) {
     return { success: false, error: 'Invalid model ID' };
@@ -133,7 +110,6 @@ export function deleteModel(
   try {
     fs.rmSync(modelDir, { recursive: true, force: true });
 
-    // Clean up empty parent org directory
     const orgDir = path.dirname(modelDir);
     const remaining = fs.readdirSync(orgDir);
     if (remaining.length === 0) {
@@ -147,7 +123,6 @@ export function deleteModel(
   }
 }
 
-/** Recursively compute directory size in bytes */
 function getDirSize(dirPath: string): number {
   let total = 0;
   try {
@@ -160,15 +135,10 @@ function getDirSize(dirPath: string): number {
         total += getDirSize(fullPath);
       }
     }
-  } catch {
-    // Ignore errors (permission issues etc.)
-  }
+  } catch {}
   return total;
 }
 
-/**
- * Get the absolute path to the local model cache directory.
- */
 export function getCachePath(): string {
   return getDefaultCachePath();
 }

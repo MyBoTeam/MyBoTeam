@@ -5,30 +5,24 @@ export async function withPreservedForeground<T>(operation: () => Promise<T>): P
     return operation();
   }
 
-  // Save frontmost app
   let frontmostApp: string | null = null;
   try {
     frontmostApp = execSync(
       `osascript -e 'tell application "System Events" to get name of first process whose frontmost is true'`,
       { encoding: 'utf8', timeout: 2000 },
     ).trim();
-  } catch {
-    /* ignore */
-  }
+  } catch {}
 
   try {
     return await operation();
   } finally {
     if (frontmostApp) {
       try {
-        // Use execFileSync to avoid shell quoting issues
         execFileSync('osascript', ['-e', `tell application "${frontmostApp}" to activate`], {
           encoding: 'utf8',
           timeout: 2000,
         });
-      } catch {
-        /* ignore */
-      }
+      } catch {}
     }
   }
 }

@@ -60,12 +60,10 @@ export function resolveAccounts(
     return { resolved: [match] };
   }
 
-  // free-time always queries all accounts regardless of account param
   if (subcommand === 'free-time') {
     return { resolved: accounts };
   }
 
-  // get requires a specific account when multiple exist
   if (subcommand === 'get' && accounts.length > 1) {
     const available = accounts.map((a) => `${a.label} (${a.email})`).join(', ');
     return {

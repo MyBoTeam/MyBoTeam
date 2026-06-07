@@ -15,7 +15,7 @@ describe('Moonshot Proxy', () => {
 
   afterEach(async () => {
     vi.restoreAllMocks();
-    // Clean up any running proxy
+
     await stopMoonshotProxy();
   });
 
@@ -94,8 +94,6 @@ describe('Moonshot Proxy', () => {
       const result = transformMoonshotRequestBody(body);
       const parsed = JSON.parse(result.toString());
 
-      // When max_tokens already exists, max_completion_tokens is NOT converted
-      // Both remain in the request (the API will use max_tokens)
       expect(parsed.max_completion_tokens).toBe(1000);
       expect(parsed.max_tokens).toBe(500);
     });

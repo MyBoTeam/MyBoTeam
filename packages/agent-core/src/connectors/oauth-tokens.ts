@@ -1,9 +1,6 @@
 import type { OAuthTokens } from '../common/types/connector.js';
 import { fetchWithTimeout } from './oauth-metadata.js';
 
-/**
- * Exchange an authorization code for access and refresh tokens.
- */
 export async function exchangeCodeForTokens(params: {
   tokenEndpoint: string;
   code: string;
@@ -60,9 +57,6 @@ export async function exchangeCodeForTokens(params: {
   };
 }
 
-/**
- * Refresh an expired access token using a refresh token.
- */
 export async function refreshAccessToken(params: {
   tokenEndpoint: string;
   refreshToken: string;
@@ -115,11 +109,8 @@ export async function refreshAccessToken(params: {
   };
 }
 
-/**
- * Check if an OAuth access token is expired (with 5-minute buffer).
- */
 export function isTokenExpired(tokens: OAuthTokens): boolean {
   if (!tokens.expiresAt) return false;
-  const bufferMs = 5 * 60 * 1000; // 5 minutes
+  const bufferMs = 5 * 60 * 1000;
   return Date.now() >= tokens.expiresAt - bufferMs;
 }

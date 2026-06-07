@@ -3,10 +3,6 @@ import type { useExecutionCore } from './useExecutionCore';
 
 type CoreState = ReturnType<typeof useExecutionCore>;
 
-/**
- * Side-effect hooks for the execution page.
- * Handles auth/pause cleanup, follow-up focus, and keyboard shortcuts.
- */
 export function useExecutionEffects(s: CoreState, myboteam: CoreState['myboteam']) {
   useEffect(() => {
     s.setTaskActionError(null);
@@ -28,14 +24,11 @@ export function useExecutionEffects(s: CoreState, myboteam: CoreState['myboteam'
             void myboteam.logoutSlackMcp();
           }
         })
-        .catch(() => {
-          // ignore errors from oauth status check
-        });
+        .catch(() => {});
       return () => {
         stale = true;
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- s.setTaskActionError/setIsTaskActionRunning are stable store actions
   }, [
     myboteam,
     s.currentTask?.status,
@@ -48,7 +41,6 @@ export function useExecutionEffects(s: CoreState, myboteam: CoreState['myboteam'
     if (s.canFollowUp) {
       s.followUpInputRef.current?.focus();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- followUpInputRef is a stable ref
   }, [s.canFollowUp, s.followUpInputRef.current?.focus]);
 
   useEffect(() => {
@@ -69,6 +61,5 @@ export function useExecutionEffects(s: CoreState, myboteam: CoreState['myboteam'
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- s is a stable hook result reference
   }, [s.currentTask, s.isComplete, s.permissionRequest, s.showSettingsDialog, s.interruptTask]);
 }

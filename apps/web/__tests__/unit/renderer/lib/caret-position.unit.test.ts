@@ -1,7 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
-
 import { describe, expect, it } from 'vitest';
 import { getCaretPosition } from '@/components/landing/caretPosition';
 
@@ -29,7 +25,7 @@ describe('getCaretPosition', () => {
     document.body.appendChild(textarea);
 
     const pos = getCaretPosition(textarea, 0);
-    // These may not be exactly 0 due to padding, but should be defined
+
     expect(pos.top).toBeDefined();
     expect(pos.left).toBeDefined();
 

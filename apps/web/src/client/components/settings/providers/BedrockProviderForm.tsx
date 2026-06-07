@@ -2,7 +2,7 @@ import type { ConnectedProvider } from '@myboteam/agent-core/common';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { settingsTransitions, settingsVariants } from '@/lib/animations';
-// Import Bedrock logo
+
 import bedrockLogo from '/assets/ai-logos/bedrock.svg';
 import { ConnectButton, FormError, ProviderFormHeader, RegionSelector } from '../shared';
 import { BedrockAccessKeyTab } from './BedrockAccessKeyTab';
@@ -69,7 +69,7 @@ export function BedrockProviderForm({
               transition={settingsTransitions.enter}
               className="space-y-3"
             >
-              {/* Auth tabs */}
+              {}
               <div className="flex gap-2">
                 <button
                   onClick={() => setAuthTab('apiKey')}

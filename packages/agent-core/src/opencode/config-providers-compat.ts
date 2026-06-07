@@ -1,4 +1,3 @@
-/** OpenAI-compatible and special provider config builders: NIM, Custom, OOAI-compatible cloud, GitHub Copilot. */
 import { DEFAULT_PROVIDERS } from '../common/index.js';
 import { createConsoleLogger } from '../utils/logging.js';
 import { OPENAI_COMPATIBLE_PROVIDER_IDS } from './config-auth-sync.js';

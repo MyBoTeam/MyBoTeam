@@ -3,7 +3,7 @@ import http from 'node:http';
 import { log } from './logger.js';
 import type { RateLimiter } from './rate-limiter.js';
 
-const MAX_BODY_SIZE = 1024 * 1024; // 1 MB
+const MAX_BODY_SIZE = 1024 * 1024;
 
 export interface Route {
   method: string;
@@ -20,7 +20,7 @@ export interface HttpServerOptions {
   rateLimiter: RateLimiter;
   routes: Route[];
   serviceName: string;
-  /** Fixed port to listen on. If 0 or omitted, the OS assigns a random port. */
+
   port?: number;
 }
 
@@ -130,7 +130,6 @@ export function createHttpServer(
 
     server.on('error', (error: NodeJS.ErrnoException) => {
       if (error.code === 'EADDRINUSE' && requestedPort) {
-        // Port already in use — fall back to OS-assigned port
         log.warn(`[${serviceName}] Port ${requestedPort} in use, falling back to random port`);
         server.listen(0, '127.0.0.1', () => {
           const addr = server.address();

@@ -1,11 +1,3 @@
-/**
- * analytics-service.ts — GA4 Measurement Protocol analytics.
- *
- * No-ops gracefully when GA4 is not configured (OSS builds).
- * Session and client state management lives in analytics-service-utils.ts.
- * GA4 sending logic lives in analytics-service-ga4.ts.
- */
-
 import { app } from 'electron';
 import { trackGa4Event } from './analytics-service-ga4';
 import {
@@ -32,8 +24,6 @@ export {
   markFirstTaskCompleted,
 } from './analytics-service-utils';
 
-// ── Init ─────────────────────────────────────────────────────────────
-
 export function initAnalytics(): { isFirstLaunch: boolean } {
   const result = initClientId();
   initSessionState();
@@ -52,8 +42,6 @@ export function initDeviceFingerprint(): void {
   initDeviceFingerprintCache();
 }
 
-// ── Event tracking ───────────────────────────────────────────────────
-
 export async function trackEvent(
   eventName: string,
   params: Record<string, string | number | boolean | undefined> = {},
@@ -62,9 +50,7 @@ export async function trackEvent(
     try {
       const { trackMixpanelEvent } = await import('./mixpanel-service');
       trackMixpanelEvent(eventName, params);
-    } catch {
-      // Mixpanel not initialized — no-op
-    }
+    } catch {}
 
     await trackGa4Event(eventName, params);
   } catch (error) {

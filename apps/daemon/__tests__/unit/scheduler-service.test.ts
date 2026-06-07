@@ -2,10 +2,6 @@ import type { ScheduledTask } from '@myboteam/agent-core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SchedulerService } from '../../src/scheduler-service.js';
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 let idCounter = 0;
 
 function makeTask(overrides: Partial<ScheduledTask> = {}): ScheduledTask {
@@ -22,15 +18,11 @@ function makeTask(overrides: Partial<ScheduledTask> = {}): ScheduledTask {
   };
 }
 
-// ---------------------------------------------------------------------------
-// Mock StorageAPI (in-memory)
-// ---------------------------------------------------------------------------
-
 function createMockStorage() {
   const tasks: ScheduledTask[] = [];
 
   return {
-    tasks, // exposed for test assertions
+    tasks,
 
     getAllScheduledTasks: vi.fn(() => [...tasks]),
 
@@ -44,7 +36,7 @@ function createMockStorage() {
 
     createScheduledTask: vi.fn((cron: string, prompt: string, workspaceId?: string) => {
       const task = makeTask({ cron, prompt, workspaceId });
-      // Simulate DB: compute nextRunAt
+
       task.nextRunAt = new Date(Date.now() + 60_000).toISOString();
       tasks.push(task);
       return task;
@@ -81,10 +73,6 @@ function createMockStorage() {
 
 type MockStorage = ReturnType<typeof createMockStorage>;
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
-
 describe('SchedulerService', () => {
   let storage: MockStorage;
   let onTaskFire: ReturnType<typeof vi.fn>;
@@ -96,7 +84,7 @@ describe('SchedulerService', () => {
     idCounter = 0;
     storage = createMockStorage();
     onTaskFire = vi.fn();
-    // Cast to satisfy the StorageAPI type — we only mock the scheduler methods
+
     service = new SchedulerService(storage as never, onTaskFire);
   });
 
@@ -104,10 +92,6 @@ describe('SchedulerService', () => {
     service.stop();
     vi.useRealTimers();
   });
-
-  // =========================================================================
-  // createSchedule
-  // =========================================================================
 
   describe('createSchedule', () => {
     it('creates a schedule with a valid daily cron', () => {
@@ -182,14 +166,9 @@ describe('SchedulerService', () => {
     });
 
     it('throws on valid syntax but unschedulable cron (no match in scan window)', () => {
-      // Feb 29 on a Monday — can be decades away
       expect(() => service.createSchedule('0 0 29 2 1', 'leap monday')).toThrow('no matching date');
     });
   });
-
-  // =========================================================================
-  // listSchedules
-  // =========================================================================
 
   describe('listSchedules', () => {
     it('returns all schedules when no workspace filter', () => {
@@ -217,10 +196,6 @@ describe('SchedulerService', () => {
     });
   });
 
-  // =========================================================================
-  // deleteSchedule
-  // =========================================================================
-
   describe('deleteSchedule', () => {
     it('delegates to storage.deleteScheduledTask', () => {
       storage.tasks.push(makeTask({ id: 'sched-1' }));
@@ -230,10 +205,6 @@ describe('SchedulerService', () => {
       expect(storage.tasks).toHaveLength(0);
     });
   });
-
-  // =========================================================================
-  // setEnabled
-  // =========================================================================
 
   describe('setEnabled', () => {
     it('disables a schedule via storage', () => {
@@ -250,10 +221,6 @@ describe('SchedulerService', () => {
       expect(storage.setScheduledTaskEnabled).toHaveBeenCalledWith('sched-1', true);
     });
   });
-
-  // =========================================================================
-  // tick
-  // =========================================================================
 
   describe('tick', () => {
     it('fires due schedules and updates last_run_at / next_run_at', () => {
@@ -335,15 +302,10 @@ describe('SchedulerService', () => {
         throw new Error('boom');
       });
 
-      // Should not throw
       expect(() => service.tick()).not.toThrow();
       expect(onTaskFire).toHaveBeenCalledTimes(2);
     });
   });
-
-  // =========================================================================
-  // catchUp
-  // =========================================================================
 
   describe('catchUp', () => {
     it('fires overdue schedules', () => {
@@ -402,10 +364,6 @@ describe('SchedulerService', () => {
     });
   });
 
-  // =========================================================================
-  // start / stop / minute-boundary alignment
-  // =========================================================================
-
   describe('start and stop', () => {
     it('calls catchUp immediately on start', () => {
       const overdueTime = new Date(Date.now() - 60_000).toISOString();
@@ -415,13 +373,10 @@ describe('SchedulerService', () => {
 
       service.start();
 
-      // catchUp should have fired synchronously
       expect(onTaskFire).toHaveBeenCalledWith('catch-up', undefined);
     });
 
     it('ticks immediately when started exactly on a minute boundary', () => {
-      // Current time: 2025-06-15T10:00:00.000Z — exactly on the minute
-      // With the fix, remainder === 0, so tick runs immediately
       const pastTime = new Date(Date.now() - 1000).toISOString();
       storage.tasks.push(
         makeTask({
@@ -434,12 +389,10 @@ describe('SchedulerService', () => {
 
       service.start();
 
-      // tick should have fired immediately (no setTimeout delay)
       expect(onTaskFire).toHaveBeenCalledWith('boundary fire', undefined);
     });
 
     it('aligns tick to next minute boundary when not on boundary', () => {
-      // Move to mid-minute: 10:00:30.000
       vi.setSystemTime(new Date('2025-06-15T10:00:30.000Z'));
 
       service = new SchedulerService(storage as never, onTaskFire);
@@ -450,11 +403,9 @@ describe('SchedulerService', () => {
         makeTask({ id: 'align-test', prompt: 'aligned fire', enabled: true, nextRunAt: pastTime }),
       );
 
-      // Advance to just before alignment (30s away)
       vi.advanceTimersByTime(29_999);
       expect(onTaskFire).not.toHaveBeenCalled();
 
-      // Advance past alignment
       vi.advanceTimersByTime(1);
       expect(onTaskFire).toHaveBeenCalledWith('aligned fire', undefined);
     });
@@ -462,16 +413,13 @@ describe('SchedulerService', () => {
     it('ticks every 60 seconds after alignment', () => {
       service.start();
 
-      // Advance past alignment
       vi.advanceTimersByTime(60_000);
 
-      // Add a due task
       const pastTime = new Date(Date.now() - 1000).toISOString();
       storage.tasks.push(
         makeTask({ id: 'recurring', prompt: 'again', enabled: true, nextRunAt: pastTime }),
       );
 
-      // Advance one more interval
       vi.advanceTimersByTime(60_000);
       expect(onTaskFire).toHaveBeenCalledWith('again', undefined);
     });
@@ -485,7 +433,6 @@ describe('SchedulerService', () => {
         makeTask({ id: 'no-fire', prompt: 'should not fire', enabled: true, nextRunAt: pastTime }),
       );
 
-      // Advance well past when tick would have fired
       vi.advanceTimersByTime(120_000);
       expect(onTaskFire).not.toHaveBeenCalled();
     });

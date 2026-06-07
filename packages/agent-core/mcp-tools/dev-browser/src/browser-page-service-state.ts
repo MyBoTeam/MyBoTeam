@@ -1,13 +1,8 @@
 import type { CDPSession, Page } from 'playwright';
 import type { PageLaunchIntent } from './types.js';
 
-// minimized: intentionally hidden from the desktop
-// normal: available for background/live use without implying user-visible foreground
 export type BrowserWindowState = 'minimized' | 'normal';
 
-// minimized-once: first real task open/reopen; background after the first live frame only once
-// background-normal: generic ensure/recovery work that must never consume first-open behavior
-// foreground: explicit user-facing open/focus flows only
 export type TaskPageLaunchMode = 'minimized-once' | 'background-normal' | 'foreground';
 
 export const SCREENCAST_FRAME_POLL_MS = 25;

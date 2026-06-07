@@ -13,15 +13,9 @@ export class SchedulerService {
     this.onTaskFire = onTaskFire;
   }
 
-  /**
-   * Start the scheduler. Fires overdue schedules immediately (catch-up),
-   * then aligns to the next minute boundary and ticks every 60 seconds.
-   */
   start(): void {
     this.catchUp();
 
-    // Align to the next minute boundary.
-    // If we're exactly on a boundary (msUntilNextMinute === 60000), tick immediately.
     const now = Date.now();
     const remainder = now % 60_000;
     const msUntilNextMinute = remainder === 0 ? 0 : 60_000 - remainder;
@@ -37,7 +31,6 @@ export class SchedulerService {
     }
   }
 
-  /** Stop all timers. */
   stop(): void {
     if (this.alignTimeout) {
       clearTimeout(this.alignTimeout);
@@ -49,10 +42,6 @@ export class SchedulerService {
     }
   }
 
-  /**
-   * Tick: find enabled schedules whose next_run_at <= now, update their
-   * last_run_at and next_run_at, then fire their prompts.
-   */
   tick(): void {
     const now = new Date();
     const nowIso = now.toISOString();
@@ -76,10 +65,6 @@ export class SchedulerService {
     }
   }
 
-  /**
-   * Fire once for any overdue schedules (e.g. daemon was stopped).
-   * Only fires schedules whose next_run_at is in the past.
-   */
   catchUp(): void {
     const now = new Date();
     const nowIso = now.toISOString();
@@ -105,14 +90,11 @@ export class SchedulerService {
     }
   }
 
-  /** Create a new schedule after validating the cron expression. */
   createSchedule(cron: string, prompt: string, workspaceId?: string): ScheduledTask {
     if (!validateCron(cron)) {
       throw new Error(`Invalid cron expression: ${cron}`);
     }
-    // Verify the cron can actually fire within the scan window.
-    // Rejects expressions like "0 0 29 2 1" (Feb 29 on Monday) that may
-    // be decades away and would be persisted with next_run_at = NULL.
+
     const nextRun = computeNextRunAt(cron, new Date());
     if (!nextRun) {
       throw new Error(
@@ -124,7 +106,6 @@ export class SchedulerService {
     return this.storage.createScheduledTask(cron, prompt, workspaceId);
   }
 
-  /** List all schedules, optionally filtered by workspace. */
   listSchedules(workspaceId?: string): ScheduledTask[] {
     if (workspaceId) {
       return this.storage.getScheduledTasksByWorkspace(workspaceId);
@@ -132,15 +113,12 @@ export class SchedulerService {
     return this.storage.getAllScheduledTasks();
   }
 
-  /** Delete a schedule by ID. */
   deleteSchedule(id: string): void {
     this.storage.deleteScheduledTask(id);
   }
 
-  /** Enable or disable a schedule. */
   setEnabled(id: string, enabled: boolean): void {
     if (enabled) {
-      // Verify the schedule can fire before enabling
       const task = this.storage.getScheduledTaskById(id);
       if (task) {
         const nextRun = computeNextRunAt(task.cron, new Date());

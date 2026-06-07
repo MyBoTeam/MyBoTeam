@@ -1,7 +1,3 @@
-/**
- * Low-level hook for managing MediaRecorder state and audio capture
- */
-
 import { useCallback, useEffect, useRef } from 'react';
 import { SpeechRecognitionError } from './speech-types';
 
@@ -184,5 +180,4 @@ export function useSpeechRecorder(options: UseSpeechRecorderOptions): UseSpeechR
   };
 }
 
-// Re-export for consumers that import error class from this module
 export { SpeechRecognitionError };

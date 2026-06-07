@@ -1,10 +1,3 @@
-// =============================================================================
-// @myboteam/agent-core/common-utils - Runtime utility exports
-// =============================================================================
-// Extracted from common.ts to keep both files under the 200-line limit.
-// Contains runtime values, constants, and utility functions.
-// =============================================================================
-
 export {
   getModelDisplayName,
   MODEL_DISPLAY_NAMES,

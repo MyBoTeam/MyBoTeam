@@ -42,9 +42,7 @@ function killProcessTree(pid: number): void {
   }
   try {
     process.kill(pid, 'SIGKILL');
-  } catch {
-    // Process already exited — fine.
-  }
+  } catch {}
 }
 
 function trackRuntimePid(proc: ChildProcess): number {

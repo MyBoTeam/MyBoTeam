@@ -1,4 +1,3 @@
-/** Vertex AI and Azure Foundry provider config builders. */
 import type { VertexProviderCredentials } from '../common/types/providerSettings.js';
 import { getAzureFoundryConfig } from '../storage/repositories/index.js';
 import { createConsoleLogger } from '../utils/logging.js';
@@ -62,7 +61,6 @@ export async function buildVertexConfig(ctx: ProviderBuildContext): Promise<Prov
   };
   const vertexModels: Record<string, ProviderModelConfig> = {};
   if (activeModel?.provider === 'vertex' && activeModel.model) {
-    // Normalize: strip any leading "vertex/" prefix (including "vertex/<segment>/")
     const modelId = activeModel.model.replace(/^vertex\/(?:[^/]+\/)?/, '');
     vertexModels[modelId] = { name: modelId, tools: true };
   }
@@ -125,7 +123,6 @@ export async function buildAzureFoundryConfig(
     return { configs: [], enableToAdd: [] };
   }
 
-  // Legacy path
   const azureFoundryConfig = getAzureFoundryConfig();
   if (azureFoundryConfig?.enabled && activeModel?.provider === 'azure-foundry') {
     let config: ProviderConfig | null = null;

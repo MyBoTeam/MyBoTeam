@@ -1,11 +1,3 @@
-/**
- * ModelIndicator component
- *
- * Ultra-minimal Claude-style model selector.
- * Shows current model with inline switching for same-provider siblings
- * and sub-menu access to all other connected providers.
- */
-
 'use client';
 
 import type { ConnectedProvider, ProviderId } from '@myboteam/agent-core/common';
@@ -64,7 +56,7 @@ export function ModelIndicator({
       return [];
     }
     const dynamic = activeProvider?.availableModels;
-    // undefined → fall back to static config; explicit [] → real empty state, don't fall back
+
     const source =
       dynamic !== undefined
         ? dynamic.map((m) => ({ id: m.id, displayName: m.name }))

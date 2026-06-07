@@ -30,16 +30,16 @@ const skillsDir = path.join(
   'mcp-tools',
 );
 
-// Skills that have runtime dependencies (playwright) that cannot be bundled
+                                                                            
 const SKILLS_WITH_RUNTIME_DEPS = ['dev-browser', 'dev-browser-mcp', 'gws-mcp'];
 
-// Skills that are fully bundled (no runtime node_modules needed).
-//
-// `ask-user-question` and `file-permission` were removed by Phase 3 of the
-// OpenCode SDK cutover port — their HTTP-callback plumbing was replaced by
-// native SDK `permission.asked` / `question.asked` events handled inside
-// `OpenCodeAdapter`. Keep this list synchronised with `mcp-tools/` directory
-// contents; any skill listed here but absent on disk would fail the build.
+                                                                  
+  
+                                                                           
+                                                                           
+                                                                         
+                                                                             
+                                                                           
 const SKILLS_FULLY_BUNDLED = [
   'complete-task',
   'request-connector-auth',
@@ -48,7 +48,7 @@ const SKILLS_FULLY_BUNDLED = [
   'request-google-file-picker',
 ];
 
-// Skills that need googleapis at runtime — bundle JS but mark googleapis as external
+                                                                                     
 const SKILLS_WITH_GOOGLEAPIS = ['gmail-mcp', 'calendar-mcp'];
 
 const bundles = [
@@ -73,14 +73,14 @@ const bundles = [
     outfile: 'dist/index.mjs',
   },
   {
-    // gmail-mcp uses googleapis at runtime — bundle JS but mark googleapis as external
+                                                                                       
     name: 'gmail-mcp',
     entry: 'src/index.ts',
     outfile: 'dist/index.mjs',
     external: ['googleapis'],
   },
   {
-    // calendar-mcp uses googleapis at runtime — bundle JS but mark googleapis as external
+                                                                                          
     name: 'calendar-mcp',
     entry: 'src/index.ts',
     outfile: 'dist/index.mjs',
@@ -92,8 +92,8 @@ const bundles = [
     outfile: 'dist/index.mjs',
   },
   {
-    // gws-mcp requires @googleworkspace/cli at runtime (native binary).
-    // Bundle the JS wrapper but leave the CLI package as external.
+                                                                        
+                                                                   
     name: 'gws-mcp',
     entry: 'src/index.ts',
     outfile: 'dist/index.mjs',
@@ -106,11 +106,11 @@ const bundles = [
     external: ['playwright'],
   },
   {
-    // Main HTTP server — output as ESM (.mjs) since start-server.ts uses top-level await
-    // and import.meta.url which are incompatible with CJS format.
-    // Referenced by packages/agent-core/src/browser/server.ts via hardcoded path.
-    // Entry must be start-server.ts (calls serve() + keeps process alive), NOT src/index.ts
-    // (which only exports serve without calling it — causes immediate exit with no listener).
+                                                                                         
+                                                                  
+                                                                                  
+                                                                                            
+                                                                                              
     name: 'dev-browser',
     entry: 'scripts/start-server.ts',
     outfile: 'server.mjs',
@@ -189,7 +189,7 @@ async function bundleSkill({
   ensureDir(path.dirname(absOutfile));
 
   if (!fs.existsSync(absEntry)) {
-    // Source not available (e.g. using pre-built npm package) — skip if dist already exists
+                                                                                            
     if (fs.existsSync(absOutfile)) {
       console.log(
         `[bundle-skills] Skipping ${name}: source not found but dist exists at ${absOutfile}`,
@@ -225,11 +225,11 @@ async function bundleSkill({
   });
 }
 
-/**
- * For packaged builds, reinstall only production dependencies.
- * - Skills with runtime deps (playwright): npm install --omit=dev
- * - Fully bundled skills: remove node_modules entirely
- */
+   
+                                                               
+                                                                  
+                                                       
+   
 function reinstallProductionDepsForBundledBuild() {
   for (const skillName of SKILLS_WITH_RUNTIME_DEPS) {
     const skillPath = path.join(skillsDir, skillName);
@@ -247,7 +247,7 @@ function reinstallProductionDepsForBundledBuild() {
     }
 
     // Note: We don't use --ignore-scripts because playwright needs its postinstall
-    // script to download browser binaries
+                                          
     console.log(`[bundle-skills] Installing production deps for ${skillName}...`);
     try {
       execSync('npm install --omit=dev', {
@@ -271,7 +271,7 @@ function reinstallProductionDepsForBundledBuild() {
     }
   }
 
-  // Skills with googleapis as external dep: keep production node_modules (googleapis only)
+                                                                                           
   for (const skillName of SKILLS_WITH_GOOGLEAPIS) {
     const skillPath = path.join(skillsDir, skillName);
     const packageJsonPath = path.join(skillPath, 'package.json');

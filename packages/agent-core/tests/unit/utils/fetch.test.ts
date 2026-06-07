@@ -1,11 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-// We test the proxy-agent selection logic by mocking the environment
-// and observing which dispatcher is passed to global fetch.
-
 describe('fetchWithTimeout proxy support', () => {
   afterEach(() => {
-    // Clean up env vars set during tests
     for (const key of [
       'HTTPS_PROXY',
       'https_proxy',
@@ -39,7 +35,6 @@ describe('fetchWithTimeout proxy support', () => {
     const mockFetch = vi.fn().mockResolvedValue(new Response('ok', { status: 200 }));
     vi.stubGlobal('fetch', mockFetch);
 
-    // Re-import to pick up the new env var
     vi.resetModules();
     const { fetchWithTimeout } = await import('../../../src/utils/fetch.js');
 

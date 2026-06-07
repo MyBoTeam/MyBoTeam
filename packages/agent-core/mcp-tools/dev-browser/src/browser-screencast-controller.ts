@@ -20,14 +20,10 @@ export class BrowserScreencastController {
     if (screencast.session) {
       try {
         await screencast.session.send('Page.stopScreencast');
-      } catch {
-        // Session may already be detached
-      }
+      } catch {}
       try {
         await screencast.session.detach();
-      } catch {
-        // Already detached
-      }
+      } catch {}
       screencast.session = null;
     }
     screencast.quality = null;
@@ -38,7 +34,6 @@ export class BrowserScreencastController {
   private async ensureScreencastRunning(entry: PageEntry, quality: number): Promise<void> {
     const { screencast } = entry;
 
-    // Wait for in-progress start before checking state
     if (screencast.startPromise) {
       await screencast.startPromise.catch(() => {});
     }
@@ -99,16 +94,12 @@ export class BrowserScreencastController {
       await new Promise((r) => setTimeout(r, SCREENCAST_FRAME_POLL_MS));
     }
 
-    // Stale frame fallback: return whatever we have
     if (screencast.latestFrame) return screencast.latestFrame;
 
     throw new Error(`Screencast frame timed out after ${SCREENCAST_FIRST_FRAME_TIMEOUT_MS}ms`);
   }
 
   private staleGraceExpired(entry: PageEntry): boolean {
-    // If the URL changed and we haven't got a fresh frame, check if grace period expired.
-    // We use a simple heuristic: if latestFrameUrl doesn't match current URL,
-    // the next poll will handle the stale restart.
     const { screencast, page } = entry;
     if (!screencast.latestFrame) return true;
     return screencast.latestFrameUrl !== page.url();

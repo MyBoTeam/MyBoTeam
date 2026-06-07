@@ -1,7 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
 
-// --- parseElevenLabsErrorMessage tests (no mocking needed) ---
-
 describe('ELEVENLABS_API_TIMEOUT_MS', () => {
   it('is 30000', async () => {
     const { ELEVENLABS_API_TIMEOUT_MS } = await import(
@@ -112,8 +110,6 @@ describe('parseElevenLabsErrorMessage', () => {
     expect(parseElevenLabsErrorMessage({}, '', '')).toBe('Unknown API error');
   });
 });
-
-// --- validateElevenLabsApiKey tests (need fetchWithTimeout mock) ---
 
 const mockFetchWithTimeout = vi.hoisted(() => vi.fn());
 

@@ -5,7 +5,6 @@ interface DragOverlayProps {
   handleDrop: (e: React.DragEvent) => void;
 }
 
-/** Full-area drag-and-drop overlay shown while dragging files. */
 export function DragOverlay({ setIsDragging, handleDrop }: DragOverlayProps) {
   const { t } = useTranslation('execution');
   return (

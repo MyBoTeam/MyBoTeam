@@ -136,9 +136,7 @@ export class BrowserServer {
     if (this._browserContext) {
       try {
         await this._browserContext.close();
-      } catch {
-        // intentionally empty
-      }
+      } catch {}
     }
     console.log('Server stopped.');
   }
@@ -171,9 +169,7 @@ export class BrowserServer {
       if (this._browserContext) {
         try {
           this._browserContext.close();
-        } catch {
-          /* intentionally empty */
-        }
+        } catch {}
       }
     });
 

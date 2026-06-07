@@ -7,39 +7,6 @@ vi.mock('@opencode-ai/sdk/v2', () => ({
   createOpencodeClient: vi.fn(),
 }));
 
-/**
- * REGRESSION: the adapter used to pass `{ title }` to `session.create`
- * and nothing agent-related to `session.prompt`. The generated
- * `opencode.json` defines a custom `myboteam` agent containing the
- * entire MyBoTeam system prompt (skills, connectors, workspace
- * instructions, knowledge notes, etc.) and sets `default_agent:
- * 'myboteam'` at the config root. That default_agent IS honored by
- * the CLI path, which was invoked as `opencode --agent myboteam` —
- * but the SDK path (OpenCode SDK cutover port) has no implicit agent
- * selection. Without explicit `agent: MYBOTEAM_AGENT_NAME` on each
- * `session.prompt`, OpenCode runs the session under its built-in
- * default agent and silently ignores the myboteam prompt.
- *
- * User-visible symptom: workspace `instruction`-type knowledge notes
- * are correctly written into the generated opencode.json (verified by
- * inspecting the file) but the model's replies show none of those
- * instructions being followed. The entire ~18KB MyBoTeam system
- * prompt — including the mandatory `<workspace-instructions>` block
- * prepended to the top — never reaches the model because the session
- * isn't configured to use the myboteam agent.
- *
- * Fix: pass `agent: MYBOTEAM_AGENT_NAME` on BOTH session.prompt call
- * sites (initial prompt + continuation nudge). Per the current
- * `@opencode-ai/sdk` type defs, `SessionPromptData.body` accepts
- * `agent?: string`; `SessionCreateData.body` does not have an agent
- * field so create stays agent-less.
- *
- * These tests pin the fix at the narrow seam:
- *   - Initial startTask → session.prompt carries `agent: 'myboteam'`.
- *   - Continuation prompt → also carries `agent: 'myboteam'`.
- * If a future SDK upgrade or refactor silently drops the field, these
- * tests fail loudly before the PR lands.
- */
 describe('OpenCodeAdapter agent selection on session.prompt', () => {
   beforeEach(() => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -89,7 +56,7 @@ describe('OpenCodeAdapter agent selection on session.prompt', () => {
           const stream: AsyncIterable<unknown> = {
             [Symbol.asyncIterator]() {
               return {
-                next: () => new Promise(() => {}), // never resolves
+                next: () => new Promise(() => {}),
               };
             },
           };
@@ -127,7 +94,7 @@ describe('OpenCodeAdapter agent selection on session.prompt', () => {
     expect(fake.promptCalls.length).toBe(1);
     const call = fake.promptCalls[0];
     expect(call.agent).toBe(MYBOTEAM_AGENT_NAME);
-    expect(call.agent).toBe('myboteam'); // double-check the constant value
+    expect(call.agent).toBe('myboteam');
     expect(call.text).toBe('tell me about yourself');
   });
 
@@ -148,17 +115,6 @@ describe('OpenCodeAdapter agent selection on session.prompt', () => {
     expect(fake.promptCalls[0].sessionID).toBe('existing_session');
   });
 
-  // ──────────────────────────────────────────────────────────────────────
-  // Runtime per-turn `system` injection for workspace instructions.
-  //
-  // The agent-level `agent.myboteam.prompt` is not enough: the OpenAI/
-  // Codex provider path inside OpenCode injects its own `options.instructions`
-  // channel that crowds out the agent-level prompt, so mandatory user rules
-  // (e.g. "always add Haiku suffix") never reach the model. Fix: `onBeforeStart`
-  // returns `{ env, workspaceInstructions }`, the adapter stores the
-  // instructions, and every `session.prompt` call includes them as the
-  // SDK's first-class `system` field. These tests pin that pipeline.
-  // ──────────────────────────────────────────────────────────────────────
   it('session.prompt carries system= with workspace instructions when onBeforeStart returns them', async () => {
     const adapter = new OpenCodeAdapter(
       {
@@ -178,14 +134,11 @@ describe('OpenCodeAdapter agent selection on session.prompt', () => {
     expect(fake.promptCalls.length).toBe(1);
     const call = fake.promptCalls[0];
     expect(call.system).toBeDefined();
-    // The runtime block wraps the instructions under a mandatory header
-    // that's deliberately terse but explicit about overriding the
-    // conversational-bypass default-concise behavior.
+
     expect(call.system).toContain('MANDATORY WORKSPACE INSTRUCTIONS');
-    // The exact user-supplied instruction text is preserved verbatim.
+
     expect(call.system).toContain('Always add "Haiku" suffix string for any reply');
-    // It's wrapped in the <workspace-instructions> tag so the model can
-    // pattern-match it reliably.
+
     expect(call.system).toContain('<workspace-instructions>');
     expect(call.system).toContain('</workspace-instructions>');
   });
@@ -196,7 +149,7 @@ describe('OpenCodeAdapter agent selection on session.prompt', () => {
         platform: 'darwin',
         isPackaged: false,
         tempPath: '/tmp',
-        // onBeforeStart returns a legacy plain-env shape, no workspaceInstructions.
+
         onBeforeStart: async () => ({ MYBOTEAM_SOME_VAR: '1' }) as NodeJS.ProcessEnv,
       },
       'tsk_no_instr',
@@ -205,10 +158,7 @@ describe('OpenCodeAdapter agent selection on session.prompt', () => {
     await runStartTask(adapter, { prompt: 'hi' }, fake);
 
     expect(fake.promptCalls.length).toBe(1);
-    // Legacy callers that return a bare env object shouldn't accidentally
-    // trigger a `system` injection. The adapter only populates `system`
-    // when `onBeforeStart` returns the rich `{ env, workspaceInstructions }`
-    // shape with a non-empty `workspaceInstructions` field.
+
     expect(fake.promptCalls[0].system).toBeUndefined();
   });
 
@@ -232,10 +182,8 @@ describe('OpenCodeAdapter agent selection on session.prompt', () => {
       fake,
     );
 
-    // The critical property: a session that was created BEFORE the user
     // added the workspace note must STILL get the instructions injected
-    // on subsequent turns, because the runtime `system` field is per-call,
-    // not sticky to session creation.
+
     expect(fake.promptCalls.length).toBe(1);
     expect(fake.promptCalls[0].sessionID).toBe('session_was_created_before_note_was_added');
     expect(fake.promptCalls[0].system).toContain('Reply in haiku form');

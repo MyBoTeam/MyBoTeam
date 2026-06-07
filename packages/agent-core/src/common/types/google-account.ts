@@ -5,7 +5,7 @@ export interface GoogleAccount {
   email: string;
   displayName: string;
   pictureUrl: string | null;
-  /** User-assigned label set at connection time, e.g. "Work" or "Personal" */
+
   label: string;
   status: GoogleAccountStatus;
   connectedAt: string;
@@ -19,7 +19,6 @@ export interface GoogleAccountToken {
   scopes: string[];
 }
 
-/** Passed to resolveTaskConfig to provide all connected Google accounts */
 export interface GwsAccountsContext {
   accounts: Array<{
     googleAccountId: string;

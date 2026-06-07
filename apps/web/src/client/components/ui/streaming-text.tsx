@@ -1,21 +1,16 @@
-/**
- * StreamingText - A component that reveals text character-by-character
- * for a more engaging, "typing" effect during AI responses.
- */
-
 import { useEffect, useRef, useState } from 'react';
 
 interface StreamingTextProps {
   text: string;
-  /** Characters per second reveal rate (default: 80) */
+
   speed?: number;
-  /** Whether streaming is complete (shows full text immediately) */
+
   isComplete?: boolean;
-  /** Callback when streaming finishes */
+
   onComplete?: () => void;
-  /** Additional className for the container */
+
   className?: string;
-  /** Render function for the displayed text */
+
   children: (displayedText: string) => React.ReactNode;
 }
 
@@ -33,38 +28,29 @@ export function StreamingText({
   const lastTimeRef = useRef<number>(0);
   const textRef = useRef(text);
 
-  // Update ref when text changes
   useEffect(() => {
-    // If new text is longer, continue streaming from current position
     if (text.length > textRef.current.length && !isComplete) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsStreaming(true);
     }
     textRef.current = text;
   }, [text, isComplete]);
 
-  // Handle immediate completion
   useEffect(() => {
     if (isComplete) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisplayedLength(text.length);
       setIsStreaming(false);
     }
   }, [isComplete, text.length]);
 
-  // Track when streaming finishes to call onComplete outside of render
   const [streamingJustFinished, setStreamingJustFinished] = useState(false);
 
-  // Call onComplete in a separate effect to avoid setState during render
   useEffect(() => {
     if (streamingJustFinished) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStreamingJustFinished(false);
       onComplete?.();
     }
   }, [streamingJustFinished, onComplete]);
 
-  // Animation loop
   useEffect(() => {
     if (!isStreaming || isComplete) return;
 
@@ -116,10 +102,6 @@ export function StreamingText({
   );
 }
 
-/**
- * Hook to track whether a message should be streamed
- * (only the latest assistant message while task is running)
- */
 export function useStreamingState(
   messageId: string,
   isLatestAssistantMessage: boolean,
@@ -128,22 +110,17 @@ export function useStreamingState(
   const [hasFinishedStreaming, setHasFinishedStreaming] = useState(false);
   const wasStreamingRef = useRef(false);
 
-  // Determine if this message should stream
   const shouldStream = isLatestAssistantMessage && isTaskRunning && !hasFinishedStreaming;
 
-  // Track when streaming completes
   useEffect(() => {
     if (wasStreamingRef.current && !shouldStream) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasFinishedStreaming(true);
     }
     wasStreamingRef.current = shouldStream;
   }, [shouldStream]);
 
-  // Reset if message ID changes
-  // biome-ignore lint/correctness/useExhaustiveDependencies: must re-run when messageId changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: messageId triggers state reset
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHasFinishedStreaming(false);
     wasStreamingRef.current = false;
   }, [messageId]);

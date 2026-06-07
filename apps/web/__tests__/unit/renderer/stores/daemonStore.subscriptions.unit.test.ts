@@ -95,7 +95,7 @@ describe('daemonStore subscriptions', () => {
       reconnectFailedCb = cb;
       return () => {};
     });
-    // Re-import with reset modules to pick up new mock
+
     vi.resetModules();
     const { useDaemonStore } = await import('@/stores/daemonStore');
     useDaemonStore.setState({ status: 'connected', toastDismissed: true });
@@ -106,13 +106,13 @@ describe('daemonStore subscriptions', () => {
 
   it('handles missing window.myboteam gracefully on module load', async () => {
     vi.resetModules();
-    // Override the window from setup.ts by deleting myboteam
+
     const win = window as unknown as { myboteam?: unknown };
     delete win.myboteam;
     await import('@/stores/daemonStore');
-    // Module should load without throwing
+
     expect(true).toBe(true);
-    // Restore for other tests
+
     win.myboteam = {} as typeof win.myboteam;
   });
 });

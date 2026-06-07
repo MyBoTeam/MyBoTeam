@@ -1,13 +1,4 @@
-/**
- * Type definitions for the provider E2E test framework.
- *
- * These tests run real API calls against actual provider endpoints.
- * Secrets are loaded from environment variables or a local secrets.json file.
- */
-
 import type { ProviderId } from '@myboteam/agent-core/common';
-
-// ===== Auth Method =====
 
 export type AuthMethod =
   | 'api-key'
@@ -21,22 +12,17 @@ export type AuthMethod =
   | 'ollama'
   | 'zai';
 
-// ===== Provider Test Config =====
-
 export interface ProviderTestConfig {
-  /** Internal provider ID (e.g., 'openai', 'google') */
   providerId: ProviderId;
-  /** Human-readable name for test output */
+
   displayName: string;
-  /** Optional: model ID to use for testing */
+
   modelId?: string;
-  /** How authentication works for this provider */
+
   authMethod: AuthMethod;
-  /** Optional: timeout override in ms */
+
   timeout?: number;
 }
-
-// ===== Secret Types =====
 
 export interface ApiKeySecrets {
   apiKey: string;
@@ -109,16 +95,10 @@ export type ProviderSecrets =
   | ServerUrlWithKeySecrets
   | ZaiSecrets;
 
-// ===== Secrets Config =====
-
 export interface SecretsConfig {
-  /** Provider-specific secrets keyed by config key (e.g., 'openai', 'bedrock-api-key') */
   providers: Record<string, ProviderSecrets>;
 }
 
-// ===== Resolved Config =====
-
 export interface ResolvedProviderTestConfig extends ProviderTestConfig {
-  /** Resolved secrets for this provider */
   secrets?: ProviderSecrets;
 }

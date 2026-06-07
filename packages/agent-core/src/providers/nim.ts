@@ -92,14 +92,6 @@ async function requestNimModels(
   }
 }
 
-/**
- * Tests connection to an NVIDIA NIM endpoint and retrieves available models.
- * Makes an HTTP request to the OpenAI-compatible /models endpoint.
- *
- * @param url - The NIM base URL (default: https://integrate.api.nvidia.com/v1)
- * @param apiKey - NVIDIA API key (NGC)
- * @returns Connection result with available models on success
- */
 export async function testNimConnection(url: string, apiKey: string): Promise<NimConnectionResult> {
   const sanitizedUrl = sanitizeString(url, 'nimUrl', 256);
   const sanitizedApiKey = sanitizeString(apiKey, 'apiKey', 256);
@@ -137,12 +129,6 @@ export interface FetchNimModelsOptions {
   apiKey?: string;
 }
 
-/**
- * Fetches available models from a configured NVIDIA NIM endpoint.
- *
- * @param options - Configuration and API key
- * @returns Result with formatted models on success
- */
 export async function fetchNimModels(options: FetchNimModelsOptions): Promise<NimConnectionResult> {
   const { config, apiKey } = options;
 

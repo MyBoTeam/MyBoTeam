@@ -10,11 +10,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const nodeExternals = [...builtinModules, ...builtinModules.map((m) => `node:${m}`)];
 
-// Externalize all node_modules — only bundle local source files.
-// Vite 8 (rolldown) does not auto-convert CJS require() to ESM imports,
-// so any bundled third-party package that internally calls require() for
-// Node built-ins will fail at runtime in an ESM context.
-// Workspace packages (@myboteam/*) are aliased to local source and must be bundled.
 const externalizeNodeModules = (id: string) => {
   if (id.startsWith('@myboteam/') || id.startsWith('@main/')) {
     return false;
@@ -22,10 +17,6 @@ const externalizeNodeModules = (id: string) => {
   return !id.startsWith('.') && !id.startsWith('/') && !id.includes('\0') && !path.isAbsolute(id);
 };
 
-/**
- * Compile theme-core.ts → public/theme-init.js for the desktop renderer dev server.
- * Mirrors the same plugin in apps/web/vite.config.ts.
- */
 function buildThemeInit(): import('vite').Plugin {
   const outfile = path.resolve(__dirname, 'public/theme-init.js');
 

@@ -3,12 +3,6 @@ import { getDaemonClient } from '../../daemon-bootstrap';
 import { handle } from './utils';
 
 export function registerFavoritesHandlers(): void {
-  // Milestone 3 sub-chunk 3c: all favorite reads/writes route through the
-  // daemon. `favorites.add` on the daemon side is a thin pass-through
-  // over `StorageAPI.addFavorite(taskId, prompt, summary?)` — the task's
-  // prompt + summary have to be fetched separately via `task.get` since
-  // the daemon doesn't derive them from the taskId.
-
   handle('favorites:list', async () => {
     return getDaemonClient().call('favorites.list');
   });

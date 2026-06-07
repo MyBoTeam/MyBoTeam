@@ -1,11 +1,5 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { ElementHandle } from 'playwright';
-import {
-  getElementCoordinates,
-  isCoordinateClickApp,
-  toAIFriendlyError,
-  waitForPageLoad,
-} from './browser-actions.js';
 import { getPage } from './session-manager.js';
 import { selectSnapshotRef } from './snapshot-manager.js';
 import type { BrowserFileUploadInput, BrowserGetTextInput, BrowserSelectInput } from './types.js';

@@ -1,13 +1,9 @@
-// packages/shared/src/index.ts
-
-// === TYPES ===
-
 export {
   getModelDisplayName,
   MODEL_DISPLAY_NAMES,
   PROVIDER_PREFIXES,
 } from './constants/model-display.js';
-// === CONSTANTS ===
+
 export {
   CONNECTOR_AUTH_REQUIRED_MARKER,
   DEV_BROWSER_CDP_PORT,
@@ -19,14 +15,14 @@ export {
   PERMISSION_REQUEST_TIMEOUT_MS,
   WHATSAPP_API_PORT,
 } from './constants.js';
-// === SCHEMAS ===
+
 export {
   permissionResponseSchema,
   resumeSessionSchema,
   taskConfigSchema,
   validate,
 } from './schemas/validation.js';
-// Auth types
+
 export type {
   ApiKeyConfig,
   BedrockAccessKeyCredentials,
@@ -38,16 +34,16 @@ export type {
   VertexServiceAccountCredentials,
 } from './types/auth.js';
 export type { ConnectorStatus, McpConnector, OAuthTokens } from './types/connector.js';
-// Connector types
+
 export {
   getOAuthProviderDisplayName,
   isOAuthProviderId,
   OAuthProviderId,
 } from './types/connector.js';
-// Gateway types
+
 export type { CreditUsage } from './types/gateway.js';
 export type { LogEntry, LogLevel, LogSource } from './types/logging.js';
-// OpenCode message types
+
 export type {
   OpenCodeErrorMessage,
   OpenCodeMessage,
@@ -59,7 +55,7 @@ export type {
   OpenCodeToolResultMessage,
   OpenCodeToolUseMessage,
 } from './types/opencode.js';
-// Permission types
+
 export type {
   FileOperation,
   PermissionOption,
@@ -71,7 +67,7 @@ export {
   FILE_PERMISSION_REQUEST_PREFIX,
   QUESTION_REQUEST_PREFIX,
 } from './types/permission.js';
-// Provider types
+
 export type {
   ApiKeyProvider,
   AzureFoundryConfig,
@@ -99,7 +95,7 @@ export {
   STANDARD_VALIDATION_PROVIDERS,
   ZAI_ENDPOINTS,
 } from './types/provider.js';
-// Provider settings types
+
 export type {
   ApiKeyCredentials,
   AzureFoundryCredentials,
@@ -135,9 +131,9 @@ export {
   PROVIDER_ID_TO_OPENCODE,
   PROVIDER_META,
 } from './types/providerSettings.js';
-// Skills types
+
 export type { Skill, SkillFrontmatter, SkillSource } from './types/skills.js';
-// Task types
+
 export type {
   Task,
   TaskAttachment,
@@ -149,11 +145,11 @@ export type {
   TaskUpdateEvent,
 } from './types/task.js';
 export { STARTUP_STAGES } from './types/task.js';
-// Other types
+
 export type { TodoItem } from './types/todo.js';
-// Workspace types
+
 export type { Workspace, WorkspaceCreateInput, WorkspaceUpdateInput } from './types/workspace.js';
-// === UTILS ===
+
 export {
   createFilePermissionRequestId,
   createMessageId,

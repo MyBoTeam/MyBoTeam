@@ -1,18 +1,9 @@
-/**
- * GitHub Copilot device OAuth flow helpers.
- *
- * Implements the device authorization flow:
- *   1. Request a device code from GitHub
- *   2. Poll GitHub's token endpoint until authorized
- */
-
 export const GITHUB_COPILOT_OAUTH_CLIENT_ID = 'Iv1.b507a08c87ecfe98';
 export const GITHUB_COPILOT_DEVICE_CODE_URL = 'https://github.com/login/device/code';
 export const GITHUB_COPILOT_TOKEN_URL = 'https://github.com/login/oauth/access_token';
 export const GITHUB_COPILOT_AUTH_URL = 'https://github.com/login/device';
 export const GITHUB_COPILOT_API_URL = 'https://api.github.com/copilot_internal/v2/token';
 
-/** Scope required for Copilot access */
 export const GITHUB_COPILOT_SCOPE = 'read:user';
 
 export interface CopilotDeviceCodeResponse {
@@ -31,10 +22,6 @@ export interface CopilotTokenResponse {
   error_description?: string;
 }
 
-/**
- * Step 1 of device flow: request a device code from GitHub.
- * Returns device_code, user_code, verification_uri, interval, expires_in.
- */
 export async function requestCopilotDeviceCode(): Promise<CopilotDeviceCodeResponse> {
   const params = new URLSearchParams({
     client_id: GITHUB_COPILOT_OAUTH_CLIENT_ID,
@@ -62,11 +49,6 @@ export async function requestCopilotDeviceCode(): Promise<CopilotDeviceCodeRespo
   return data;
 }
 
-/**
- * Step 2: Poll GitHub's token endpoint until the user completes authorization.
- * Returns the access token when authorized.
- * Throws if the device code expires or an unrecoverable error occurs.
- */
 export async function pollCopilotDeviceToken(params: {
   deviceCode: string;
   interval: number;
@@ -106,7 +88,6 @@ export async function pollCopilotDeviceToken(params: {
     }
 
     if (data.error === 'authorization_pending' || data.error === 'slow_down') {
-      // Continue polling
       continue;
     }
 

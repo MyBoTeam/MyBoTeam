@@ -12,7 +12,6 @@ interface UseExecutionDebugStateOptions {
   currentTool: string | null;
 }
 
-/** Manages debug mode, bug report state, and elapsed time for the execution page. */
 export function useExecutionDebugState({
   myboteam,
   startupStageTaskId,
@@ -40,7 +39,6 @@ export function useExecutionDebugState({
     return () => {
       unsub?.();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [myboteam.onDebugModeChange, myboteam.getDebugMode]);
 
   useEffect(() => {

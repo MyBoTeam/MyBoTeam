@@ -9,7 +9,6 @@ import {
   Keyboard,
 } from '@phosphor-icons/react';
 
-// Browser action type from the MCP tool
 export interface BrowserAction {
   action: string;
   url?: string;
@@ -20,7 +19,6 @@ export interface BrowserAction {
   code?: string;
 }
 
-// Action type to icon mapping
 export const ACTION_ICONS: Record<string, typeof Globe> = {
   goto: Globe,
   findAndFill: CursorText,
@@ -36,7 +34,6 @@ export const ACTION_ICONS: Record<string, typeof Globe> = {
   evaluate: Code,
 };
 
-// Format action to human-readable label
 export function formatActionLabel(
   action: BrowserAction,
   t: (key: string, options?: { [key: string]: string | number }) => string,
@@ -65,7 +62,7 @@ export function formatActionLabel(
     case 'findAndClick':
     case 'clickByRef': {
       const target = action.ref || action.selector || 'element';
-      // Simplify selector for display
+
       const simplified = target.length > 15 ? `${target.slice(0, 12)}...` : target;
       label = t('browserScript.actions.click', { target: simplified });
       break;
@@ -95,14 +92,12 @@ export function formatActionLabel(
       label = action.action;
   }
 
-  // Truncate if too long
   if (label.length > maxLength) {
     return `${label.slice(0, maxLength - 3)}...`;
   }
   return label;
 }
 
-// Generate stable key for action based on content, not index
 export function getActionKey(action: BrowserAction, index: number): string {
   const parts = [action.action];
   if (action.url) {
@@ -120,7 +115,7 @@ export function getActionKey(action: BrowserAction, index: number): string {
   if (action.key) {
     parts.push(action.key);
   }
-  // Include index as fallback for duplicate actions
+
   return `${parts.join('-')}-${index}`;
 }
 
@@ -129,7 +124,6 @@ export interface BrowserScriptCardProps {
   isRunning?: boolean;
 }
 
-// Custom comparison for memo - compare actions by content, not reference
 export function arePropsEqual(
   prevProps: BrowserScriptCardProps,
   nextProps: BrowserScriptCardProps,
@@ -141,7 +135,6 @@ export function arePropsEqual(
     return false;
   }
 
-  // Deep compare actions array
   for (let i = 0; i < prevProps.actions.length; i++) {
     const prev = prevProps.actions[i];
     const next = nextProps.actions[i];

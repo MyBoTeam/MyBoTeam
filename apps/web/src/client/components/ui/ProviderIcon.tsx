@@ -1,8 +1,3 @@
-/**
- * Provider brand icon component
- * Shows a colored icon with the provider's initial
- */
-
 import type { ProviderType } from '@myboteam/agent-core/common';
 import { cn } from '@/lib/utils';
 
@@ -12,43 +7,37 @@ interface ProviderIconProps {
   className?: string;
 }
 
-/**
- * Provider brand colors
- */
 const PROVIDER_COLORS: Record<string, string> = {
-  anthropic: 'bg-[#D4A574]', // Warm coral/tan
-  openai: 'bg-[#10A37F]', // Green
-  google: 'bg-[#4285F4]', // Blue
-  xai: 'bg-[#1DA1F2]', // Twitter blue
-  deepseek: 'bg-[#6366F1]', // Indigo
-  moonshot: 'bg-[#8B5CF6]', // Purple
-  ollama: 'bg-[#F97316]', // Orange
-  openrouter: 'bg-[#EC4899]', // Pink
-  litellm: 'bg-[#06B6D4]', // Cyan
-  bedrock: 'bg-[#FF9900]', // AWS Orange
-  zai: 'bg-[#22C55E]', // Green
-  minimax: 'bg-[#EF4444]', // Red
-  lmstudio: 'bg-[#3B82F6]', // Blue
-  'azure-foundry': 'bg-[#0078D4]', // Azure blue
-  'huggingface-local': 'bg-[#FF9D00]', // HuggingFace yellow-orange
-  nebius: 'bg-[#7B61FF]', // Purple
-  together: 'bg-[#0EA5E9]', // Sky blue
-  fireworks: 'bg-[#EF4444]', // Red
-  groq: 'bg-[#F55036]', // Red-orange
-  nim: 'bg-[#76B900]', // NVIDIA green
-  custom: 'bg-[#6B7280]', // Gray
+  anthropic: 'bg-[#D4A574]',
+  openai: 'bg-[#10A37F]',
+  google: 'bg-[#4285F4]',
+  xai: 'bg-[#1DA1F2]',
+  deepseek: 'bg-[#6366F1]',
+  moonshot: 'bg-[#8B5CF6]',
+  ollama: 'bg-[#F97316]',
+  openrouter: 'bg-[#EC4899]',
+  litellm: 'bg-[#06B6D4]',
+  bedrock: 'bg-[#FF9900]',
+  zai: 'bg-[#22C55E]',
+  minimax: 'bg-[#EF4444]',
+  lmstudio: 'bg-[#3B82F6]',
+  'azure-foundry': 'bg-[#0078D4]',
+  'huggingface-local': 'bg-[#FF9D00]',
+  nebius: 'bg-[#7B61FF]',
+  together: 'bg-[#0EA5E9]',
+  fireworks: 'bg-[#EF4444]',
+  groq: 'bg-[#F55036]',
+  nim: 'bg-[#76B900]',
+  custom: 'bg-[#6B7280]',
 };
 
-/**
- * Provider initials
- */
 const PROVIDER_INITIALS: Record<string, string> = {
   anthropic: 'A',
-  openai: 'G', // GPT
+  openai: 'G',
   google: 'G',
   xai: 'X',
   deepseek: 'D',
-  moonshot: 'K', // Kimi
+  moonshot: 'K',
   ollama: 'O',
   openrouter: 'R',
   litellm: 'L',

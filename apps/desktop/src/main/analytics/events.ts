@@ -1,6 +1,3 @@
-/**
- * Analytics events barrel — re-exports all event type definitions, trackers, and error classifier.
- */
 export { classifyErrorCategory } from './error-classifier';
 export * from './event-trackers';
 export * from './event-trackers-feature';

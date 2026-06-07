@@ -112,8 +112,6 @@ export function registerSettingsHandlers(): void {
     return snap.app;
   });
 
-  // ── Scheduler ────────────────────────────────────────────────────────
-
   handle('scheduler:list', async (_event: IpcMainInvokeEvent, workspaceId?: string) => {
     const client = getDaemonClient();
     return client.call('task.listScheduled', { workspaceId });
@@ -148,7 +146,6 @@ export function registerSettingsHandlers(): void {
   registerOpenCodeHandlers(handle);
   registerWhatsAppHandlers(handle);
 
-  // Build capabilities
   handle('app:get-build-capabilities', async () => {
     const { isFreeMode, isAnalyticsEnabled } = await import('../../config/build-config');
     return {

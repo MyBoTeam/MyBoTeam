@@ -1,11 +1,3 @@
-/**
- * Pure early-boot theme initialisation — no Electron bridge or React dependencies.
- * Safe to run at HTML-parse time, before the app loads.
- *
- * This module is compiled to `public/theme-init.js` by the Vite build plugin
- * (see vite.config.ts) and also imported by `theme.ts` to avoid duplicating logic.
- */
-
 import { applyColorTheme, COLOR_THEME_KEY, isValidColor } from './theme-color.js';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
@@ -27,17 +19,11 @@ export function applyClass(resolved: 'light' | 'dark'): void {
   }
 }
 
-/**
- * Read stored theme preference and apply the correct class to <html>.
- * Called once at early-boot time (before React mounts).
- */
 export function initEarlyTheme(): void {
   let stored = 'system';
   try {
     stored = localStorage.getItem(THEME_KEY) || 'system';
-  } catch (_e) {
-    // localStorage may be unavailable in sandboxed environments; fall back to system
-  }
+  } catch (_e) {}
   const preference = (
     ['system', 'light', 'dark'].includes(stored) ? stored : 'system'
   ) as ThemePreference;

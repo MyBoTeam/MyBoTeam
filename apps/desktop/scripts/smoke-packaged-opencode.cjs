@@ -1,34 +1,34 @@
-/**
- * Smoke test for the packaged OpenCode CLI.
- *
- * Runs against a finished electron-builder artifact directory (local
- * `build:unpack` output, or an extracted CI artifact) to prove that the
- * packaged `opencode` binary:
- *   1. reports the expected version
- *   2. starts `opencode serve --hostname=127.0.0.1 --port=0` cleanly under
- *      isolated HOME/XDG env and emits the expected
- *      "opencode server listening on http://..." stdout line
- *   3. terminates within a short deadline after SIGTERM (or equivalent)
- *
- * Intended call sites:
- *   - local: after `pnpm -F @myboteam/desktop build:unpack`
- *   - CI: after electron-builder in each per-platform release job, before
- *     the R2 upload gate
- *
- * Usage:
- *   node scripts/smoke-packaged-opencode.cjs \
- *     --artifact-dir=release/mac-arm64/MyBoTeam.app \
- *     --expected-version=1.14.18
- *
- * Optional flags:
- *   --ready-timeout-ms=30000   how long to wait for the ready line
- *   --kill-timeout-ms=5000     how long to wait for graceful exit after SIGTERM
- *
- * Exit codes:
- *   0  pass
- *   1  smoke failure (message on stderr)
- *   2  usage error
- */
+   
+                                            
+  
+                                                                     
+                                                                        
+                              
+                                    
+                                                                           
+                                                    
+                                                             
+                                                                        
+  
+                       
+                                                            
+                                                                          
+                         
+  
+         
+                                               
+                                                      
+                                 
+  
+                  
+                                                                   
+                                                                                
+  
+              
+            
+                                         
+                   
+   
 
 'use strict';
 
@@ -42,9 +42,9 @@ const READY_LINE_PATTERN = /opencode server listening on\s+(https?:\/\/\S+)/;
 function parseArgs(argv) {
   const out = {};
   for (const arg of argv.slice(2)) {
-    // Tolerate a bare `--` separator forwarded by pnpm — some runners strip
-    // it, others pass it through literally. The WebStorm XML template in
-    // docs/webstorm-run-configurations.md relies on this.
+                                                                            
+                                                                         
+                                                          
     if (arg === '--') {
       continue;
     }
@@ -67,22 +67,22 @@ function die(msg, code = 1) {
   process.exit(code);
 }
 
-/**
- * Resolve the packaged opencode binary under an artifact directory.
- *
- * Electron-builder layouts we care about:
- *   macOS .app:       <root>/Contents/Resources/app.asar.unpacked/node_modules/
- *   Linux unpacked:   <root>/resources/app.asar.unpacked/node_modules/
- *   Windows unpacked: <root>/resources/app.asar.unpacked/node_modules/
- *
- * The platform-specific subdir is chosen by electron-builder from the
- * `optionalDependencies` list, keyed on BOTH OS and arch. We match by full
- * `opencode-<platform>-<arch>[-variant]` so a hypothetical artifact that
- * somehow contains both arm64 and x64 packages can't be smoked against the
- * wrong binary. Among multiple matching variants (baseline, musl, etc.)
- * we prefer the shortest name (so plain `opencode-linux-x64` wins over
- * `opencode-linux-x64-baseline`).
- */
+   
+                                                                    
+  
+                                          
+                                                                                
+                                                                       
+                                                                       
+  
+                                                                      
+                                                                           
+                                                                         
+                                                                           
+                                                                        
+                                                                       
+                                  
+   
 function resolveBinary(artifactDir) {
   const candidates = [
     path.join(artifactDir, 'Contents', 'Resources', 'app.asar.unpacked', 'node_modules'),
@@ -183,7 +183,7 @@ function runServeSmoke(binPath, readyTimeoutMs, killTimeoutMs) {
       try {
         fs.rmSync(isolated.root, { recursive: true, force: true });
       } catch {
-        // Best effort — tmp dir will be cleared eventually anyway.
+                                                                   
       }
     };
 
@@ -204,7 +204,7 @@ function runServeSmoke(binPath, readyTimeoutMs, killTimeoutMs) {
       try {
         proc.kill();
       } catch {
-        // Ignore — we're erroring out anyway.
+                                              
       }
       cleanup();
       resolve({
@@ -230,19 +230,19 @@ function runServeSmoke(binPath, readyTimeoutMs, killTimeoutMs) {
       clearTimeout(readyTimer);
       const readyUrl = match[1];
 
-      // Ask for a graceful shutdown. On Windows this maps to TerminateProcess
-      // (ungraceful) — the smoke only cares that the ready line appeared, so
-      // we accept a non-zero exit code on Windows and bound the wait instead.
+                                                                              
+                                                                             
+                                                                              
       try {
         proc.kill();
       } catch {
-        // Ignore.
+                  
       }
       const killTimer = setTimeout(() => {
         try {
           proc.kill('SIGKILL');
         } catch {
-          // Ignore.
+                    
         }
       }, killTimeoutMs);
 

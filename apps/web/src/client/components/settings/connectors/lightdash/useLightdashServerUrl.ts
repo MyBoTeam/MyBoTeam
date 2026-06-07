@@ -36,9 +36,7 @@ export function useLightdashServerUrl(): UseLightdashServerUrl {
           setUrlInput(url);
         }
       })
-      .catch(() => {
-        // Failed to load server URL — leave as null
-      })
+      .catch(() => {})
       .finally(() => setUrlLoading(false));
   }, []);
 

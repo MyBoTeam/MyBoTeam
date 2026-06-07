@@ -88,9 +88,7 @@ describe('prepareGwsManifest', () => {
     vi.unstubAllGlobals();
     try {
       fs.rmSync(tmpDir, { recursive: true, force: true });
-    } catch {
-      /* best-effort cleanup */
-    }
+    } catch {}
   });
 
   it('returns undefined when no connected accounts exist', async () => {

@@ -32,9 +32,7 @@ function killProcessOnPort(port: number): void {
         process.kill(parseInt(pid, 10), 'SIGTERM');
       }
     }
-  } catch {
-    // Port not in use or command not available
-  }
+  } catch {}
 }
 
 export async function shutdownDevBrowserServer(config: {
@@ -50,9 +48,7 @@ export async function shutdownDevBrowserServer(config: {
       signal: AbortSignal.timeout(3000),
     });
     responded = res.ok;
-  } catch {
-    // Server not reachable
-  }
+  } catch {}
 
   if (responded) {
     await new Promise<void>((resolve) => setTimeout(resolve, 2000));

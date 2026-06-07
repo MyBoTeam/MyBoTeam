@@ -110,21 +110,16 @@ describe('task-bridge-rate-limit', () => {
     it('should clean up old senders when exceeding MAX_TRACKED_SENDERS', () => {
       const state = createRateLimitState();
 
-      // Add more than MAX_TRACKED_SENDERS senders with recent timestamps
       for (let i = 0; i < MAX_TRACKED_SENDERS + 1; i++) {
         recordMessage(state, `sticky-user-${i}`);
       }
-      // All timestamps are recent, so no cleanup happens
+
       expect(state.senderTimestamps.size).toBe(MAX_TRACKED_SENDERS + 1);
 
-      // Advance time past the window so all existing timestamps expire
       vi.advanceTimersByTime(RATE_LIMIT_WINDOW_MS + 1);
 
-      // Add one more sender to trigger cleanup
       recordMessage(state, 'new-user');
 
-      // Old senders should have been cleaned up (all their timestamps expired)
-      // Only the new sender should remain
       expect(state.senderTimestamps.size).toBe(1);
       expect(state.senderTimestamps.has('new-user')).toBe(true);
     });

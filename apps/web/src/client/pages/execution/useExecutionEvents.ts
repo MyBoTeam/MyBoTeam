@@ -26,7 +26,6 @@ interface UseExecutionEventsOptions {
   loadTaskById: (id: string) => Promise<void>;
 }
 
-/** Registers all IPC event subscriptions for the execution page. */
 export function useExecutionEvents(opts: UseExecutionEventsOptions) {
   const {
     id,
@@ -115,11 +114,6 @@ export function useExecutionEvents(opts: UseExecutionEventsOptions) {
       }
     });
 
-    // On daemon disconnect: don't mark task as failed immediately — the daemon
-    // may reconnect and the task may still be running. The global toast and
-    // status dot already show "Reconnecting..." to the user.
-    // On reconnect: re-fetch task to get authoritative state from daemon DB.
-    // On reconnect-failed: only then mark running task as failed.
     const unsubscribeDaemonReconnected = myboteam.onDaemonReconnected(() => {
       if (id) {
         loadTaskById(id);
@@ -144,7 +138,6 @@ export function useExecutionEvents(opts: UseExecutionEventsOptions) {
       unsubscribeDaemonReconnected();
       unsubscribeDaemonReconnectFailed?.();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     id,
     loadTaskById,

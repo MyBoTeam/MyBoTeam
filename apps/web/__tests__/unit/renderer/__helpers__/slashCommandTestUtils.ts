@@ -1,7 +1,6 @@
 import type { Skill } from '@myboteam/agent-core/common';
 import { vi } from 'vitest';
 
-/** Two visible mock skills for testing slash-command features. */
 export const mockSkills: Skill[] = [
   {
     id: 'skill-1',
@@ -29,7 +28,6 @@ export const mockSkills: Skill[] = [
   },
 ];
 
-/** Same as {@link mockSkills} plus one hidden skill for filter testing. */
 export const mockSkillsWithHidden: Skill[] = [
   ...mockSkills,
   {
@@ -46,7 +44,6 @@ export const mockSkillsWithHidden: Skill[] = [
   },
 ];
 
-/** Create a mock textarea ref with vi.fn() stubs for focus/setSelectionRange. */
 export function createTextareaRef(overrides?: Partial<HTMLTextAreaElement>) {
   return {
     current: {
@@ -58,14 +55,12 @@ export function createTextareaRef(overrides?: Partial<HTMLTextAreaElement>) {
   };
 }
 
-/** Create a real DOM textarea appended to document.body (caller must clean up). */
 export function createDomTextareaRef() {
   const textarea = document.createElement('textarea');
   document.body.appendChild(textarea);
   return { current: textarea };
 }
 
-/** Build a mock React.KeyboardEvent with vi.fn() stubs for preventDefault/stopPropagation. */
 export function createKeyboardEvent(key: string, extra?: Partial<React.KeyboardEvent>) {
   return {
     key,

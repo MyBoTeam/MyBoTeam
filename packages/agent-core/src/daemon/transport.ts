@@ -1,21 +1,7 @@
-/**
- * In-Process Transport
- *
- * A DaemonTransport implementation that passes messages directly
- * between server and client within the same process via callbacks.
- * This is the Step 2 transport — no sockets, no serialization overhead.
- *
- * In Step 3, this will be swapped for a socket-based transport.
- */
-
 import type { DaemonTransport, JsonRpcMessage } from '../common/types/daemon.js';
 
 type MessageHandler = (message: JsonRpcMessage) => void;
 
-/**
- * Creates a pair of linked in-process transports.
- * Messages sent on one side are received on the other.
- */
 export function createInProcessTransportPair(): {
   serverTransport: DaemonTransport;
   clientTransport: DaemonTransport;

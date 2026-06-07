@@ -1,13 +1,3 @@
-/**
- * device-fingerprint.ts — Generates a stable device identifier for gateway auth.
- *
- * Produces a 32-char hex string by SHA-256 hashing a platform-specific machine UUID.
- * Same hardware → same fingerprint across restarts and reinstalls.
- *
- * Placed in identity/ (not analytics/) because this is used for gateway DPoP
- * identity binding, not for product analytics.
- */
-
 import { execSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';

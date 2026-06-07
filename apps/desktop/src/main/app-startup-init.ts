@@ -16,9 +16,7 @@ function logMain(level: 'INFO' | 'WARN' | 'ERROR', msg: string, data?: Record<st
   try {
     const l = getLogCollector();
     if (l?.log) l.log(level, 'main', msg, data);
-  } catch (_e) {
-    /* best-effort */
-  }
+  } catch (_e) {}
 }
 
 export function runLegacyMigration(): void {
@@ -72,9 +70,7 @@ export async function initPostBootstrap(): Promise<void> {
 
     try {
       nativeTheme.themeSource = snap.app.theme;
-    } catch {
-      /* first launch or unknown value */
-    }
+    } catch {}
 
     const hfConfig = snap.huggingFaceLocalConfig;
     if (hfConfig?.enabled && hfConfig.selectedModelId) {
@@ -109,9 +105,7 @@ export async function initPostBootstrap(): Promise<void> {
           logMain('INFO', '[Main] Removed stale myboteam-ai provider (free mode not available)');
         }
       }
-    } catch {
-      /* best-effort cleanup */
-    }
+    } catch {}
   } catch (err) {
     logMain('WARN', '[Main] Post-bootstrap settings snapshot read failed', {
       err: String(err),

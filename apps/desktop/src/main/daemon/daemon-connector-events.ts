@@ -1,9 +1,3 @@
-/**
- * Daemon Connector - Event Handling
- *
- * Reconnection logic, connect/disconnect event handlers, and renderer broadcasting.
- */
-
 import type { createSocketTransport, DaemonClient } from '@myboteam/agent-core/desktop-main';
 import { BrowserWindow } from 'electron';
 import {
@@ -137,9 +131,7 @@ function broadcastToRenderer(channel: string): void {
     if (!win.isDestroyed()) {
       try {
         win.webContents.send(channel);
-      } catch {
-        // Window torn down
-      }
+      } catch {}
     }
   }
 }

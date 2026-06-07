@@ -1,5 +1,3 @@
-// apps/desktop/src/renderer/components/settings/shared/ConnectionStatus.tsx
-
 import type { ConnectionStatus as ConnectionStatusType } from '@myboteam/agent-core/common';
 import { useTranslation } from 'react-i18next';
 

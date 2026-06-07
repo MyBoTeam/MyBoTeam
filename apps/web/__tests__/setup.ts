@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 
-// Prevent undici from crashing on Node 20 (undici 8 requires Node 22 APIs)
 vi.mock('undici', () => ({
   ProxyAgent: class ProxyAgent {},
   Agent: class Agent {},
@@ -17,7 +16,6 @@ if (typeof Element !== 'undefined') {
   Element.prototype.scrollIntoView = () => {};
 }
 
-// Load English locale files so tests get real translated text
 const localesDir = path.resolve(process.cwd(), 'locales/en');
 const translations: Record<string, Record<string, unknown>> = {};
 
@@ -50,7 +48,6 @@ function interpolate(text: string, options?: Record<string, unknown>): string {
   });
 }
 
-// Mock react-i18next for all tests — resolves keys to actual English text
 vi.mock('react-i18next', () => ({
   useTranslation: (ns?: string) => ({
     t: (key: string, options?: Record<string, unknown>) => {
@@ -60,7 +57,7 @@ vi.mock('react-i18next', () => ({
       if (value) {
         return interpolate(value, options);
       }
-      // Fallback: return namespaced key for debugging
+
       return ns ? `${ns}:${key}` : key;
     },
     i18n: {

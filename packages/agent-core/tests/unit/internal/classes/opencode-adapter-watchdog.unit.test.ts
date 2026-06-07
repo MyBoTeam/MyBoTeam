@@ -1,21 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { OpenCodeAdapter } from '../../../../src/internal/classes/open-code-adapter.js';
 
-/**
- * REGRESSION (Max review residual #4): the `TaskInactivityWatchdog` class
- * has comprehensive unit tests of its own, but they only prove it works in
- * isolation. This suite pins the wiring inside `OpenCodeAdapter` — that
- * `startWatchdog()` actually constructs a watchdog and that the hard
- * timeout callback drives the adapter into a failed-task terminal state.
- *
- * Without these tests, a future refactor that accidentally drops
- * `this.startWatchdog()` from `startTask()` — or the hard-timeout
- * handler's `markComplete('error', …)` call — would silently re-introduce
- * the "LLM stream hangs forever" bug the watchdog was added to fix.
- */
 describe('OpenCodeAdapter watchdog wiring', () => {
   beforeEach(() => {
-    // Silence the adapter's console logger during the test.
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -26,11 +13,6 @@ describe('OpenCodeAdapter watchdog wiring', () => {
   });
 
   function constructAdapter(): OpenCodeAdapter {
-    // Minimal options — enough to construct the adapter. Not calling
-    // startTask(), which would require a full SDK mock. We directly
-    // exercise the private watchdog-related helpers via a narrow escape
-    // hatch; the adapter's public contract is "on hard timeout, emit
-    // 'error' and mark the task complete with status='error'".
     const adapter = new OpenCodeAdapter(
       {
         platform: 'darwin',
@@ -44,16 +26,13 @@ describe('OpenCodeAdapter watchdog wiring', () => {
 
   it('startWatchdog constructs a watchdog instance', () => {
     const adapter = constructAdapter();
-    // Before: no watchdog yet.
+
     expect((adapter as unknown as { watchdog: unknown }).watchdog).toBeNull();
 
-    // Direct call to the private helper. Typecheck-safe via cast.
     (adapter as unknown as { startWatchdog: () => void }).startWatchdog();
 
     expect((adapter as unknown as { watchdog: unknown }).watchdog).not.toBeNull();
 
-    // Teardown cleans it up so the test exits cleanly (the watchdog has
-    // a running sampleIntervalMs timer by default).
     (adapter as unknown as { teardown: () => void }).teardown();
     expect((adapter as unknown as { watchdog: unknown }).watchdog).toBeNull();
   });
@@ -66,9 +45,6 @@ describe('OpenCodeAdapter watchdog wiring', () => {
     const completeEvents: Array<{ status: string; error?: string }> = [];
     adapter.on('complete', (result) => completeEvents.push(result));
 
-    // Invoke the private hard-timeout handler directly. This is exactly
-    // what the watchdog class calls when its `postNudgeTimeoutMs` budget
-    // expires without progress.
     (
       adapter as unknown as {
         handleWatchdogHardTimeout: (ctx: {
@@ -85,7 +61,7 @@ describe('OpenCodeAdapter watchdog wiring', () => {
 
     expect(errorEvents).toHaveLength(1);
     expect(errorEvents[0].message).toMatch(/watchdog/i);
-    expect(errorEvents[0].message).toMatch(/\d+s/); // includes elapsed seconds
+    expect(errorEvents[0].message).toMatch(/\d+s/);
 
     expect(completeEvents).toHaveLength(1);
     expect(completeEvents[0].status).toBe('error');
@@ -94,8 +70,7 @@ describe('OpenCodeAdapter watchdog wiring', () => {
 
   it('sampleWatchdogState reports inProgress=false when a pending request is waiting on a human', () => {
     const adapter = constructAdapter();
-    // Seed session + pending-request internal state that the sample
-    // function reads. These fields are private; use narrow escape.
+
     const priv = adapter as unknown as {
       currentSessionId: string | null;
       watchdogActivityCounter: number;
@@ -111,12 +86,9 @@ describe('OpenCodeAdapter watchdog wiring', () => {
     };
 
     const snap = priv.sampleWatchdogState();
-    // The watchdog must not escalate while we're waiting on the user —
-    // human input time is not a stall. `inProgress: false` tells the
-    // watchdog to reset its timer on each sample.
+
     expect(snap.inProgress).toBe(false);
-    // Fingerprint still encodes the pending-request id so if the user
-    // replies and a new request arrives, progress is detected.
+
     expect(snap.fingerprint).toContain('per_sdk_xyz');
   });
 
@@ -125,7 +97,6 @@ describe('OpenCodeAdapter watchdog wiring', () => {
     const errorEvents: Error[] = [];
     adapter.on('error', (err) => errorEvents.push(err));
 
-    // Simulate the task having already finished via the success path.
     (adapter as unknown as { hasCompleted: boolean }).hasCompleted = true;
 
     (
@@ -142,8 +113,6 @@ describe('OpenCodeAdapter watchdog wiring', () => {
       snapshot: { fingerprint: 'x', inProgress: true },
     });
 
-    // Already-completed tasks must not get a belated error — the user
-    // already saw their success result.
     expect(errorEvents).toHaveLength(0);
   });
 });

@@ -1,11 +1,3 @@
-/**
- * Daemon Bootstrap
- *
- * Connects to the standalone daemon process via Unix socket / Windows named pipe.
- * If no daemon is running, spawns one (detached, survives Electron exit).
- * Registers notification forwarding and reconnection handling.
- */
-
 import type { DaemonClient } from '@myboteam/agent-core/desktop-main';
 import { createSocketTransport } from '@myboteam/agent-core/desktop-main';
 import type { BrowserWindow } from 'electron';
@@ -29,9 +21,7 @@ function log(level: 'INFO' | 'WARN' | 'ERROR', msg: string): void {
     if (l?.log) {
       l.log(level, 'daemon', msg);
     }
-  } catch {
-    /* best-effort */
-  }
+  } catch {}
 }
 
 export async function bootstrapDaemon(): Promise<DaemonClient> {

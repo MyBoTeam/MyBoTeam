@@ -43,7 +43,6 @@ export function VertexAdcTab({
           })),
         );
 
-        // Auto-select: prefer detected default project, fall back to first
         if (!projectId) {
           if (detectResult?.success && detectResult.projectId) {
             onProjectIdChange(detectResult.projectId);
@@ -66,7 +65,6 @@ export function VertexAdcTab({
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t, projectId, onProjectIdChange]);
 
   return (
@@ -76,7 +74,7 @@ export function VertexAdcTab({
         <code className="text-xs bg-muted rounded px-1 py-0.5">{t('vertex.adcCommand')}</code>
       </div>
 
-      {/* Project Selector */}
+      {}
       {error ? (
         <div className="rounded-md bg-destructive/10 px-3 py-2.5 text-sm text-destructive">
           {error}
@@ -96,7 +94,7 @@ export function VertexAdcTab({
         />
       )}
 
-      {/* Location */}
+      {}
       <SearchableSelect
         items={VERTEX_LOCATIONS}
         value={location}

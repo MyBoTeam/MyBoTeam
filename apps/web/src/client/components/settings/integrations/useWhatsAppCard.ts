@@ -1,10 +1,3 @@
-/**
- * useWhatsAppCard — state machine hook for WhatsApp connection management.
- *
- * Extracted from WhatsAppCard for modularity (> 200 line limit).
- * Encapsulates IPC bootstrapping, subscription cleanup, and status transitions.
- * IPC subscriptions are delegated to useWhatsAppSubscriptions.
- */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getMyBoTeam } from '@/lib/myboteam';
 import { useWhatsAppSubscriptions } from './useWhatsAppSubscriptions';
@@ -53,7 +46,6 @@ export function useWhatsAppCard(): WhatsAppCardState & WhatsAppCardActions {
   const qrTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const connectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Auto-clear confirm disconnect after 3 seconds
   useEffect(() => {
     if (!confirmDisconnect) {
       return;
@@ -62,10 +54,7 @@ export function useWhatsAppCard(): WhatsAppCardState & WhatsAppCardActions {
     return () => clearTimeout(timer);
   }, [confirmDisconnect]);
 
-  // Cleanup timers on unmount. Reads .current in the cleanup function intentionally —
-  // we want whatever timers are active at unmount time, not the values at mount time.
   useEffect(() => {
-    /* eslint-disable react-hooks/exhaustive-deps */
     return () => {
       if (qrTimerRef.current) {
         clearInterval(qrTimerRef.current);
@@ -74,7 +63,6 @@ export function useWhatsAppCard(): WhatsAppCardState & WhatsAppCardActions {
         clearTimeout(connectTimeoutRef.current);
       }
     };
-    /* eslint-enable react-hooks/exhaustive-deps */
   }, []);
 
   const fetchConfig = useCallback(async () => {
@@ -87,7 +75,7 @@ export function useWhatsAppCard(): WhatsAppCardState & WhatsAppCardActions {
           phoneNumber: result.phoneNumber,
           lastConnectedAt: result.lastConnectedAt,
         });
-        // QR recovery: if daemon is already in qr_ready with a QR code, show it
+
         if (status === 'qr_ready' && result.qrCode && result.qrIssuedAt) {
           setQrCode(result.qrCode);
           setQrExpiresAt(result.qrIssuedAt + 60_000);

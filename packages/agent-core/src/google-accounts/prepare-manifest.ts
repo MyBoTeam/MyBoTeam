@@ -63,9 +63,7 @@ export async function prepareGwsManifest(
   fs.mkdirSync(tokenDir, { recursive: true });
   try {
     fs.chmodSync(tokenDir, 0o700);
-  } catch {
-    // non-critical
-  }
+  } catch {}
 
   const entries: GwsAccountEntry[] = [];
   const summary: GwsAccountSummary[] = [];
@@ -82,9 +80,7 @@ export async function prepareGwsManifest(
       atomicWriteFile(tokenFilePath, JSON.stringify(token));
       try {
         fs.chmodSync(tokenFilePath, 0o600);
-      } catch {
-        // non-critical
-      }
+      } catch {}
     } catch (err) {
       log('WARN', '[prepareGwsManifest] failed to write per-account token file', {
         googleAccountId: account.googleAccountId,
@@ -114,9 +110,7 @@ export async function prepareGwsManifest(
     atomicWriteFile(manifestPath, JSON.stringify(entries, null, 2));
     try {
       fs.chmodSync(manifestPath, 0o600);
-    } catch {
-      // non-critical
-    }
+    } catch {}
   } catch (err) {
     log('ERROR', '[prepareGwsManifest] failed to write manifest', { err: String(err) });
     return { manifestPath: '', summary };

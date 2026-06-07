@@ -1,21 +1,12 @@
-/**
- * Integration tests for History page
- * Tests "Clear All" button visibility and interactions in the History page header
- * @module __tests__/integration/renderer/pages/History.integration.test
- * @vitest-environment jsdom
- */
-
 import type { Task, TaskStatus } from '@myboteam/agent-core';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Create mock functions for task store
 const mockLoadTasks = vi.fn();
 const mockDeleteTask = vi.fn();
 const mockClearHistory = vi.fn();
 
-// Store state holder
 let mockStoreState = {
   tasks: [] as Task[],
   loadTasks: mockLoadTasks,
@@ -23,12 +14,10 @@ let mockStoreState = {
   clearHistory: mockClearHistory,
 };
 
-// Mock the task store
 vi.mock('@/stores/taskStore', () => ({
   useTaskStore: () => mockStoreState,
 }));
 
-// Mock the Header component to keep tests focused on History page behavior
 vi.mock('@/components/layout/Header', () => ({
   default: () => <header data-testid="mock-header" />,
 }));

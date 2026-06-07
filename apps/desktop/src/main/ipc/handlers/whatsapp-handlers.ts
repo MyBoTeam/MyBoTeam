@@ -1,9 +1,3 @@
-/**
- * WhatsApp IPC handlers — daemon proxy version
- *
- * All operations are proxied to the daemon via RPC.
- * QR and status notifications flow via daemon-bootstrap notification forwarding.
- */
 import type { IpcMainInvokeEvent } from 'electron';
 import { getDaemonClient } from '../../daemon-bootstrap';
 import type { IpcHandler } from '../types';

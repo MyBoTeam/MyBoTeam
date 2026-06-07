@@ -64,7 +64,7 @@ export default function ExecutionPage() {
         <QueuedWithMessages messages={s.currentTask.messages} messagesEndRef={messagesEndRef} />
       )}
 
-      {/* Running messages */}
+      {}
       {s.currentTask.status !== 'queued' && (
         <ErrorBoundary
           fallback={(error, reset) => (
@@ -127,7 +127,7 @@ export default function ExecutionPage() {
           </div>
         )}
 
-        {/* Follow-up input */}
+        {}
         {s.canFollowUp && (
           <FollowUpInput
             followUp={s.followUp}
@@ -157,7 +157,7 @@ export default function ExecutionPage() {
           />
         )}
 
-        {/* Credit exhaustion banner — shown when task fails due to quota or live credits exhausted */}
+        {}
         {(creditsState.isCreditsBlocked ||
           (s.currentTask?.status === 'failed' &&
             isMyBoTeamCreditExhaustedError(s.currentTask?.result?.error))) && (

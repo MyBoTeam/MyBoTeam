@@ -228,7 +228,7 @@ describe('isTokenExpired', () => {
   });
 
   it('returns false when token is within buffer window', () => {
-    const future = Date.now() + 600000; // 10 minutes from now (buffer is 5 min)
+    const future = Date.now() + 600000;
     expect(isTokenExpired({ accessToken: 'abc', tokenType: 'Bearer', expiresAt: future })).toBe(
       false,
     );

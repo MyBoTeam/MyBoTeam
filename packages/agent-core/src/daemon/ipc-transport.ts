@@ -1,21 +1,6 @@
-/**
- * IPC Channel Transport
- *
- * DaemonTransport implementations that use Node.js child_process IPC channels
- * (process.send / child.send) for parent ↔ child communication.
- *
- * This is cross-platform (macOS, Windows, Linux) without sockets or named pipes.
- *
- * ESM module — use .js extensions on imports.
- */
-
 import type { ChildProcess } from 'node:child_process';
 import type { DaemonTransport, JsonRpcMessage } from '../common/types/daemon.js';
 
-/**
- * Envelope for messages sent over the IPC channel.
- * Discriminates daemon RPC messages from other IPC traffic.
- */
 interface DaemonIpcEnvelope {
   __daemon: true;
   payload: JsonRpcMessage;
@@ -31,10 +16,6 @@ function isDaemonEnvelope(msg: unknown): msg is DaemonIpcEnvelope {
   );
 }
 
-/**
- * Transport for the PARENT process (Electron main).
- * Wraps a ChildProcess's IPC channel.
- */
 export function createChildProcessTransport(child: ChildProcess): DaemonTransport {
   const handlers: Array<(message: JsonRpcMessage) => void> = [];
 
@@ -65,10 +46,6 @@ export function createChildProcessTransport(child: ChildProcess): DaemonTranspor
   };
 }
 
-/**
- * Transport for the CHILD process (daemon).
- * Wraps process.send / process.on('message').
- */
 export function createParentProcessTransport(): DaemonTransport {
   const handlers: Array<(message: JsonRpcMessage) => void> = [];
 

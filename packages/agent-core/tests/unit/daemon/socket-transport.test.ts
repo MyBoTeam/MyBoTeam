@@ -6,7 +6,6 @@ import { DaemonClient } from '../../../src/daemon/client.js';
 import { DaemonRpcServer } from '../../../src/daemon/rpc-server.js';
 import { createSocketTransport } from '../../../src/daemon/socket-transport.js';
 
-// Use a temp dir for each test's socket to avoid collisions
 let tempDir: string;
 let server: DaemonRpcServer | null = null;
 
@@ -64,7 +63,6 @@ describe('createSocketTransport', () => {
     const transport = await createSocketTransport({ socketPath });
     const client = new DaemonClient({ transport });
 
-    // Wait for connection to register on server side
     await client.ping();
 
     const received: unknown[] = [];
@@ -72,10 +70,8 @@ describe('createSocketTransport', () => {
       received.push(data);
     });
 
-    // Server pushes a notification
     server.notify('task.progress', { taskId: 'tsk-1', stage: 'running' });
 
-    // Give the notification time to arrive
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(received).toHaveLength(1);
@@ -107,7 +103,6 @@ describe('createSocketTransport', () => {
     await server.stop();
     server = null;
 
-    // Wait for close event to propagate
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(disconnected).toBe(true);

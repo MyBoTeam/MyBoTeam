@@ -37,9 +37,7 @@ export function resolveWindowsCliFromLauncher(
   try {
     const realLauncherPackagePath = fs.realpathSync(launcherPackagePath);
     candidateModuleRoots.add(path.dirname(realLauncherPackagePath));
-  } catch {
-    // Ignore realpath failures and continue with known roots.
-  }
+  } catch {}
 
   for (const moduleRoot of candidateModuleRoots) {
     for (const packageName of packageNames) {

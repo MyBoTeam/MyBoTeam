@@ -8,15 +8,7 @@ interface GoogleAccountStore {
   accounts: GoogleAccount[];
   loading: boolean;
   error: string | null;
-  /**
-   * Most recent error emitted on `gws:account:auth-error` (M5 review
-   * finding P2.3). Set by `initGoogleAccountListener` when the daemon's
-   * background OAuth consumer fails to register an account (typical
-   * trigger: Google omitted the refresh token on re-consent). The
-   * `GoogleAccountsSection` component watches this, breaks out of its
-   * 30s poll, and shows the message to the user. Cleared by
-   * `clearAuthError` when the UI is ready to try again.
-   */
+
   authError: string | null;
   _requestToken: symbol | null;
   fetchAccounts: () => Promise<void>;
@@ -104,10 +96,6 @@ export function initGoogleAccountListener(): () => void {
     useGoogleAccountStore.getState().handleStatusChange(id, status as GoogleAccountStatus);
   });
 
-  // M5 review finding P2.3 (round-2 P2.B): consume the dedicated Google
-  // OAuth auth-error channel so missing-refresh-token and similar
-  // daemon-side rejections reach the user instead of silently timing
-  // out the 30s `GoogleAccountsSection` poll.
   const unsubscribeAuthError = window.myboteam?.gws?.onAuthError(({ message }) => {
     logger.warn('Google account auth error:', message);
     useGoogleAccountStore.getState().setAuthError(message);

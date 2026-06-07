@@ -133,7 +133,6 @@ describe('normalizeMessage', () => {
       messageTimestamp: 8000,
     });
 
-    // fromMe is true, so senderId should be the chatJid (group), not participant
     expect(result?.senderId).toBe('123-456@g.us');
     expect(result?.isFromMe).toBe(true);
   });

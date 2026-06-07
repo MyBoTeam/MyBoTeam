@@ -19,12 +19,6 @@ import { registerWorkspaceHandlers } from './workspace-handlers';
 type GoogleAuthFn = typeof startGoogleOAuth;
 type CancelGoogleOAuthFn = typeof cancelGoogleOAuth;
 
-// Milestone 4 of the daemon-only-SQLite migration: the Google account
-// DB + token refresh moved to the daemon, so main no longer passes the
-// AccountManager / TokenManager singletons to the handler layer. Only
-// the OAuth loopback helpers (`startGoogleOAuth`, `cancelGoogleOAuth`)
-// stay in main — they need Electron's `shell.openExternal` + a local
-// HTTP listener.
 export function registerIPCHandlers(
   googleAuth?: GoogleAuthFn,
   cancelGoogleOAuthFn?: CancelGoogleOAuthFn,

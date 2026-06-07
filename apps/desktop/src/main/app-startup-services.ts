@@ -10,9 +10,7 @@ function logMain(level: 'INFO' | 'WARN' | 'ERROR', msg: string, data?: Record<st
   try {
     const l = getLogCollector();
     if (l?.log) l.log(level, 'main', msg, data);
-  } catch (_e) {
-    /* best-effort */
-  }
+  } catch (_e) {}
 }
 
 export async function setupGoogleOAuthAndIpc(): Promise<void> {
@@ -72,9 +70,7 @@ export async function setupWindowServices(
         try {
           const { suppressReconnect } = await import('./daemon/daemon-connector-events');
           suppressReconnect();
-        } catch {
-          /* connector may not be loaded */
-        }
+        } catch {}
         const { requestStopDaemonOnQuit } = await import('./app-shutdown');
         requestStopDaemonOnQuit();
         isQuittingRef.value = true;
@@ -110,9 +106,7 @@ export function registerActivateHandler(createWindow: () => void): void {
       createWindow();
       try {
         getLogCollector()?.logEnv?.('INFO', '[Main] Application reactivated; recreated window');
-      } catch (_e) {
-        /* ignore */
-      }
+      } catch (_e) {}
     } else {
       windows[0].show();
       windows[0].focus();
@@ -121,9 +115,7 @@ export function registerActivateHandler(createWindow: () => void): void {
           'INFO',
           '[Main] Application reactivated; showed existing window',
         );
-      } catch (_e) {
-        /* ignore */
-      }
+      } catch (_e) {}
     }
   });
 }

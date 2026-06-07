@@ -1,5 +1,3 @@
-// apps/desktop/src/renderer/components/settings/hooks/useProviderSettings.ts
-
 import type { ConnectedProvider, ProviderId, ProviderSettings } from '@myboteam/agent-core/common';
 import { useCallback, useEffect, useState } from 'react';
 import { getMyBoTeam } from '@/lib/myboteam';
@@ -87,25 +85,18 @@ export function useProviderSettings() {
     setSettings((prev) => (prev ? { ...prev, debugMode: enabled } : null));
   }, []);
 
-  /**
-   * Atomically switches to a model on a different provider.
-   * Rolls back the model update if activating the provider fails.
-   */
   const switchProviderModel = useCallback(async (providerId: ProviderId, modelId: string) => {
     const myboteam = getMyBoTeam();
-    // Capture previousModelId before writing so the rollback target is the original value
+
     const current = (await myboteam.getProviderSettings()) as ProviderSettings;
     const previousModelId = current.connectedProviders[providerId]?.selectedModelId ?? null;
     await myboteam.updateProviderModel(providerId, modelId);
     try {
       await myboteam.setActiveProvider(providerId);
     } catch (err) {
-      // Revert the model update so settings stay consistent
       try {
         await myboteam.updateProviderModel(providerId, previousModelId);
-      } catch {
-        // Best-effort rollback; ignore secondary failure
-      }
+      } catch {}
       throw err;
     }
     setSettings((prev) => {

@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { getMyBoTeam } from '@/lib/myboteam';
 import { ProviderCard } from './ProviderCard';
 
-// Provider order matching Figma design (4 columns per row)
 const PROVIDER_ORDER: ProviderId[] = [
   'myboteam-ai',
   'openai',
@@ -53,7 +52,6 @@ export function ProviderGrid({
   const [search, setSearch] = useState('');
   const [hasFreeMode, setHasFreeMode] = useState<boolean | null>(null);
 
-  // Check build capabilities on mount to determine if myboteam-ai should be shown
   useEffect(() => {
     let cancelled = false;
     getMyBoTeam()
@@ -72,7 +70,6 @@ export function ProviderGrid({
   const filteredProviders = useMemo(() => {
     let providers = PROVIDER_ORDER;
 
-    // Hide myboteam-ai when the build does not support free mode
     if (hasFreeMode === false) {
       providers = providers.filter((id) => id !== 'myboteam-ai');
     }
@@ -87,7 +84,7 @@ export function ProviderGrid({
 
   return (
     <div className="rounded-xl border border-border bg-card/70 p-4" data-testid="provider-grid">
-      {/* Header */}
+      {}
       <div className="flex items-center justify-between mb-4">
         <span className="text-sm font-medium text-foreground">{t('providers.title')}</span>
         <div className="relative">

@@ -18,13 +18,6 @@ export interface FetchModelsResult {
   error?: string;
 }
 
-/**
- * Fetches available models from the OpenRouter API.
- *
- * @param apiKey - The OpenRouter API key
- * @param timeout - Request timeout in milliseconds (default: 10000)
- * @returns Result object with success status and models array or error message
- */
 export async function fetchOpenRouterModels(
   apiKey: string,
   timeout: number = DEFAULT_TIMEOUT_MS,

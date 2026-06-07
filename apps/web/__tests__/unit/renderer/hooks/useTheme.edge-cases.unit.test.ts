@@ -1,7 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
-
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -60,13 +56,12 @@ describe('useTheme hook - edge cases', () => {
   }
 
   it('handles matchMedia throwing in resolveIsDark', async () => {
-    // matchMedia might throw in some environments (e.g., SSR, some test runners)
     vi.stubGlobal('matchMedia', () => {
       throw new Error('matchMedia not available');
     });
 
     const { result } = await renderThemeHook();
-    // Should default to light (isDark = false)
+
     expect(result.current.isDark).toBe(false);
   });
 
@@ -81,7 +76,6 @@ describe('useTheme hook - edge cases', () => {
 
     const { result } = await renderThemeHook();
 
-    // Simulate backend pushing a theme change
     act(() => {
       changeCallback!({ theme: 'dark', resolved: 'dark' });
     });
@@ -118,7 +112,6 @@ describe('useTheme hook - edge cases', () => {
   it('loads theme from backend on mount', async () => {
     mockGetTheme.mockResolvedValue('dark');
 
-    // Set localStorage to light so we can see the backend override
     localStorageMock.setItem('theme', 'light');
 
     const { result } = await renderThemeHook();
@@ -127,7 +120,6 @@ describe('useTheme hook - edge cases', () => {
   });
 
   it('handles matchMedia throwing in OS theme listener', async () => {
-    // First render with system preference
     vi.stubGlobal('matchMedia', () => ({
       matches: false,
       addEventListener: vi.fn(),
@@ -136,7 +128,6 @@ describe('useTheme hook - edge cases', () => {
 
     const { result, unmount } = await renderThemeHook();
 
-    // Now change preference to system to trigger the OS listener effect
     act(() => {
       result.current.setTheme('system');
     });

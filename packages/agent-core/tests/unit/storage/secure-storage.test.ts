@@ -9,7 +9,6 @@ describe('SecureStorage', () => {
   let testDir: string;
 
   beforeEach(() => {
-    // Create a unique temporary directory for each test
     testDir = path.join(
       os.tmpdir(),
       `secure-storage-test-${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -23,7 +22,6 @@ describe('SecureStorage', () => {
   });
 
   afterEach(() => {
-    // Clean up test directory
     if (fs.existsSync(testDir)) {
       fs.rmSync(testDir, { recursive: true, force: true });
     }
@@ -86,7 +84,6 @@ describe('SecureStorage', () => {
     it('should persist data to file', () => {
       storage.set('persistKey', 'persistValue');
 
-      // Create a new storage instance pointing to the same directory
       const newStorage = createSecureStorage({
         storagePath: testDir,
         appId: 'test.app.id',
@@ -107,19 +104,15 @@ describe('SecureStorage', () => {
       const sensitiveValue = 'my-secret-api-key-12345';
       storage.set('apiKey', sensitiveValue);
 
-      // Read the raw file contents
       const filePath = path.join(testDir, 'secure-storage.json');
       const fileContents = fs.readFileSync(filePath, 'utf-8');
 
-      // The plain text value should NOT appear in the file
       expect(fileContents).not.toContain(sensitiveValue);
 
-      // The encrypted value should be stored in the values object
       const parsed = JSON.parse(fileContents);
       expect(parsed.values).toBeDefined();
       expect(parsed.values.apiKey).toBeDefined();
 
-      // Encrypted format should be: iv:authTag:ciphertext (base64)
       const encryptedValue = parsed.values.apiKey;
       const parts = encryptedValue.split(':');
       expect(parts.length).toBe(3);
@@ -195,7 +188,6 @@ describe('SecureStorage', () => {
     });
 
     it('should return null for invalid Bedrock credentials', () => {
-      // Store invalid JSON
       storage.storeApiKey('bedrock', 'not-valid-json');
       expect(storage.getBedrockCredentials()).toBeNull();
     });

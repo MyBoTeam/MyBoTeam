@@ -1,23 +1,5 @@
-/**
- * Unit tests for BrowserPreview IPC handlers (ENG-695 / ENG-981)
- *
- * Tests the browser live-view IPC handlers:
- * - browser-preview:start
- * - browser-preview:stop
- * - browser-preview:status
- *
- * The implementation routes IPC calls to the browserPreview service which
- * uses Chrome DevTools Protocol (CDP) via a WebSocket-based CdpClient.
- * These tests mock the browserPreview service to isolate handler logic.
- *
- * Mock/setup helpers live in helpers/browserPreview.helpers.ts.
- *
- * @module __tests__/unit/main/ipc/handlers.browserpreview.unit.test
- */
-
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// ── Prevent undici from crashing on Node 20 (undici 8 requires Node 22 APIs) ──
 vi.mock('undici', () => ({
   ProxyAgent: class ProxyAgent {},
   Agent: class Agent {},
@@ -26,7 +8,6 @@ vi.mock('undici', () => ({
   getGlobalDispatcher: vi.fn(),
 }));
 
-// ── Hoisted mock fns (must be defined before any vi.mock() calls) ─────────────
 const {
   mockStartBrowserPreviewStream,
   mockStopBrowserPreviewStream,
@@ -43,8 +24,6 @@ const {
 
 import { createMockStorage, invokeHandler, mockHandlers } from './helpers/browserPreview.helpers';
 
-// ── Mock browserPreview service (CDP-based, not ws npm package) ──────────────
-
 vi.mock('@main/services/browserPreview', () => ({
   startBrowserPreviewStream: mockStartBrowserPreviewStream,
   stopBrowserPreviewStream: mockStopBrowserPreviewStream,
@@ -52,8 +31,6 @@ vi.mock('@main/services/browserPreview', () => ({
   isScreencastActive: mockIsScreencastActive,
   autoStartScreencast: mockAutoStartScreencast,
 }));
-
-// ── Mock Electron ────────────────────────────────────────────────────────────
 
 vi.mock('electron', () => ({
   ipcMain: {
@@ -88,8 +65,6 @@ vi.mock('electron', () => ({
   app: { isPackaged: false, getPath: vi.fn(() => '/tmp/test-app') },
 }));
 
-// ── Mock opencode ────────────────────────────────────────────────────────────
-
 vi.mock('@main/opencode', () => ({
   getTaskManager: vi.fn(() => ({
     startTask: vi.fn(),
@@ -113,13 +88,9 @@ vi.mock('@main/opencode/auth-browser', () => ({
   loginOpenAiWithChatGpt: vi.fn(() => Promise.resolve({ openedUrl: undefined })),
 }));
 
-// ── Mock storage ─────────────────────────────────────────────────────────────
-
 vi.mock('@main/store/storage', () => ({
   getStorage: vi.fn(() => createMockStorage()),
 }));
-
-// ── Mock agent-core ──────────────────────────────────────────────────────────
 
 vi.mock('@myboteam/agent-core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@myboteam/agent-core')>();
@@ -171,8 +142,6 @@ vi.mock('@myboteam/agent-core/common', () => ({
   DEV_BROWSER_CDP_PORT: 9223,
   getConnectorDefinitions: () => [],
 }));
-
-// ── Mock remaining dependencies ──────────────────────────────────────────────
 
 vi.mock('@main/connectors/connector-token-resolver', () => ({
   connectBuiltInConnector: vi.fn(),
@@ -239,29 +208,20 @@ vi.mock('@main/services/speechToText', () => ({
   transcribeAudio: vi.fn(() => Promise.resolve({ success: true, result: { text: '' } })),
 }));
 
-// ── Mock global fetch ─────────────────────────────────────────────────────────
-
 const mockFetch = vi.fn();
 vi.stubGlobal('fetch', mockFetch);
 
-// ── Import handler registration (after all mocks) ─────────────────────────────
-
 import { registerIPCHandlers } from '@main/ipc/handlers';
-
-// ── Convenience wrapper using module-level mockHandlers ───────────────────────
 
 async function invoke(channel: string, ...args: unknown[]): Promise<unknown> {
   return invokeHandler(mockHandlers, channel, ...args);
 }
-
-// ── Tests ─────────────────────────────────────────────────────────────────────
 
 describe('BrowserPreview IPC Handlers (CDP implementation)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockHandlers.clear();
 
-    // Reset mock implementations
     mockStartBrowserPreviewStream.mockResolvedValue(undefined);
     mockStopBrowserPreviewStream.mockResolvedValue(undefined);
     mockStopAllBrowserPreviewStreams.mockResolvedValue(undefined);
@@ -274,8 +234,6 @@ describe('BrowserPreview IPC Handlers (CDP implementation)', () => {
     vi.clearAllMocks();
     vi.unstubAllGlobals();
   });
-
-  // ── Handler registration ──────────────────────────────────────────────────
 
   describe('handler registration', () => {
     it('should register browser-preview:start handler', () => {
@@ -290,8 +248,6 @@ describe('BrowserPreview IPC Handlers (CDP implementation)', () => {
       expect(mockHandlers.has('browser-preview:status')).toBe(true);
     });
   });
-
-  // ── browser-preview:start ─────────────────────────────────────────────────
 
   describe('browser-preview:start', () => {
     it('should return { success: true } on success', async () => {
@@ -343,8 +299,6 @@ describe('BrowserPreview IPC Handlers (CDP implementation)', () => {
     });
   });
 
-  // ── browser-preview:stop ──────────────────────────────────────────────────
-
   describe('browser-preview:stop', () => {
     it('should return { stopped: true } on success', async () => {
       const result = await invoke('browser-preview:stop', 'task-123');
@@ -382,8 +336,6 @@ describe('BrowserPreview IPC Handlers (CDP implementation)', () => {
     });
   });
 
-  // ── browser-preview:status ────────────────────────────────────────────────
-
   describe('browser-preview:status', () => {
     it('should return { active: false } when no session is running', async () => {
       mockIsScreencastActive.mockReturnValue(false);
@@ -414,8 +366,6 @@ describe('BrowserPreview IPC Handlers (CDP implementation)', () => {
     });
   });
 
-  // ── Handler isolation / idempotency ──────────────────────────────────────
-
   describe('handler isolation', () => {
     it('should not share state between independent start calls', async () => {
       mockStartBrowserPreviewStream.mockResolvedValue(undefined);
@@ -442,8 +392,6 @@ describe('BrowserPreview IPC Handlers (CDP implementation)', () => {
       expect(mockStopBrowserPreviewStream).not.toHaveBeenCalled();
     });
   });
-
-  // ── CDP architecture validation ───────────────────────────────────────────
 
   describe('CDP architecture (service contract)', () => {
     it('startBrowserPreviewStream is the CDP-based service function (not ws package)', () => {

@@ -67,7 +67,6 @@ function simulateMessage(data: string): void {
   for (const h of mockWs._messageHandlers) h({ data });
 }
 
-/** Flush pending microtasks (for void async handlers) */
 function tick(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, 0));
 }

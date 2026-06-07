@@ -1,11 +1,3 @@
-/**
- * Built-in Connector IPC Handlers
- *
- * URL setter/getter handlers for connectors with stored server URLs (Lightdash, Datadog).
- * Auth status handler for all 8 built-in connectors.
- * All handlers delegate to ConnectorAuthStore instances.
- */
-
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import type { ConnectorAuthStatus } from '@myboteam/agent-core/common';
@@ -27,7 +19,6 @@ import { handle } from './utils';
 
 const execFileAsync = promisify(execFile);
 
-/** Validate and return a trimmed server URL, or throw with a connector-specific message. */
 function validateServerUrl(url: unknown, connectorName: string): string {
   const trimmed = typeof url === 'string' ? url.trim() : '';
   if (!trimmed) {
@@ -44,7 +35,6 @@ function validateServerUrl(url: unknown, connectorName: string): string {
   return trimmed;
 }
 
-/** Check existing gh CLI token at startup and seed in-memory state. */
 async function initGitHubState(): Promise<void> {
   const augmentedEnv = { ...process.env, PATH: buildGhAugmentedPath() };
   for (const bin of GH_BINARY_CANDIDATES) {
@@ -62,16 +52,13 @@ async function initGitHubState(): Promise<void> {
         setDesktopConnectorConnected(OAuthProviderId.GitHub, true);
         return;
       }
-    } catch {
-      // try next candidate
-    }
+    } catch {}
   }
 }
 
 export function registerBuiltInConnectorHandlers(): void {
-  // Initialize GitHub state from existing gh CLI session (fire-and-forget)
   void initGitHubState();
-  // Lightdash instance URL
+
   handle('lightdash:get-server-url', async (_event: IpcMainInvokeEvent) => {
     const store = getConnectorAuthStore(OAuthProviderId.Lightdash);
     return (await store?.getServerUrl()) ?? null;
@@ -85,7 +72,6 @@ export function registerBuiltInConnectorHandlers(): void {
     await store.setServerUrl(validateServerUrl(url, 'Lightdash'));
   });
 
-  // Datadog site URL
   handle('datadog:get-server-url', async (_event: IpcMainInvokeEvent) => {
     const store = getConnectorAuthStore(OAuthProviderId.Datadog);
     return (await store?.getServerUrl()) ?? null;
@@ -99,16 +85,12 @@ export function registerBuiltInConnectorHandlers(): void {
     await store.setServerUrl(validateServerUrl(url, 'Datadog'));
   });
 
-  // Auth status for all built-in connectors.
-  // `getOAuthStatus()` is now async (RPC over the daemon); fan out with
-  // `Promise.all` so a slow connector doesn't serialize the others.
   handle('connectors:get-built-in-auth-status', async (_event: IpcMainInvokeEvent) => {
     const defs = getConnectorDefinitions();
     const statuses: ConnectorAuthStatus[] = await Promise.all(
       defs.map(async (def) => {
         const store = getConnectorAuthStore(def.id);
         if (!store) {
-          // GitHub and Google use custom flows — check in-memory state
           return {
             providerId: def.id,
             connected: isDesktopConnectorConnected(def.id),
@@ -127,7 +109,6 @@ export function registerBuiltInConnectorHandlers(): void {
     return statuses;
   });
 
-  // Authenticate a built-in connector
   handle(
     'connectors:built-in-login',
     async (_event: IpcMainInvokeEvent, providerId: OAuthProviderId) => {
@@ -144,7 +125,6 @@ export function registerBuiltInConnectorHandlers(): void {
     },
   );
 
-  // Disconnect a built-in connector
   handle(
     'connectors:built-in-logout',
     async (_event: IpcMainInvokeEvent, providerId: OAuthProviderId) => {
@@ -155,7 +135,6 @@ export function registerBuiltInConnectorHandlers(): void {
       if (store) {
         await store.clearTokens();
       } else {
-        // GitHub / Google — clear in-memory state
         setDesktopConnectorConnected(providerId, false);
       }
     },

@@ -24,9 +24,6 @@ export interface AzureFoundryConnectionResult {
   error?: string;
 }
 
-/**
- * Tests connection to an Azure Foundry (Azure OpenAI) endpoint.
- */
 export async function testAzureFoundryConnection(
   options: AzureFoundryConnectionOptions,
 ): Promise<AzureFoundryConnectionResult> {
@@ -89,21 +86,17 @@ export async function testAzureFoundryConnection(
 }
 
 export interface AzureFoundryValidationOptions {
-  /** API key for api-key auth type */
   apiKey?: string;
-  /** Base URL override (uses config if not provided) */
+
   baseUrl?: string;
-  /** Deployment name override (uses config if not provided) */
+
   deploymentName?: string;
-  /** Auth type override (uses config if not provided, defaults to 'api-key') */
+
   authType?: 'api-key' | 'entra-id';
-  /** Request timeout in milliseconds */
+
   timeout?: number;
 }
 
-/**
- * Validates Azure Foundry (Azure OpenAI) credentials by making a test API call.
- */
 export async function validateAzureFoundry(
   config: AzureFoundryConfig | null,
   options: AzureFoundryValidationOptions,
@@ -114,7 +107,6 @@ export async function validateAzureFoundry(
   const timeout = options.timeout ?? DEFAULT_AZURE_TIMEOUT_MS;
 
   if (authType === 'entra-id' && (!options.baseUrl || !options.deploymentName)) {
-    // For Entra ID, only validate if both baseUrl and deploymentName are provided
     return { valid: true };
   }
 

@@ -4,7 +4,6 @@ import { getDaemonClient } from '../../../daemon-bootstrap';
 import type { IpcHandler } from '../../types';
 
 export function registerSandboxHandlers(handle: IpcHandler): void {
-  // Milestone 3 sub-chunk 3c: config get/set route through daemon RPC.
   handle('sandbox:get-config', async (_event: IpcMainInvokeEvent) => {
     return getDaemonClient().call('settings.getSandboxConfig');
   });

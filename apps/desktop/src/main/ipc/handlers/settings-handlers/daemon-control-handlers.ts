@@ -36,9 +36,7 @@ export function registerDaemonControlHandlers(handle: HandleFn): void {
       try {
         const client = getDaemonClient();
         client.call('daemon.shutdown').catch(() => {});
-      } catch {
-        /* daemon may already be down */
-      }
+      } catch {}
       shutdownDaemon();
 
       try {
@@ -61,9 +59,7 @@ export function registerDaemonControlHandlers(handle: HandleFn): void {
             break;
           }
         }
-      } catch {
-        /* best effort */
-      }
+      } catch {}
 
       try {
         const { getSocketPath } = await import('@myboteam/agent-core/desktop-main');
@@ -73,9 +69,7 @@ export function registerDaemonControlHandlers(handle: HandleFn): void {
         if (fs.existsSync(socketPath)) {
           fs.unlinkSync(socketPath);
         }
-      } catch {
-        /* best effort */
-      }
+      } catch {}
 
       await bootstrapDaemon();
       return { success: true };
@@ -92,9 +86,7 @@ export function registerDaemonControlHandlers(handle: HandleFn): void {
     try {
       const client = getDaemonClient();
       client.call('daemon.shutdown').catch(() => {});
-    } catch {
-      /* daemon may already be down */
-    }
+    } catch {}
     shutdownDaemon();
 
     try {
@@ -117,9 +109,7 @@ export function registerDaemonControlHandlers(handle: HandleFn): void {
           break;
         }
       }
-    } catch {
-      /* best effort */
-    }
+    } catch {}
 
     return { success: true };
   });

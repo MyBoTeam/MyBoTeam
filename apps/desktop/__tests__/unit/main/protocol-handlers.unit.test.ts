@@ -3,11 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mockWebContentsSend = vi.hoisted(() => vi.fn());
 const mockIsLoadingMainFrame = vi.hoisted(() => vi.fn(() => false));
 const mockIsDestroyed = vi.hoisted(() => vi.fn(() => false));
-/**
- * Simulates did-finish-load: when a listener is registered, toggle
- * isLoadingMainFrame to false and invoke the callback so drainProtocolUrlQueue
- * proceeds to drain.
- */
+
 const mockWebContentsOnce = vi.hoisted(() =>
   vi.fn((_event: string, cb: () => void) => {
     mockIsLoadingMainFrame.mockReturnValue(false);

@@ -1,8 +1,3 @@
-/**
- * Unit tests for isSameApex — the apex-domain check for manifest `path:` URLs.
- * Pure function; no Electron / network mocks needed.
- */
-
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -13,7 +8,6 @@ import {
 
 describe('isSameApex', () => {
   it('accepts same-apex subdomain (typical myboteam layout)', () => {
-    // Feed lives on d.myboteam.app; artifacts on downloads.myboteam.app — shared apex.
     expect(isSameApex('https://downloads.myboteam.app/x/a.exe', 'https://d.myboteam.app')).toBe(
       true,
     );
@@ -34,8 +28,6 @@ describe('isSameApex', () => {
   });
 
   it('rejects label-trick hosts (evil-myboteam.app vs myboteam.app)', () => {
-    // `evil-myboteam.app`.endsWith('myboteam.app') is true by raw string match, but our
-    // boundary-aware check (hostname === apex || hostname.endsWith('.' + apex)) rejects it.
     expect(isSameApex('https://evil-myboteam.app/x/a.exe', 'https://d.myboteam.app')).toBe(false);
   });
 
@@ -48,8 +40,6 @@ describe('isSameApex', () => {
   });
 
   it('rejects DIFFERENT IPv4 even when last-two-octets match (would pass the apex rule)', () => {
-    // Naive apex of '127.0.0.1' is '0.1'; '192.168.0.1' endsWith '.0.1' → would
-    // falsely accept without IP-literal special-case. Pin the fix.
     expect(isSameApex('http://192.168.0.1/a.exe', 'http://127.0.0.1')).toBe(false);
   });
 
@@ -67,13 +57,10 @@ describe('isSameApex', () => {
   });
 
   it('rejects HTTPS → HTTP downgrade even on same apex', () => {
-    // An HTTPS feed must never direct users to a plaintext download URL.
     expect(isSameApex('http://downloads.myboteam.app/a.exe', 'https://d.myboteam.app')).toBe(false);
   });
 
   it('rejects HTTP → HTTPS upgrade (scheme must match)', () => {
-    // Symmetric: a dev feed on http://localhost shouldn't accept https://localhost
-    // (different URL anyway, but pin the scheme-equality rule).
     expect(isSameApex('https://localhost:8080/a.exe', 'http://localhost:8080')).toBe(false);
   });
 

@@ -12,7 +12,7 @@ interface CustomProviderFormProps {
   connectedProvider?: ConnectedProvider;
   onConnect: (provider: ConnectedProvider) => void;
   onDisconnect: () => void;
-  onModelChange: (modelId: string) => void; // Unused - model is set during connection
+  onModelChange: (modelId: string) => void;
   showModelError: boolean;
 }
 
@@ -32,13 +32,11 @@ export function CustomProviderForm({
   const isConnected = connectedProvider?.connectionStatus === 'connected';
 
   const handleConnect = async () => {
-    // Validate inputs
     if (!baseUrl.trim()) {
       setError('Base URL is required');
       return;
     }
 
-    // Check for common URL mistakes
     const trimmedUrl = baseUrl.trim();
     if (trimmedUrl.includes('/chat/completions')) {
       setError('Base URL should not include /chat/completions (it is added automatically)');
@@ -61,7 +59,6 @@ export function CustomProviderForm({
       const myboteam = getMyBoTeam();
       const trimmedKey = apiKey.trim() || undefined;
 
-      // Test connection to the endpoint
       const result = await myboteam.testCustomConnection(baseUrl.trim(), trimmedKey);
       if (!result.success) {
         setError(result.error || 'Connection failed');
@@ -69,15 +66,12 @@ export function CustomProviderForm({
         return;
       }
 
-      // Save or remove API key based on user input
       if (trimmedKey) {
         await myboteam.addApiKey('custom', trimmedKey);
       } else {
-        // Remove any previously stored key when connecting without one
         await myboteam.removeApiKey('custom');
       }
 
-      // Create the model with the custom/ prefix
       const fullModelId = `custom/${modelName.trim()}`;
 
       const provider: ConnectedProvider = {

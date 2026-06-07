@@ -1,15 +1,15 @@
-/**
- * Patches the Electron.app Info.plist for development:
- * - Shows "MyBoTeam" instead of "Electron" in macOS Cmd+Tab and Dock
- * - Registers the "myboteam://" URL scheme so OAuth callbacks route to the running dev instance
- */
+   
+                                                       
+                                                                     
+                                                                                                
+   
 const fs = require('fs');
 const path = require('path');
 
 const APP_NAME = 'MyBoTeam';
 const URL_SCHEME = 'myboteam';
 
-// Only run on macOS
+                    
 if (process.platform !== 'darwin') {
   console.log('[patch-electron-name] Skipping on non-macOS platform');
   process.exit(0);
@@ -27,7 +27,7 @@ if (!fs.existsSync(electronPath)) {
 
 let plist = fs.readFileSync(electronPath, 'utf8');
 
-// Check if already patched (both name and URL scheme)
+                                                      
 if (
   plist.includes(`<string>${APP_NAME}</string>`) &&
   plist.includes(`<string>${URL_SCHEME}</string>`)
@@ -38,7 +38,7 @@ if (
   process.exit(0);
 }
 
-// Replace CFBundleDisplayName and CFBundleName
+                                               
 plist = plist.replace(
   /<key>CFBundleDisplayName<\/key>\s*<string>[^<]*<\/string>/,
   `<key>CFBundleDisplayName</key>\n\t<string>${APP_NAME}</string>`,
@@ -49,7 +49,7 @@ plist = plist.replace(
   `<key>CFBundleName</key>\n\t<string>${APP_NAME}</string>`,
 );
 
-// Add CFBundleURLTypes for the myboteam:// protocol (if not already present)
+                                                                             
 if (!plist.includes('CFBundleURLTypes')) {
   const urlTypesEntry = `\t<key>CFBundleURLTypes</key>
 \t<array>
@@ -63,7 +63,7 @@ if (!plist.includes('CFBundleURLTypes')) {
 \t\t</dict>
 \t</array>`;
 
-  // Insert before the closing </dict></plist>
+                                              
   plist = plist.replace(/(<\/dict>\s*<\/plist>)/, `${urlTypesEntry}\n$1`);
 }
 

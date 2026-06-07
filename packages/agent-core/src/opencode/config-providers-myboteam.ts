@@ -1,11 +1,3 @@
-/**
- * MyBoTeam AI provider config builder.
- *
- * Delegates to the injected MyboteamRuntime adapter. In OSS the runtime is
- * noopRuntime (isAvailable() === false), so this builder returns empty configs.
- * The private @myboteam/llm-gateway-client package provides the real runtime.
- */
-
 import { createConsoleLogger } from '../utils/logging.js';
 import type { ProviderBuildContext, ProviderBuildResult } from './config-provider-context.js';
 

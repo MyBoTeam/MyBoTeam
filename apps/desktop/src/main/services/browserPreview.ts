@@ -1,13 +1,3 @@
-/**
- * Browser Preview Service — Embedded Live Browser View (ENG-695)
- *
- * Streams live CDP screencast frames from the dev-browser server to the Electron
- * renderer via IPC.  Uses per-task CDP sessions (Dev0907, PR #480) and
- * auto-reconnect via HTTP polling (dhruvawani17, PR #489).
- *
- * Architecture: dev-browser (CDP :9223) ── WebSocket ──► this service ── IPC ──► renderer
- */
-
 import { getLogCollector } from '@main/logging';
 import {
   autoStartScreencast as autoStartScreencastUtil,
@@ -32,19 +22,10 @@ interface BrowserPreviewSession {
   unsubscribe: () => void;
 }
 
-/** Active preview sessions keyed by taskId */
 const sessions = new Map<string, BrowserPreviewSession>();
-/** Used by autoStartScreencast (PR #489 / dhruvawani17) to check liveness */
+
 let anySessionActive = false;
 
-// ---------------------------------------------------------------------------
-// Public API
-// ---------------------------------------------------------------------------
-
-/**
- * Start a live browser preview stream for the given task / page.
- * Contributed by Dev0907 (PR #480) for ENG-695.
- */
 export async function startBrowserPreviewStream(
   taskId: string,
   pageName = DEFAULT_PAGE_NAME,
@@ -88,7 +69,7 @@ export async function startBrowserPreviewStream(
           params.metadata?.deviceWidth,
           params.metadata?.deviceHeight,
         );
-        // Acknowledge so CDP continues sending frames
+
         cdp
           .sendCommand('Page.screencastFrameAck', { sessionId: params.sessionId }, cdpSessionId)
           .catch(() => {});
@@ -132,11 +113,6 @@ export async function startBrowserPreviewStream(
   }
 }
 
-/**
- * Stop the preview stream for a specific task.
- * Safe to call even if no stream is active for this task.
- * Contributed by Dev0907 (PR #480) for ENG-695.
- */
 export async function stopBrowserPreviewStream(taskId: string): Promise<void> {
   const session = sessions.get(taskId);
   if (!session) return;
@@ -158,28 +134,15 @@ export async function stopBrowserPreviewStream(taskId: string): Promise<void> {
   }
 }
 
-/**
- * Stop all active preview streams (e.g. on app shutdown or clear history).
- * Contributed by Dev0907 (PR #480) for ENG-695.
- */
 export async function stopAllBrowserPreviewStreams(): Promise<void> {
   const taskIds = Array.from(sessions.keys());
   await Promise.all(taskIds.map((id) => stopBrowserPreviewStream(id)));
 }
 
-/**
- * Check whether any screencast relay is currently active.
- * Contributed by dhruvawani17 (PR #489) for ENG-695.
- */
 export function isScreencastActive(): boolean {
   return anySessionActive;
 }
 
-/**
- * Auto-start a preview when the dev-browser server is already running with an active session.
- * Called opportunistically from the task lifecycle.
- * Contributed by dhruvawani17 (PR #489) for ENG-695.
- */
 export async function autoStartScreencast(taskId: string): Promise<void> {
   return autoStartScreencastUtil(taskId, startBrowserPreviewStream);
 }

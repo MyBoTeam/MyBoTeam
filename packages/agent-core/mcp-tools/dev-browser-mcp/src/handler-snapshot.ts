@@ -42,9 +42,7 @@ export async function handleBrowserSnapshot(args: unknown): Promise<CallToolResu
         width: window.innerWidth,
         height: window.innerHeight,
       }));
-    } catch {
-      /* empty */
-    }
+    } catch {}
   }
   const url = page.url();
   const title = await page.title();

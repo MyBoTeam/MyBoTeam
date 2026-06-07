@@ -22,7 +22,7 @@ describe('server-state', () => {
     state.isStopping = false;
     setLoadModelPromise(null);
     setStartServerPromise(null);
-    // Reset module-level activeGenerations
+
     while (activeGenerations > 0) decrementGenerations();
   });
 

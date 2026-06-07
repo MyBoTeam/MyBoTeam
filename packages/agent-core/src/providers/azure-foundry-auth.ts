@@ -1,23 +1,9 @@
-/**
- * Azure Foundry authentication helpers
- *
- * Utilities for acquiring auth headers and tokens for Azure Foundry
- * (Azure OpenAI) API requests. Supports api-key and Entra ID auth types.
- * Also provides a retry helper for the max_tokens/max_completion_tokens
- * compatibility issue across Azure OpenAI deployment versions.
- */
-
 import { getAzureEntraToken } from '../opencode/proxies/azure-token-manager.js';
 import { fetchWithTimeout } from '../utils/fetch.js';
 import { sanitizeString } from '../utils/sanitize.js';
 
 export const DEFAULT_AZURE_TIMEOUT_MS = 15000;
 
-/**
- * POST a minimal chat completion to Azure OpenAI.
- * Automatically retries with `max_tokens` if the deployment rejects `max_completion_tokens`.
- * Returns the final Response (ok or not) or throws on network error.
- */
 export async function postAzureChatCompletionWithRetry(
   testUrl: string,
   headers: Record<string, string>,
@@ -36,7 +22,6 @@ export async function postAzureChatCompletionWithRetry(
     return response;
   }
 
-  // Some deployments don't support max_completion_tokens — retry with max_tokens
   const errorData = await response
     .clone()
     .json()
@@ -51,7 +36,6 @@ export async function postAzureChatCompletionWithRetry(
     );
   }
 
-  // Return original failed response so caller can handle the error
   return response;
 }
 
@@ -70,7 +54,6 @@ export interface AzureAuthHeaderError {
 
 export type AzureAuthHeaderOutcome = AzureAuthHeaderResult | AzureAuthHeaderError;
 
-/** Shared helper: fetch an Entra ID token and build the Authorization header. */
 async function getEntraAuthHeader(): Promise<
   { success: false; error: string } | { success: true; authValue: string }
 > {
@@ -81,10 +64,6 @@ async function getEntraAuthHeader(): Promise<
   return { success: true, authValue: `Bearer ${tokenResult.token}` };
 }
 
-/**
- * Build Authorization headers for an Azure Foundry API request.
- * Returns the headers dict and the raw auth value for reuse.
- */
 export async function buildAzureAuthHeaders(
   authType: AzureAuthType,
   apiKey?: string,
@@ -117,10 +96,6 @@ export async function buildAzureAuthHeaders(
   return { success: true, headers, authValue: sanitizedKey };
 }
 
-/**
- * Build auth headers for a connection test (raw api-key, no sanitization).
- * Used in testAzureFoundryConnection where the key comes directly from user input.
- */
 export async function buildTestAuthHeaders(
   authType: AzureAuthType,
   apiKey?: string,

@@ -1,13 +1,8 @@
 import type { TaskErrorCategory } from './types';
 
-/**
- * Classify a raw error name/message into a standardized TaskErrorCategory.
- * Maps log-watcher error names and common Error.name values.
- */
 export function classifyErrorCategory(errorName: unknown): TaskErrorCategory {
   const name = String(errorName).toLowerCase();
 
-  // Auth errors
   if (
     name.includes('auth') ||
     name.includes('oauth') ||
@@ -18,7 +13,6 @@ export function classifyErrorCategory(errorName: unknown): TaskErrorCategory {
     return 'auth_error';
   }
 
-  // Rate limiting
   if (
     name.includes('throttl') ||
     name.includes('rate_limit') ||
@@ -28,12 +22,10 @@ export function classifyErrorCategory(errorName: unknown): TaskErrorCategory {
     return 'rate_limit';
   }
 
-  // Timeouts
   if (name.includes('timeout') || name === 'aborterror') {
     return 'timeout';
   }
 
-  // Network errors
   if (
     name.includes('network') ||
     name.includes('econnrefused') ||
@@ -43,7 +35,6 @@ export function classifyErrorCategory(errorName: unknown): TaskErrorCategory {
     return 'network_error';
   }
 
-  // Context overflow (local model context window too small)
   if (
     name.includes('contextoverflowerror') ||
     name.includes('n_keep') ||
@@ -55,12 +46,10 @@ export function classifyErrorCategory(errorName: unknown): TaskErrorCategory {
     return 'context_overflow';
   }
 
-  // User interruptions
   if (name.includes('interrupt') || name.includes('cancel') || name.includes('abort')) {
     return 'user_interrupted';
   }
 
-  // Tool errors
   if (name.includes('tool_error') || name.includes('validation')) {
     return 'tool_error';
   }

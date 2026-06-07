@@ -1,20 +1,12 @@
 const MAX_SCREENSHOT_ATTACHMENT_COUNT = 1;
 const MAX_SCREENSHOT_ATTACHMENT_LENGTH = 200_000;
 
-/**
- * Attachment extracted from tool output.
- */
 export interface MessageAttachment {
   type: 'screenshot' | 'json';
   data: string;
   label?: string;
 }
 
-/**
- * Extracts base64 screenshots from tool output text.
- * Returns the cleaned text with screenshots replaced by placeholders,
- * and an array of extracted screenshot attachments.
- */
 export function extractScreenshots(output: string): {
   cleanedText: string;
   attachments: MessageAttachment[];

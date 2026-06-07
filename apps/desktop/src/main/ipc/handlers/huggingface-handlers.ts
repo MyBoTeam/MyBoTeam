@@ -1,10 +1,3 @@
-/**
- * HuggingFace Local LLM IPC handlers (ENG-687)
- *
- * Contributed by feat/huggingface-local-eng-687.
- * Manages the local Transformers.js inference server lifecycle and model management.
- */
-
 import type { HuggingFaceLocalConfig } from '@myboteam/agent-core/desktop-main';
 import type { IpcMainInvokeEvent } from 'electron';
 import { getDaemonClient } from '../../daemon-bootstrap';
@@ -24,10 +17,6 @@ import {
 import { handle } from './utils';
 
 export function registerHuggingFaceHandlers(): void {
-  // Milestone 3 sub-chunk 3c: config get/set now route through the daemon.
-  // The other handlers on this file (start-server, stop-server, etc.)
-  // manage a LOCAL subprocess and stay Electron-side.
-
   handle('huggingface-local:start-server', async (_event: IpcMainInvokeEvent, modelId: string) => {
     if (typeof modelId !== 'string' || !modelId.trim()) {
       return { success: false, error: 'Invalid model ID' };
@@ -57,9 +46,7 @@ export function registerHuggingFaceHandlers(): void {
       (progress: unknown) => {
         try {
           event.sender.send('huggingface-local:download-progress', progress);
-        } catch {
-          // Window may have been closed
-        }
+        } catch {}
       },
       getCachePath(),
     );
@@ -74,7 +61,7 @@ export function registerHuggingFaceHandlers(): void {
     if (typeof modelId !== 'string' || !modelId.trim()) {
       return { success: false, error: 'Invalid model ID' };
     }
-    // Stop server before deleting to avoid file-lock issues
+
     await stopHuggingFaceServer().catch(() => {});
     return deleteHuggingFaceModel(modelId.trim());
   });

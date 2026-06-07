@@ -50,16 +50,11 @@ export function getToolDisplayName(toolName: string): string | null {
   return toolName;
 }
 
-/**
- * Sanitizes tool output for display by removing ANSI codes,
- * connection URLs, call logs, and simplifying error messages.
- */
 export function sanitizeToolOutput(text: string, isError: boolean): string {
   let result = text;
 
-  // eslint-disable-next-line no-control-regex
   result = result.replace(/\x1B\[[0-9;]*[a-zA-Z]/g, '');
-  // eslint-disable-next-line no-control-regex
+
   result = result.replace(/\x1B\[2m|\x1B\[22m|\x1B\[0m/g, '');
 
   result = result.replace(/ws:\/\/[^\s\]]+/g, '[connection]');

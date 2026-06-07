@@ -1,67 +1,3 @@
-/**
- * Daemon-side OpenAI ChatGPT OAuth orchestration.
- *
- * Ports the SDK-based OAuth flow from commercial
- * `1a320029:apps/desktop/src/main/opencode/auth-browser.ts`. In commercial
- * the flow ran inside Electron main; in OSS it lives in the daemon because
- * the daemon owns `opencode serve` lifecycle (Phase 2 of the SDK cutover
- * port). Desktop keeps the Electron-only `shell.openExternal` step and
- * drives the two daemon RPCs.
- *
- * Phase 4a RPC protocol (registered in `daemon-routes.ts`):
- *   - `auth.openai.startLogin()` → `{ sessionId, authorizeUrl }`
- *   - `auth.openai.awaitCompletion({ sessionId, timeoutMs? })` → plan
- *   - `auth.openai.status()` → `{ connected, expires? }`
- *   - `auth.openai.getAccessToken()` → `string | null`
- *
- * The manager holds at most one in-flight session at a time (matches
- * commercial's `OAuthBrowserFlow` class). A second `startLogin` aborts the
- * first — typical when a user retries without explicitly cancelling.
- *
- * ---------------------------------------------------------------------------
- * OAuth flow — two-step contract with `opencode serve`
- * ---------------------------------------------------------------------------
- *
- * OpenCode's SDK exposes OAuth as TWO endpoints on the transient
- * `opencode serve`, and BOTH must be called:
- *
- *   1. `POST /provider/openai/oauth/authorize { method }`
- *      Server-side effect:
- *        - Binds an OAuth HTTP listener on `localhost:1455` (hardcoded in
- *          opencode, registered as the redirect URI with OpenAI's app).
- *        - Generates PKCE + state, stores a `pending[openai]` handle with
- *          a `callbackPromise` that resolves once `:1455/auth/callback`
- *          receives the browser redirect.
- *      Returns `{ url, method: "auto", instructions }`.
- *      Does NOT write `auth.json` yet.
- *
- *   2. Browser lands on `:1455/auth/callback?code=X`
- *        - opencode's handler fires `exchangeCodeForTokens(code)` async and
- *          RETURNS THE HTML SUCCESS PAGE IMMEDIATELY (user sees success).
- *        - Tokens sit in memory, awaiting a consumer.
- *      Still no `auth.json` write.
- *
- *   3. `POST /provider/openai/oauth/callback { method }`  ← THIS is what
- *      the prior implementation was missing. Until it is called, opencode
- *      holds the tokens unconsumed and `auth.json` is never updated.
- *      Server-side effect:
- *        - Awaits the pending `callbackPromise`.
- *        - Writes `auth.json` via `Auth.set('openai', { type: 'oauth',
- *          access, refresh, expires, accountId })`.
- *      Returns `true` on success.
- *
- * The pre-fix implementation called step 1 and then polled `auth.json`
- * mtime+hash for up to two minutes waiting for opencode to write it on its
- * own — which never happened. That produced the user-visible "browser
- * shows success, daemon hangs, at the end it fails" regression after the
- * PTY → SDK cutover.
- *
- * The current implementation invokes `client.provider.oauth.callback` and
- * lets opencode drive the completion. The 2-minute deadline is enforced on
- * our side to cap the wait (opencode's own internal `waitForOAuthCallback`
- * timer is 5 minutes).
- */
-
 import { randomUUID } from 'node:crypto';
 import {
   detectOpenAiOauthPlan,
@@ -174,9 +110,7 @@ export class OpenAiOauthManager {
       } finally {
         try {
           runtime.close();
-        } catch {
-          /* ignore */
-        }
+        } catch {}
         if (this.active?.sessionId === sessionId) {
           this.active = null;
         }
@@ -244,8 +178,6 @@ export class OpenAiOauthManager {
     active.abortController.abort();
     try {
       active.runtime.close();
-    } catch {
-      /* ignore */
-    }
+    } catch {}
   }
 }

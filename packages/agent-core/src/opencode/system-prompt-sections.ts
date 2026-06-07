@@ -1,12 +1,3 @@
-/**
- * Helper sections for the MyBoTeam agent system prompt.
- * Split out from system-prompt.ts to keep each file under 200 lines.
- * Heavy behavior blocks live in system-prompt-behaviors.ts.
- */
-
-/**
- * Platform-specific environment instructions for the system prompt.
- */
 export function getPlatformEnvironmentInstructions(platform: NodeJS.Platform): string {
   if (platform === 'win32') {
     return `<environment>

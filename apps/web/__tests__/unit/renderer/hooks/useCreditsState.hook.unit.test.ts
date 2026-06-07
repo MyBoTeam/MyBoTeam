@@ -32,7 +32,7 @@ describe('useCreditsState', () => {
 
   it('returns initial state', () => {
     const { result } = renderHook(() => import('@/hooks/useCreditsState'));
-    // Just verify the hook exists
+
     expect(result).toBeDefined();
   });
 

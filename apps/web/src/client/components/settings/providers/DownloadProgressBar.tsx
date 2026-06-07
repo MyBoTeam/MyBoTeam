@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 
-/** Download progress bar */
 export function DownloadProgressBar({ progress, modelId }: { progress: number; modelId: string }) {
   return (
     <div className="space-y-1.5">

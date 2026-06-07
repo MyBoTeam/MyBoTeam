@@ -8,7 +8,6 @@ export interface InboundMessage {
   isFromMe: boolean;
 }
 
-/** Minimal contract TaskBridge needs from a WhatsApp transport layer. */
 export interface MessageTransport {
   on(event: 'message', listener: (msg: InboundMessage) => void): this;
   off(event: 'message', listener: (msg: InboundMessage) => void): this;
@@ -19,7 +18,7 @@ export const RATE_LIMIT_WINDOW_MS = 60_000;
 export const RATE_LIMIT_MAX_MESSAGES = 10;
 export const GLOBAL_RATE_LIMIT_MAX = 30;
 export const MAX_TRACKED_SENDERS = 100;
-export const SESSION_IDLE_TIMEOUT_MS = 10 * 60_000; // 10 minutes
+export const SESSION_IDLE_TIMEOUT_MS = 10 * 60_000;
 
 export interface SenderSession {
   sessionId: string;

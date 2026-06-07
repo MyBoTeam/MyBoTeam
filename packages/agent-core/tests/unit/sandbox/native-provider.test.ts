@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SandboxConfig, SpawnArgs } from '../../../src/common/types/sandbox.js';
 
-// Mock fs at module level so vitest can intercept accessSync
 vi.mock('fs', async () => {
   const actual = await vi.importActual<typeof import('fs')>('fs');
   return {
@@ -14,16 +13,7 @@ vi.mock('fs', async () => {
   };
 });
 
-/**
- * NativeSandboxProvider tests.
- *
- * We pass the `platform` parameter to the constructor to exercise
- * both macOS (sandbox-exec wrapping) and Windows/Linux (env-var only)
- * paths without relying on the test runner's actual OS.
- */
-
 describe('NativeSandboxProvider', () => {
-  // Dynamic import after mock setup
   let NativeSandboxProvider: typeof import('../../../src/sandbox/native-provider.js').NativeSandboxProvider;
 
   beforeEach(async () => {
@@ -212,16 +202,13 @@ describe('NativeSandboxProvider', () => {
 
       const result = await provider.wrapSpawnArgs(spawnArgs, config);
 
-      // File and args should be unchanged
       expect(result.file).toBe('cmd.exe');
       expect(result.args).toEqual(['/c', 'node', 'script.js']);
       expect(result.cwd).toBe('C:\\Projects\\myapp');
 
-      // Original env vars preserved
       expect(result.env.COMSPEC).toBe('cmd.exe');
       expect(result.env.PATH).toBe('C:\\Windows\\System32');
 
-      // Sandbox env vars injected
       expect(result.env.MYBOTEAM_SANDBOX_ENABLED).toBe('1');
       expect(result.env.MYBOTEAM_SANDBOX_MODE).toBe('native');
       expect(result.env.MYBOTEAM_SANDBOX_ALLOWED_PATHS).toBe('C:\\Projects\\myapp');
@@ -275,21 +262,18 @@ describe('NativeSandboxProvider', () => {
 
       const result = await provider.wrapSpawnArgs(spawnArgs, config);
 
-      // Should be wrapped with /bin/sh -c sandbox-exec
       expect(result.file).toBe('/bin/sh');
       expect(result.args[0]).toBe('-c');
       expect(result.args[1]).toContain('/usr/bin/sandbox-exec');
       expect(result.args[1]).toContain('-p');
 
-      // Profile should deny default, allow process-exec, and contain allowed paths
       const profileArg = result.args[1];
       expect(profileArg).toContain('deny default');
       expect(profileArg).toContain('allow process-exec');
       expect(profileArg).toContain('/Users/dev/.opencode');
-      expect(profileArg).toContain('/Users/dev/project'); // cwd
-      expect(profileArg).toContain('allow network*'); // not restricted
+      expect(profileArg).toContain('/Users/dev/project');
+      expect(profileArg).toContain('allow network*');
 
-      // Sandbox env vars should be present
       expect(result.env.MYBOTEAM_SANDBOX_ENABLED).toBe('1');
     });
 

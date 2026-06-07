@@ -10,12 +10,6 @@ import type { LogEntry, LogLevel, LogSource } from '../../common/types/logging.j
 
 import { redact } from '../../utils/redact.js';
 
-/**
- * LogFileWriter - Writes log entries to rotating daily log files.
- *
- * This class is platform-agnostic and requires the log directory to be
- * injected via constructor (dependency injection pattern).
- */
 export class LogFileWriter {
   private currentDate: string = '';
   private currentFilePath: string = '';
@@ -79,7 +73,6 @@ export class LogFileWriter {
       fs.appendFileSync(this.currentFilePath, `${lines.join('\n')}\n`);
       this.buffer = [];
     } catch (_error) {
-      // Don't clear buffer on failure - retry on next flush, but prevent unbounded growth
       if (this.buffer.length > LOG_BUFFER_MAX_ENTRIES * 10) {
         this.buffer = this.buffer.slice(-LOG_BUFFER_MAX_ENTRIES);
       }
@@ -106,7 +99,6 @@ export class LogFileWriter {
   private updateCurrentFile(): void {
     const today = new Date().toISOString().split('T')[0];
     if (today !== this.currentDate) {
-      // Write buffered entries to old file directly to avoid recursion from calling flush()
       if (this.currentDate && this.buffer.length > 0 && this.currentFilePath) {
         const lines = this.buffer.map(
           (entry) => `[${entry.timestamp}] [${entry.level}] [${entry.source}] ${entry.message}`,
@@ -114,9 +106,7 @@ export class LogFileWriter {
         try {
           fs.appendFileSync(this.currentFilePath, `${lines.join('\n')}\n`);
           this.buffer = [];
-        } catch (_error) {
-          // Don't clear buffer - entries will be written to new file
-        }
+        } catch (_error) {}
       }
       this.currentDate = today;
       this.currentFilePath = path.join(this.logDir, `app-${today}.log`);

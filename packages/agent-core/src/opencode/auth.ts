@@ -9,7 +9,7 @@ export {
   getOpenCodeAuthPath,
   getOpenCodeDataHome,
 } from './auth-paths.js';
-// Slack MCP OAuth helpers — re-exported from auth-slack-mcp.ts
+
 export type { OpenCodeMcpOauthStatus } from './auth-slack-mcp.js';
 export {
   clearSlackMcpAuth,

@@ -7,16 +7,6 @@ import type { ValidationResult } from './validation.js';
 export type { BedrockModel, FetchBedrockModelsResult } from './bedrock-models.js';
 export { fetchBedrockModels } from './bedrock-models.js';
 
-/**
- * Validates AWS Bedrock credentials by making a test API call.
- * Supports three authentication types:
- * - API Key (bearer token)
- * - Access Keys (accessKeyId + secretAccessKey)
- * - IAM Profile (uses fromIni)
- *
- * @param credentialsJson - JSON string containing BedrockCredentials
- * @returns ValidationResult indicating if credentials are valid
- */
 export async function validateBedrockCredentials(
   credentialsJson: string,
 ): Promise<ValidationResult> {

@@ -1,16 +1,5 @@
-/**
- * Unit tests for MyBoTeam API library
- *
- * Tests the Electron detection and shell utilities:
- * - isRunningInElectron() detection
- * - getShellVersion() retrieval
- * - getShellPlatform() retrieval
- * - getMyBoTeam() and useMyBoTeam() API access
- */
-
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Store original window
 const originalWindow = globalThis.window;
 
 describe('MyBoTeam API', () => {
@@ -45,12 +34,11 @@ describe('MyBoTeam API', () => {
     });
 
     it('should return false when myboteamShell is unavailable', async () => {
-      // Test undefined, null, missing property, and empty object
       const unavailableScenarios = [
         { myboteamShell: undefined },
         { myboteamShell: null },
-        { myboteamShell: { version: '1.0.0' } }, // missing isElectron
-        {}, // no myboteamShell at all
+        { myboteamShell: { version: '1.0.0' } },
+        {},
       ];
 
       for (const scenario of unavailableScenarios) {
@@ -62,7 +50,6 @@ describe('MyBoTeam API', () => {
     });
 
     it('should use strict equality for isElectron check', async () => {
-      // Truthy but not true should return false
       (globalThis as unknown as { window: { myboteamShell: { isElectron: number } } }).window = {
         myboteamShell: { isElectron: 1 },
       };
@@ -85,7 +72,7 @@ describe('MyBoTeam API', () => {
     it('should return null when version is unavailable', async () => {
       const unavailableScenarios = [
         { myboteamShell: undefined },
-        { myboteamShell: { isElectron: true } }, // no version property
+        { myboteamShell: { isElectron: true } },
         {},
       ];
 
@@ -128,7 +115,7 @@ describe('MyBoTeam API', () => {
     it('should return null when platform is unavailable', async () => {
       const unavailableScenarios = [
         { myboteamShell: undefined },
-        { myboteamShell: { isElectron: true } }, // no platform property
+        { myboteamShell: { isElectron: true } },
         {},
       ];
 
@@ -156,7 +143,7 @@ describe('MyBoTeam API', () => {
 
       const { getMyBoTeam } = await import('@/lib/myboteam');
       const result = getMyBoTeam();
-      // getMyBoTeam returns a wrapper object with spread methods + Bedrock wrappers
+
       expect(result.getVersion).toBeDefined();
       expect(result.startTask).toBeDefined();
       expect(result.validateBedrockCredentials).toBeDefined();

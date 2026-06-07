@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 
 const COPIED_TIMEOUT_MS = 1200;
 
-// Figure out whether dark mode is active at render time.
 function isDarkMode() {
   if (typeof document === 'undefined') {
     return false;
@@ -25,7 +24,6 @@ export function CodeBlock({ language, children, inline = false }: CodeBlockProps
   const [isDark, setIsDark] = useState(isDarkMode);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Clear the copy-reset timer on unmount to avoid calling setState after unmount.
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -34,7 +32,6 @@ export function CodeBlock({ language, children, inline = false }: CodeBlockProps
     };
   }, []);
 
-  // Re-sync isDark whenever the 'dark' class is toggled on <html>.
   useEffect(() => {
     if (typeof document === 'undefined') {
       return;
@@ -59,12 +56,9 @@ export function CodeBlock({ language, children, inline = false }: CodeBlockProps
       timeoutRef.current = setTimeout(() => {
         setCopied(false);
       }, COPIED_TIMEOUT_MS);
-    } catch {
-      // clipboard API may be unavailable in non-secure contexts
-    }
+    } catch {}
   }, [children]);
 
-  // Inline code gets simple styling, no copy button needed.
   if (inline) {
     return (
       <code className="bg-muted text-foreground px-1 py-0.5 rounded text-xs font-mono">

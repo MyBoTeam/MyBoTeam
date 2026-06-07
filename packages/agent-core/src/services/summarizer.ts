@@ -1,10 +1,3 @@
-/**
- * Task summary generator using LLM APIs
- *
- * Generates short, descriptive titles for tasks (like ChatGPT's conversation titles).
- * Uses the first available API key, preferring Anthropic for speed/cost.
- */
-
 import type { ApiKeyProvider } from '../common/types/provider.js';
 import { createConsoleLogger } from '../utils/logging.js';
 import { callAnthropic, callGoogle, callOpenAI, callXAI } from './summarizer-providers.js';
@@ -12,19 +5,9 @@ import { truncatePrompt } from './summarizer-providers-types.js';
 
 const log = createConsoleLogger({ prefix: 'Summarizer' });
 
-/**
- * Type for the getApiKey function that retrieves API keys by provider
- */
 export type GetApiKeyFn = (provider: ApiKeyProvider) => string | null;
 
-/**
- * Generate a short summary title for a task prompt
- * @param prompt The user's task prompt
- * @param getApiKey Function to retrieve API keys by provider
- * @returns A short summary string, or truncated prompt as fallback
- */
 export async function generateTaskSummary(prompt: string, getApiKey: GetApiKeyFn): Promise<string> {
-  // Try providers in order of preference
   const providers: ApiKeyProvider[] = ['anthropic', 'openai', 'google', 'xai'];
 
   for (const provider of providers) {
@@ -41,11 +24,9 @@ export async function generateTaskSummary(prompt: string, getApiKey: GetApiKeyFn
       }
     } catch (error) {
       log.warn(`[Summarizer] ${provider} failed: ${String(error)}`);
-      // Continue to next provider
     }
   }
 
-  // Fallback: truncate prompt
   log.info('[Summarizer] All providers failed, using truncated prompt');
   return truncatePrompt(prompt);
 }

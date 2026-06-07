@@ -1,7 +1,3 @@
-/**
- * MyBoTeam AI IPC handlers.
- */
-
 import type { IpcMainInvokeEvent } from 'electron';
 import { getDaemonClient } from '../../../daemon-bootstrap';
 import { isDaemonUnavailableError } from '../utils';

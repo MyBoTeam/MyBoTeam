@@ -15,7 +15,6 @@ import type { TaskState } from './taskStore';
 type SetFn = (partial: Partial<TaskState> | ((state: TaskState) => Partial<TaskState>)) => void;
 type GetFn = () => TaskState;
 
-/** Task execution slice: startTask, sendFollowUp, permission handling. */
 export function createTaskExecutionActions(set: SetFn, get: GetFn) {
   return {
     startTask: async (config: TaskConfig): Promise<Task | null> => {
@@ -28,7 +27,7 @@ export function createTaskExecutionActions(set: SetFn, get: GetFn) {
           message: 'UI start task',
           context: { prompt: config.prompt, taskId: config.taskId, files: config.files?.length },
         });
-        // Analytics: track task submission from UI
+
         myboteam.analytics?.trackSubmitTask().catch(() => {});
         const task = await myboteam.startTask(config);
         const currentState = get();

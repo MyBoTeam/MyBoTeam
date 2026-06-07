@@ -30,7 +30,6 @@ describe('getCreditStatusColor', () => {
   });
 
   it('handles zero total credits gracefully', () => {
-    // pct = NaN, so neither branch matches, falls to bg-red-500
     expect(getCreditStatusColor({ remainingCredits: 0, spentCredits: 0, totalCredits: 0 })).toBe(
       'bg-red-500',
     );

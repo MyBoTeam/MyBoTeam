@@ -1,45 +1,45 @@
-/**
- * Stage the daemon's runtime native dependencies into apps/daemon/dist/
- * using the bundled Node from apps/desktop/resources/nodejs/.
- *
- * Runs BEFORE electron-builder, so the contents of apps/daemon/dist/
- * — including the freshly-installed node_modules/ — are copied into
- * the packaged app via the existing extraResources entry:
- *
- *   { "from": "../../apps/daemon/dist", "to": "daemon" }
- *
- * Staging pre-packaging rather than post-packaging is deliberate:
- *   - No post-sign mutation of the .app (signatures stay valid)
- *   - Works uniformly across all electron-builder output targets
- *     (unpacked, DMG, ZIP, AppImage, deb, NSIS)
- *   - Matches what the private myboteam-release workflow does for
- *     CI builds, so local and CI artifacts have the same layout
- *
- * Uses the bundled Node + npm to run `npm install`, with the bundled
- * Node dir prepended to PATH so prebuild-install / node-gyp child
- * processes resolve the same `node`.
- *
- * Target arch:
- *   Defaults to the host platform+arch. Cross-arch staging is supported
- *   via `--target-platform=<platform>-<arch>` (e.g. `linux-arm64`). This
- *   matters for local multi-arch Linux builds: `package:linux` used to
- *   stage once on the host arch and then produce both x64 + arm64
- *   artifacts, so one artifact shipped the wrong `.node` binary. The
- *   canonical release pipeline is per-arch runners so cross-arch is
- *   mostly a developer-convenience thing — when used, we set
- *   `npm_config_target_arch` / `npm_config_target_platform` so
- *   `prebuild-install` picks the right prebuild, and skip the local
- *   ABI smoke (can't `require()` a foreign-arch binary).
- *
- * Prerequisites:
- *   - `pnpm -F @myboteam/desktop download:nodejs` has been run
- *     (or the build script has chained it in)
- *   - `pnpm -F @myboteam/daemon build` has produced dist/index.js
- *
- * Usage:
- *   node apps/desktop/scripts/stage-daemon-deps.cjs [--target-platform=<p>-<a>]
- *   (typically invoked via `pnpm -F @myboteam/desktop stage:daemon-deps`)
- */
+   
+                                                                        
+                                                              
+  
+                                                                     
+                                                                    
+                                                          
+  
+                                                         
+  
+                                                                  
+                                                                
+                                                                 
+                                                
+                                                                  
+                                                                
+  
+                                                                     
+                                                                  
+                                     
+  
+               
+                                                                        
+                                                                         
+                                                                       
+                                                                  
+                                                                     
+                                                                    
+                                                             
+                                                               
+                                                                    
+                                                         
+  
+                 
+                                                               
+                                              
+                                                                  
+  
+         
+                                                                                
+                                                                          
+   
 
 'use strict';
 
@@ -55,10 +55,10 @@ const DAEMON_DIST = path.join(REPO_ROOT, 'apps', 'daemon', 'dist');
 
 const DEPS = ['ws@8', 'sql.js@^1.11.0'];
 
-/** Subset of DEPS that install a native binary — must be purged before
- *  re-staging so `prebuild-install` actually re-runs and picks the
- *  correct target's `.node` binary. Currently empty (sql.js is WASM);
- *  `ws` is pure JS; both are safe to leave in place between runs. */
+                                                                       
+                                                                   
+                                                                      
+                                                                     
 const NATIVE_DEPS = [];
 
 const SUPPORTED_TARGET_PLATFORMS = new Set([
@@ -78,10 +78,10 @@ function die(msg) {
   process.exit(1);
 }
 
-/**
- * Extract the package name from a spec like "ws@8" or "@scope/pkg@1".
- * Uses lastIndexOf so scoped packages work too.
- */
+   
+                                                                      
+                                                
+   
 function packageName(spec) {
   const at = spec.lastIndexOf('@');
   return at <= 0 ? spec : spec.slice(0, at);
@@ -97,30 +97,30 @@ function parseArgs(argv) {
   return { targetPlatform };
 }
 
-/**
- * Map Node's `process.platform` to the short name used for directories
- * under `resources/nodejs/`. Currently identical — kept as a helper so
- * future renames (e.g. 'freebsd', 'darwin' vs 'macos') have one place
- * to touch.
- */
+   
+                                                                       
+                                                                       
+                                                                      
+            
+   
 function hostPlatform() {
   return `${process.platform}-${process.arch}`;
 }
 
-/**
- * Locate the bundled Node for the given platform/arch. P2.C fix: we
- * require the exact `node-v${NODE_VERSION}-${target}` directory. Pre-fix
- * this sorted all `node-v*` entries lexicographically and picked the
- * last one, which could pick up a stale extracted Node version if
- * `download:nodejs` had been run against multiple versions against the
- * same checkout. after-pack.cjs copies the exact `NODE_VERSION`, so
- * picking anything else produces an ABI mismatch at runtime.
- */
+   
+                                                                    
+                                                                         
+                                                                     
+                                                                  
+                                                                       
+                                                                    
+                                                             
+   
 function resolveBundledNode(target) {
-  // The `target` string matches the directory name under resources/nodejs/
-  // — e.g. 'linux-x64', 'darwin-arm64'. Bundled Node always runs on the
-  // host; for cross-arch staging we still use the host's Node binary
-  // and flip prebuild-install via env vars (see `npmInstallEnv`).
+                                                                           
+                                                                        
+                                                                     
+                                                                  
   const host = hostPlatform();
   const platformRoot = path.join(DESKTOP_ROOT, 'resources', 'nodejs', host);
 
@@ -131,9 +131,9 @@ function resolveBundledNode(target) {
     );
   }
 
-  // Node's own archive layout names the extracted dir
-  // `node-v${NODE_VERSION}-${target}` (e.g. `node-v24.15.0-linux-x64`).
-  // P2.C: use the exact host directory, not a sorted glob.
+                                                      
+                                                                        
+                                                           
   const expectedDir = `node-v${NODE_VERSION}-${host.replace('win32-', 'win-')}`;
   const nodeDir = path.join(platformRoot, expectedDir);
   if (!fs.existsSync(nodeDir)) {
@@ -157,17 +157,17 @@ function resolveBundledNode(target) {
     die(`Bundled npm CLI missing at ${npmCli}`);
   }
 
-  void target; // reserved for future cross-arch Node selection if needed
+  void target;                                                           
   return { nodeBin, npmCli };
 }
 
-/**
- * Build the env passed to `npm install`. Prepends the bundled Node
- * bin dir to PATH so prebuild-install / node-gyp child processes
- * resolve the matching `node`. For cross-arch staging, sets the
- * standard `npm_config_target_*` env vars so prebuild-install
- * downloads the right prebuild.
- */
+   
+                                                                   
+                                                                 
+                                                                
+                                                              
+                                
+   
 function npmInstallEnv(nodeBinDir, target) {
   const [targetPlatform, targetArch] = target.split('-');
   const env = {
@@ -175,8 +175,8 @@ function npmInstallEnv(nodeBinDir, target) {
     PATH: `${nodeBinDir}${path.delimiter}${process.env.PATH || ''}`,
   };
   if (target !== hostPlatform()) {
-    // `prebuild-install` honors these and resolves the matching arch
-    // prebuild from the native-module's GitHub release assets.
+                                                                     
+                                                               
     env.npm_config_target_arch = targetArch;
     env.npm_config_target_platform = targetPlatform === 'win32' ? 'win32' : targetPlatform;
     env.npm_config_arch = targetArch;
@@ -185,68 +185,68 @@ function npmInstallEnv(nodeBinDir, target) {
   return env;
 }
 
-/**
- * Read the architecture signature of a compiled `.node` addon and
- * return a short arch tag ('x64'/'arm64') or null on unknown format.
- *
- * Called after staging to make sure the binary actually matches the
- * declared `--target-platform`. Without this check, a stale native
- * module from the previous stage run (different target arch) could
- * slip through — the review finding P1.F case.
- *
- * Parses magic bytes directly instead of shelling out to `file` so
- * the check works identically on macOS, Linux, and Windows (and on
- * CI runners without the `file` utility installed).
- */
+   
+                                                                  
+                                                                     
+  
+                                                                    
+                                                                   
+                                                                   
+                                               
+  
+                                                                   
+                                                                   
+                                                    
+   
 function readNativeArch(binaryPath) {
   const fd = fs.openSync(binaryPath, 'r');
   try {
     const header = Buffer.alloc(64);
     fs.readSync(fd, header, 0, 64, 0);
 
-    // Mach-O (macOS). Magic FEEDFACF = MH_MAGIC_64 (little-endian).
-    //
-    // Mach-O's `cputype` encodes the base CPU in the low bits and OR's
-    // in `CPU_ARCH_ABI64 = 0x01000000` for 64-bit variants. `MH_MAGIC_64`
-    // guarantees we're looking at a 64-bit binary, so both supported
-    // arches will have the ABI64 bit set:
-    //   CPU_TYPE_X86_64 = CPU_TYPE_X86 (7) | 0x01000000 = 0x01000007
-    //   CPU_TYPE_ARM64  = CPU_TYPE_ARM (12) | 0x01000000 = 0x0100000C
-    //
-    // Masking the ABI64 bit off lets us compare against the base types
-    // directly and handles both explicitly-constructed variants.
+                                                                    
+      
+                                                                       
+                                                                          
+                                                                     
+                                          
+                                                                     
+                                                                      
+      
+                                                                       
+                                                                 
     if (header.readUInt32LE(0) === 0xfeedfacf) {
       const cpuType = header.readInt32LE(4);
       const baseCpuType = cpuType & ~0x01000000;
-      if (baseCpuType === 7) return 'x64'; // CPU_TYPE_X86_64
-      if (baseCpuType === 12) return 'arm64'; // CPU_TYPE_ARM64
+      if (baseCpuType === 7) return 'x64';                   
+      if (baseCpuType === 12) return 'arm64';                  
       return null;
     }
 
-    // ELF (Linux). Magic 7F 45 4C 46 + class/encoding bytes.
+                                                             
     if (header[0] === 0x7f && header[1] === 0x45 && header[2] === 0x4c && header[3] === 0x46) {
-      // `e_machine` is a 2-byte LE value at offset 0x12 for EI_DATA=1
-      // (little-endian, which covers every supported target).
+                                                                      
+                                                              
       const machine = header.readUInt16LE(0x12);
-      if (machine === 0x3e) return 'x64'; // EM_X86_64
-      if (machine === 0xb7) return 'arm64'; // EM_AARCH64
+      if (machine === 0x3e) return 'x64';             
+      if (machine === 0xb7) return 'arm64';              
       return null;
     }
 
-    // PE (Windows). Magic 4D 5A (MZ). The PE header offset lives at
-    // 0x3C (LE). `IMAGE_FILE_HEADER.Machine` is the first 2 bytes
-    // after the 4-byte 'PE\0\0' signature.
+                                                                    
+                                                                  
+                                           
     if (header[0] === 0x4d && header[1] === 0x5a) {
       const peOffset = header.readUInt32LE(0x3c);
       const peHeader = Buffer.alloc(6);
       fs.readSync(fd, peHeader, 0, 6, peOffset);
-      // 'PE\0\0' signature then IMAGE_FILE_HEADER.Machine
+                                                          
       const sigOk =
         peHeader[0] === 0x50 && peHeader[1] === 0x45 && peHeader[2] === 0 && peHeader[3] === 0;
       if (!sigOk) return null;
       const machine = peHeader.readUInt16LE(4);
-      if (machine === 0x8664) return 'x64'; // IMAGE_FILE_MACHINE_AMD64
-      if (machine === 0xaa64) return 'arm64'; // IMAGE_FILE_MACHINE_ARM64
+      if (machine === 0x8664) return 'x64';                            
+      if (machine === 0xaa64) return 'arm64';                            
       return null;
     }
     return null;
@@ -255,14 +255,14 @@ function readNativeArch(binaryPath) {
   }
 }
 
-/**
- * Remove stale lockfiles from `apps/daemon/dist/node_modules/` before
- * re-running `npm install`. Also purges any remaining native dependency
- * directories listed in NATIVE_DEPS (currently empty since sql.js is WASM).
- *
- * Also remove `package-lock.json` / `pnpm-lock.yaml` if present: a
- * stale lockfile can pin resolved URLs, and we want a clean install.
- */
+   
+                                                                      
+                                                                        
+                                                                            
+  
+                                                                   
+                                                                     
+   
 function purgePreviousStaging() {
   const nodeModules = path.join(DAEMON_DIST, 'node_modules');
   for (const name of NATIVE_DEPS) {
@@ -281,17 +281,17 @@ function purgePreviousStaging() {
   }
 }
 
-/**
- * Confirm each native dep's `.node` file is actually for `target`.
- * Throws (via `die`) on mismatch so the build fails LOUDLY instead of
- * packaging a wrong-arch daemon that would crash on first DB call.
- */
+   
+                                                                   
+                                                                      
+                                                                   
+   
 function verifyNativeBinariesForTarget(target) {
   const expectedArch = target.split('-')[1];
-  // Sanity: if someone adds a target string that doesn't end in 'x64'
-  // or 'arm64' (e.g. future riscv64), `readNativeArch` would return
-  // null for the known-good cases and the comparison would fail
-  // misleadingly. Fail fast here with a clear message instead.
+                                                                      
+                                                                    
+                                                                
+                                                               
   if (expectedArch !== 'x64' && expectedArch !== 'arm64') {
     die(
       `verifyNativeBinariesForTarget: unsupported arch '${expectedArch}' in target ` +
@@ -363,10 +363,10 @@ function main() {
   log(`Dependencies: ${DEPS.join(' ')}`);
   log(`Target: ${target}${isCrossArch ? ` (cross-arch; host=${host})` : ''}`);
 
-  // Purge previous installs BEFORE npm runs. This removes stale
-  // lockfiles so npm re-resolves dependencies. Pure-JS deps (ws, sql.js)
-  // could stay in place across runs, but removing lockfiles ensures a
-  // clean install.
+                                                                
+                                                                         
+                                                                      
+                   
   purgePreviousStaging();
 
   const env = npmInstallEnv(binDir, target);
@@ -377,14 +377,14 @@ function main() {
     stdio: 'inherit',
   });
 
-  // Verify any native binaries match the target (no-op with sql.js since
-  // NATIVE_DEPS is empty).
+                                                                         
+                           
   verifyNativeBinariesForTarget(target);
 
-  // Host-arch staging: additionally run the runtime `require()` smoke
-  // to catch ABI mismatches (right arch, wrong Node major). Cross-arch
-  // can't load a foreign-arch binary, so the magic-byte check above
-  // is our end-of-the-line signal.
+                                                                      
+                                                                       
+                                                                    
+                                   
   if (!isCrossArch) {
     for (const spec of DEPS) {
       const name = packageName(spec);

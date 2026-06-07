@@ -1,5 +1,3 @@
-// apps/desktop/src/renderer/components/settings/providers/index.ts
-
 export { AzureFoundryProviderForm } from './AzureFoundryProviderForm';
 export { BedrockProviderForm } from './BedrockProviderForm';
 export { ClassicProviderForm } from './ClassicProviderForm';

@@ -1,24 +1,15 @@
-/**
- * JSON-RPC 2.0 message parsing and dispatch helpers for DaemonRpcServer.
- * ESM module — use .js extensions on imports.
- */
-
 import type { JsonRpcMessage, JsonRpcRequest, JsonRpcResponse } from '../common/types/daemon.js';
 import { JSON_RPC_ERRORS } from '../common/types/daemon.js';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyMethodHandler = (params: any) => Promise<unknown> | unknown;
 
 export interface RpcClient {
   id: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   socket: { destroyed: boolean; write: (data: string) => any };
   buffer: string;
 }
 
-/**
- * Send a successful result response to a client.
- */
 export function sendResult(client: RpcClient, id: string | number, result: unknown): void {
   const response: JsonRpcResponse = { jsonrpc: '2.0', id, result };
   if (!client.socket.destroyed) {
@@ -26,9 +17,6 @@ export function sendResult(client: RpcClient, id: string | number, result: unkno
   }
 }
 
-/**
- * Send an error response to a client.
- */
 export function sendError(
   client: RpcClient,
   id: string | number,
@@ -40,9 +28,6 @@ export function sendError(
   }
 }
 
-/**
- * Parse and dispatch a single JSON-RPC line from a client.
- */
 export async function handleRpcLine(
   client: RpcClient,
   line: string,
@@ -55,7 +40,6 @@ export async function handleRpcLine(
     return;
   }
 
-  // Only handle requests (messages with id + method)
   if (!('id' in message) || !('method' in message)) {
     return;
   }
@@ -76,7 +60,7 @@ export async function handleRpcLine(
     sendResult(client, request.id as string | number, result);
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
-    // OSS mode: myboteam-ai is unavailable by design; downgrade from error to warn
+
     if (errorMessage.includes('myboteam_runtime_unavailable')) {
     } else {
     }

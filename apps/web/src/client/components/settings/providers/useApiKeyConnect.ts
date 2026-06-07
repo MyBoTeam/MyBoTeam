@@ -32,7 +32,6 @@ export interface UseApiKeyConnectReturn {
   handleConnect: () => Promise<void>;
 }
 
-/** Handles API key + base URL connection logic for ClassicProviderForm. */
 export function useApiKeyConnect({
   providerId,
   connectedProvider,
@@ -54,7 +53,6 @@ export function useApiKeyConnect({
     ? connectedProvider?.customBaseUrl || defaultBaseUrl || undefined
     : undefined;
 
-  // Issue #2: AbortController cleanup for getOpenAiBaseUrl effect
   useEffect(() => {
     if (!isOpenAI) return;
     const controller = new AbortController();
@@ -75,7 +73,6 @@ export function useApiKeyConnect({
     setCustomBaseUrl(connectedProvider?.customBaseUrl || '');
   }, [hasEditableBaseUrl, connectedProvider?.customBaseUrl]);
 
-  // Issue #1: model-fetching delegated to useProviderModels hook
   const fetchedModels = useProviderModels({
     providerId,
     connectedProvider,
@@ -118,7 +115,7 @@ export function useApiKeyConnect({
     setError(null);
     try {
       const myboteam = getMyBoTeam();
-      // Issue #3: use openAiBaseUrl consistently for OpenAI resolvedBaseUrl
+
       let resolvedBaseUrl: string | undefined;
       if (isOpenAI) {
         resolvedBaseUrl = openAiBaseUrl.trim() || undefined;
@@ -136,7 +133,7 @@ export function useApiKeyConnect({
         setConnecting(false);
         return;
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       await myboteam.addApiKey(providerId as any, apiKey.trim());
       let models: Array<{ id: string; name: string }> | undefined;
       if (providerConfig?.modelsEndpoint) {

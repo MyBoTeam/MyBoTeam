@@ -65,7 +65,7 @@ export default function Sidebar({ isTitleBarHidden = false }: SidebarProps) {
       {/* Spacer */}
       <div className="flex-1" />
 
-      {/* Bottom Section - only visible when expanded */}
+      {}
       {!isCollapsed && (
         <div className="flex flex-col gap-2 px-3 py-3">
           <WorkspaceSelector onManageWorkspaces={() => navigate('/settings/workspaces')} />

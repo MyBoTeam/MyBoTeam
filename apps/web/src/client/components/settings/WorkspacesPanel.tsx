@@ -16,12 +16,10 @@ export function WorkspacesPanel() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Create form state
   const [newName, setNewName] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [newColor, setNewColor] = useState(WORKSPACE_COLORS[0]);
 
-  // Edit form state
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editColor, setEditColor] = useState('');
@@ -82,7 +80,7 @@ export function WorkspacesPanel() {
 
   return (
     <div className="space-y-4">
-      {/* Workspace List */}
+      {}
       <div className="space-y-2">
         {workspaces.map((workspace) => (
           <div key={workspace.id} className="rounded-lg border border-border bg-card/70 p-4">
@@ -107,7 +105,7 @@ export function WorkspacesPanel() {
         ))}
       </div>
 
-      {/* Create Form */}
+      {}
       {showCreateForm ? (
         <CreateWorkspaceForm
           name={newName}

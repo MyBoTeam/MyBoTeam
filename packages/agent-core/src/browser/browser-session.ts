@@ -1,10 +1,3 @@
-/**
- * Browser Session Management
- *
- * Functions for starting, waiting for, and checking the dev-browser server.
- * Extracted from server.ts to keep it under the 200-line limit.
- */
-
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -80,7 +73,6 @@ export async function startDevBrowserServer(
   log.info(`[Browser] Script exists: ${fs.existsSync(serverScript)}`);
   log.info(`[Browser] CWD exists: ${fs.existsSync(serverCwd)}`);
 
-  // detached + unref allows server to outlive parent process
   const child = spawn(nodeExe, [serverScript], {
     detached: true,
     stdio: ['ignore', 'pipe', 'pipe'],
@@ -130,7 +122,6 @@ export async function startDevBrowserServer(
 
   log.info(`[Browser] Dev-browser server spawn initiated (PID: ${child.pid})`);
 
-  // Windows needs longer timeout due to slower process startup
   const maxWaitMs = process.platform === 'win32' ? 30000 : 15000;
   log.info(`[Browser] Waiting for dev-browser server to be ready (max ${maxWaitMs}ms)...`);
 

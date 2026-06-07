@@ -1,7 +1,6 @@
 import type { GoogleAccount } from '@myboteam/agent-core/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Mock the logger to prevent console noise
 vi.mock('@/lib/logger', () => ({
   createLogger: () => ({
     log: vi.fn(),
@@ -25,7 +24,6 @@ function makeAccount(overrides: Partial<GoogleAccount> = {}): GoogleAccount {
   };
 }
 
-// Build a mock window.myboteam.gws API
 function makeGwsApi(
   overrides: Partial<{
     listAccounts: () => Promise<GoogleAccount[]>;
@@ -62,7 +60,7 @@ describe('useGoogleAccountStore', () => {
 
   afterEach(async () => {
     vi.clearAllMocks();
-    // Reset store to initial state to prevent test bleed
+
     try {
       const { useGoogleAccountStore } = await import('@/stores/googleAccountStore');
       useGoogleAccountStore.setState({
@@ -71,9 +69,7 @@ describe('useGoogleAccountStore', () => {
         error: null,
         _requestToken: null,
       });
-    } catch {
-      /* module may not be loaded */
-    }
+    } catch {}
   });
 
   describe('fetchAccounts', () => {
@@ -152,7 +148,6 @@ describe('useGoogleAccountStore', () => {
 
       await useGoogleAccountStore.getState().removeAccount('uid-1');
 
-      // Accounts should still contain the item since the call failed
       expect(useGoogleAccountStore.getState().accounts).toHaveLength(1);
     });
   });
@@ -178,12 +173,10 @@ describe('useGoogleAccountStore', () => {
       const { useGoogleAccountStore } = await import('@/stores/googleAccountStore');
       useGoogleAccountStore.setState({ accounts: [acc1] });
 
-      // Should not throw
       expect(() => {
         useGoogleAccountStore.getState().handleStatusChange('uid-nonexistent', 'expired');
       }).not.toThrow();
 
-      // Original account is unchanged
       expect(useGoogleAccountStore.getState().accounts[0].status).toBe('connected');
     });
   });
@@ -207,20 +200,16 @@ describe('useGoogleAccountStore', () => {
 
       const { useGoogleAccountStore } = await import('@/stores/googleAccountStore');
 
-      // Start first fetch — will be made stale
       const p1 = useGoogleAccountStore.getState().fetchAccounts();
-      // Start second fetch — this is the "latest"
+
       const p2 = useGoogleAccountStore.getState().fetchAccounts();
 
-      // Resolve second first (it writes the latest token)
       resolveSecond(secondAccounts);
       await p2;
 
-      // Now resolve the first (stale) — should be ignored
       resolveFirst(firstAccounts);
       await p1;
 
-      // The store should have the second (most recent) result
       expect(useGoogleAccountStore.getState().accounts[0].email).toBe('second@gmail.com');
     });
   });

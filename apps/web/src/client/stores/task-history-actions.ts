@@ -11,13 +11,11 @@ import type { TaskState } from './taskStore';
 
 const logger = createLogger('TaskStore');
 
-// Request-token counter to guard against stale loadFavorites responses
 let _loadFavoritesToken = 0;
 
 type SetFn = (partial: Partial<TaskState> | ((state: TaskState) => Partial<TaskState>)) => void;
 type GetFn = () => TaskState;
 
-/** Task history and favorites slice: loadTasks, loadTaskById, deleteTask, clearHistory, favorites management. */
 export function createTaskHistoryActions(set: SetFn, get: GetFn) {
   return {
     loadTasks: async () => {

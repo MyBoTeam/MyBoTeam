@@ -1,10 +1,3 @@
-/**
- * Integration tests for Header component
- * Tests rendering and navigation elements
- * @module __tests__/integration/renderer/components/Header.integration.test
- * @vitest-environment jsdom
- */
-
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
@@ -32,7 +25,6 @@ vi.mock('@/lib/myboteam', () => {
 describe('Header Integration', () => {
   describe('rendering', () => {
     it('should render the header element', () => {
-      // Arrange & Act
       render(
         <MemoryRouter initialEntries={['/']}>
           <Header />
@@ -59,7 +51,6 @@ describe('Header Integration', () => {
     });
 
     it('should render the brand text', () => {
-      // Arrange & Act
       render(
         <MemoryRouter initialEntries={['/']}>
           <Header />
@@ -100,7 +91,6 @@ describe('Header Integration', () => {
     });
 
     it('should render History navigation link', () => {
-      // Arrange & Act
       render(
         <MemoryRouter initialEntries={['/']}>
           <Header />
@@ -114,7 +104,6 @@ describe('Header Integration', () => {
     });
 
     it('should render Settings navigation link', () => {
-      // Arrange & Act
       render(
         <MemoryRouter initialEntries={['/']}>
           <Header />
@@ -128,7 +117,6 @@ describe('Header Integration', () => {
     });
 
     it('should render all three navigation links', () => {
-      // Arrange & Act
       render(
         <MemoryRouter initialEntries={['/']}>
           <Header />
@@ -157,7 +145,6 @@ describe('Header Integration', () => {
     });
 
     it('should mark History link as active when on history route', () => {
-      // Arrange & Act
       render(
         <MemoryRouter initialEntries={['/history']}>
           <Header />
@@ -170,7 +157,6 @@ describe('Header Integration', () => {
     });
 
     it('should mark Settings link as active when on settings route', () => {
-      // Arrange & Act
       render(
         <MemoryRouter initialEntries={['/settings']}>
           <Header />
@@ -183,7 +169,6 @@ describe('Header Integration', () => {
     });
 
     it('should not mark Home link as active when on other routes', () => {
-      // Arrange & Act
       render(
         <MemoryRouter initialEntries={['/history']}>
           <Header />
@@ -196,7 +181,6 @@ describe('Header Integration', () => {
     });
 
     it('should have nav link styles on all navigation links', () => {
-      // Arrange & Act
       render(
         <MemoryRouter initialEntries={['/']}>
           <Header />
@@ -216,7 +200,6 @@ describe('Header Integration', () => {
 
   describe('layout and structure', () => {
     it('should have drag region class for window dragging', () => {
-      // Arrange & Act
       render(
         <MemoryRouter initialEntries={['/']}>
           <Header />
@@ -242,7 +225,6 @@ describe('Header Integration', () => {
     });
 
     it('should have no-drag class on navigation', () => {
-      // Arrange & Act
       render(
         <MemoryRouter initialEntries={['/']}>
           <Header />
@@ -271,7 +253,6 @@ describe('Header Integration', () => {
 
   describe('deep routes', () => {
     it('should not highlight any nav link on execution routes', () => {
-      // Arrange & Act
       render(
         <MemoryRouter initialEntries={['/execution/task-123']}>
           <Header />

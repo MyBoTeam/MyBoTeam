@@ -14,7 +14,6 @@ export const DEFAULT_CONFIG: SandboxConfig = {
   networkPolicy: DEFAULT_NETWORK_POLICY,
 };
 
-/** Regex for validating Docker image references (SaaiAravindhRaja, PR #612) */
 export const DOCKER_IMAGE_REGEX = /^[\w.-]+(\/[\w.-]+)*(:[\w.-]+)?$/;
 
 export interface UseSandboxPanelResult {

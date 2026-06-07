@@ -14,9 +14,7 @@ export function AnimatedOutletWrapper() {
         getMyBoTeam()
           .analytics?.trackPageView(location.pathname)
           .catch(() => {});
-      } catch {
-        /* not in Electron or analytics unavailable */
-      }
+      } catch {}
     }
   }, [location.pathname]);
 

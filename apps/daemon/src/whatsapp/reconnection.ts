@@ -1,9 +1,3 @@
-/**
- * reconnection — exponential-backoff reconnect scheduler for WhatsAppService.
- *
- * Extracted from WhatsAppService for modularity.
- */
-
 import { log } from '../logger.js';
 
 export const MAX_RECONNECT_ATTEMPTS = 5;
@@ -26,13 +20,6 @@ export function clearReconnectTimer(state: ReconnectState): void {
   }
 }
 
-/**
- * Schedule a reconnect attempt with exponential backoff.
- *
- * @param state   Mutable reconnect state object
- * @param onConnect  Async function to call when the timer fires
- * @param onMaxReached  Called when MAX_RECONNECT_ATTEMPTS is exceeded
- */
 export function scheduleReconnect(
   state: ReconnectState,
   onConnect: () => Promise<void>,

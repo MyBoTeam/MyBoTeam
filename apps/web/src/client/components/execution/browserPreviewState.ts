@@ -1,8 +1,3 @@
-/**
- * State types and reducer for useBrowserPreview.
- * Extracted from useBrowserPreview.ts to keep files under 200 lines.
- */
-
 import type { ViewStatus } from './StatusBadge';
 
 export type PreviewState = {

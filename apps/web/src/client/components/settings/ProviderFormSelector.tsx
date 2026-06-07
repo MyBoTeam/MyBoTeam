@@ -40,7 +40,6 @@ export function ProviderFormSelector({
   const { t } = useTranslation('settings');
   const meta = PROVIDER_META[providerId];
 
-  // Handle GitHub Copilot separately (device OAuth flow, no API key)
   if (providerId === 'copilot') {
     return (
       <CopilotProviderForm
@@ -53,7 +52,6 @@ export function ProviderFormSelector({
     );
   }
 
-  // Handle NVIDIA NIM separately (has custom endpoint + API key)
   if (providerId === 'nim') {
     return (
       <NimProviderForm
@@ -66,7 +64,6 @@ export function ProviderFormSelector({
     );
   }
 
-  // Handle MyBoTeam AI separately (device fingerprint flow, no API key)
   if (providerId === 'myboteam-ai') {
     return (
       <MyboteamAiProviderForm
@@ -80,7 +77,6 @@ export function ProviderFormSelector({
     );
   }
 
-  // Handle Z.AI separately (has region selector)
   if (providerId === 'zai') {
     return (
       <ZaiProviderForm
@@ -197,7 +193,7 @@ export function ProviderFormSelector({
           />
         );
       }
-      // Default to LiteLLM for other hybrid providers
+
       return (
         <LiteLLMProviderForm
           connectedProvider={connectedProvider}

@@ -1,10 +1,3 @@
-/**
- * normalizeMessage — extracts a normalized message payload from a raw Baileys
- * `messages.upsert` entry.
- *
- * Extracted from WhatsAppService for modularity.
- */
-
 export interface NormalizedMessage {
   messageId: string;
   senderId: string;
@@ -15,10 +8,6 @@ export interface NormalizedMessage {
   isFromMe: boolean;
 }
 
-/**
- * Attempt to extract text content and metadata from a raw Baileys message.
- * Returns `null` when the message has no usable text.
- */
 export function normalizeMessage(msg: Record<string, unknown>): NormalizedMessage | null {
   if (!msg.message) {
     return null;
@@ -44,12 +33,10 @@ export function normalizeMessage(msg: Record<string, unknown>): NormalizedMessag
   }
 
   const key = msg.key as Record<string, unknown>;
-  // chatJid is always the conversation JID (group or DM) — used for isGroup detection
-  // and for routing replies via TaskBridge.sendMessage().
+
   const chatJid = (key.remoteJid as string) || '';
   const isGroup = chatJid.endsWith('@g.us');
-  // For incoming group messages, senderId is the individual participant, not the group JID.
-  // For outgoing messages and DMs, it equals chatJid.
+
   const senderId = (!key.fromMe && key.participant ? (key.participant as string) : chatJid) || '';
   const senderName = (msg.pushName as string) || undefined;
   const isFromMe = key.fromMe === true;

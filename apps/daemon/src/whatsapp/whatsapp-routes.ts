@@ -1,16 +1,8 @@
-/**
- * Route builders for the WhatsApp HTTP API.
- * Each builder returns a Route object for use with createHttpServer.
- */
 import type http from 'node:http';
 import type { Route } from '../http-server-factory.js';
 import { log } from '../logger.js';
 import type { WhatsAppDaemonService } from '../whatsapp-service.js';
 
-/**
- * Baileys error message substrings that indicate the WebSocket dropped mid-send.
- * Used by FR-020: detect connection loss, proactively mark disconnected.
- */
 export const WHATSAPP_CONNECTION_LOSS_PATTERNS = [
   'connection closed',
   'connection lost',
@@ -21,12 +13,6 @@ export const WHATSAPP_CONNECTION_LOSS_PATTERNS = [
   'stream errored',
 ] as const;
 
-/**
- * Normalize a recipient to WhatsApp JID format.
- * If the string already contains '@', it is returned as-is.
- * Otherwise digits are extracted and '@s.whatsapp.net' is appended.
- * Throws if no digits are found (would produce a malformed JID).
- */
 export function normalizeRecipient(recipient: string): string {
   if (recipient.includes('@')) {
     return recipient;
@@ -143,7 +129,7 @@ export function buildSendRoute(svc: WhatsAppDaemonService): Route {
 
       try {
         const jid = normalizeRecipient(recipient.trim());
-        // Validate with trimmed copy but send the original message unchanged (preserve user content).
+
         await svc.sendMessage(jid, message);
         sendJson(res, { success: true });
       } catch (err) {
@@ -156,8 +142,7 @@ export function buildSendRoute(svc: WhatsAppDaemonService): Route {
           });
           return;
         }
-        // Detect Baileys connection-loss signals (FR-020). Match case-insensitively
-        // since Baileys capitalisation varies across versions.
+
         const errLower = errMsg.toLowerCase();
         const isConnectionLoss = WHATSAPP_CONNECTION_LOSS_PATTERNS.some((p) =>
           errLower.includes(p),
@@ -165,7 +150,7 @@ export function buildSendRoute(svc: WhatsAppDaemonService): Route {
         if (isConnectionLoss) {
           svc.markDisconnected();
         }
-        // Do NOT log errMsg — it may reflect message payload content (NFR-002).
+
         log.error('[WhatsAppSendApi] Send failed');
         sendJson(res, {
           success: false,

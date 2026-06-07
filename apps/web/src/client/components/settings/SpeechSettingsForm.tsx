@@ -61,7 +61,7 @@ export function SpeechSettingsForm({ onSave, onChange }: SpeechSettingsFormProps
 
   return (
     <div className="group rounded-xl border border-border bg-card/70 p-3.5 transition-all duration-200 hover:border-primary hover:shadow-md">
-      {/* Header: Title + Toggle */}
+      {}
       <div className="mb-1.5">
         <span className="flex items-center gap-1.5 text-[13px] font-semibold text-foreground">
           <Microphone className="h-3.5 w-3.5 text-blue-500" />
@@ -74,7 +74,7 @@ export function SpeechSettingsForm({ onSave, onChange }: SpeechSettingsFormProps
         {t('speech.description')}
       </p>
 
-      {/* Info section */}
+      {}
       <div className="mb-2.5 flex items-start gap-1.5 rounded-md border border-border bg-background px-2.5 py-2 text-[11px] text-foreground">
         <WarningCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
         <span>

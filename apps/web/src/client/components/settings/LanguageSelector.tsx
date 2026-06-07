@@ -10,7 +10,6 @@ import { DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/d
 import { changeLanguage, getLanguagePreference } from '@/i18n';
 import { cn } from '@/lib/utils';
 
-// Auto label in each supported system language so it's always recognizable
 const AUTO_LABELS: Record<string, string> = {
   en: 'Auto (System)',
   'zh-CN': '自动（跟随系统）',
@@ -19,7 +18,6 @@ const AUTO_LABELS: Record<string, string> = {
 };
 const AUTO_FALLBACK = 'Auto (System)';
 
-// Compute once at module level — navigator.language is static
 const systemLang = typeof navigator !== 'undefined' ? navigator.language : 'en';
 const matchedLang = Object.keys(AUTO_LABELS).find(
   (key) => systemLang === key || systemLang.startsWith(key.split('-')[0]),

@@ -10,12 +10,12 @@ describe('priority scoring', () => {
   describe('getElementPriority', () => {
     it('should score buttons highest', () => {
       const score = getElementPriority('button', true);
-      expect(score).toBe(150); // 100 base + 50 viewport bonus
+      expect(score).toBe(150);
     });
 
     it('should score textbox high', () => {
       const score = getElementPriority('textbox', true);
-      expect(score).toBe(145); // 95 base + 50 viewport bonus
+      expect(score).toBe(145);
     });
 
     it('should give viewport bonus', () => {
@@ -90,11 +90,10 @@ describe('truncateElements', () => {
   it('should prioritize viewport elements', () => {
     const inViewport = createElements(5, 'button', true);
     const outViewport = createElements(5, 'button', false);
-    const mixed = [...outViewport, ...inViewport]; // Out of viewport first
+    const mixed = [...outViewport, ...inViewport];
 
     const result = truncateElements(mixed, { maxElements: 5 });
 
-    // Should keep all viewport elements
     expect(result.elements.every((e) => e.inViewport)).toBe(true);
   });
 
@@ -102,11 +101,10 @@ describe('truncateElements', () => {
     const buttons = createElements(3, 'button', false);
     const links = createElements(3, 'link', false);
     const navs = createElements(3, 'navigation', false);
-    const mixed = [...navs, ...links, ...buttons]; // Lowest priority first
+    const mixed = [...navs, ...links, ...buttons];
 
     const result = truncateElements(mixed, { maxElements: 3 });
 
-    // Should keep buttons (highest priority)
     expect(result.elements.every((e) => e.role === 'button')).toBe(true);
   });
 

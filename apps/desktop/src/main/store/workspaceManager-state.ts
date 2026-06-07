@@ -17,7 +17,5 @@ export function log(
     if (l?.log) {
       l.log(level, 'main', msg, data);
     }
-  } catch {
-    /* best-effort logging */
-  }
+  } catch {}
 }

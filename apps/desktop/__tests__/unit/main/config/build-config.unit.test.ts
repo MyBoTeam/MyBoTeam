@@ -1,17 +1,8 @@
-/**
- * Unit tests for loadBuildConfig() — verifies precedence between
- * the CI-injected build.env file and process.env (populated by
- * dotenv from apps/desktop/.env in dev mode).
- *
- * @module __tests__/unit/main/config/build-config.unit.test
- */
-
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Mock electron.app — packaged vs. dev controls which file path is resolved.
 const mockApp = {
   isPackaged: false,
 };
@@ -20,7 +11,6 @@ vi.mock('electron', () => ({
   app: mockApp,
 }));
 
-// Every variable the loader consumes — saved in beforeEach so tests stay isolated.
 const MANAGED_ENV_KEYS = [
   'BUILD_ENV_VERSION',
   'MIXPANEL_TOKEN',
@@ -40,11 +30,9 @@ describe('loadBuildConfig() — build.env and process.env resolution', () => {
   let originalResourcesPath: string | undefined;
 
   beforeEach(() => {
-    // Fresh temp dir per test → acts as the APP_ROOT where build.env lives.
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'myboteam-build-config-'));
     buildEnvPath = path.join(tempDir, 'build.env');
 
-    // Snapshot + clear the env vars the loader looks at, so tests control both sources.
     originalEnv = {};
     for (const key of MANAGED_ENV_KEYS) {
       originalEnv[key] = process.env[key];
@@ -52,18 +40,15 @@ describe('loadBuildConfig() — build.env and process.env resolution', () => {
     }
     process.env.APP_ROOT = tempDir;
 
-    // Snapshot + clear process.resourcesPath. Only packaged tests set it; keep dev tests clean.
     originalResourcesPath = (process as { resourcesPath?: string }).resourcesPath;
     delete (process as { resourcesPath?: string }).resourcesPath;
 
     mockApp.isPackaged = false;
 
-    // Reset module-level cachedConfig between tests.
     vi.resetModules();
   });
 
   afterEach(() => {
-    // Restore original env vars verbatim (including undefined → delete).
     for (const key of MANAGED_ENV_KEYS) {
       const saved = originalEnv[key];
       if (saved === undefined) {
@@ -81,7 +66,6 @@ describe('loadBuildConfig() — build.env and process.env resolution', () => {
   });
 
   async function loadFresh() {
-    // Re-import after vi.resetModules() so cachedConfig starts null.
     const mod = await import('@main/config/build-config');
     return mod.loadBuildConfig();
   }
@@ -182,19 +166,17 @@ describe('loadBuildConfig() — build.env and process.env resolution', () => {
     });
 
     it('process.env fills gaps when build.env omits specific fields', async () => {
-      // build.env has only Mixpanel; .env has Sentry. Both should show up.
       fs.writeFileSync(buildEnvPath, 'MIXPANEL_TOKEN=build-env-mix\n');
       process.env.SENTRY_DSN = 'https://env.sentry.io/dsn';
       process.env.GA_API_SECRET = 'env-ga';
 
       const cfg = await loadFresh();
-      expect(cfg.mixpanelToken).toBe('build-env-mix'); // from build.env
-      expect(cfg.sentryDsn).toBe('https://env.sentry.io/dsn'); // from process.env
-      expect(cfg.gaApiSecret).toBe('env-ga'); // from process.env
+      expect(cfg.mixpanelToken).toBe('build-env-mix');
+      expect(cfg.sentryDsn).toBe('https://env.sentry.io/dsn');
+      expect(cfg.gaApiSecret).toBe('env-ga');
     });
 
     it('empty string in build.env is treated as absent (falls back to process.env)', async () => {
-      // Degenerate build.env with empty value — process.env should win.
       fs.writeFileSync(buildEnvPath, 'MIXPANEL_TOKEN=\n');
       process.env.MIXPANEL_TOKEN = 'env-wins';
 
@@ -212,7 +194,6 @@ describe('loadBuildConfig() — build.env and process.env resolution', () => {
     });
 
     it('falls back to process.env MYBOTEAM_BUILD_ID when build.env lacks it', async () => {
-      // build.env exists but has no BUILD_ID; env var should be picked up.
       fs.writeFileSync(buildEnvPath, 'MIXPANEL_TOKEN=anything\n');
       process.env.MYBOTEAM_BUILD_ID = 'env-build-xyz789';
       await loadFresh();
@@ -239,8 +220,6 @@ describe('loadBuildConfig() — build.env and process.env resolution', () => {
     });
 
     it('packaged mode + only process.env set: isAutoUpdaterEnabled() returns false (security invariant)', async () => {
-      // Packaged OSS binaries must NOT honor a runtime MYBOTEAM_UPDATER_URL env var —
-      // the updater spawns an installer and a rogue URL would be RCE.
       process.env.MYBOTEAM_UPDATER_URL = 'https://evil.example.com';
       mockApp.isPackaged = true;
       (process as { resourcesPath?: string }).resourcesPath = tempDir;

@@ -1,14 +1,9 @@
-/**
- * Normalize a Lightdash instance URL to the MCP endpoint format.
- * Accepts HTTP and HTTPS (FR-017).
- */
 export function normalizeLightdashUrl(input: string): string {
   let url = input.trim();
   if (!url) {
     return url;
   }
 
-  // Bare hostname like "mycompany" → assume Lightdash Cloud
   if (!url.includes('.') && !url.includes('://')) {
     return `https://${url}.lightdash.cloud/api/v1/mcp`;
   }
@@ -28,9 +23,7 @@ export function normalizeLightdashUrl(input: string): string {
       : `${normalizedPath}/api/v1/mcp`;
     parsed.pathname = pathWithMcp.startsWith('/') ? pathWithMcp : `/${pathWithMcp}`;
     url = parsed.toString();
-  } catch {
-    // Leave as-is if URL parsing fails
-  }
+  } catch {}
 
   return url;
 }

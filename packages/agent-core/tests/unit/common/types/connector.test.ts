@@ -48,7 +48,6 @@ describe('connector types', () => {
     });
 
     it('should return undefined or fail gracefully for unknown values', () => {
-      // @ts-expect-error testing runtime behavior
       const result = getOAuthProviderDisplayName('unknown');
       expect(result).toBeUndefined();
     });

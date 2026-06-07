@@ -148,9 +148,7 @@ export function runGws(
               if (parsed?.error?.message) {
                 apiError = `${parsed.error.message} (HTTP ${parsed.error.code ?? '?'})`;
               }
-            } catch {
-              /* not JSON */
-            }
+            } catch {}
           }
           reject(new Error(apiError || stderr || error.message, { cause: error }));
         } else {

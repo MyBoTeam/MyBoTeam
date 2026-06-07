@@ -18,9 +18,7 @@ export function log(
     if (l?.log) {
       l.log(level, 'daemon', msg, data);
     }
-  } catch {
-    /* best-effort */
-  }
+  } catch {}
 }
 
 export function sleep(ms: number): Promise<void> {

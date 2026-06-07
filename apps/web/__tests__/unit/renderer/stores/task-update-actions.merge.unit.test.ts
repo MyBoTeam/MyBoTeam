@@ -1,8 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
 
-// Agent-core transitively loads undici at module evaluation time. The global
-// mock in setup.ts is applied too late for this import chain, so we hoist an
-// explicit mock here to prevent the Node 20 / undici 8 crash.
 vi.mock('undici', () => ({
   ProxyAgent: class ProxyAgent {},
   Agent: class Agent {},
@@ -15,22 +12,6 @@ import type { Task, TaskMessage, TaskUpdateEvent } from '@myboteam/agent-core';
 import { createTaskUpdateActions } from '@/stores/task-update-actions';
 import type { TaskState } from '@/stores/taskStore';
 
-/**
- * Phase 1c regression (Max review blocker #1): the renderer's task-update
- * handlers used to do `[...existing, incoming]` — raw append. With the
- * SDK adapter emitting stable-IDed messages (`running` then `completed` for
- * the same tool), raw append produced two tool-row bubbles per transition.
- *
- * This suite pins the correct behaviour:
- *   - A `running` message followed by a `completed` message with the SAME
- *     id must collapse into ONE row with status = 'completed'.
- *   - Different IDs still append as separate rows (no false coalescing).
- *   - Batch path (`addTaskUpdateBatch`) has the same semantics.
- *   - Timestamp on merged row preserves the original so UI sort order is
- *     stable.
- */
-
-// Mock the myboteam logger so tests don't hit IPC/preload.
 vi.mock('@/lib/myboteam', () => ({
   getMyBoTeam: () => ({ logEvent: vi.fn() }),
 }));
@@ -97,7 +78,7 @@ describe('task-update-actions merge-by-stable-id (Phase 1c)', () => {
     expect(messages).toHaveLength(1);
     expect(messages[0]?.id).toBe('tool-1');
     expect(messages[0]?.toolStatus).toBe('completed');
-    // Preserve the original timestamp so the UI doesn't re-sort on each update.
+
     expect(messages[0]?.timestamp).toBe('2026-04-15T10:00:00.000Z');
   });
 
@@ -144,14 +125,14 @@ describe('task-update-actions merge-by-stable-id (Phase 1c)', () => {
     actions.addTaskUpdateBatch({
       taskId: 'tsk-1',
       messages: [
-        buildToolMessage('tool-1', 'completed', '2026-04-15T10:00:02.000Z'), // merges
-        buildToolMessage('tool-2', 'running', '2026-04-15T10:00:03.000Z'), // appends
+        buildToolMessage('tool-1', 'completed', '2026-04-15T10:00:02.000Z'),
+        buildToolMessage('tool-2', 'running', '2026-04-15T10:00:03.000Z'),
       ],
     });
 
     const messages = getState().currentTask?.messages ?? [];
     expect(messages).toHaveLength(2);
-    expect(messages[0]?.toolStatus).toBe('completed'); // merged
-    expect(messages[1]?.toolStatus).toBe('running'); // new
+    expect(messages[0]?.toolStatus).toBe('completed');
+    expect(messages[1]?.toolStatus).toBe('running');
   });
 });

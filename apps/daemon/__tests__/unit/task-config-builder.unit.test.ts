@@ -33,24 +33,14 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Tunable via each test.
-// Either-or: `knowledgeInstructionsText` → rendered in the binding
-// <workspace-instructions> block; `knowledgeContextText` → rendered in the
-// soft <workspace-knowledge> block. Tests set one or both per scenario.
 let knowledgeInstructionsText: string | undefined;
 let knowledgeContextText: string | undefined;
 let activeProviderModel: { provider: string; model: string } | null = null;
 let gwsRows: Record<string, unknown>[] = [];
 
-// `generateConfig` does `fs.existsSync(nodeExe)` before writing the config;
-// create a real placeholder file each test can point at. This is test
-// plumbing, not what onBeforeStart produces on a real machine — the real
-// daemon resolves this from packaged / dev paths.
 let fakeNodeBinDir: string;
 let fakeMcpToolsPath: string;
 
-// Live DB stub — only answers what `prepareGwsManifest` queries.
-// Uses sql.js `exec()` API (not better-sqlite3 `prepare()`).
 const dbStub = {
   exec: vi.fn((sql: string) => {
     if (sql.includes('SELECT') && sql.includes('google_accounts')) {
@@ -89,11 +79,6 @@ vi.mock('@myboteam/agent-core/storage/database', () => ({
   flushDatabase: vi.fn(),
 }));
 
-// resolveTaskConfig imports directly from the repository module (NOT via
-// the barrel), so the mock must target that module path exactly. We stub
-// both `getFormattedKnowledgeNotes` (the new structured API that splits
-// instructions from context) and `getKnowledgeNotesForPrompt` (the legacy
-// single-string API kept for backward compatibility).
 vi.mock('@myboteam/agent-core/storage/repositories/knowledgeNotes', () => ({
   getFormattedKnowledgeNotes: vi.fn(() => ({
     instructions: knowledgeInstructionsText ?? '',
@@ -111,14 +96,10 @@ vi.mock('@myboteam/agent-core', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,
-    // Mock out the auth.json sync / bundled-node resolution bits that
-    // hit the filesystem unnecessarily for this test.
+
     syncApiKeysToOpenCodeAuth: vi.fn(),
     getOpenCodeAuthJsonPath: vi.fn(() => '/tmp/fake-auth.json'),
-    // generateConfig throws without a bundled node path; point at a real
-    // file created in beforeEach. The MCP server entries the test asserts
-    // on don't actually spawn — we just need fs.existsSync to pass. The
-    // real daemon resolves this from packaged / dev paths.
+
     getBundledNodePaths: vi.fn(() => ({
       binDir: fakeNodeBinDir,
       nodeExe: path.join(fakeNodeBinDir, process.platform === 'win32' ? 'node.exe' : 'node'),
@@ -128,12 +109,6 @@ vi.mock('@myboteam/agent-core', async (importOriginal) => {
   };
 });
 
-// Provider-settings / storage-repository barrel reads getDatabase() at call
-// time — the real one requires an initialised native SQLite module which is
-// absent in this test environment. Stub only the methods `buildProviderConfigs`
-// pulls in via that barrel. The vitest alias maps `@myboteam/agent-core`
-// to agent-core's src/, so the relative path resolves the same way as from
-// `src/opencode/config-builder.ts`.
 vi.mock('@myboteam/agent-core/storage/repositories/index', async () => {
   return {
     getProviderSettings: vi.fn(() => ({
@@ -200,10 +175,7 @@ describe('daemon onBeforeStart — integration against real resolveTaskConfig + 
     fs.mkdirSync(fakeNodeBinDir, { recursive: true });
     fs.writeFileSync(path.join(fakeNodeBinDir, 'node'), '');
     fs.writeFileSync(path.join(fakeNodeBinDir, 'node.exe'), '');
-    // generator-mcp validates each registered MCP tool has a real
-    // `{tool}/dist/index.mjs` on disk. Create empty placeholders for each
-    // tool the real generator could conditionally register, so the test
-    // doesn't have to know which combinations each scenario enables.
+
     fakeMcpToolsPath = path.join(tmpUserData, 'fake-mcp-tools');
     for (const tool of [
       'request-connector-auth',
@@ -225,9 +197,7 @@ describe('daemon onBeforeStart — integration against real resolveTaskConfig + 
   afterEach(() => {
     try {
       fs.rmSync(tmpUserData, { recursive: true, force: true });
-    } catch {
-      /* best-effort */
-    }
+    } catch {}
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
   });
@@ -249,12 +219,11 @@ describe('daemon onBeforeStart — integration against real resolveTaskConfig + 
       { taskId: 'tsk_abc', workspaceId: 'ws_42' },
     );
 
-    // File should exist under the per-task name inside userDataPath/opencode/
     expect(configPath).toBe(path.join(tmpUserData, 'opencode', 'opencode-tsk_abc.json'));
     expect(fs.existsSync(configPath)).toBe(true);
 
     const written = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-    // System prompt has the workspace knowledge text embedded
+
     const systemPrompt =
       typeof written.instructions === 'string'
         ? written.instructions
@@ -263,17 +232,10 @@ describe('daemon onBeforeStart — integration against real resolveTaskConfig + 
           : JSON.stringify(written);
     expect(systemPrompt).toContain('treat `foo` as a reserved keyword');
 
-    // OpenAI provider has store:false injected
     expect(written.provider?.openai?.options?.store).toBe(false);
   });
 
   it('returns workspaceInstructions alongside env so the adapter can inject them as SDK `system` per-turn', async () => {
-    // The generated config file (tested above) is not enough — the
-    // OpenAI/Codex provider path inside OpenCode has its own
-    // `options.instructions` channel that crowds out the agent-level
-    // prompt. onBeforeStart must return the pre-formatted instruction
-    // bullet list via `workspaceInstructions` so the adapter can
-    // duplicate it into `session.prompt({ system })` on every turn.
     knowledgeInstructionsText = '- Always add "Haiku" suffix to every reply';
     const storage = makeStorage();
 
@@ -291,14 +253,11 @@ describe('daemon onBeforeStart — integration against real resolveTaskConfig + 
 
     expect(result.workspaceInstructions).toBeDefined();
     expect(result.workspaceInstructions).toContain('Always add "Haiku" suffix to every reply');
-    // Env is still populated as before — not clobbered by the new field.
+
     expect(result.env.OPENCODE_CONFIG).toBeDefined();
   });
 
   it('omits workspaceInstructions when no instruction-type notes exist (context/reference only)', async () => {
-    // The structured return from getFormattedKnowledgeNotes splits by type:
-    // only `instruction` notes go into `.instructions`, so context-only
-    // workspaces should produce a result with no `workspaceInstructions` key.
     knowledgeInstructionsText = undefined;
     knowledgeContextText = '### Context\n- Project uses Postgres 16';
     const storage = makeStorage();
@@ -352,10 +311,7 @@ describe('daemon onBeforeStart — integration against real resolveTaskConfig + 
       string,
       { type?: string; url?: string; headers?: Record<string, string> }
     >;
-    // Generator-mcp encodes user connectors as `connector-<sanitized-name>-<id-prefix>`
-    // (see generator-mcp.ts:240–262). Built-in `slack` uses a bare `slack` key,
-    // so filtering on the `connector-` prefix avoids false-passing on the
-    // default remote slack MCP that's always registered.
+
     const userConnectorEntries = Object.entries(mcp).filter(([key]) =>
       key.startsWith('connector-'),
     );
@@ -387,7 +343,7 @@ describe('daemon onBeforeStart — integration against real resolveTaskConfig + 
           return JSON.stringify({
             accessToken: 'ya29.live',
             refreshToken: 'rt-live',
-            expiresAt: now + 3600_000, // 1 hour — well outside refresh margin
+            expiresAt: now + 3600_000,
             scopes: ['https://www.googleapis.com/auth/gmail.modify'],
           });
         }
@@ -412,16 +368,15 @@ describe('daemon onBeforeStart — integration against real resolveTaskConfig + 
       string,
       { environment?: Record<string, string>; env?: Record<string, string> }
     >;
-    // The three GWS MCP servers should be registered
+
     expect(Object.keys(mcp)).toEqual(
       expect.arrayContaining(['gws-mcp', 'gmail-mcp', 'calendar-mcp']),
     );
-    // Each GWS MCP server's env should include GWS_ACCOUNTS_MANIFEST pointing
-    // at the manifest file we just wrote
+
     const gwsMcpEnv = mcp['gws-mcp'].environment ?? mcp['gws-mcp'].env ?? {};
     expect(gwsMcpEnv.GWS_ACCOUNTS_MANIFEST).toContain('gws-manifests');
     expect(gwsMcpEnv.GWS_ACCOUNTS_MANIFEST).toContain('manifest.json');
-    // Verify the manifest actually exists on disk
+
     expect(fs.existsSync(gwsMcpEnv.GWS_ACCOUNTS_MANIFEST!)).toBe(true);
     const manifest = JSON.parse(fs.readFileSync(gwsMcpEnv.GWS_ACCOUNTS_MANIFEST!, 'utf-8'));
     expect(manifest).toHaveLength(1);
@@ -442,8 +397,6 @@ describe('daemon onBeforeStart — integration against real resolveTaskConfig + 
       { taskId: '../../../etc/passwd', workspaceId: undefined },
     );
 
-    // No path escape — the file lands inside userDataPath/opencode/ and
-    // the filename has path separators replaced with underscores.
     expect(configPath.startsWith(path.join(tmpUserData, 'opencode'))).toBe(true);
     expect(configPath).not.toContain('..');
     expect(configPath).not.toContain('/etc/passwd');
@@ -489,7 +442,7 @@ describe('daemon onBeforeStart — integration against real resolveTaskConfig + 
     expect(fs.existsSync(configPath)).toBe(true);
     const written = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
     expect(written).toBeDefined();
-    // No GWS MCP servers registered when database is unavailable
+
     const mcp = (written.mcp ?? written.mcpServers ?? {}) as Record<string, unknown>;
     expect(Object.keys(mcp)).not.toContain('gws-mcp');
     expect(Object.keys(mcp)).not.toContain('gmail-mcp');
@@ -532,7 +485,6 @@ describe('daemon onBeforeStart — integration against real resolveTaskConfig + 
         { taskId: 'tsk_win32', workspaceId: undefined },
       );
 
-      // On Windows: both PATH and Path should be set
       expect(result.env.PATH).toBe(`${fakeNodeBinDir}${path.delimiter}${process.env.PATH ?? ''}`);
       expect(result.env.Path).toBe(result.env.PATH);
     } finally {

@@ -116,7 +116,6 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
   },
 }));
 
-// Subscribe to workspace events
 let unsubscribeWorkspaceChanged: (() => void) | undefined;
 
 if (typeof window !== 'undefined' && window.myboteam) {

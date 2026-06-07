@@ -1,20 +1,11 @@
-/**
- * Integration tests for Sidebar component
- * Tests rendering, navigation, sidebar collapse behavior
- * @module __tests__/integration/renderer/components/Sidebar.integration.test
- * @vitest-environment jsdom
- */
-
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Create mock functions outside of mock factory
 const mockListTasks = vi.fn();
 const mockOnTaskStatusChange = vi.fn();
 const mockOnTaskUpdate = vi.fn();
 
-// Mock myboteam API
 const mockMyBoTeam = {
   listTasks: mockListTasks.mockResolvedValue([]),
   onTaskStatusChange: mockOnTaskStatusChange.mockReturnValue(() => {}),
@@ -54,13 +45,11 @@ const mockMyBoTeam = {
   onThemeColorChange: vi.fn().mockReturnValue(() => {}),
 };
 
-// Mock the myboteam module
 vi.mock('@/lib/myboteam', () => ({
   getMyBoTeam: () => mockMyBoTeam,
   useMyBoTeam: () => mockMyBoTeam,
 }));
 
-// Mock framer-motion to simplify testing animations
 vi.mock('framer-motion', () => {
   const createMotionMock = (Element: string) => {
     return ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => {
@@ -93,7 +82,7 @@ vi.mock('framer-motion', () => {
 });
 
 import Sidebar from '@/components/layout/Sidebar';
-// Need to import after mocks are set up
+
 import { useSidebarStore } from '@/stores/sidebarStore';
 
 describe('Sidebar Integration', () => {

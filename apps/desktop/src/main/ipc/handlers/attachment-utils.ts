@@ -1,12 +1,8 @@
 import type { FileAttachmentInfo } from '@myboteam/agent-core/desktop-main';
 
 const VALID_ATTACHMENT_TYPES = new Set(['image', 'pdf', 'code', 'text', 'other']);
-const MAX_ATTACHMENT_SIZE = 10_485_760; // 10 MB
+const MAX_ATTACHMENT_SIZE = 10_485_760;
 
-/**
- * Sanitize renderer-controlled attachment objects before passing them to the task manager.
- * Invalid entries are filtered out rather than throwing, to be lenient at the IPC boundary.
- */
 export function sanitizeAttachments(attachments: unknown[] | undefined): FileAttachmentInfo[] {
   if (!Array.isArray(attachments)) {
     return [];

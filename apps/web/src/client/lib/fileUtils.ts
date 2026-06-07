@@ -1,7 +1,7 @@
 import type { FileAttachmentInfo } from '@myboteam/agent-core/common';
 
 export const MAX_FILES = 5;
-export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+export const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 export function getFileType(name: string): FileAttachmentInfo['type'] {
   const ext = name.split('.').pop()?.toLowerCase() || '';
@@ -78,11 +78,6 @@ export interface FileAttachmentCallbacks {
   onOverLimit?: (count: number, max: number) => void;
 }
 
-/**
- * Validates and converts a FileList/File[] into FileAttachmentInfo entries.
- * Calls optional callbacks for skipped files (caller can show toasts/alerts).
- * Returns the accepted attachments to be added.
- */
 export function processFileAttachments(
   fileList: FileList | File[],
   currentCount: number,

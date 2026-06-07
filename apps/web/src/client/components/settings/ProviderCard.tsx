@@ -29,12 +29,9 @@ export const ProviderCard = memo(function ProviderCard({
   const providerReady = isProviderReady(connectedProvider);
   const logoSrc = PROVIDER_LOGOS[providerId];
 
-  // Get translated provider name and label
   const providerName = t(`providers.${providerId}`, { defaultValue: meta.name });
   const providerLabel = t(`providerLabels.${providerId}`, { defaultValue: meta.label });
 
-  // Green background = active provider that is ready (connected + model selected)
-  // isSelected = card clicked for viewing settings (border only, not green background)
   const showGreenBackground = isActive && providerReady;
 
   const handleClick = useCallback(() => {

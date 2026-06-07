@@ -26,9 +26,7 @@ export function registerVertexHandlers(handle: IpcHandler): void {
       if (l?.log) {
         l.log('INFO', 'main', '[Vertex] Validation requested');
       }
-    } catch (_e) {
-      /* best-effort logging */
-    }
+    } catch (_e) {}
     return validateVertexCredentials(credentials);
   });
 
@@ -46,9 +44,7 @@ export function registerVertexHandlers(handle: IpcHandler): void {
         if (l?.log) {
           l.log('ERROR', 'main', '[Vertex] Failed to fetch models', { error: String(error) });
         }
-      } catch (_e) {
-        /* best-effort logging */
-      }
+      } catch (_e) {}
       return { success: false, error: normalizeIpcError(error), models: [] };
     }
   });
@@ -98,7 +94,6 @@ export function registerVertexHandlers(handle: IpcHandler): void {
   });
 
   handle('vertex:detect-project', async (_event: IpcMainInvokeEvent) => {
-    // 1. Check environment variables
     const envProject =
       process.env.GOOGLE_CLOUD_PROJECT ||
       process.env.CLOUDSDK_CORE_PROJECT ||
@@ -107,15 +102,12 @@ export function registerVertexHandlers(handle: IpcHandler): void {
       return { success: true, projectId: envProject };
     }
 
-    // 2. Try gcloud config
     try {
       const project = await execAsync('gcloud', ['config', 'get-value', 'project']);
       if (project) {
         return { success: true, projectId: project };
       }
-    } catch {
-      // gcloud not available or not configured
-    }
+    } catch {}
 
     return { success: false, projectId: null };
   });
@@ -135,7 +127,6 @@ export function registerVertexHandlers(handle: IpcHandler): void {
       const projects: Array<{ projectId: string; name: string }> = [];
       let pageToken: string | undefined;
 
-      // Fetch up to 3 pages (each page has up to 100 projects)
       for (let page = 0; page < 3; page++) {
         const url = new URL('https://cloudresourcemanager.googleapis.com/v1/projects');
         url.searchParams.set('filter', 'lifecycleState:ACTIVE');

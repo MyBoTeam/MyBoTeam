@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 console.error('[dev-browser-mcp] Script starting...');
 console.error('[dev-browser-mcp] Node version:', process.version);

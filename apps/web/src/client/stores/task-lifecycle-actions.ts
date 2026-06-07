@@ -6,10 +6,6 @@ import type { TaskState } from './taskStore';
 type SetFn = (partial: Partial<TaskState> | ((state: TaskState) => Partial<TaskState>)) => void;
 type GetFn = () => TaskState;
 
-/**
- * Groups task-stop actions so the store can expose a consistent API for
- * ending active work while guarding updates against stale task state.
- */
 export function createTaskLifecycleActions(set: SetFn, get: GetFn) {
   return {
     cancelTask: async () => {

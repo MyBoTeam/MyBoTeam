@@ -9,7 +9,7 @@ import { AuthErrorToast } from './components/AuthErrorToast';
 import { CloseConfirmDialog } from './components/CloseConfirmDialog';
 import { DaemonConnectionToast } from './components/DaemonConnectionToast';
 import AuthSettingsDialog from './components/layout/AuthSettingsDialog';
-// Components
+
 import Sidebar from './components/layout/Sidebar';
 import { SidebarFallback } from './components/layout/SidebarFallback';
 import { TaskLauncher } from './components/TaskLauncher';
@@ -32,10 +32,8 @@ export function App() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const isTitleBarHidden = isFullScreen;
 
-  // Get store state and actions
   const { openLauncher, authError, clearAuthError } = useTaskStore();
 
-  // Handle re-login from auth error toast
   const handleAuthReLogin = useCallback(() => {
     if (authError) {
       if (authError.providerId === OAuthProviderId.Slack) {
@@ -49,7 +47,6 @@ export function App() {
     }
   }, [authError]);
 
-  // Handle auth settings dialog close
   const handleAuthSettingsClose = useCallback(
     (open: boolean) => {
       setAuthSettingsOpen(open);
@@ -62,7 +59,6 @@ export function App() {
     [clearAuthError],
   );
 
-  // Cmd+K keyboard shortcut
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -96,7 +92,6 @@ export function App() {
     checkStatus();
   }, [t]);
 
-  // Listen for fullscreen state changes
   useEffect(() => {
     if (!isRunningInElectron()) return;
 
@@ -119,7 +114,6 @@ export function App() {
     };
   }, []);
 
-  // Loading state
   if (status === 'loading') {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -128,7 +122,6 @@ export function App() {
     );
   }
 
-  // Error state
   if (status === 'error') {
     return (
       <div className="flex min-h-screen items-center justify-center p-8">
@@ -160,10 +153,10 @@ export function App() {
       </main>
       <TaskLauncher />
 
-      {/* Auth Error Toast - shown when OAuth session expires */}
+      {}
       <AuthErrorToast error={authError} onReLogin={handleAuthReLogin} onDismiss={clearAuthError} />
 
-      {/* Daemon Connection Toast - shown when daemon disconnects */}
+      {}
       <DaemonConnectionToast
         onOpenSettings={() => {
           setAuthSettingsTab('general');
@@ -171,10 +164,10 @@ export function App() {
         }}
       />
 
-      {/* Close Confirmation Dialog - themed replacement for native OS dialog */}
+      {}
       <CloseConfirmDialog />
 
-      {/* Auth Settings Dialog for re-authentication */}
+      {}
       <AuthSettingsDialog
         open={authSettingsOpen}
         onOpenChange={handleAuthSettingsClose}

@@ -92,9 +92,7 @@ export async function resolveTaskConfig(
     if (typeof language === 'string' && language.trim().length === 0) {
       language = undefined;
     }
-  } catch (_err) {
-    // Non-critical: language column may be absent in older DBs before migration
-  }
+  } catch (_err) {}
 
   let gwsAccountsManifestPath: string | undefined;
   let gwsAccountsSummary: Array<{ label: string; email: string; status: string }> | undefined;

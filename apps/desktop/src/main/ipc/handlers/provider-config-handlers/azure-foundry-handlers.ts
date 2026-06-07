@@ -6,10 +6,6 @@ import { storeApiKey } from '../../../store/secureStorage';
 import type { IpcHandler } from '../../types';
 import { API_KEY_VALIDATION_TIMEOUT_MS } from '../utils';
 
-// Milestone 5: Azure Foundry config reads/writes now route through the
-// daemon's `settings.*AzureFoundryConfig` RPCs. The validation logic
-// stays here — it's sanity-checking user input at the IPC boundary
-// before we hand it off to persistence.
 export function registerAzureFoundryHandlers(handle: IpcHandler): void {
   handle('azure-foundry:get-config', async (_event: IpcMainInvokeEvent) => {
     return getDaemonClient().call('settings.getAzureFoundryConfig');
@@ -77,7 +73,6 @@ export function registerAzureFoundryHandlers(handle: IpcHandler): void {
     ) => {
       const { endpoint, deploymentName, authType, apiKey } = config;
 
-      // Validate the same fields as azure-foundry:set-config
       if (typeof endpoint !== 'string' || !endpoint.trim()) {
         throw new Error('Invalid Azure Foundry configuration: endpoint is required');
       }

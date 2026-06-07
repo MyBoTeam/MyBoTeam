@@ -139,11 +139,11 @@ export interface MyBoTeamAPIProviders {
   testNimConnection(url: string, apiKey: string): Promise<NimConnectionResult>;
   fetchNimModels(): Promise<NimConnectionResult>;
   testCustomConnection(baseUrl: string, apiKey?: string): Promise<SimpleResultWithError>;
-  validateBedrockCredentials(credentials: string): Promise<SimpleResultWithError>;
+  validateBedrockCredentials(credentials: string): Promise<{ valid: boolean; error?: string }>;
   saveBedrockCredentials(credentials: string): Promise<ApiKeyConfig>;
   getBedrockCredentials(): Promise<BedrockCredentials | null>;
   fetchBedrockModels(credentials: string): Promise<BedrockModelResult>;
-  validateVertexCredentials(credentials: string): Promise<SimpleResultWithError>;
+  validateVertexCredentials(credentials: string): Promise<{ valid: boolean; error?: string }>;
   saveVertexCredentials(credentials: string): Promise<ApiKeyConfig>;
   getVertexCredentials(): Promise<VertexCredentials | null>;
   fetchVertexModels(credentials: string): Promise<BedrockModelResult>;

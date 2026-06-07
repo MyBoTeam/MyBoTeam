@@ -1,8 +1,3 @@
-/**
- * Chat completion handlers for the HuggingFace Local inference server.
- * Implements non-streaming and streaming (SSE) completion logic.
- */
-
 import type http from 'node:http';
 import { getLogCollector } from '../../logging';
 import { formatChatPrompt } from './model-loader';
@@ -16,9 +11,6 @@ import {
 
 export { validateSamplingParams };
 
-/**
- * Handle a chat completion request (non-streaming).
- */
 export async function handleChatCompletion(
   req: ChatCompletionRequest,
   res: http.ServerResponse,
@@ -83,9 +75,6 @@ export async function handleChatCompletion(
   }
 }
 
-/**
- * Handle a streaming chat completion request via SSE.
- */
 export async function handleStreamingCompletion(
   req: ChatCompletionRequest,
   res: http.ServerResponse,
@@ -119,10 +108,10 @@ export async function handleStreamingCompletion(
       temperature,
       top_p: topP,
       do_sample: temperature > 0,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       callback_function: (output: any) => {
         const lastToken = output.slice(null, -1);
-        // Capture tokenizer before async generate to avoid null-deref if stopServer fires mid-stream
+
         const tokenizer = state.tokenizer;
         if (!tokenizer) {
           return;
@@ -176,7 +165,7 @@ export async function handleStreamingCompletion(
     });
   } finally {
     decrementGenerations();
-    // Guard against double-end
+
     if (!res.writableEnded) {
       res.end();
     }

@@ -3,11 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SettingsChangePayload } from '../../src/settings-service.js';
 import { SETTINGS_CHANGED, SettingsService } from '../../src/settings-service.js';
 
-/**
- * Milestone 2 — SettingsService forwards reads/writes to StorageAPI and
- * emits `settings.changed` on every write. These tests pin both sides of
- * that contract so a future refactor can't silently stop notifying.
- */
 function makeStorageStub(): StorageAPI {
   return {
     getAppSettings: vi.fn(() => ({}) as unknown as ReturnType<StorageAPI['getAppSettings']>),
@@ -15,13 +10,13 @@ function makeStorageStub(): StorageAPI {
       () => ({}) as unknown as ReturnType<StorageAPI['getProviderSettings']>,
     ),
     getHuggingFaceLocalConfig: vi.fn(() => null),
-    // M2 review follow-up: getAll must cover the full M5 first-frame payload
+
     getNotificationsEnabled: vi.fn(() => true),
     getCloseBehavior: vi.fn(() => 'keep-daemon' as const),
     getSandboxConfig: vi.fn(() => ({}) as unknown as ReturnType<StorageAPI['getSandboxConfig']>),
     getCloudBrowserConfig: vi.fn(() => null),
     getMessagingConfig: vi.fn(() => null),
-    // Scope-completeness: selected-model + provider-config setters/getters
+
     getSelectedModel: vi.fn(() => null),
     setSelectedModel: vi.fn(),
     getOpenAiBaseUrl: vi.fn(() => ''),
@@ -93,9 +88,7 @@ describe('SettingsService', () => {
     expect(snap.app).toEqual({ debugMode: true });
     expect(snap.providers).toEqual({ activeProviderId: 'anthropic' });
     expect(snap.huggingFaceLocalConfig).toBeNull();
-    // Review P2: these five fields are NOT in AppSettings and must be
-    // present in the snapshot so M5's daemon-first startup doesn't need
-    // to issue follow-up RPCs for basic chrome state.
+
     expect(snap.notificationsEnabled).toBe(false);
     expect(snap.closeBehavior).toBe('stop-daemon');
     expect(snap.sandboxConfig).toEqual({ mode: 'disabled' });
@@ -104,16 +97,12 @@ describe('SettingsService', () => {
   });
 
   it('exposes on-demand getters for the fields AppSettings does not bundle', () => {
-    // Renderer re-reads these independently (notifications toggle in tray,
-    // close-behavior picker in settings, sandbox config UI). Fetching the
-    // whole snapshot for a single field is wasteful.
     vi.mocked(storage.getNotificationsEnabled).mockReturnValue(true);
     vi.mocked(storage.getCloseBehavior).mockReturnValue('keep-daemon');
 
     expect(service.getNotificationsEnabled()).toBe(true);
     expect(service.getCloseBehavior()).toBe('keep-daemon');
-    // The three typed-config getters all delegate straight to storage; we
-    // don't need fancy fixtures here — just confirm the plumbing.
+
     service.getSandboxConfig();
     service.getCloudBrowserConfig();
     service.getMessagingConfig();
@@ -207,7 +196,6 @@ describe('SettingsService', () => {
     expect(changes).toEqual([]);
   });
 
-  // ── Scope-completeness: selected-model + app-settings provider configs ─
   describe('selected-model + provider configs (review P2b)', () => {
     it('getAll includes nimConfig (not in AppSettings) so M5 first-frame is complete', () => {
       vi.mocked(storage.getNimConfig).mockReturnValue({
@@ -229,12 +217,9 @@ describe('SettingsService', () => {
       ['nimConfig', 'setNimConfig', { baseUrl: 'http://nim.local' }],
     ] as const)('set%s writes through to storage and emits %s', (key, method, value) => {
       const changes = captureChanges(service);
-      // @ts-expect-error — dynamic-key service method call is a table-driven
-      // shortcut; the TS checker has already verified each individual method
-      // via the type-tight setter signatures above.
+
       service[method](value);
 
-      // @ts-expect-error — same dynamic-key rationale
       expect(storage[method]).toHaveBeenCalledWith(value);
       expect(changes).toEqual([{ key, value }]);
     });

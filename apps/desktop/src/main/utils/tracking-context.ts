@@ -1,11 +1,3 @@
-/**
- * tracking-context.ts — Common tracking fields shared between GA4 and Mixpanel.
- *
- * Ported from myboteam-commercial-fork with enterprise code removed:
- * - __APP_TIER__ replaced with getAppTier() from build-config
- * - org_id and user_role hardcoded to defaults (no enterprise identity)
- */
-
 import * as os from 'node:os';
 import { app, session } from 'electron';
 import {
@@ -17,7 +9,6 @@ import {
 } from '../analytics/analytics-service';
 import { getAppTier } from '../config/build-config';
 
-// Lazy-cached Electron (Chromium) user agent — captured once
 let _electronUserAgent: string | null = null;
 
 function getElectronUserAgent(): string {
@@ -27,7 +18,6 @@ function getElectronUserAgent(): string {
   return _electronUserAgent;
 }
 
-// Browser user agent — set when first browser tool call provides it
 let _browserUserAgent: string | null = null;
 
 export function setBrowserUserAgent(ua: string): void {
@@ -51,9 +41,6 @@ function getReadableOsName(): string {
   }
 }
 
-/**
- * Common tracking fields shared between trace steps and GA events.
- */
 export function buildCommonTrackingFields() {
   return {
     platform: process.platform as string,

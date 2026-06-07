@@ -1,5 +1,3 @@
-// packages/core/mcp-tools/dev-browser-mcp/src/snapshot/differ.test.ts
-
 import { describe, expect, it } from 'vitest';
 import { compressRefList, diffSnapshots, formatDiff } from './differ.js';
 import type { ParsedSnapshot, SnapshotElement } from './types.js';
@@ -48,7 +46,6 @@ describe('diffSnapshots', () => {
   });
 
   it('detects removed elements', () => {
-    // Need enough unchanged elements to stay below 70% change threshold
     const prev = createSnapshot([
       { ref: 'e1', role: 'button', name: 'Submit' },
       { ref: 'e2', role: 'textbox', name: 'Email' },
@@ -69,7 +66,6 @@ describe('diffSnapshots', () => {
   });
 
   it('detects value changes', () => {
-    // Need enough unchanged elements to stay below 70% change threshold
     const prev = createSnapshot([
       { ref: 'e1', role: 'textbox', name: 'Email', value: '' },
       { ref: 'e2', role: 'button', name: 'Submit' },
@@ -93,7 +89,6 @@ describe('diffSnapshots', () => {
   });
 
   it('detects disabled state changes', () => {
-    // Need enough unchanged elements to stay below 70% change threshold
     const prev = createSnapshot([
       { ref: 'e1', role: 'button', name: 'Submit', disabled: true },
       { ref: 'e2', role: 'textbox', name: 'Email' },

@@ -45,9 +45,7 @@ function setupNavigationRoutes(app: Express, ctx: ServerRoutesContext): void {
         try {
           new URL(url);
           valid = true;
-        } catch {
-          // invalid URL — valid stays false
-        }
+        } catch {}
       }
       if (!valid) {
         res.status(400).json({ error: 'invalid url' });

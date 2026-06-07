@@ -16,10 +16,7 @@ describe('ConfigGenerator', () => {
   let mcpToolsPath: string;
   let userDataPath: string;
   const sharedBundledNodeBinPath = path.join(os.tmpdir(), 'config-gen-test-bundled-node', 'bin');
-  // Phase 3 of the SDK cutover port deleted the `file-permission` and
-  // `ask-user-question` MCP shims — the SDK's `permission.asked` /
-  // `question.asked` events replace them. Those entries are no longer
-  // expected in the generated config.
+
   const requiredMcpDistEntries = [
     ['request-connector-auth', 'dist/index.mjs'],
     ['complete-task', 'dist/index.mjs'],
@@ -35,7 +32,6 @@ describe('ConfigGenerator', () => {
     mcpToolsPath = path.join(testDir, 'mcp-tools');
     userDataPath = path.join(testDir, 'user-data');
 
-    // Create directories
     fs.mkdirSync(mcpToolsPath, { recursive: true });
     fs.mkdirSync(userDataPath, { recursive: true });
     fs.mkdirSync(sharedBundledNodeBinPath, { recursive: true });
@@ -48,7 +44,6 @@ describe('ConfigGenerator', () => {
       fs.writeFileSync(entryPath, `// ${toolName} bundled entry`);
     }
 
-    // Suppress console output
     vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
@@ -175,9 +170,7 @@ describe('ConfigGenerator', () => {
       const result = generateConfig(options);
 
       expect(result.mcpServers.slack).toBeDefined();
-      // file-permission / ask-user-question removed in Phase 3 of the SDK
-      // cutover port — their HTTP-callback role is now handled natively by
-      // the SDK's permission.asked / question.asked events.
+
       expect(result.mcpServers['file-permission']).toBeUndefined();
       expect(result.mcpServers['ask-user-question']).toBeUndefined();
       expect(result.mcpServers['desktop-control']).toBeUndefined();
@@ -226,7 +219,6 @@ describe('ConfigGenerator', () => {
 
       const result = generateConfig(options);
 
-      // Check for the skills section header and content
       expect(result.systemPrompt).toContain('# SKILLS - Include relevant');
       expect(result.systemPrompt).toContain('**Available Skills:**');
       expect(result.systemPrompt).toContain('Test Skill');
@@ -244,9 +236,6 @@ describe('ConfigGenerator', () => {
 
       const result = generateConfig(options);
 
-      // The base template references <available-skills> in instructions,
-      // but the actual skills section starts with "# SKILLS - Include relevant"
-      // and ends with the closing tag. Check for the section header instead.
       expect(result.systemPrompt).not.toContain('# SKILLS - Include relevant');
       expect(result.systemPrompt).not.toContain('**Available Skills:**');
     });
@@ -306,7 +295,7 @@ describe('ConfigGenerator', () => {
       const result = generateConfig(options);
 
       expect(result.config.provider).toBeDefined();
-      // Provider config in output has id stripped (used as key)
+
       const { id: _id, ...expectedProviderConfig } = customProvider;
       expect(result.config.provider?.['custom-provider']).toEqual(expectedProviderConfig);
       expect(result.config.enabled_providers).toContain('custom-provider');
@@ -362,24 +351,6 @@ describe('ConfigGenerator', () => {
       expect(result.config.$schema).toBe('https://opencode.ai/config.json');
     });
 
-    // Permission policy regression guard.
-    //
-    // The old MCP-shim implementation emitted `{ '*': 'allow', todowrite:
-    // 'allow' }` because file permissions and user questions were handled by
-    // separate MCP tools (`file-permission`, `ask-user-question`). The SDK
-    // cutover removed those shims, so native OpenCode permissions now need a
-    // narrow policy:
-    //
-    //   1. No top-level `*` override: OpenCode's defaults already allow
-    //      non-mutating tools, and its built-in `external_directory: ask`
-    //      must remain active for paths like ~/Desktop.
-    //   2. Native file mutation tools are explicit `ask`.
-    //   3. Bash allows read-only utilities by default, but asks for obvious
-    //      file mutation patterns and arbitrary interpreters.
-    //   4. `question` stays `allow` so OpenCode can emit `question.asked`
-    //      and the renderer can show the QuestionCard.
-    //   5. `todowrite` stays `allow` (internal bookkeeping; fires on
-    //      every agent turn, prompting would be deafening).
     it('allows non-mutating tools by default and asks for file mutations', () => {
       const options: ConfigGeneratorOptions = {
         ...baseOptions,
@@ -633,9 +604,6 @@ describe('ConfigGenerator', () => {
 
       const result = generateConfig(options);
 
-      // Should use node + dist path instead of tsx + src
-      // file-permission MCP removed in Phase 3 of the SDK cutover port;
-      // assert on a retained MCP entry (request-connector-auth) instead.
       const command = result.mcpServers['request-connector-auth'].command;
       expect(command?.[0]).toContain('node');
       expect(command?.[1]).toContain('dist/index.mjs');
@@ -663,17 +631,12 @@ describe('ConfigGenerator', () => {
 
       const result = generateConfig(options);
 
-      // file-permission MCP removed in Phase 3 of the SDK cutover port;
-      // assert on a retained MCP entry (request-connector-auth) instead.
       const command = result.mcpServers['request-connector-auth'].command;
       expect(command?.[0]).toContain('node');
       expect(command?.[1]).toContain('dist/index.mjs');
     });
 
     it('should throw when MCP dist entry is missing', () => {
-      // Pick any still-bundled MCP — request-connector-auth is the simplest
-      // always-present entry post-Phase-3. Removing its dist entry should
-      // trip the generator's validation.
       fs.rmSync(path.join(mcpToolsPath, 'request-connector-auth', 'dist', 'index.mjs'));
 
       const options: ConfigGeneratorOptions = {
@@ -686,11 +649,6 @@ describe('ConfigGenerator', () => {
       expect(() => generateConfig(options)).toThrow(/Missing MCP dist entry/);
     });
   });
-
-  // Phase 4b of the OpenCode SDK cutover port deleted the `buildCliArgs`
-  // helper. Z.AI model normalization for SDK calls now happens inside
-  // `model-runtime-mapping.ts` (`normalizeSelectedModelForSdk`). Tests for
-  // that mapping live in `model-runtime-mapping.unit.test.ts`.
 
   describe('getOpenCodeConfigPath', () => {
     it('should return correct config path', () => {

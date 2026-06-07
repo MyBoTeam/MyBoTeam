@@ -215,7 +215,6 @@ describe('createHttpServer', () => {
     });
 
     try {
-      // Just barely over 1 MB MAX_BODY_SIZE
       const bigBody = 'x'.repeat(1024 * 1024 + 1);
       const res = await makeRequest(port, '/ping', 'POST', bigBody, 'secret-token');
       expect(res.statusCode).toBe(413);
@@ -230,7 +229,6 @@ describe('createHttpServer', () => {
     const rateLimiter = new RateLimiter(60_000, 10);
     const rateLimiter2 = new RateLimiter(60_000, 10);
 
-    // Start first server on a fixed port
     const { server: server1, port: port1 } = await createHttpServer({
       authToken: 'token',
       rateLimiter,
@@ -240,7 +238,6 @@ describe('createHttpServer', () => {
     });
 
     try {
-      // Use the port that was just allocated as the fixed port for the second server
       const { server: server2, port: port2 } = await createHttpServer({
         authToken: 'token2',
         rateLimiter: rateLimiter2,

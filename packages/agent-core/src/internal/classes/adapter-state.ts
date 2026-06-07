@@ -1,9 +1,6 @@
 import type { OpencodeClient, Part } from '@opencode-ai/sdk/v2';
 import type { EventEmitter } from 'events';
-import type { BrowserFramePayload } from '../../common/types/browser-view.js';
 import type { SandboxConfig, SandboxProvider } from '../../common/types/sandbox.js';
-import type { TaskResult } from '../../common/types/task.js';
-import type { TodoItem } from '../../common/types/todo.js';
 import type { CompletionEnforcer } from '../../opencode/completion/index.js';
 import type { AdapterOptions, OpenCodeAdapterEvents, PendingRequest } from './adapter-types.js';
 import type { OpenCodeLogWatcher } from './OpenCodeLogWatcher.js';

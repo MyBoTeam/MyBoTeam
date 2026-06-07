@@ -1,7 +1,3 @@
-/**
- * storage.ts — path-derivation helpers for Electron main.
- */
-
 import path from 'node:path';
 import { app } from 'electron';
 

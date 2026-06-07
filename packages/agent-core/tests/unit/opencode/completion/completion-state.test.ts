@@ -81,7 +81,7 @@ describe('CompletionState', () => {
 
       expect(state.getState()).toBe(CompletionFlowState.PARTIAL_CONTINUATION_PENDING);
       expect(state.isPendingPartialContinuation()).toBe(true);
-      expect(state.isCompleteTaskCalled()).toBe(false); // Partial doesn't count as "called" for completion logic
+      expect(state.isCompleteTaskCalled()).toBe(false);
     });
 
     it('should transition to BLOCKED state on blocked status', () => {
@@ -130,9 +130,9 @@ describe('CompletionState', () => {
     it('should return false when max retries reached', () => {
       const limitedState = new CompletionState(2);
 
-      limitedState.scheduleContinuation(); // attempt 1
-      limitedState.scheduleContinuation(); // attempt 2
-      const result = limitedState.scheduleContinuation(); // attempt 3 - exceeds max
+      limitedState.scheduleContinuation();
+      limitedState.scheduleContinuation();
+      const result = limitedState.scheduleContinuation();
 
       expect(result).toBe(false);
       expect(limitedState.getState()).toBe(CompletionFlowState.MAX_RETRIES_REACHED);
@@ -218,16 +218,15 @@ describe('CompletionState', () => {
         original_request_summary: 'Test',
       });
 
-      limitedState.startPartialContinuation(); // attempt 1, goes to IDLE
+      limitedState.startPartialContinuation();
 
-      // Need to re-record partial status
       limitedState.recordCompleteTaskCall({
         status: 'partial',
         summary: 'Partial again',
         original_request_summary: 'Test',
       });
 
-      const result = limitedState.startPartialContinuation(); // attempt 2 - exceeds max
+      const result = limitedState.startPartialContinuation();
 
       expect(result).toBe(false);
       expect(limitedState.getState()).toBe(CompletionFlowState.MAX_RETRIES_REACHED);
@@ -244,7 +243,6 @@ describe('CompletionState', () => {
 
   describe('reset', () => {
     it('should reset all state to initial values', () => {
-      // Set up some state
       state.scheduleContinuation();
       state.startContinuation();
       state.recordCompleteTaskCall({
@@ -274,7 +272,7 @@ describe('CompletionState', () => {
 
     it('should return true for MAX_RETRIES_REACHED state', () => {
       const limitedState = new CompletionState(0);
-      limitedState.scheduleContinuation(); // Immediately exceeds max (0)
+      limitedState.scheduleContinuation();
 
       expect(limitedState.isDone()).toBe(true);
     });

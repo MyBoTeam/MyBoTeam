@@ -1,16 +1,3 @@
-/**
- * @vitest-environment jsdom
- *
- * Unit tests for OAuthConnectorCard (T015)
- *
- * Validates:
- * - Connect button shown when disconnected; Disconnect button when connected
- * - Button is disabled while actionLoading is true
- * - marketplaceUrl renders a link when disconnected, hidden when connected
- * - Pending authorization shows "Reconnect" button text
- * - Provider-specific displayName and icon rendered
- */
-
 import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -62,7 +49,7 @@ describe('OAuthConnectorCard', () => {
 
     it('renders the icon img', () => {
       const { container } = render(<OAuthConnectorCard {...baseProps} authState={disconnected} />);
-      // alt="" makes the img presentational; query via container
+
       const img = container.querySelector('img');
       expect(img).not.toBeNull();
       expect(img).toHaveAttribute('src', '/assets/icons/integrations/jira.svg');

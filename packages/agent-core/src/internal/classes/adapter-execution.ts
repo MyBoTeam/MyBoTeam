@@ -1,5 +1,4 @@
 import { createOpencodeClient } from '@opencode-ai/sdk/v2';
-import { CONNECTOR_AUTH_REQUIRED_MARKER } from '../../common/constants.js';
 import type { PermissionResponse } from '../../common/types/permission.js';
 import type { Task, TaskConfig } from '../../common/types/task.js';
 import { MYBOTEAM_AGENT_NAME } from '../../opencode/config-generator.js';

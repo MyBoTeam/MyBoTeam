@@ -15,18 +15,14 @@ export interface FetchVertexModelsResult {
   error?: string;
 }
 
-/** Curated list of Google models available through Vertex AI.
- *  Source: https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models
- */
 const VERTEX_CURATED_MODELS: Array<{ publisher: string; modelId: string; displayName: string }> = [
-  // Google — Gemini 3 (preview)
   { publisher: 'google', modelId: 'gemini-3-pro-preview', displayName: 'Gemini 3 Pro (Preview)' },
   {
     publisher: 'google',
     modelId: 'gemini-3-flash-preview',
     displayName: 'Gemini 3 Flash (Preview)',
   },
-  // Google — Gemini 2.5 (GA)
+
   { publisher: 'google', modelId: 'gemini-2.5-pro', displayName: 'Gemini 2.5 Pro' },
   { publisher: 'google', modelId: 'gemini-2.5-flash', displayName: 'Gemini 2.5 Flash' },
   { publisher: 'google', modelId: 'gemini-2.5-flash-lite', displayName: 'Gemini 2.5 Flash Lite' },
@@ -34,10 +30,6 @@ const VERTEX_CURATED_MODELS: Array<{ publisher: string; modelId: string; display
 
 const VERTEX_TOKEN_TIMEOUT_MS = 15000;
 
-/**
- * Client for Vertex AI API calls. Encapsulates base URL, auth token,
- * and project/location.
- */
 export class VertexClient {
   readonly baseUrl: string;
   private readonly headers: Record<string, string>;
@@ -57,13 +49,11 @@ export class VertexClient {
     };
   }
 
-  /** Factory: acquires token from credentials, returns ready client */
   static async create(credentials: VertexCredentials): Promise<VertexClient> {
     const token = await getVertexAccessToken(credentials);
     return new VertexClient(credentials.projectId, credentials.location, token);
   }
 
-  /** Quick connectivity + auth test via a lightweight generateContent call */
   async testAccess(): Promise<void> {
     const url = `${this.baseUrl}/v1/projects/${this.projectId}/locations/${this.location}/publishers/google/models/gemini-2.5-flash:generateContent`;
     const response = await fetch(url, {
@@ -76,8 +66,6 @@ export class VertexClient {
     });
 
     if (!response.ok) {
-      // 429 means credentials are valid — the request was authenticated and
-      // authorized but the project hit its quota.  Treat as success.
       if (response.status === 429) {
         return;
       }
@@ -97,9 +85,6 @@ export class VertexClient {
   }
 }
 
-/**
- * Validates Vertex AI credentials by obtaining an access token and making a test API call.
- */
 export async function validateVertexCredentials(
   credentialsJson: string,
 ): Promise<ValidationResult> {
@@ -145,10 +130,6 @@ export async function validateVertexCredentials(
   }
 }
 
-/**
- * Returns the curated list of models available on Vertex AI.
- * No API call needed — the list is hardcoded from Google's documentation.
- */
 export function fetchVertexModels(_credentials: VertexCredentials): FetchVertexModelsResult {
   const models: VertexModel[] = VERTEX_CURATED_MODELS.map((m) => ({
     id: `vertex/${m.publisher}/${m.modelId}`,

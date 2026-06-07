@@ -1,16 +1,3 @@
-/**
- * Connector Token Resolver
- *
- * Dispatches the correct OAuth strategy for each built-in connector (ADR-F002).
- * Uses a discriminated union switch with assertNever for compile-time exhaustiveness.
- *
- * Strategies:
- *   mcp-dcr          — Dynamic Client Registration + PKCE (Jira, Notion, monday.com, Lightdash, Datadog)
- *   mcp-fixed-client — Pre-registered client + PKCE (Slack)
- *   desktop-google   — Delegate to existing Google OAuth handler
- *   desktop-github   — gh CLI: `gh auth token`, fallback to `gh auth login`
- */
-
 import type { ConnectorDesktopOAuthKind, OAuthProviderId } from '@myboteam/agent-core/common';
 import { getConnectorDefinition } from '@myboteam/agent-core/common';
 import { discoverOAuthMetadata, refreshAccessToken } from '@myboteam/agent-core/desktop-main';
@@ -27,14 +14,6 @@ export type ConnectorOAuthResult =
       message?: string;
     };
 
-// ---------------------------------------------------------------------------
-// Public API
-// ---------------------------------------------------------------------------
-
-/**
- * Connect a built-in connector: runs the appropriate OAuth strategy.
- * Returns an access token on success.
- */
 export async function connectBuiltInConnector(
   providerId: OAuthProviderId,
 ): Promise<ConnectorOAuthResult> {
@@ -63,10 +42,6 @@ export async function connectBuiltInConnector(
   }
 }
 
-/**
- * Resolve a valid access token for an already-connected connector.
- * Auto-refreshes if expired. Returns undefined if not connected.
- */
 export async function resolveMcpConnectorAccessToken(
   providerId: OAuthProviderId,
 ): Promise<string | undefined> {
@@ -80,22 +55,16 @@ export async function resolveMcpConnectorAccessToken(
     return undefined;
   }
 
-  // Try silent token refresh if expired
   const expiry = await store.getTokenExpiry();
   if (expiry && Date.now() >= expiry - 5 * 60 * 1000) {
     const refreshed = await tryRefreshToken(store);
     if (refreshed) {
       return refreshed;
     }
-    // Refresh failed — return the potentially stale token; let the call fail naturally
   }
 
   return accessToken;
 }
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 
 async function tryRefreshToken(store: ConnectorAuthStore): Promise<string | undefined> {
   const [serverUrl, clientReg, refreshToken] = await Promise.all([
@@ -123,7 +92,6 @@ async function tryRefreshToken(store: ConnectorAuthStore): Promise<string | unde
   }
 }
 
-// TypeScript exhaustiveness guard
 function assertNever(value: never): never {
   throw new Error(`Unhandled OAuth kind: ${String(value)}`);
 }

@@ -1,10 +1,3 @@
-/**
- * HuggingFace Local Provider
- *
- * Entry point for the local HuggingFace inference provider.
- * Exports server lifecycle and model management functions.
- */
-
 export type { DownloadProgress, ProgressCallback } from './model-manager';
 
 export {

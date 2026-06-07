@@ -3,7 +3,6 @@ import { isWaitingForUser } from '@/lib/waiting-detection';
 
 describe('isWaitingForUser', () => {
   describe('should return true for messages indicating waiting', () => {
-    // "Let me know" patterns
     it.each([
       'Let me know when you are done',
       'let me know once you have logged in',
@@ -13,7 +12,6 @@ describe('isWaitingForUser', () => {
       expect(isWaitingForUser(message)).toBe(true);
     });
 
-    // "Tell me" patterns
     it.each([
       'Tell me when you are ready',
       'tell me once you finish',
@@ -22,7 +20,6 @@ describe('isWaitingForUser', () => {
       expect(isWaitingForUser(message)).toBe(true);
     });
 
-    // "Waiting for you" patterns
     it.each([
       'I am waiting for you to complete this',
       'I will wait for your response',
@@ -32,7 +29,6 @@ describe('isWaitingForUser', () => {
       expect(isWaitingForUser(message)).toBe(true);
     });
 
-    // "Once you" / "After you" / "When you" patterns
     it.each([
       "Once you've logged in, I can continue",
       'Once you have completed the form',
@@ -45,7 +41,6 @@ describe('isWaitingForUser', () => {
       expect(isWaitingForUser(message)).toBe(true);
     });
 
-    // "Please [action]" patterns
     it.each([
       'Please log in to continue',
       'Please login with your credentials',
@@ -62,7 +57,6 @@ describe('isWaitingForUser', () => {
       expect(isWaitingForUser(message)).toBe(true);
     });
 
-    // Login/authentication specific
     it.each([
       'You need to log in manually',
       'Please sign in yourself',
@@ -79,7 +73,6 @@ describe('isWaitingForUser', () => {
       expect(isWaitingForUser(message)).toBe(true);
     });
 
-    // Manual action required
     it.each([
       'This requires manual action',
       'A manual step is needed',
@@ -93,7 +86,6 @@ describe('isWaitingForUser', () => {
       expect(isWaitingForUser(message)).toBe(true);
     });
 
-    // Ready/done prompts
     it.each([
       "When you're done, I can proceed",
       'When you are ready, continue',
@@ -105,7 +97,6 @@ describe('isWaitingForUser', () => {
       expect(isWaitingForUser(message)).toBe(true);
     });
 
-    // Continuation prompts
     it.each([
       'Ready to continue?',
       'Ready to proceed with the next step?',
@@ -118,7 +109,6 @@ describe('isWaitingForUser', () => {
       expect(isWaitingForUser(message)).toBe(true);
     });
 
-    // Explicit waiting statements
     it.each([
       "I'll be here when you need me",
       'I will be here waiting',

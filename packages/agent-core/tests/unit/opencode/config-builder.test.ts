@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { buildProviderConfigs } from '../../../src/opencode/config-builder.js';
 
-// Mock storage repositories so the test doesn't hit the DB
 vi.mock('../../../src/storage/repositories/index.js', () => ({
   getOllamaConfig: () => null,
   getLMStudioConfig: () => null,
@@ -16,7 +15,6 @@ vi.mock('../../../src/storage/repositories/index.js', () => ({
   getAzureFoundryConfig: () => null,
 }));
 
-// Mock proxy helpers
 vi.mock('../../../src/opencode/proxies/index.js', () => ({
   ensureAzureFoundryProxy: vi.fn().mockResolvedValue({ baseURL: 'http://proxy' }),
   ensureMoonshotProxy: vi.fn().mockResolvedValue({ baseURL: 'http://proxy' }),

@@ -1,15 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-/**
- * Milestone 2 — WorkspaceService wraps standalone agent-core repo functions
- * (not StorageAPI methods), so we mock those functions at the module boundary
- * and assert: call-forwarding, event emission, and the (noteId, workspaceId)
- * composite-key threading.
- *
- * `sql.js` isn't loadable in the daemon vitest env, so mocking
- * agent-core here also avoids the `getDatabase()` evaluation inside each
- * repo function.
- */
 const mocks = vi.hoisted(() => ({
   createDefaultWorkspace: vi.fn(),
   listWorkspaces: vi.fn(),
@@ -51,10 +41,6 @@ describe('WorkspaceService', () => {
     service = new WorkspaceService();
   });
 
-  // ── ensureInitialized (review P2) ─────────────────────────────────────
-  // Ports desktop `workspaceManager.initialize()` so fresh profiles get a
-  // default workspace + a normalized active-id even after M5 removes main's
-  // initialize() call. Idempotent by design.
   describe('ensureInitialized', () => {
     it('creates the default workspace and sets active when no active id is stored', () => {
       mocks.createDefaultWorkspace.mockReturnValue({ id: 'w-default' });
@@ -83,7 +69,6 @@ describe('WorkspaceService', () => {
 
       service.ensureInitialized();
 
-      // createDefault still runs (idempotent) — but no pointer rewrite.
       expect(mocks.createDefaultWorkspace).toHaveBeenCalledTimes(1);
       expect(mocks.setActiveWorkspaceId).not.toHaveBeenCalled();
     });
@@ -118,7 +103,6 @@ describe('WorkspaceService', () => {
       expect(service.getActive()).toBeNull();
     });
 
-    // ── setActive invariants (review P2a) ──────────────────────────────
     describe('setActive', () => {
       it('throws when the target workspace does not exist', () => {
         mocks.getWorkspace.mockReturnValue(undefined);
@@ -167,7 +151,6 @@ describe('WorkspaceService', () => {
       expect(changes).toEqual([{ kind: 'workspace.updated', workspaceId: 'w1' }]);
     });
 
-    // ── delete invariants (review P2a) ─────────────────────────────────
     describe('delete', () => {
       it('returns { deleted: false } and does NOT emit when the workspace does not exist', () => {
         mocks.getWorkspace.mockReturnValue(undefined);
@@ -217,20 +200,18 @@ describe('WorkspaceService', () => {
           deleted: true,
           newActiveWorkspaceId: 'w-default',
         });
-        // Order: activeChanged FIRST (preempts stale pointer), deleted SECOND
+
         expect(changes).toEqual([
           { kind: 'workspace.activeChanged', workspaceId: 'w-default' },
           { kind: 'workspace.deleted', workspaceId: 'w-active' },
         ]);
-        // And the repo call order matches — setActive before delete
+
         const setActiveOrder = mocks.setActiveWorkspaceId.mock.invocationCallOrder[0];
         const deleteOrder = mocks.deleteWorkspaceRecord.mock.invocationCallOrder[0];
         expect(setActiveOrder).toBeLessThan(deleteOrder);
       });
 
       it('falls back to the first remaining workspace when no default exists', () => {
-        // This is the (unlikely but possible) edge case where someone
-        // deletes the default or a profile is imported without one.
         mocks.getWorkspace.mockReturnValue({ id: 'w-active', isDefault: false });
         mocks.getActiveWorkspaceId.mockReturnValue('w-active');
         mocks.listWorkspaces.mockReturnValue([
@@ -248,14 +229,14 @@ describe('WorkspaceService', () => {
       it('handles the race where the row disappears between check and delete', () => {
         mocks.getWorkspace.mockReturnValue({ id: 'w1', isDefault: false });
         mocks.getActiveWorkspaceId.mockReturnValue('w-active');
-        // Repo returns false — something raced us
+
         mocks.deleteWorkspaceRecord.mockReturnValue(false);
         const changes = capture(service);
 
         const result = service.delete('w1');
 
         expect(result.deleted).toBe(false);
-        // No deleted event emitted — the state didn't change due to our call
+
         expect(changes.filter((c) => c.kind === 'workspace.deleted')).toEqual([]);
       });
     });

@@ -201,8 +201,6 @@ describe('toTaskMessage', () => {
     expect(result!.attachments).toBeUndefined();
   });
 
-  // --- New behaviours from commercial PR #720 (OpenCode SDK cutover) -----------------
-
   it('emits a tool message in running state (previously dropped in OSS)', () => {
     const message: OpenCodeMessage = {
       type: 'tool_use',
@@ -251,7 +249,7 @@ describe('toTaskMessage', () => {
     const doneRes = toTaskMessage(completed);
     expect(runRes!.id).toBe('sess-B:stable-1');
     expect(doneRes!.id).toBe('sess-B:stable-1');
-    // Same id = store upsert collapses the two into one row
+
     expect(runRes!.id).toBe(doneRes!.id);
   });
 

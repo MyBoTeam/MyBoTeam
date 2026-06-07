@@ -34,7 +34,6 @@ export const ConnectorCard = memo(function ConnectorCard({
   const { t } = useTranslation('settings');
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  // Auto-cancel delete confirmation after 3 seconds, cleanup on unmount
   useEffect(() => {
     if (!confirmDelete) return;
     const timer = setTimeout(() => setConfirmDelete(false), 3000);
@@ -54,7 +53,7 @@ export const ConnectorCard = memo(function ConnectorCard({
   return (
     <div className="rounded-lg border border-border bg-card/70 p-4">
       <div className="flex items-start justify-between gap-3">
-        {/* Left: Name, URL, Status */}
+        {}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h3 className="truncate text-sm font-medium text-foreground">{connector.name}</h3>
@@ -73,9 +72,9 @@ export const ConnectorCard = memo(function ConnectorCard({
           </p>
         </div>
 
-        {/* Right: Toggle + Delete */}
+        {}
         <div className="flex items-center gap-2">
-          {/* Enable/Disable toggle */}
+          {}
           <button
             onClick={() => onToggleEnabled(connector.id)}
             className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 ${

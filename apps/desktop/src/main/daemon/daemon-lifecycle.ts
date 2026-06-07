@@ -1,11 +1,3 @@
-/**
- * Daemon Lifecycle
- *
- * Module-level state for the daemon client connection.
- * The desktop connects to the standalone daemon via Unix socket / named pipe.
- * shutdownDaemon() only closes the client — it does NOT kill the daemon process.
- */
-
 import type { DaemonClient } from '@myboteam/agent-core/desktop-main';
 import { getLogCollector } from '../logging';
 
@@ -20,9 +12,6 @@ export function setMode(m: 'socket' | null): void {
   mode = m;
 }
 
-/**
- * Get the daemon client. Throws if not bootstrapped.
- */
 export function getDaemonClient(): DaemonClient {
   if (!client) {
     throw new Error('Daemon not bootstrapped. Call bootstrapDaemon() first.');
@@ -30,18 +19,10 @@ export function getDaemonClient(): DaemonClient {
   return client;
 }
 
-/**
- * Get the current daemon mode.
- */
 export function getDaemonMode(): 'socket' | null {
   return mode;
 }
 
-/**
- * Shut down the daemon client connection.
- * IMPORTANT: This only closes the socket — it does NOT kill the daemon process.
- * The daemon is designed to survive Electron exit.
- */
 export function shutdownDaemon(): void {
   if (client) {
     client.close();
@@ -53,7 +34,5 @@ export function shutdownDaemon(): void {
     if (l?.log) {
       l.log('INFO', 'daemon', '[DaemonLifecycle] Daemon client disconnected');
     }
-  } catch {
-    /* best-effort logging */
-  }
+  } catch {}
 }

@@ -1,12 +1,3 @@
-/**
- * Native sandbox provider — OS-level FS/network restriction.
- *
- * macOS: wraps spawn command with sandbox-exec and a generated profile.
- * Windows: injects MYBOTEAM_SANDBOX_* env vars consumed by file-permission MCP;
- *          network restriction via env-var flags (no admin elevation required).
- * Linux: injects env vars; optionally wraps with firejail if available.
- */
-
 import fs from 'node:fs';
 import type { SandboxConfig, SandboxProvider, SpawnArgs } from '../common/types/sandbox.js';
 
@@ -28,7 +19,6 @@ export class NativeSandboxProvider implements SandboxProvider {
       }
     }
 
-    // Windows and Linux always support the env-var approach
     return true;
   }
 
@@ -44,7 +34,6 @@ export class NativeSandboxProvider implements SandboxProvider {
       return this.wrapDarwin(args, config, mergedEnv);
     }
 
-    // Windows and Linux — env-var enforcement only (no command wrapping)
     return {
       ...args,
       env: mergedEnv,
@@ -74,16 +63,8 @@ export class NativeSandboxProvider implements SandboxProvider {
     return env;
   }
 
-  async dispose(): Promise<void> {
-    // nothing to clean up
-  }
+  async dispose(): Promise<void> {}
 
-  /**
-   * On macOS, wrap the command with sandbox-exec using a generated profile.
-   *
-   * sandbox-exec interposes a Seatbelt profile that controls file I/O,
-   * network access, and process execution at the kernel level.
-   */
   private wrapDarwin(
     args: SpawnArgs,
     config: SandboxConfig,
@@ -91,7 +72,6 @@ export class NativeSandboxProvider implements SandboxProvider {
   ): SpawnArgs {
     const profile = this.buildSeatbeltProfile(config, args.cwd);
 
-    // Build the original command string that will run inside the sandbox
     const innerCommand = [args.file, ...args.args].map((a) => this.shellEscape(a)).join(' ');
 
     return {
@@ -105,20 +85,17 @@ export class NativeSandboxProvider implements SandboxProvider {
     };
   }
 
-  /**
-   * Generate a macOS Seatbelt profile string from the sandbox config.
-   */
   private buildSeatbeltProfile(config: SandboxConfig, cwd: string): string {
     const rules: string[] = [
       '(version 1)',
       '(deny default)',
-      // Allow basic process execution
+
       '(allow process-exec)',
       '(allow process-fork)',
       '(allow signal)',
       '(allow sysctl-read)',
       '(allow mach-lookup)',
-      // Allow reading standard system locations
+
       '(allow file-read* (subpath "/usr"))',
       '(allow file-read* (subpath "/bin"))',
       '(allow file-read* (subpath "/sbin"))',
@@ -130,22 +107,20 @@ export class NativeSandboxProvider implements SandboxProvider {
       '(allow file-read* (subpath "/tmp"))',
       '(allow file-write* (subpath "/tmp"))',
       '(allow file-write* (subpath "/dev"))',
-      // Allow the working directory
+
       `(allow file-read* (subpath "${this.escapeSeatbeltString(cwd)}"))`,
       `(allow file-write* (subpath "${this.escapeSeatbeltString(cwd)}"))`,
     ];
 
-    // Allow user-specified paths
     for (const p of config.allowedPaths) {
       const escaped = this.escapeSeatbeltString(p);
       rules.push(`(allow file-read* (subpath "${escaped}"))`);
       rules.push(`(allow file-write* (subpath "${escaped}"))`);
     }
 
-    // Network access
     if (config.networkRestricted) {
       rules.push('(deny network*)');
-      // Allow loopback for MCP tool communication
+
       rules.push('(allow network* (local ip "localhost:*"))');
       rules.push('(allow network* (remote ip "localhost:*"))');
       rules.push('(allow network* (local ip "127.0.0.1:*"))');

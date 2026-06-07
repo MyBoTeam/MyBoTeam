@@ -23,7 +23,7 @@ export function ConnectorsSubmenu({
   const { t } = useTranslation('home');
   return (
     <div className="flex flex-col">
-      {/* Connectors List */}
+      {}
       <div className="max-h-[300px] overflow-y-auto">
         {connectors.length === 0 ? (
           <div className="p-3 text-center text-sm text-muted-foreground">
@@ -49,7 +49,7 @@ export function ConnectorsSubmenu({
                   className={`h-1.5 w-1.5 shrink-0 rounded-full ${statusDot[connector.status] || statusDot.disconnected}`}
                 />
 
-                {/* Name + URL */}
+                {}
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-[13px] font-medium text-foreground">
                     {connector.name}
@@ -85,7 +85,7 @@ export function ConnectorsSubmenu({
 
       <DropdownMenuSeparator />
 
-      {/* Footer */}
+      {}
       <div className="p-2.5">
         <button
           type="button"

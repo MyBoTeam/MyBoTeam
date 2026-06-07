@@ -1,8 +1,5 @@
 import type { RouteServices } from './daemon-routes.js';
 
-/**
- * Forward task service events as RPC notifications.
- */
 export function registerTaskEventForwarding(services: RouteServices): void {
   const { rpc, taskService, healthService, whatsappService } = services;
 
@@ -30,9 +27,7 @@ export function registerTaskEventForwarding(services: RouteServices): void {
   });
 
   // Todo / auth-error / browser-frame live forwarding (Codex R4 P1 #1).
-  // `task-callbacks.ts` emits these on the taskService emitter; without
-  // these forwarders TodoSidebar, auth-expired toasts, and the browser
-  // preview path all went dark on real SDK runs.
+
   taskService.on('todo:update', (data: { taskId: string; todos: unknown[] }) => {
     rpc.notify('todo.update', data);
   });
@@ -43,7 +38,6 @@ export function registerTaskEventForwarding(services: RouteServices): void {
     rpc.notify('browser.frame', data);
   });
 
-  // WhatsApp notification forwarding
   whatsappService.on('qr', (qr: string) => {
     rpc.notify('whatsapp.qr', { qr });
   });

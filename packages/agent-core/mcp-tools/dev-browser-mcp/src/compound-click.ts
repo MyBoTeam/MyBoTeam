@@ -24,7 +24,6 @@ export async function tryAutoReopen(
   triggerRef: string | undefined,
   element: ElementHandle,
 ): Promise<void> {
-  // If a trigger ref is specified, clicking the trigger may close a popup — reopen it
   if (!triggerRef) {
     return;
   }
@@ -33,8 +32,7 @@ export async function tryAutoReopen(
     if (!triggerEl) {
       return true;
     }
-    // Search relative to the trigger: check closest ancestor popup, then sibling popups
-    // within the same parent container to avoid matching unrelated UI.
+
     const popup =
       triggerEl.closest('[role="listbox"], [role="menu"], [role="dialog"]') ??
       triggerEl.parentElement?.querySelector('[role="listbox"], [role="menu"], [role="dialog"]') ??
@@ -58,7 +56,6 @@ export async function tryAutoReopen(
         msg.includes('Execution context was destroyed') ||
         msg.includes('navigation')
       ) {
-        // Known transient error, suppress
       } else {
         console.warn('tryAutoReopen: element.click() failed:', error);
         throw error;

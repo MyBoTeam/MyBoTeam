@@ -1,10 +1,3 @@
-/**
- * Permission Request State Helpers
- *
- * Pure state/type helpers for permission and question request lifecycle.
- * Used by PermissionRequestHandler to manage pending requests and validation.
- */
-
 import {
   createFilePermissionRequestId,
   createQuestionRequestId,
@@ -16,26 +9,17 @@ import type {
   PermissionRequest,
 } from '../../common/types/permission.js';
 
-/**
- * Generic pending request interface
- */
 export interface PendingRequest<T> {
   resolve: (result: T) => void;
   reject: (error: Error) => void;
   timeoutId: NodeJS.Timeout;
 }
 
-/**
- * Validation result for permission request data
- */
 export interface PermissionValidationResult {
   valid: boolean;
   error?: string;
 }
 
-/**
- * Raw file permission request data (from HTTP request body)
- */
 export interface FilePermissionRequestData {
   operation?: string;
   filePath?: string;
@@ -44,9 +28,6 @@ export interface FilePermissionRequestData {
   contentPreview?: string;
 }
 
-/**
- * Raw question request data (from HTTP request body)
- */
 export interface QuestionRequestData {
   question?: string;
   header?: string;
@@ -54,9 +35,6 @@ export interface QuestionRequestData {
   multiSelect?: boolean;
 }
 
-/**
- * Question response data
- */
 export interface QuestionResponseData {
   selectedOptions?: string[];
   customText?: string;

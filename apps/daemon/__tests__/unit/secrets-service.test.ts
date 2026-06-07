@@ -2,11 +2,6 @@ import type { StorageAPI } from '@myboteam/agent-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SecretsService } from '../../src/secrets-service.js';
 
-/**
- * Milestone 2 — SecretsService is a thin pass-through; the tests exist to
- * guarantee that every RPC-facing method reaches the same StorageAPI method
- * it documents, and no extra side-effects slip in later.
- */
 function makeStorageStub(): StorageAPI {
   return {
     storeApiKey: vi.fn(),

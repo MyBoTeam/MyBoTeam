@@ -24,10 +24,6 @@ export function fetchWithTimeout(url: string, options: RequestInit = {}): Promis
     .finally(() => clearTimeout(timeoutId));
 }
 
-/**
- * Discover OAuth 2.0 authorization server metadata from an MCP server URL.
- * Fetches from {serverUrl}/.well-known/oauth-authorization-server
- */
 export async function discoverOAuthMetadata(serverUrl: string): Promise<OAuthMetadata> {
   const url = new URL('/.well-known/oauth-authorization-server', serverUrl);
   const response = await fetchWithTimeout(url.toString(), {
@@ -59,10 +55,6 @@ export async function discoverOAuthMetadata(serverUrl: string): Promise<OAuthMet
   };
 }
 
-/**
- * Discover OAuth protected resource metadata from an MCP server's 401 challenge.
- * Fetches the URL advertised in the WWW-Authenticate `resource_metadata` parameter.
- */
 export async function discoverOAuthProtectedResourceMetadata(
   serverUrl: string,
 ): Promise<OAuthProtectedResourceMetadata> {
@@ -78,19 +70,13 @@ export async function discoverOAuthProtectedResourceMetadata(
   }
 
   const authenticateHeader = response.headers.get('www-authenticate');
-  // RFC 7235 allows optional whitespace around `=` in auth-params
+
   const metadataUrlMatch = authenticateHeader?.match(/\bresource_metadata\s*=\s*"([^"]+)"/i);
   const metadataUrl = metadataUrlMatch?.[1];
 
   let lastError: Error | undefined;
   let parsedData: Record<string, unknown> | undefined;
 
-  /**
-   * Fetch a metadata URL, validate content-type, parse JSON, and check the
-   * required `resource` field.  Returns the parsed object on success, or sets
-   * `lastError` and returns `undefined` so the caller can fall through to the
-   * next candidate URL.
-   */
   const tryFetchMetadata = async (url: string, label: string) => {
     try {
       const res = await fetchWithTimeout(url, {
@@ -123,8 +109,6 @@ export async function discoverOAuthProtectedResourceMetadata(
   }
 
   if (!parsedData) {
-    // Preserve any subpath on serverUrl (e.g. /mcp) so subpath-mounted servers
-    // resolve to the correct well-known document rather than origin root.
     const resourceUrl = new URL(serverUrl);
     const resourcePath = resourceUrl.pathname === '/' ? '' : resourceUrl.pathname;
     const wellKnownUrl = new URL(

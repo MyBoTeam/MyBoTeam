@@ -1,14 +1,7 @@
-/**
- * Unit tests for PermissionDialog component
- * Tests rendering of the inline card for various permission request types
- * @module __tests__/unit/renderer/components/execution/PermissionDialog.unit.test
- * @vitest-environment jsdom
- */
-
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { PermissionDialog } from '@/components/execution/PermissionDialog';
-// Import helpers first — they register vi.mock stubs before PermissionDialog is loaded
+
 import { createFilePermission, createToolPermission } from './permissionDialogTestHelpers';
 
 describe('PermissionDialog', () => {
