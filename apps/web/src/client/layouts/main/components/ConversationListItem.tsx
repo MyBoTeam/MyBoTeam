@@ -3,7 +3,7 @@ import { SpinnerGap, Star, X } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
-import { getFaviconUrl } from '@/components/landing/IntegrationIcons';
+import { getFaviconUrl } from '@/pages/home/components/IntegrationIcons';
 import { extractDomains, FAVORITABLE_STATUSES, STATUS_COLORS } from '@/lib/task-utils';
 import { cn } from '@/lib/utils';
 import { useTaskStore } from '@/stores/taskStore';

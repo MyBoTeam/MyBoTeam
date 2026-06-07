@@ -5,18 +5,18 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatedOutletWrapper } from './App.components';
 import type { AppStatus } from './App.types';
-import { AuthErrorToast } from './components/AuthErrorToast';
-import { CloseConfirmDialog } from './components/CloseConfirmDialog';
-import { DaemonConnectionToast } from './components/DaemonConnectionToast';
-import AuthSettingsDialog from './components/layout/AuthSettingsDialog';
+import { AuthErrorToast } from '../../components/common/AuthErrorToast';
+import { CloseConfirmDialog } from '../../components/common/CloseConfirmDialog';
+import { DaemonConnectionToast } from '../../components/common/DaemonConnectionToast';
+import AuthSettingsDialog from './components/AuthSettingsDialog';
 
-import Sidebar from './components/layout/Sidebar';
-import { SidebarFallback } from './components/layout/SidebarFallback';
-import { TaskLauncher } from './components/TaskLauncher';
-import { ErrorBoundary } from './components/ui/ErrorBoundary';
-import { logger } from './lib/logger';
-import { getMyBoTeam, isRunningInElectron } from './lib/myboteam';
-import { useTaskStore } from './stores/taskStore';
+import Sidebar from './components/Sidebar';
+import { SidebarFallback } from './components/SidebarFallback';
+import { TaskLauncher } from '../../components/common/TaskLauncher';
+import { ErrorBoundary } from '../../components/ui/ErrorBoundary';
+import { logger } from '../../utils/logger';
+import { getMyBoTeam, isRunningInElectron } from '../../config/myboteam';
+import { useTaskStore } from '../../stores/taskStore';
 
 export function App() {
   const { t } = useTranslation('errors');

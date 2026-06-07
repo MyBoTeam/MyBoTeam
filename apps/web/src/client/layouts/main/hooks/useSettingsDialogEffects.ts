@@ -1,8 +1,8 @@
 import type { ProviderId } from '@myboteam/agent-core/common';
 import { useEffect } from 'react';
-import { getMyBoTeam } from '@/lib/myboteam';
-import type { SettingsTabId } from './settings-tabs';
-import { FIRST_FOUR_PROVIDERS } from './settings-tabs';
+import { getMyBoTeam } from '@/config/myboteam';
+import type { SettingsTabId } from '../components/settings-tabs';
+import { FIRST_FOUR_PROVIDERS } from '../components/settings-tabs';
 
 interface UseSettingsDialogEffectsOptions {
   open: boolean;

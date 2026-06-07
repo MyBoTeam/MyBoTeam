@@ -1,7 +1,7 @@
 import type { ProviderId } from '@myboteam/agent-core/common';
 import { MemoryRouter } from 'react-router';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { ProvidersPage } from '@/pages/settings/ProvidersPage';
+import { ProvidersPage } from '@/pages/settings/providers/ProvidersPage';
 
 interface AuthSettingsDialogProps {
   open: boolean;

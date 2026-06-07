@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router';
-import { springs, variants } from '@/lib/animations';
-import { getMyBoTeam, isRunningInElectron } from '@/lib/myboteam';
-import { AnimatedOutlet } from './pages/execution/AnimatedOutlet';
+import { springs, variants } from '@/utils/animations';
+import { getMyBoTeam, isRunningInElectron } from '@/config/myboteam';
+import { AnimatedOutlet } from '@/pages/conversation/AnimatedOutlet';
 
 export function AnimatedOutletWrapper() {
   const location = useLocation();

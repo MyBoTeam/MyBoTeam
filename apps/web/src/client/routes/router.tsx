@@ -1,21 +1,21 @@
 import { createHashRouter, Navigate } from 'react-router';
-import { App } from './App';
-import SettingsLayout from './components/layout/SettingsLayout';
+import { App } from './layouts/main/App';
+import SettingsLayout from './layouts/settings/SettingsLayout';
 import { RouteErrorFallback } from './components/ui/RouteErrorFallback';
-import ConversationsFavoritesPage from './pages/ConversationsFavoritesPage';
-import ConversationsPage from './pages/ConversationsPage';
-import ExamplesPage from './pages/ExamplesPage';
-import ExecutionPage from './pages/Execution';
-import { HomePage } from './pages/Home';
-import { AboutPage } from './pages/settings/AboutPage';
-import { BrowsersPage } from './pages/settings/BrowsersPage';
-import { GeneralPage } from './pages/settings/GeneralPage';
-import { IntegrationsPage } from './pages/settings/IntegrationsPage';
-import { ProvidersPage } from './pages/settings/ProvidersPage';
-import { SchedulerPage } from './pages/settings/SchedulerPage';
-import { SkillsPage } from './pages/settings/SkillsPage';
-import { VoicePage } from './pages/settings/VoicePage';
-import { WorkspacesPage } from './pages/settings/WorkspacesPage';
+import ConversationsFavoritesPage from './pages/conversations/ConversationsFavoritesPage';
+import ConversationsPage from './pages/conversations/ConversationsPage';
+import ExamplesPage from './pages/conversations/ExamplesPage';
+import { ConversationView } from './pages/conversation/ConversationView';
+import { HomePage } from './pages/home/Home';
+import { AboutPage } from './pages/settings/about/AboutPage';
+import { BrowsersPage } from './pages/settings/browsers/BrowsersPage';
+import { GeneralPage } from './pages/settings/general/GeneralPage';
+import { IntegrationsPage } from './pages/settings/integrations/IntegrationsPage';
+import { ProvidersPage } from './pages/settings/providers/ProvidersPage';
+import { SchedulerPage } from './pages/settings/scheduler/SchedulerPage';
+import { SkillsPage } from './pages/settings/skills/SkillsPage';
+import { VoicePage } from './pages/settings/voice/VoicePage';
+import { WorkspacesPage } from './pages/settings/workspaces/WorkspacesPage';
 
 export const router = createHashRouter([
   {
@@ -39,7 +39,7 @@ export const router = createHashRouter([
           { path: 'examples', Component: ExamplesPage, errorElement: <RouteErrorFallback /> },
           {
             path: 'execution/:id',
-            Component: ExecutionPage,
+            Component: ConversationView,
             errorElement: <RouteErrorFallback />,
           },
           { path: '*', element: <Navigate to="/" replace /> },
