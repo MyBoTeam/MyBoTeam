@@ -35,6 +35,7 @@ export function useSpeechInput(options: UseSpeechInputOptions = {}): UseSpeechIn
     recordingDuration: 0,
     error: null,
     lastTranscription: null,
+    isConfigured,
   });
 
   const recorder = useSpeechRecorder({

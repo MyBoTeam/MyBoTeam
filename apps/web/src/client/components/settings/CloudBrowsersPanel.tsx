@@ -1,4 +1,8 @@
-import type { CloudBrowserProvider, CloudBrowserProviderConfig } from '@myboteam/agent-core/common';
+import type {
+  CloudBrowserConfig,
+  CloudBrowserProvider,
+  CloudBrowserProviderConfig,
+} from '@myboteam/agent-core/common';
 import { useCallback, useEffect, useState } from 'react';
 import { useMyBoTeam } from '@/lib/myboteam';
 import { CloudBrowserProviderRow } from './CloudBrowserProviderRow';

@@ -9,7 +9,7 @@ interface UseSettingsDialogEffectsOptions {
   loading: boolean;
   initialProvider?: ProviderId;
   initialTab: SettingsTabId;
-  activeProviderId?: string;
+  activeProviderId?: ProviderId | null;
   refetch: () => void;
   setSelectedProvider: (provider: ProviderId | null) => void;
   setGridExpanded: (expanded: boolean) => void;
@@ -76,7 +76,7 @@ export function useSettingsDialogEffects({
     if (!providerToSelect) {
       return;
     }
-    setSelectedProvider(providerToSelect);
+    setSelectedProvider(providerToSelect as ProviderId);
     if (!FIRST_FOUR_PROVIDERS.includes(providerToSelect as (typeof FIRST_FOUR_PROVIDERS)[number])) {
       setGridExpanded(true);
     }

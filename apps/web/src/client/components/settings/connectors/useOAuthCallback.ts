@@ -5,7 +5,7 @@ import { createLogger } from '@/lib/logger';
 const logger = createLogger('ConnectorsPanel');
 
 export function useOAuthCallback(
-  completeOAuth: (state: string, code: string) => Promise<void>,
+  completeOAuth: (state: string, code: string) => Promise<unknown>,
   onError?: (error: string) => void,
 ) {
   const { t } = useTranslation('settings');

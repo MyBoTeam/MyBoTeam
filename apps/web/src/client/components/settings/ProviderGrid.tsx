@@ -35,7 +35,7 @@ const PROVIDER_ORDER: ProviderId[] = [
 ];
 
 interface ProviderGridProps {
-  settings: ProviderSettings;
+  settings: ProviderSettings | null;
   selectedProvider: ProviderId | null;
   onSelectProvider: (providerId: ProviderId) => void;
   expanded: boolean;
