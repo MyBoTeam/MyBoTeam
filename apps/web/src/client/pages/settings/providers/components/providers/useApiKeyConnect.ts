@@ -3,8 +3,8 @@ import { DEFAULT_PROVIDERS } from '@myboteam/agent-core/common';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getMyBoTeam } from '@/config/myboteam';
+import type { ProviderUnion } from '@/config/myboteam-types';
 import { createLogger } from '@/utils/logger';
-import type { ProviderUnion } from '@/lib/myboteam-types';
 import { useProviderModels } from './useProviderModels';
 
 const logger = createLogger('useApiKeyConnect');
