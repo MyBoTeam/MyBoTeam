@@ -3,8 +3,8 @@ import { DaemonSection } from './DaemonSection';
 import { DebugSection } from './DebugSection';
 import { LanguageSelector } from './LanguageSelector';
 import { NotificationsSection } from './NotificationsSection';
-import { ThemeSelector } from './ThemeSelector';
 import { SpeechSettingsForm } from './SpeechSettingsForm';
+import { ThemeSelector } from './ThemeSelector';
 
 interface GeneralTabProps {
   notificationsEnabled: boolean;

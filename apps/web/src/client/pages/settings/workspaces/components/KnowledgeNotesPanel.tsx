@@ -3,10 +3,10 @@
 import { Plus } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
+import { useKnowledgeNotes } from '../hooks/useKnowledgeNotes';
 import { AddNoteForm } from './AddNoteForm';
 import { NoteRow } from './NoteRow';
-import { useKnowledgeNotes } from './useKnowledgeNotes';
 
 const MAX_NOTES = 20;
 

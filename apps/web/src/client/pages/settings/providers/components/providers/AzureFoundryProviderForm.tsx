@@ -1,7 +1,7 @@
 import type { AzureFoundryCredentials, ConnectedProvider } from '@myboteam/agent-core/common';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 
 import azureLogo from '/assets/ai-logos/azure.svg';
 import { ProviderFormHeader } from '../shared';

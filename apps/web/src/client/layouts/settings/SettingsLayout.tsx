@@ -1,8 +1,8 @@
 import { ArrowLeft } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate } from 'react-router';
-import { cn } from '@/utils/utils';
 import { useSidebarStore } from '@/stores/sidebarStore';
+import { cn } from '@/utils/utils';
 import { SETTINGS_TABS } from '../main/components/settings-tabs';
 
 export default function SettingsLayout() {

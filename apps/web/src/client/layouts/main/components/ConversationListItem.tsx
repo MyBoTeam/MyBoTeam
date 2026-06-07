@@ -4,10 +4,10 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 import { getFaviconUrl } from '@/pages/home/components/IntegrationIcons';
-import { extractDomains, FAVORITABLE_STATUSES, STATUS_COLORS } from '@/lib/task-utils';
-import { cn } from '@/lib/utils';
 import { useTaskStore } from '@/stores/taskStore';
 import { useWorkspaceStore } from '@/stores/workspaceStore';
+import { extractDomains, FAVORITABLE_STATUSES, STATUS_COLORS } from '@/utils/task-utils';
+import { cn } from '@/utils/utils';
 
 interface ConversationListItemProps {
   task: Task;

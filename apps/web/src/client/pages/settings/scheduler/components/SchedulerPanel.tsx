@@ -2,7 +2,7 @@ import type { ScheduledTask } from '@myboteam/agent-core/common';
 import { Info, Plus } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMyBoTeam } from '@/lib/myboteam';
+import { useMyBoTeam } from '@/config/myboteam';
 import { useWorkspaceStore } from '@/stores/workspaceStore';
 import { AddScheduleDialog } from './AddScheduleDialog';
 import { ScheduleCard } from './ScheduleCard';

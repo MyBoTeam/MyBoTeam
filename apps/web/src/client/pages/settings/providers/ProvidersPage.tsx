@@ -3,12 +3,12 @@ import { isProviderReady } from '@myboteam/agent-core/common';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useState } from 'react';
 import { useSearchParams } from 'react-router';
-import { FIRST_FOUR_PROVIDERS } from '@/components/layout/settings-tabs';
+import { useSettings } from '@/hooks/useSettings';
+import { FIRST_FOUR_PROVIDERS } from '@/layouts/main/components/settings-tabs';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
+import { SandboxSection } from '../general/components/SandboxSection';
 import { ProviderGrid } from './components/ProviderGrid';
 import { ProviderSettingsPanel } from './components/ProviderSettingsPanel';
-import { SandboxSection } from '../general/components/SandboxSection';
-import { useSettings } from '@/hooks/useSettings';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
 
 interface ProvidersPageProps {
   onApiKeySaved?: () => void;

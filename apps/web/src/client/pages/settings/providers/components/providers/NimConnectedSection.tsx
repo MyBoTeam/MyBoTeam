@@ -1,7 +1,7 @@
 import type { ConnectedProvider, NimCredentials } from '@myboteam/agent-core/common';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
 import { ConnectedControls, ModelSelector } from '../shared';
 
 const NIM_DEFAULT_BASE_URL = 'https://integrate.api.nvidia.com/v1';

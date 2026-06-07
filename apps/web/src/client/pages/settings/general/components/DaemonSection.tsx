@@ -2,7 +2,7 @@ import { Warning } from '@phosphor-icons/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { useMyBoTeam } from '@/lib/myboteam';
+import { useMyBoTeam } from '@/config/myboteam';
 import { useDaemonStore } from '@/stores/daemonStore';
 import {
   formatUptime,

@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
 import { ChevronDown, ChevronUp, Globe } from 'lucide-react';
 import { memo } from 'react';
-import { cn } from '@/utils/utils';
 import { springs } from '@/utils/animations';
+import { cn } from '@/utils/utils';
+import { useBrowserPreview } from '../hooks/useBrowserPreview';
 import { PreviewBody } from './PreviewBody';
 import { StatusBadge } from './StatusBadge';
-import { useBrowserPreview } from './useBrowserPreview';
 
 interface BrowserPreviewProps {
   taskId: string;

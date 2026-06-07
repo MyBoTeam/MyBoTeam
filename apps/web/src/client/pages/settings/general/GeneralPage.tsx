@@ -1,5 +1,5 @@
-import { GeneralTab } from './components/GeneralTab';
 import { useSettings } from '@/hooks/useSettings';
+import { GeneralTab } from './components/GeneralTab';
 
 export function GeneralPage() {
   const { notificationsEnabled, debugMode, handleNotificationsToggle, handleDebugToggle } =

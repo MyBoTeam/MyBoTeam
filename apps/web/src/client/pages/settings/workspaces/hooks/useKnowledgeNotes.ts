@@ -1,7 +1,7 @@
 import type { KnowledgeNote, KnowledgeNoteType } from '@myboteam/agent-core';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { getMyBoTeam } from '@/lib/myboteam';
+import type { getMyBoTeam } from '@/config/myboteam';
 
 type MyBoTeamInstance = ReturnType<typeof getMyBoTeam>;
 

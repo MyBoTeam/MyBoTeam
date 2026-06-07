@@ -5,7 +5,6 @@ import { DEFAULT_PROVIDERS, getModelDisplayName, PROVIDER_META } from '@myboteam
 import { CaretDown, Warning } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProviderSettings } from '@/components/settings/hooks/useProviderSettings';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,8 +13,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ProviderSubMenu } from '@/components/ui/ProviderSubMenu';
-import { logger } from '@/lib/logger';
-import { cn } from '@/lib/utils';
+import { useProviderSettings } from '@/pages/settings/providers/hooks/useProviderSettings';
+import { logger } from '@/utils/logger';
+import { cn } from '@/utils/utils';
 import type { ModelIndicatorProps } from './ModelIndicator.types';
 
 export function ModelIndicator({

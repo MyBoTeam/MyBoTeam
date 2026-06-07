@@ -1,8 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { useTranslation } from 'react-i18next';
-import ConversationList from './components/ConversationList';
 import Header from '@/layouts/main/components/Header';
 import { useTaskStore } from '@/stores/taskStore';
+import ConversationList from './components/ConversationList';
 
 export default function HistoryPage() {
   const { t } = useTranslation('history');

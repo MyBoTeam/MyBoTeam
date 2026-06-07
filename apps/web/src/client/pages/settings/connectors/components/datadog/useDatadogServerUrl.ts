@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import { DATADOG_REGIONS, findDatadogRegionByMcpUrl } from './regions';
 
 interface UseDatadogServerUrl {

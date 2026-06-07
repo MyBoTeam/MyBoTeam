@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { StarButton } from '@/components/ui/StarButton';
-import { FAVORITABLE_STATUSES } from '@/utils/task-utils';
 import { useTaskStore } from '@/stores/taskStore';
+import { FAVORITABLE_STATUSES } from '@/utils/task-utils';
 import { getStatusTranslationKey } from './conversationStatusUtils';
 
 export function ConversationCompleteFooter({

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { PROVIDER_LOGOS } from '@/lib/provider-logos';
+import { PROVIDER_LOGOS } from '@/utils/provider-logos';
 import { ConnectButton, FormError } from '../shared';
 import { ProviderAdvancedSettings } from './ProviderAdvancedSettings';
 

@@ -2,8 +2,8 @@ import type { ApiKeyCredentials, ConnectedProvider, ProviderId } from '@myboteam
 import { DEFAULT_PROVIDERS } from '@myboteam/agent-core/common';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { createLogger } from '@/lib/logger';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
+import { createLogger } from '@/utils/logger';
 import { useProviderModels } from './useProviderModels';
 
 const logger = createLogger('useApiKeyConnect');

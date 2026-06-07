@@ -1,6 +1,6 @@
 import type { ConnectedProvider, ProviderId, ProviderSettings } from '@myboteam/agent-core/common';
 import { useCallback, useEffect, useState } from 'react';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 
 export function useProviderSettings() {
   const [settings, setSettings] = useState<ProviderSettings | null>(null);

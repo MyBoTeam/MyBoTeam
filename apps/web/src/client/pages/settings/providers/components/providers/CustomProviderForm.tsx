@@ -1,8 +1,8 @@
 import type { ConnectedProvider, CustomCredentials } from '@myboteam/agent-core';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
 import customLogo from '/assets/ai-logos/custom.svg';
 import { ProviderFormHeader } from '../shared';
 import { CustomProviderConnectedSection } from './CustomProviderConnectedSection';

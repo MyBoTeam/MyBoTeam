@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
 
 interface FormErrorProps {
   error: string | null;

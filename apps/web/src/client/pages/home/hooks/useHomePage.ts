@@ -2,13 +2,13 @@ import { hasAnyReadyProvider } from '@myboteam/agent-core/common';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
-import { createLogger } from '@/utils/logger';
 import { getMyBoTeam } from '@/config/myboteam';
 import { useTaskStore } from '@/stores/taskStore';
-import { FAVORITES_PREVIEW_COUNT, USE_CASE_KEYS } from './homeConstants';
+import { createLogger } from '@/utils/logger';
+import { FAVORITES_PREVIEW_COUNT, USE_CASE_KEYS } from '../homeConstants';
 import { usePromptAttachments } from './usePromptAttachments';
 
-export { FAVORITES_PREVIEW_COUNT } from './homeConstants';
+export { FAVORITES_PREVIEW_COUNT } from '../homeConstants';
 
 const logger = createLogger('Home');
 

@@ -1,5 +1,5 @@
+import { useSandboxPanel } from '../hooks/useSandboxPanel';
 import { SandboxModeSelector } from './SandboxModeSelector';
-import { useSandboxPanel } from './useSandboxPanel';
 
 export function SandboxPanel() {
   const {

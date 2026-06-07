@@ -1,7 +1,7 @@
 import type { ConnectedProvider, OllamaCredentials } from '@myboteam/agent-core';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
 import ollamaLogo from '/assets/ai-logos/ollama.svg';
 import { ConnectButton, ConnectedControls, FormError, ProviderFormHeader } from '../shared';
 import { OllamaModelSelector } from './OllamaModelSelector';

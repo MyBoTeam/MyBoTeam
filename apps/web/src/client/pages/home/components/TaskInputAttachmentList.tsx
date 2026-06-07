@@ -1,6 +1,6 @@
 import type { FileAttachmentInfo } from '@myboteam/agent-core/common';
 import { WarningCircle, X } from '@phosphor-icons/react';
-import { formatFileSize } from '@/lib/fileUtils';
+import { formatFileSize } from '@/utils/fileUtils';
 import { FileTypeIcon } from './FileTypeIcon';
 
 interface TaskInputAttachmentListProps {

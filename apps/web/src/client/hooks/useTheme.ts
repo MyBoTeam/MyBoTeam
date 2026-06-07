@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { getMyBoTeam } from '@/lib/myboteam';
-import { applyTheme as applyLibTheme } from '@/lib/theme';
-import { applyColorTheme, COLOR_THEME_KEY, isValidColor, type ThemeColor } from '@/lib/theme-color';
+import { getMyBoTeam } from '@/config/myboteam';
+import { applyTheme as applyLibTheme } from '@/utils/theme';
+import {
+  applyColorTheme,
+  COLOR_THEME_KEY,
+  isValidColor,
+  type ThemeColor,
+} from '@/utils/theme-color';
 
 type ThemePreference = 'system' | 'light' | 'dark';
 

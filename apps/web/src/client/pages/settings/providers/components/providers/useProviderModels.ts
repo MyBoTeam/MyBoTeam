@@ -1,8 +1,8 @@
 import type { ConnectedProvider, ProviderId } from '@myboteam/agent-core';
 import { DEFAULT_PROVIDERS } from '@myboteam/agent-core/common';
 import { useEffect, useState } from 'react';
-import { createLogger } from '@/lib/logger';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
+import { createLogger } from '@/utils/logger';
 
 const logger = createLogger('useProviderModels');
 

@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 export function NavLink({
   to,

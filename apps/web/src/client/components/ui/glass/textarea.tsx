@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Textarea as BaseTextarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 export interface TextareaProps extends Omit<React.ComponentProps<typeof BaseTextarea>, 'variant'> {
   variant?: 'glass' | 'frosted' | 'fluted' | 'crystal';

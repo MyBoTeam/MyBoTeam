@@ -3,8 +3,8 @@ import { PROVIDER_META } from '@myboteam/agent-core/common';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
 
 import openrouterLogo from '/assets/ai-logos/openrouter.svg';
 import { ConnectButton, FormError, ProviderFormHeader } from '../shared';

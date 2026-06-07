@@ -1,6 +1,6 @@
 import type { Skill } from '@myboteam/agent-core';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { createLogger } from '@/lib/logger';
+import { createLogger } from '@/utils/logger';
 import {
   type FilterType,
   getFilterCounts,

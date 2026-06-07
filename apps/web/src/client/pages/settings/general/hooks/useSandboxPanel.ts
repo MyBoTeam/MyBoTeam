@@ -1,7 +1,7 @@
 import type { SandboxConfig } from '@myboteam/agent-core';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { createLogger } from '@/lib/logger';
-import { useMyBoTeam } from '@/lib/myboteam';
+import { useMyBoTeam } from '@/config/myboteam';
+import { createLogger } from '@/utils/logger';
 
 const logger = createLogger('SandboxPanel');
 const DEFAULT_NETWORK_POLICY = { allowOutbound: true };

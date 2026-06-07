@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useTaskStore } from '@/stores/taskStore';
-import ConversationsPage from './ConversationsPage';
 import { FavoritesSection } from '@/pages/home/FavoritesSection';
 import { FAVORITES_PREVIEW_COUNT } from '@/pages/home/homeConstants';
+import { useTaskStore } from '@/stores/taskStore';
+import ConversationsPage from './ConversationsPage';
 
 export default function ConversationsFavoritesPage() {
   const navigate = useNavigate();

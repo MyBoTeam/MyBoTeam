@@ -4,7 +4,7 @@ import type {
   OAuthProviderId,
 } from '@myboteam/agent-core/common';
 import { useCallback, useEffect, useState } from 'react';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import type { SlackMcpAuthState } from './useConnectors.types';
 
 export function useConnectors() {

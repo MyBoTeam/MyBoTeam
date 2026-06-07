@@ -7,11 +7,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu-sub';
-import { getMyBoTeam } from '@/lib/myboteam';
-import { applyTheme } from '@/lib/theme';
-import { THEME_KEY } from '@/lib/theme-core';
-import { cn } from '@/lib/utils';
-import { ThemeColorSelector } from '../ui/ThemeColorSelector';
+import { ThemeColorSelector } from '@/components/ui/ThemeColorSelector';
+import { getMyBoTeam } from '@/config/myboteam';
+import { applyTheme } from '@/utils/theme';
+import { THEME_KEY } from '@/utils/theme-core';
+import { cn } from '@/utils/utils';
 
 const THEME_OPTIONS = [
   {

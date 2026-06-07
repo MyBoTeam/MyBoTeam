@@ -1,6 +1,6 @@
 import type { SandboxConfig } from '@myboteam/agent-core';
 import { useCallback, useEffect, useState } from 'react';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 
 interface SandboxSectionProps {
   visible: boolean;

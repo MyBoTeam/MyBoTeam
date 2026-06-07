@@ -1,4 +1,4 @@
-import { getMyBoTeam } from './myboteam';
+import { getMyBoTeam } from '../config/myboteam';
 import { applyClass, resolveTheme, THEME_KEY, type ThemePreference } from './theme-core';
 
 export type { ThemeColor } from './theme-color.js';

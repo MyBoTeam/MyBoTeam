@@ -2,7 +2,7 @@ import type { ConnectedProvider, LiteLLMCredentials } from '@myboteam/agent-core
 import { AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import litellmLogo from '/assets/ai-logos/litellm.svg';
 import { ProviderFormHeader } from '../shared';
 import { LiteLLMConnectedSection, LiteLLMDisconnectedForm } from './LiteLLMFormSections';

@@ -1,8 +1,8 @@
 import type { ConnectedProvider, ProviderId } from '@myboteam/agent-core/common';
 import { hasAnyReadyProvider, isProviderReady } from '@myboteam/agent-core/common';
 import { useCallback, useState } from 'react';
-import { useProviderSettings } from '@/pages/settings/providers/hooks/useProviderSettings';
 import { getMyBoTeam } from '@/config/myboteam';
+import { useProviderSettings } from '@/pages/settings/providers/hooks/useProviderSettings';
 import type { UseSettingsDialogOptions } from './useSettingsDialog.types';
 import { useSettingsDialogEffects } from './useSettingsDialogEffects';
 

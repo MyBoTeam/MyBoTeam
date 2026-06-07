@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { getMyBoTeam } from '../lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import { SpeechRecognitionError } from './speech-types';
 
 export function formatErrorMessage(message: unknown): string {

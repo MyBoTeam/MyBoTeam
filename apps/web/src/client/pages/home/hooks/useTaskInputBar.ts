@@ -6,7 +6,7 @@ import { useSpeechInput } from '@/hooks/useSpeechInput';
 import { useTaskInputBehavior } from '@/hooks/useTaskInputBehavior';
 import { useTaskInputDragDrop } from '@/hooks/useTaskInputDragDrop';
 import { useTypingPlaceholder } from '@/hooks/useTypingPlaceholder';
-import { createLogger } from '@/lib/logger';
+import { createLogger } from '@/utils/logger';
 
 const logger = createLogger('TaskInputBar');
 

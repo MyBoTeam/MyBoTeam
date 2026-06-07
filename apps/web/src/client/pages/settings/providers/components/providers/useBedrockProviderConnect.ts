@@ -5,7 +5,7 @@ import {
 } from '@myboteam/agent-core/common';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 
 export interface UseBedrockProviderConnectReturn {
   authTab: 'apiKey' | 'accessKey' | 'profile';

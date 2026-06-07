@@ -3,7 +3,7 @@ import { Lightning } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 import { getCaretPosition } from './caretPosition';
 
 interface SlashCommandPopoverProps {

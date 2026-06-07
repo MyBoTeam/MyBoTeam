@@ -1,6 +1,6 @@
 import type { ConnectedProvider, HuggingFaceLocalCredentials } from '@myboteam/agent-core/common';
 import { AnimatePresence, motion } from 'framer-motion';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
 import huggingfaceLogo from '/assets/ai-logos/huggingface.svg';
 import {
   ConnectButton,

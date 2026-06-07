@@ -1,7 +1,7 @@
 import type { ConnectedProvider, LMStudioCredentials } from '@myboteam/agent-core/common';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
 import lmstudioLogo from '/assets/ai-logos/lmstudio.png';
 import { ConnectButton, ConnectedControls, FormError, ProviderFormHeader } from '../shared';
 import { LMStudioModelSelector } from './LMStudioModelSelector';

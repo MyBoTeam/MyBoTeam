@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useMyBoTeam } from '@/lib/myboteam';
+import { useMyBoTeam } from '@/config/myboteam';
 
 type CloseDecision = 'keep-daemon' | 'stop-daemon';
 

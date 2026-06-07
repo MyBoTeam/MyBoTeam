@@ -1,5 +1,5 @@
 import type { PermissionRequest, PermissionResponse } from '@myboteam/agent-core/common';
-import { getMyBoTeam } from '../lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import { hasTaskStateToken } from './task-state-helpers';
 import type { TaskState } from './taskStore';
 

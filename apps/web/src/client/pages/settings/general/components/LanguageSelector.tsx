@@ -7,8 +7,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu-sub';
-import { changeLanguage, getLanguagePreference } from '@/i18n';
-import { cn } from '@/lib/utils';
+import { changeLanguage, getLanguagePreference } from '@/config/i18n';
+import { cn } from '@/utils/utils';
 
 const AUTO_LABELS: Record<string, string> = {
   en: 'Auto (System)',

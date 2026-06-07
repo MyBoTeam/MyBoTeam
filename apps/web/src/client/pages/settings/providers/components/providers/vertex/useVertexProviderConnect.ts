@@ -1,7 +1,7 @@
 import type { ConnectedProvider, VertexProviderCredentials } from '@myboteam/agent-core';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import type {
   UseVertexProviderConnectParams,
   UseVertexProviderConnectReturn,

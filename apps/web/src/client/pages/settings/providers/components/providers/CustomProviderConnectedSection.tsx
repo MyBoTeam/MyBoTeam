@@ -1,6 +1,6 @@
 import type { ConnectedProvider, CustomCredentials } from '@myboteam/agent-core';
 import { motion } from 'framer-motion';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
 import { ConnectedControls } from '../shared';
 
 interface CustomProviderConnectedSectionProps {

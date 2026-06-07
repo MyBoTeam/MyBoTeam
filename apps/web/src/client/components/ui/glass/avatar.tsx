@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AvatarFallback, AvatarImage, Avatar as BaseAvatar } from '@/components/ui/avatar';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 export interface AvatarProps extends React.ComponentProps<typeof BaseAvatar> {
   glow?: boolean;

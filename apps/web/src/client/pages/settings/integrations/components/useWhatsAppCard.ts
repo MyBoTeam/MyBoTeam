@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import { useWhatsAppSubscriptions } from './useWhatsAppSubscriptions';
 
 const VALID_STATUSES = new Set([

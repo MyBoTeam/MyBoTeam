@@ -1,10 +1,10 @@
 import type { FileAttachmentInfo } from '@myboteam/agent-core/common';
 import { ArrowBendDownLeft } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { PlusMenu } from '@/pages/home/components/PlusMenu';
 import { ModelIndicator } from '@/components/ui/ModelIndicator';
 import { SpeechInputButton } from '@/components/ui/SpeechInputButton';
 import type { useSpeechInput } from '@/hooks/useSpeechInput';
+import { PlusMenu } from '@/pages/home/components/PlusMenu';
 
 interface FollowUpToolbarProps {
   followUp: string;

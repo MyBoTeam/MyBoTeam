@@ -1,6 +1,6 @@
 import type { ConnectedProvider, HuggingFaceLocalCredentials } from '@myboteam/agent-core/common';
 import { useEffect, useState } from 'react';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 
 export interface SuggestedModel {
   id: string;

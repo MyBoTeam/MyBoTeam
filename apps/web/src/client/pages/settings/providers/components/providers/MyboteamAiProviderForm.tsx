@@ -1,7 +1,7 @@
 import type { ConnectedProvider } from '@myboteam/agent-core/common';
 import { AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import { ProviderFormHeader } from '../shared';
 import {
   ConnectionRetryNotice,

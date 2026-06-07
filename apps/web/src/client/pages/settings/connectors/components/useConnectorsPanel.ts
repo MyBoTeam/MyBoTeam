@@ -1,7 +1,7 @@
 import type { OAuthProviderId } from '@myboteam/agent-core/common';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { createLogger } from '@/lib/logger';
+import { createLogger } from '@/utils/logger';
 import { useConnectors } from './useConnectors';
 import { useOAuthCallback } from './useOAuthCallback';
 

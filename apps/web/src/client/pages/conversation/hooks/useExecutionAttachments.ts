@@ -1,8 +1,8 @@
 import type { FileAttachmentInfo } from '@myboteam/agent-core/common';
 import { useState } from 'react';
+import type { getMyBoTeam } from '@/config/myboteam';
 import { MAX_FILES } from '@/utils/fileUtils';
 import { createLogger } from '@/utils/logger';
-import type { getMyBoTeam } from '@/config/myboteam';
 
 const logger = createLogger('ExecutionAttachments');
 

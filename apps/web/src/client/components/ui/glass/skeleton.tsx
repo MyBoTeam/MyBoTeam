@@ -1,6 +1,6 @@
 import type * as React from 'react';
 import { Skeleton as BaseSkeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 export interface SkeletonProps extends Omit<React.ComponentProps<typeof BaseSkeleton>, 'variant'> {
   variant?: 'glass' | 'frosted' | 'fluted' | 'crystal';

@@ -1,6 +1,6 @@
 import type { StoredFavorite } from '@myboteam/agent-core';
-import { createLogger } from '../lib/logger';
-import { getMyBoTeam } from '../lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
+import { createLogger } from '@/utils/logger';
 import {
   clearAllTaskScopedState,
   clearScopedTaskState,

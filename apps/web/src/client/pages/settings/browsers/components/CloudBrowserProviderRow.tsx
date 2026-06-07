@@ -1,5 +1,5 @@
 import type { CloudBrowserProvider, CloudBrowserProviderConfig } from '@myboteam/agent-core/common';
-import ProviderForm from './ProviderForm';
+import ProviderForm from '@/pages/settings/providers/components/ProviderForm';
 
 interface CloudBrowserProviderDef {
   id: CloudBrowserProvider;

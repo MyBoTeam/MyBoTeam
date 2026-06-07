@@ -1,6 +1,6 @@
 import type React from 'react';
-import { SlashCommandPopover } from '@/components/landing/SlashCommandPopover';
 import type { UseSlashCommandReturn } from '@/hooks/useSlashCommand';
+import { SlashCommandPopover } from '@/pages/home/components/SlashCommandPopover';
 
 interface TaskInputTextareaProps {
   textareaRef: React.RefObject<HTMLTextAreaElement | null>;

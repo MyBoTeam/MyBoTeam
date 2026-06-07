@@ -2,8 +2,8 @@ import { Globe } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/lib/utils';
-import { springs } from '../lib/animations';
+import { springs } from '@/utils/animations';
+import { cn } from '@/utils/utils';
 import {
   ActionChip,
   Arrow,

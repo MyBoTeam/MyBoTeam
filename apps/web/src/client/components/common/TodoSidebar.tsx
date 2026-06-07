@@ -1,7 +1,7 @@
 import type { TodoItem } from '@myboteam/agent-core/common';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 import { TodoListItem } from './TodoListItem';
 
 interface TodoSidebarProps {

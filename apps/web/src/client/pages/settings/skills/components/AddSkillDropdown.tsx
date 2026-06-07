@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { CreateSkillModal } from './CreateSkillModal';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -16,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { CreateSkillModal } from './CreateSkillModal';
 import { UploadErrorDialog } from './UploadErrorDialog';
 import { useAddSkill } from './useAddSkill';
 

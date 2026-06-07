@@ -2,7 +2,7 @@ import type { Task } from '@myboteam/agent-core';
 import { Clock } from '@phosphor-icons/react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { MessageBubble } from '@/components/execution/MessageList';
+import { MessageBubble } from '@/pages/conversation/components/MessageList';
 import { springs } from '@/utils/animations';
 
 export { QueuedEmptyState } from './QueuedEmptyState';

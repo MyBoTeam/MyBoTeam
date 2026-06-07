@@ -2,8 +2,8 @@ import type { ApiKeyCredentials, ConnectedProvider, ProviderId } from '@myboteam
 import { DEFAULT_PROVIDERS, PROVIDER_META } from '@myboteam/agent-core/common';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
-import { DARK_INVERT_PROVIDERS, PROVIDER_LOGOS } from '@/lib/provider-logos';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
+import { DARK_INVERT_PROVIDERS, PROVIDER_LOGOS } from '@/utils/provider-logos';
 import { ConnectButton, FormError, ProviderFormHeader } from '../shared';
 import { ClassicApiKeyInput } from './ClassicApiKeyInput';
 import { ClassicProviderOpenAISection } from './ClassicProviderOpenAISection';

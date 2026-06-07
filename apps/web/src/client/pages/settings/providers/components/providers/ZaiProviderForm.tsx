@@ -2,7 +2,7 @@ import type { ConnectedProvider } from '@myboteam/agent-core/common';
 import { PROVIDER_META } from '@myboteam/agent-core/common';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
 import zaiLogo from '/assets/ai-logos/zai.svg';
 import {
   ConnectButton,

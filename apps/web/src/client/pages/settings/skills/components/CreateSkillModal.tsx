@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { buildCreateSkillPrompt } from './createSkillPrompt';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -11,8 +10,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import { useTaskStore } from '@/stores/taskStore';
+import { buildCreateSkillPrompt } from './createSkillPrompt';
 
 interface CreateSkillModalProps {
   open: boolean;

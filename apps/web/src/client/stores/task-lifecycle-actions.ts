@@ -1,5 +1,5 @@
 import type { TaskStatus } from '@myboteam/agent-core';
-import { getMyBoTeam } from '../lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import { hasTaskStateToken } from './task-state-helpers';
 import type { TaskState } from './taskStore';
 

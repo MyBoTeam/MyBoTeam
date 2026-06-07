@@ -3,12 +3,12 @@
 import { ArrowLineLeft, ArrowLineRight, ChatText, Gear, List } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
-import { DaemonStatusDot } from '@/components/DaemonStatusDot';
+import { DaemonStatusDot } from '@/components/common/DaemonStatusDot';
 import { Button } from '@/components/ui/button';
 import { ThemeColorSelector } from '@/components/ui/ThemeColorSelector';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
 import { useSidebarStore } from '@/stores/sidebarStore';
+import { cn } from '@/utils/utils';
 import { NavItem } from './NavItem';
 import WorkspaceSelector from './WorkspaceSelector';
 

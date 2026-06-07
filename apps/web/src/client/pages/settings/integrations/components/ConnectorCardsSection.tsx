@@ -1,14 +1,14 @@
 import type { ConnectorAuthStatus } from '@myboteam/agent-core/common';
 import { OAuthProviderId } from '@myboteam/agent-core/common';
 import { useTranslation } from 'react-i18next';
-import { DatadogConnectorCard } from '../../connectors/components/DatadogConnectorCard';
-import { LightdashConnectorCard } from '../../connectors/components/LightdashConnectorCard';
-import { OAuthConnectorCard } from '../../connectors/components/OAuthConnectorCard';
 import githubIcon from '/assets/icons/integrations/github.svg';
 import jiraIcon from '/assets/icons/integrations/jira.svg';
 import mondayIcon from '/assets/icons/integrations/monday.svg';
 import notionIcon from '/assets/icons/integrations/notion.svg';
-import { GoogleAccountsSection } from '../google-accounts/GoogleAccountsSection';
+import { DatadogConnectorCard } from '../../connectors/components/DatadogConnectorCard';
+import { LightdashConnectorCard } from '../../connectors/components/LightdashConnectorCard';
+import { OAuthConnectorCard } from '../../connectors/components/OAuthConnectorCard';
+import { GoogleAccountsSection } from '../../google-accounts/components/GoogleAccountsSection';
 import { getAuthState, isActionLoading } from './integrations-helpers';
 
 interface ConnectorCardsSectionProps {

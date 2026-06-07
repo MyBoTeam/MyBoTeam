@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/utils/utils';
 import logoImage from '/assets/logo-1.png';
+import { useSettingsDialog } from '../hooks/useSettingsDialog';
 import { SettingsDialogContent } from './SettingsDialogContent';
 import { SETTINGS_TABS, type SettingsTabId } from './settings-tabs';
-import { useSettingsDialog } from '../hooks/useSettingsDialog';
 
 interface SettingsDialogProps {
   open: boolean;

@@ -2,7 +2,7 @@ import type { ConnectedProvider, NimCredentials } from '@myboteam/agent-core/com
 import { AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import nimLogo from '/assets/ai-logos/nim.svg';
 import { ProviderFormHeader } from '../shared';
 import { ConnectedNimDetails, DisconnectedNimForm, NIM_DEFAULT_BASE_URL } from './NimFormSections';

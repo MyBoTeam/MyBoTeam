@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
 
 export interface SelectItem {
   id: string;

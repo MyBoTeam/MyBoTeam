@@ -1,6 +1,6 @@
 import type { ConnectedProvider, ProviderId } from '@myboteam/agent-core/common';
 import { AnimatePresence, motion } from 'framer-motion';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
 import { ProviderFormSelector } from './ProviderFormSelector';
 
 interface ProviderSettingsPanelProps {

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { createLogger } from '@/lib/logger';
+import { createLogger } from '@/utils/logger';
 
 const logger = createLogger('AddSkillDropdown');
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SearchableSelect } from '@/components/ui/searchable-select';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import { VERTEX_LOCATIONS } from './locations';
 
 interface VertexAdcTabProps {

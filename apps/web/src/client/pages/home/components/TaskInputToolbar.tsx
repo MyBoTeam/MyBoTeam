@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { ModelIndicator } from '@/components/ui/ModelIndicator';
 import { SpeechInputButton } from '@/components/ui/SpeechInputButton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { getMyBoTeam } from '@/config/myboteam';
 import type { useSpeechInput } from '@/hooks/useSpeechInput';
-import { getMyBoTeam } from '@/lib/myboteam';
 
 interface TaskInputToolbarProps {
   toolbarLeft?: ReactNode;

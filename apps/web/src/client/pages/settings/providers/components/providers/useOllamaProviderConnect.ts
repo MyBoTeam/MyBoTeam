@@ -1,7 +1,7 @@
 import type { ConnectedProvider, OllamaCredentials, ToolSupportStatus } from '@myboteam/agent-core';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import type { OllamaModel } from './ollama-types';
 
 export type { OllamaModel } from './ollama-types';

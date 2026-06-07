@@ -2,8 +2,8 @@ import { CheckCircle, Microphone, SpinnerGap, WarningCircle } from '@phosphor-ic
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
-import { getMyBoTeam } from '../../lib/myboteam';
-import { getModifierKeyLabel } from '../../lib/platform';
+import { getMyBoTeam } from '@/config/myboteam';
+import { getModifierKeyLabel } from '@/config/platform';
 
 const modifierKey = getModifierKeyLabel();
 

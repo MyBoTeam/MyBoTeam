@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react';
-import { initialPreviewState, isViewStatus, previewReducer } from './browserPreviewState';
-import type { ViewStatus } from './StatusBadge';
+import {
+  initialPreviewState,
+  isViewStatus,
+  previewReducer,
+} from '../components/browserPreviewState';
+import type { ViewStatus } from '../components/StatusBadge';
 import { useBrowserPreviewIpc } from './useBrowserPreviewIpc';
 
 interface UseBrowserPreviewOptions {

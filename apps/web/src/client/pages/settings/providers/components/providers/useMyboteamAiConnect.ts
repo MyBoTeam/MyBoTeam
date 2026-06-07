@@ -1,7 +1,7 @@
 import type { ConnectedProvider, CreditUsage } from '@myboteam/agent-core/common';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import { STATIC_MODELS } from './myboteam-ai-utils';
 
 export function useMyboteamAiConnect(

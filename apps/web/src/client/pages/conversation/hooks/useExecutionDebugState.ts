@@ -5,7 +5,7 @@ import { createLogger } from '@/utils/logger';
 const logger = createLogger('Execution');
 
 interface UseExecutionDebugStateOptions {
-  myboteam: ReturnType<typeof import('../../lib/myboteam').getMyBoTeam>;
+  myboteam: ReturnType<typeof import('@/config/myboteam').getMyBoTeam>;
   startupStageTaskId: string | null | undefined;
   startupStage: { startTime: number; stage: string; message?: string } | null | undefined;
   id: string | undefined;

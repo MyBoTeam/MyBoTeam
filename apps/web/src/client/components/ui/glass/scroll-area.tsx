@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ScrollArea as BaseScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 export interface ScrollAreaProps
   extends Omit<React.ComponentProps<typeof BaseScrollArea>, 'variant'> {

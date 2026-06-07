@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getMyBoTeam, isRunningInElectron } from '@/lib/myboteam';
+import { getMyBoTeam, isRunningInElectron } from '@/config/myboteam';
 
 export function AboutTab() {
   const { t } = useTranslation('settings');

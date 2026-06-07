@@ -4,7 +4,7 @@ import type {
   CloudBrowserProviderConfig,
 } from '@myboteam/agent-core/common';
 import { useCallback, useEffect, useState } from 'react';
-import { useMyBoTeam } from '@/lib/myboteam';
+import { useMyBoTeam } from '@/config/myboteam';
 import { CloudBrowserProviderRow } from './CloudBrowserProviderRow';
 import { DEFAULT_CONFIG, PROVIDERS } from './cloud-browsers-constants';
 

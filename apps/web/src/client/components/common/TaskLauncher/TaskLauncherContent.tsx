@@ -4,8 +4,8 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
-import { springs } from '@/lib/animations';
-import { cn } from '@/lib/utils';
+import { springs } from '@/utils/animations';
+import { cn } from '@/utils/utils';
 import { TaskLauncherItem } from './TaskLauncherItem';
 
 interface TaskLauncherContentProps {

@@ -1,8 +1,8 @@
 import type { ConnectedProvider } from '@myboteam/agent-core/common';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
-import { PROVIDER_LOGOS } from '@/lib/provider-logos';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
+import { PROVIDER_LOGOS } from '@/utils/provider-logos';
 import { ConnectButton, FormError, ProviderFormHeader } from '../../shared';
 import { useVertexProviderConnect } from './useVertexProviderConnect';
 import { VertexAdcTab } from './VertexAdcTab';

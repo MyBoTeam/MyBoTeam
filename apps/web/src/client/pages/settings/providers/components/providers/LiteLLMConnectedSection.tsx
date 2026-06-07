@@ -1,7 +1,7 @@
 import type { ConnectedProvider, LiteLLMCredentials } from '@myboteam/agent-core/common';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
 import { ConnectedControls, ModelSelector } from '../shared';
 
 interface LiteLLMConnectedSectionProps {

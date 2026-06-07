@@ -1,5 +1,5 @@
 import type { TodoItem } from '@myboteam/agent-core/common';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 import { StatusIcon } from './StatusIcon';
 
 export function TodoListItem({ todo }: { todo: TodoItem }) {

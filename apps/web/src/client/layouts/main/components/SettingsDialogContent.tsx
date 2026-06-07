@@ -3,17 +3,17 @@ import { useTranslation } from 'react-i18next';
 import { AboutTab } from '@/pages/settings/about/components/AboutTab';
 import { CloudBrowsersPanel } from '@/pages/settings/browsers/components/CloudBrowsersPanel';
 import { GeneralTab } from '@/pages/settings/general/components/GeneralTab';
+import { SandboxSection } from '@/pages/settings/general/components/SandboxSection';
+import { SpeechSettingsForm } from '@/pages/settings/general/components/SpeechSettingsForm';
 import { IntegrationsPanel } from '@/pages/settings/integrations/components/IntegrationsPanel';
 import { ProviderGrid } from '@/pages/settings/providers/components/ProviderGrid';
 import { ProviderSettingsPanel } from '@/pages/settings/providers/components/ProviderSettingsPanel';
-import { SandboxSection } from '@/pages/settings/general/components/SandboxSection';
-import { SpeechSettingsForm } from '@/pages/settings/general/components/SpeechSettingsForm';
 import { SchedulerPanel } from '@/pages/settings/scheduler/components/SchedulerPanel';
 import { AddSkillDropdown, SkillsPanel } from '@/pages/settings/skills/components';
 import { WorkspacesPanel } from '@/pages/settings/workspaces/components/WorkspacesPanel';
 import { settingsTransitions, settingsVariants } from '@/utils/animations';
-import { SETTINGS_TABS } from './settings-tabs';
 import type { UseSettingsDialogReturn } from '../hooks/useSettingsDialog';
+import { SETTINGS_TABS } from './settings-tabs';
 
 interface SettingsDialogContentProps {
   s: UseSettingsDialogReturn;

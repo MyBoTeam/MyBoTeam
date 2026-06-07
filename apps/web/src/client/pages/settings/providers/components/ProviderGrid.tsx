@@ -3,7 +3,7 @@ import { PROVIDER_META } from '@myboteam/agent-core/common';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import { ProviderCard } from './ProviderCard';
 
 const PROVIDER_ORDER: ProviderId[] = [

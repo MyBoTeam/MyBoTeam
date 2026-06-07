@@ -3,9 +3,9 @@ import { isProviderReady, PROVIDER_META } from '@myboteam/agent-core/common';
 import { AnimatePresence, motion } from 'framer-motion';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { settingsTransitions, settingsVariants } from '@/lib/animations';
-import { DARK_INVERT_PROVIDERS, PROVIDER_LOGOS } from '@/lib/provider-logos';
-import { cn } from '@/lib/utils';
+import { settingsTransitions, settingsVariants } from '@/utils/animations';
+import { DARK_INVERT_PROVIDERS, PROVIDER_LOGOS } from '@/utils/provider-logos';
+import { cn } from '@/utils/utils';
 import connectedKeyIcon from '/assets/icons/connected-key.svg';
 
 interface ProviderCardProps {

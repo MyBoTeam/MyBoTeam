@@ -6,10 +6,10 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/utils/utils';
+import { useTaskInputBar } from '../hooks/useTaskInputBar';
 import { TaskInputAttachmentList } from './TaskInputAttachmentList';
 import { TaskInputTextarea } from './TaskInputTextarea';
 import { TaskInputToolbar } from './TaskInputToolbar';
-import { useTaskInputBar } from './useTaskInputBar';
 
 export { FileTypeIcon } from './FileTypeIcon';
 

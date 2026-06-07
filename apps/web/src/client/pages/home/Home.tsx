@@ -2,11 +2,11 @@ import { Lightbulb } from '@phosphor-icons/react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { PlusMenu } from './components/PlusMenu';
-import { TaskInputBar } from './components/TaskInputBar';
+import FloatingRobot from '@/components/common/robot/FloatingRobot';
 import { Button } from '@/components/ui/button';
 import { springs } from '@/utils/animations';
-import FloatingRobot from '@/components/common/robot/FloatingRobot';
+import { PlusMenu } from './components/PlusMenu';
+import { TaskInputBar } from './components/TaskInputBar';
 import { useHomePage } from './hooks/useHomePage';
 
 export function HomePage() {
