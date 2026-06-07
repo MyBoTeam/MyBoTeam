@@ -44,14 +44,14 @@ export function createCompletionEnforcer(
 }
 
 export function setupLogWatcher(
-  logWatcher: { on: (event: string, listener: (...args: any[]) => void) => void },
+  logWatcher: { on: (event: string, listener: (...args: unknown[]) => void) => void },
   hasCompleted: () => boolean,
   client: () => unknown,
   emit: (event: string, ...args: unknown[]) => boolean,
   markComplete: (status: string, error?: string) => void,
   abortSession: (reason: string) => Promise<void>,
 ): void {
-  logWatcher.on('error', (error: OpenCodeLogError) => {
+  logWatcher.on('error', ((error: OpenCodeLogError) => {
     if (hasCompleted() || !client()) return;
     const log = { info: (m: string, d?: unknown) => console.info(m, d) };
     log.info(`Log watcher detected error: ${error.errorName}`);
@@ -79,5 +79,5 @@ export function setupLogWatcher(
 
     markComplete('error', errorMessage);
     void abortSession('log-error');
-  });
+  }) as (...args: unknown[]) => void);
 }
