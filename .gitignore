@@ -62,6 +62,9 @@ prisma/*.db-journal
 # Docs
 docs/plans/
 
+# Superpowers brainstorming artifacts
+.superpowers/
+
 # Claude Code
 .claude/
 !.claude/PROJECT_RULES.md
