@@ -148,7 +148,7 @@ export async function handleBrowserScript(args: unknown): Promise<CallToolResult
           break;
         }
         default:
-          results.push(`${stepNum}. Unknown action: ${(step as any).action}`);
+          results.push(`${stepNum}. Unknown action: ${(step as Record<string, unknown>).action}`);
       }
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);

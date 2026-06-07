@@ -5,7 +5,7 @@ import type { SnapshotOptions } from './types.js';
 
 export async function getAISnapshot(page: Page, options: SnapshotOptions = {}): Promise<string> {
   const isInjected = await page.evaluate(() => {
-    return !!(globalThis as any).__devBrowser_getAISnapshot;
+    return !!(globalThis as unknown as Record<string, unknown>).__devBrowser_getAISnapshot;
   });
 
   if (!isInjected) {
@@ -26,7 +26,7 @@ export async function getAISnapshot(page: Page, options: SnapshotOptions = {}): 
   };
 
   const result = await page.evaluate(
-    (opts) => (globalThis as any).__devBrowser_getAISnapshot(opts),
+    (opts) => (globalThis as unknown as Record<string, unknown>).__devBrowser_getAISnapshot(opts),
     optsToSend,
   );
   return result as string;
@@ -34,7 +34,7 @@ export async function getAISnapshot(page: Page, options: SnapshotOptions = {}): 
 
 export async function selectSnapshotRef(page: Page, ref: string): Promise<ElementHandle | null> {
   const elementHandle = await page.evaluateHandle((refId: string) => {
-    const w = globalThis as any;
+    const w = globalThis as unknown as Record<string, unknown>;
     const refs = w.__devBrowserRefs;
     if (!refs) {
       throw new Error('No snapshot refs found. Call browser_snapshot first.');

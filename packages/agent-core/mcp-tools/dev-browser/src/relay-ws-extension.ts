@@ -1,3 +1,4 @@
+import type { WSContext } from 'hono/ws';
 import type {
   ConnectedTarget,
   ExtensionEventMessage,
@@ -23,7 +24,7 @@ export function createExtensionWsHandler(ctx: RelayContext) {
           pending.reject(new Error('Extension connection replaced'));
         ctx.extensionPendingRequests.clear();
       }
-      ctx.extensionWs.current = ws as any;
+      ctx.extensionWs.current = ws as unknown as WSContext;
       ctx.log('Extension connected');
     },
     async onMessage(
