@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from './StatusBadge';
 
-export function ExecutionHeader({ prompt, status }: { prompt: string; status: TaskStatus }) {
+export function ConversationHeader({ prompt, status }: { prompt: string; status: TaskStatus }) {
   const navigate = useNavigate();
 
   return (

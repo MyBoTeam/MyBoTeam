@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 import loadingSymbol from '/assets/loading-symbol.svg';
 
 export const SpinningIcon = ({ className }: { className?: string }) => (

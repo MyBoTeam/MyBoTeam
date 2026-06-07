@@ -1,6 +1,6 @@
 import type { FileAttachmentInfo } from '@myboteam/agent-core/common';
 import { XCircle } from '@phosphor-icons/react';
-import { getAttachmentIcon } from '../../lib/attachments';
+import { getAttachmentIcon } from '@/utils/attachments';
 
 export { DragOverlay } from './DragOverlay';
 

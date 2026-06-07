@@ -3,13 +3,13 @@ import { CaretDown } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
-import { BrowserPreview } from '../../components/execution/BrowserPreview';
-import { MessageBubble } from '../../components/execution/MessageList';
-import { PermissionDialog } from '../../components/execution/PermissionDialog';
-import { ToolProgress } from '../../components/execution/ToolProgress';
-import { TodoSidebar } from '../../components/TodoSidebar';
-import { springs } from '../../lib/animations';
-import { isWaitingForUser } from '../../lib/waiting-detection';
+import { BrowserPreview } from '@/pages/conversation/components/BrowserPreview';
+import { MessageBubble } from '@/pages/conversation/components/MessageList';
+import { PermissionDialog } from '@/pages/conversation/components/PermissionDialog';
+import { ToolProgress } from '@/pages/conversation/components/ToolProgress';
+import { TodoSidebar } from '@/components/common/TodoSidebar';
+import { springs } from '@/utils/animations';
+import { isWaitingForUser } from '@/utils/waiting-detection';
 import type { StartupStageInfo } from './types';
 
 interface ConversationViewProps {

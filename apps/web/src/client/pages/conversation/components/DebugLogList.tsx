@@ -1,7 +1,7 @@
 import { CaretDown, CaretUp, MagnifyingGlass } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 import type { DebugLogEntry } from './DebugPanel';
 
 interface DebugLogListProps {

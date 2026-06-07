@@ -1,8 +1,8 @@
 import type { TaskUpdateEvent } from '@myboteam/agent-core/common';
 import { useEffect } from 'react';
-import type { DebugLogEntry } from '../../components/execution/DebugPanel';
-import type { getMyBoTeam } from '../../lib/myboteam';
-import { useTaskStore } from '../../stores/taskStore';
+import type { DebugLogEntry } from '@/pages/conversation/components/DebugPanel';
+import type { getMyBoTeam } from '@/config/myboteam';
+import { useTaskStore } from '@/stores/taskStore';
 
 type MyBoTeam = ReturnType<typeof getMyBoTeam>;
 

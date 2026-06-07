@@ -1,5 +1,5 @@
 import type { PermissionRequest } from '@myboteam/agent-core/common';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 import {
   getDisplayFilePaths,
   getOperationBadgeClasses,

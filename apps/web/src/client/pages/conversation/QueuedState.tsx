@@ -3,7 +3,7 @@ import { Clock } from '@phosphor-icons/react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { MessageBubble } from '@/components/execution/MessageList';
-import { springs } from '@/lib/animations';
+import { springs } from '@/utils/animations';
 
 export { QueuedEmptyState } from './QueuedEmptyState';
 

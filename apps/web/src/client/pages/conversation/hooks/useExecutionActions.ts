@@ -1,6 +1,6 @@
 import { hasAnyReadyProvider } from '@myboteam/agent-core/common';
 import { useCallback, useEffect } from 'react';
-import { createLogger } from '../../lib/logger';
+import { createLogger } from '@/utils/logger';
 import type { useExecutionCore } from './useExecutionCore';
 import { useExecutionEffects } from './useExecutionEffects';
 import { useExecutionPauseActions } from './useExecutionPauseActions';

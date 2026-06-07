@@ -2,7 +2,7 @@ import { Download } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
-import { springs } from '../../lib/animations';
+import { springs } from '@/utils/animations';
 
 interface BrowserInstallModalProps {
   setupProgress: string | null;

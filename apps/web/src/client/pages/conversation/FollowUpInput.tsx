@@ -2,9 +2,9 @@ import type { FileAttachmentInfo, Task } from '@myboteam/agent-core';
 import { WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { SlashCommandPopover } from '../../components/landing/SlashCommandPopover';
-import type { useSlashCommand } from '../../hooks/useSlashCommand';
-import type { useSpeechInput } from '../../hooks/useSpeechInput';
+import { SlashCommandPopover } from '@/pages/home/components/SlashCommandPopover';
+import type { useSlashCommand } from '@/hooks/useSlashCommand';
+import type { useSpeechInput } from '@/hooks/useSpeechInput';
 import { AttachmentList, DragOverlay } from './FollowUpAttachments';
 import { FollowUpToolbar } from './FollowUpToolbar';
 

@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { ChevronDown, ChevronUp, Globe } from 'lucide-react';
 import { memo } from 'react';
-import { cn } from '@/lib/utils';
-import { springs } from '../../lib/animations';
+import { cn } from '@/utils/utils';
+import { springs } from '@/utils/animations';
 import { PreviewBody } from './PreviewBody';
 import { StatusBadge } from './StatusBadge';
 import { useBrowserPreview } from './useBrowserPreview';

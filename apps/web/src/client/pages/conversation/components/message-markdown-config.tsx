@@ -1,6 +1,6 @@
 import type { Components } from 'react-markdown';
 import { CodeBlock } from '@/components/ui/CodeBlock';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 export const proseClasses = cn(
   'text-sm prose prose-sm max-w-none',

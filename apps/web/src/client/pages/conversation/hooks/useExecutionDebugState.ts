@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import type { DebugLogEntry } from '../../components/execution/DebugPanel';
-import { createLogger } from '../../lib/logger';
+import type { DebugLogEntry } from '@/pages/conversation/components/DebugPanel';
+import { createLogger } from '@/utils/logger';
 
 const logger = createLogger('Execution');
 
