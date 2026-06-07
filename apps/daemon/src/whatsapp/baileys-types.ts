@@ -20,6 +20,7 @@ export interface BaileysEventEmitter {
     event: 'messages.upsert',
     handler: (upsert: { type: string; messages: unknown[] }) => void,
   ): void;
+  on(event: string, handler: (...args: unknown[]) => void): void;
   removeAllListeners(event?: string): void;
 }
 
@@ -30,8 +31,8 @@ export interface BaileysStore {
 }
 
 export interface BaileysChat {
-  id: unknown;
-  name: unknown;
+  id: string;
+  name?: string;
   conversationTimestamp: unknown;
 }
 

@@ -148,8 +148,8 @@ export class WhatsAppService extends EventEmitter implements ChannelAdapter {
     if (!this.store) return [];
     const chats: BaileysChat[] = this.store.chats.all() ?? [];
     return chats.slice(0, limit).map((c) => ({
-      jid: c.id as string,
-      name: c.name as string | undefined,
+      jid: c.id,
+      name: c.name,
       lastMessageAt: toTimestamp(c.conversationTimestamp),
     }));
   }

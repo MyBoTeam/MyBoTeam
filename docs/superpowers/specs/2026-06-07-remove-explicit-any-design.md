@@ -136,8 +136,9 @@ interface BaileysStore {
 ## Biome Config Changes
 
 1. Add `"noExplicitAny": "error"` to `linter.rules.suspicious` at the top level
-2. Remove `"noExplicitAny": "off"` from all override sections:
-   - `**/__tests__/**` (keep off for tests)
+2. Remove `"noExplicitAny": "off"` from all non-test override sections.
+   Keep it `"off"` for test globs:
+   - `**/__tests__/**`
    - `apps/desktop/src/main/**/*.ts` and `apps/desktop/src/preload/**/*.ts`
    - `apps/daemon/**`
    - `packages/agent-core/mcp-tools/**`

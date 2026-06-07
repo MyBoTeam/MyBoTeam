@@ -83,26 +83,21 @@ export function wireSocketEvents(
   socket.ev.on(
     'connection.update',
     (update: { connection?: string; lastDisconnect?: { error?: unknown }; qr?: string }) =>
-      handleConnectionUpdate(
-        update,
-        DisconnectReason as unknown as Record<string, number>,
-        jidNormalizedUser,
-        {
-          reconnect: deps.reconnect,
-          authStatePath: deps.authStatePath,
-          disposed: deps.disposed,
-          manualDisconnect: deps.manualDisconnect,
-          socket,
-          setStatus: deps.setStatus,
-          setQrCode: deps.setQrCode,
-          emitQr: deps.emitQr,
-          emitPhoneNumber: deps.emitPhoneNumber,
-          emitOwnerLid: deps.emitOwnerLid,
-          reconnect_connect: () => {
-            deps.connect().catch((e) => log.error('[WhatsApp] Reconnect failed:', e));
-          },
+      handleConnectionUpdate(update, DisconnectReason, jidNormalizedUser, {
+        reconnect: deps.reconnect,
+        authStatePath: deps.authStatePath,
+        disposed: deps.disposed,
+        manualDisconnect: deps.manualDisconnect,
+        socket,
+        setStatus: deps.setStatus,
+        setQrCode: deps.setQrCode,
+        emitQr: deps.emitQr,
+        emitPhoneNumber: deps.emitPhoneNumber,
+        emitOwnerLid: deps.emitOwnerLid,
+        reconnect_connect: () => {
+          deps.connect().catch((e) => log.error('[WhatsApp] Reconnect failed:', e));
         },
-      ),
+      }),
   );
   socket.ev.on('messages.upsert', (upsert: { type: string; messages: unknown[] }) => {
     for (const raw of upsert.messages as Array<Record<string, unknown>>) {
