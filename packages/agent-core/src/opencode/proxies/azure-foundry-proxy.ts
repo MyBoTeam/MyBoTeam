@@ -10,40 +10,22 @@ import {
 
 export { transformRequestBody } from './azure-foundry-proxy-transform.js';
 
+import {
+  AZURE_FOUNDRY_PROXY_PORT,
+  getProxyBaseUrl,
+  HOP_BY_HOP_HEADERS,
+  MAX_REQUEST_SIZE,
+  sendJson,
+} from './azure-foundry-types.js';
+
+export type { AzureFoundryProxyInfo } from './azure-foundry-types.js';
+
+import type { AzureFoundryProxyInfo } from './azure-foundry-types.js';
+
 const log = createConsoleLogger({ prefix: 'AzureFoundryProxy' });
-
-const AZURE_FOUNDRY_PROXY_PORT = 9228;
-const MAX_REQUEST_SIZE = 10 * 1024 * 1024;
-
 let server: http.Server | null = null;
 let targetBaseUrl: string | null = null;
 let serverStartupPromise: Promise<void> | null = null;
-
-const HOP_BY_HOP_HEADERS = [
-  'connection',
-  'keep-alive',
-  'proxy-authenticate',
-  'proxy-authorization',
-  'te',
-  'trailers',
-  'transfer-encoding',
-  'upgrade',
-];
-
-export interface AzureFoundryProxyInfo {
-  baseURL: string;
-  targetBaseURL: string;
-  port: number;
-}
-
-function getProxyBaseUrl(): string {
-  return `http://127.0.0.1:${AZURE_FOUNDRY_PROXY_PORT}`;
-}
-
-function sendJson(res: http.ServerResponse, status: number, body: object): void {
-  res.writeHead(status, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(body));
-}
 
 function forwardRequest(
   req: http.IncomingMessage,
@@ -56,18 +38,12 @@ function forwardRequest(
     rawBody.length > 0 && shouldTransformBody(req.headers['content-type'])
       ? transformRequestBody(rawBody)
       : rawBody;
-
   const headers = { ...req.headers } as Record<string, string | string[] | undefined>;
   delete headers.host;
   HOP_BY_HOP_HEADERS.forEach((header) => {
     delete headers[header];
   });
-
-  // Always set content-length to the actual body length being forwarded.
-  // When transfer-encoding was chunked, the hop-by-hop removal above deletes it,
-  // so an explicit content-length is required even when the body was not transformed.
   headers['content-length'] = String(body.length);
-
   const proxy = (isHttps ? https : http).request(
     {
       method: req.method,
@@ -78,16 +54,13 @@ function forwardRequest(
     },
     (proxyRes) => {
       const responseHeaders = { ...proxyRes.headers };
-      // Remove hop-by-hop headers from the response to prevent logic errors in the proxy
       HOP_BY_HOP_HEADERS.forEach((header) => {
         delete responseHeaders[header];
       });
-
       res.writeHead(proxyRes.statusCode || 500, responseHeaders);
       proxyRes.pipe(res);
     },
   );
-
   proxy.on('error', (error) => {
     log.error('[Azure Foundry Proxy] Request error:', { error: error.message });
     if (!res.headersSent) {
@@ -103,19 +76,16 @@ function forwardRequest(
       res.end();
     }
   });
-
   if (body.length > 0) {
     proxy.write(body);
   }
   proxy.end();
 }
-
 function proxyRequest(req: http.IncomingMessage, res: http.ServerResponse): void {
   if (req.url === '/health') {
     sendJson(res, 200, { status: 'ok', target: targetBaseUrl, port: AZURE_FOUNDRY_PROXY_PORT });
     return;
   }
-
   if (!targetBaseUrl) {
     sendJson(res, 503, {
       error: 'Azure Foundry proxy target not configured',
@@ -123,20 +93,16 @@ function proxyRequest(req: http.IncomingMessage, res: http.ServerResponse): void
     });
     return;
   }
-
   const url = new URL(req.url || '/', 'http://localhost');
-
   if (!isValidRequestPath(url.pathname)) {
     log.warn(`[Azure Foundry Proxy] Rejected invalid path: ${url.pathname}`);
     sendJson(res, 403, { error: 'Invalid request path. Only Azure OpenAI API paths are allowed.' });
     return;
   }
-
   const targetUrl = new URL(`${targetBaseUrl}${url.pathname}${url.search}`);
   const chunks: Buffer[] = [];
   let totalSize = 0;
   let aborted = false;
-
   req.on('data', (chunk) => {
     if (aborted) return;
     totalSize += chunk.length;
@@ -145,16 +111,13 @@ function proxyRequest(req: http.IncomingMessage, res: http.ServerResponse): void
       log.warn(`[Azure Foundry Proxy] Request exceeded size limit: ${totalSize} bytes`);
       sendJson(res, 413, { error: 'Request too large. Maximum size is 10MB.' });
       req.destroy();
-      return;
     }
     chunks.push(Buffer.from(chunk));
   });
-
   req.on('end', () => {
     if (aborted) return;
     forwardRequest(req, res, Buffer.concat(chunks), targetUrl);
   });
-
   req.on('error', (error) => {
     log.error('[Azure Foundry Proxy] Incoming request error:', { error: error.message });
     if (!res.headersSent) {
@@ -165,7 +128,6 @@ function proxyRequest(req: http.IncomingMessage, res: http.ServerResponse): void
     }
   });
 }
-
 async function startProxyServer(): Promise<void> {
   const newServer = http.createServer(proxyRequest);
   return new Promise<void>((resolve, reject) => {
@@ -178,7 +140,8 @@ async function startProxyServer(): Promise<void> {
       reject(
         error.code === 'EADDRINUSE'
           ? new Error(
-              `Port ${AZURE_FOUNDRY_PROXY_PORT} is already in use. Please close other applications using this port or restart the app.`,
+              `Port ${AZURE_FOUNDRY_PROXY_PORT} is already in use. ` +
+                'Please close other applications using this port or restart the app.',
             )
           : error,
       );
@@ -210,9 +173,7 @@ export async function ensureAzureFoundryProxy(baseURL: string): Promise<AzureFou
 }
 
 export async function stopAzureFoundryProxy(): Promise<void> {
-  if (!server) {
-    return;
-  }
+  if (!server) return;
   await new Promise<void>((resolve, reject) => {
     const timeout = setTimeout(() => {
       log.warn('[Azure Foundry Proxy] Shutdown timeout, forcing close');

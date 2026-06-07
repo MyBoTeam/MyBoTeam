@@ -1,10 +1,10 @@
 import type { ProviderId } from '@myboteam/agent-core/common';
 import { OAuthProviderId } from '@myboteam/agent-core/common';
 import { SpinnerGapIcon, WarningIcon } from '@phosphor-icons/react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useOutlet } from 'react-router';
+import { AnimatedOutletWrapper } from './App.components';
+import type { AppStatus } from './App.types';
 import { AuthErrorToast } from './components/AuthErrorToast';
 import { CloseConfirmDialog } from './components/CloseConfirmDialog';
 import { DaemonConnectionToast } from './components/DaemonConnectionToast';
@@ -14,57 +14,9 @@ import Sidebar from './components/layout/Sidebar';
 import { SidebarFallback } from './components/layout/SidebarFallback';
 import { TaskLauncher } from './components/TaskLauncher';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
-import { springs, variants } from './lib/animations';
 import { logger } from './lib/logger';
 import { getMyBoTeam, isRunningInElectron } from './lib/myboteam';
 import { useTaskStore } from './stores/taskStore';
-
-type AppStatus = 'loading' | 'ready' | 'error';
-
-/**
- * Freezes the outlet so exit animations can complete before the new outlet renders.
- */
-function AnimatedOutlet() {
-  const outlet = useOutlet();
-  const [frozenOutlet] = useState(outlet);
-  return frozenOutlet;
-}
-
-/**
- * Wraps the outlet with AnimatePresence + motion for page transitions.
- */
-function AnimatedOutletWrapper() {
-  const location = useLocation();
-
-  // Analytics: track page views on route changes
-  useEffect(() => {
-    if (isRunningInElectron()) {
-      try {
-        getMyBoTeam()
-          .analytics?.trackPageView(location.pathname)
-          .catch(() => {});
-      } catch {
-        /* not in Electron or analytics unavailable */
-      }
-    }
-  }, [location.pathname]);
-
-  return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={location.pathname}
-        className="h-full"
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        variants={variants.fadeUp}
-        transition={springs.gentle}
-      >
-        <AnimatedOutlet />
-      </motion.div>
-    </AnimatePresence>
-  );
-}
 
 export function App() {
   const { t } = useTranslation('errors');

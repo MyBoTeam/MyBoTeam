@@ -13,26 +13,17 @@ import type { SecureStorage } from '../storage/secure-storage.js';
 import { fetchWithTimeout } from '../utils/fetch.js';
 import { createConsoleLogger } from '../utils/logging.js';
 import {
+  DEFAULT_ELEVENLABS_STT_MODEL_ID,
+  type TranscriptionError,
+  type TranscriptionResult,
+} from './speech-types.js';
+import {
   ELEVENLABS_API_TIMEOUT_MS,
   parseElevenLabsErrorMessage,
   validateElevenLabsApiKey,
 } from './speech-validation.js';
 
 const log = createConsoleLogger({ prefix: 'Speech' });
-
-const DEFAULT_ELEVENLABS_STT_MODEL_ID = 'scribe_v2';
-
-export interface TranscriptionResult {
-  text: string;
-  confidence?: number;
-  duration: number;
-  timestamp: number;
-}
-
-export interface TranscriptionError {
-  code: string;
-  message: string;
-}
 
 /**
  * Speech service that uses ElevenLabs API for transcription.

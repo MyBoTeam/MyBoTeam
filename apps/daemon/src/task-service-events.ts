@@ -1,8 +1,10 @@
-/**
- * Event type declarations for TaskService.
- * Extracted from task-service.ts to keep files under 200 lines.
- */
-import type { MyboteamRuntime, TaskMessage, TaskStatus } from '@myboteam/agent-core';
+import type {
+  FileAttachmentInfo,
+  MyboteamRuntime,
+  TaskMessage,
+  TaskSource,
+  TaskStatus,
+} from '@myboteam/agent-core';
 
 export interface TaskServiceEvents {
   progress: [data: { taskId: string; stage: string; message?: string }];
@@ -12,6 +14,28 @@ export interface TaskServiceEvents {
   permission: [data: unknown];
   statusChange: [data: { taskId: string; status: TaskStatus }];
   summary: [data: { taskId: string; summary: string }];
+}
+
+export interface StartTaskParams {
+  prompt: string;
+  taskId?: string;
+  modelId?: string;
+  sessionId?: string;
+  workingDirectory?: string;
+  workspaceId?: string;
+  systemPromptAppend?: string;
+  attachments?: FileAttachmentInfo[];
+  source?: TaskSource;
+  allowedTools?: string[];
+  outputSchema?: object;
+}
+
+export interface ResumeSessionParams {
+  sessionId: string;
+  prompt: string;
+  existingTaskId?: string;
+  attachments?: FileAttachmentInfo[];
+  workspaceId?: string;
 }
 
 export interface TaskServiceOptions {

@@ -64,7 +64,7 @@ export function useLMStudioProviderConnect({
         return;
       }
 
-      const models = (result.models || []) as LMStudioModel[];
+      const models = (result.models || []) as unknown as LMStudioModel[];
       setAvailableModels(models);
 
       const provider: ConnectedProvider = {
@@ -119,7 +119,7 @@ export function useLMStudioProviderConnect({
         return;
       }
 
-      const freshModels = (result.models || []) as LMStudioModel[];
+      const freshModels = (result.models || []) as unknown as LMStudioModel[];
       setAvailableModels(freshModels);
 
       const freshModelIds = new Set(freshModels.map((m) => `lmstudio/${m.id}`));

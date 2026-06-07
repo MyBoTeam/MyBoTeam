@@ -1,19 +1,11 @@
 import type { ConnectedProvider, ProviderId } from '@myboteam/agent-core/common';
 import { hasAnyReadyProvider, isProviderReady } from '@myboteam/agent-core/common';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useProviderSettings } from '@/components/settings/hooks/useProviderSettings';
 import { getMyBoTeam } from '@/lib/myboteam';
-import { FIRST_FOUR_PROVIDERS, type SettingsTabId } from './settings-tabs';
+import type { UseSettingsDialogOptions } from './useSettingsDialog.types';
+import { useSettingsDialogEffects } from './useSettingsDialogEffects';
 
-interface UseSettingsDialogOptions {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onApiKeySaved?: () => void;
-  initialProvider?: ProviderId;
-  initialTab: SettingsTabId;
-}
-
-/** All state and callbacks for SettingsDialog. */
 export function useSettingsDialog({
   open,
   onOpenChange,
@@ -25,7 +17,7 @@ export function useSettingsDialog({
   const [gridExpanded, setGridExpanded] = useState(false);
   const [closeWarning, setCloseWarning] = useState(false);
   const [showModelError, setShowModelError] = useState(false);
-  const [activeTab, setActiveTab] = useState<SettingsTabId>(initialTab);
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [appVersion, setAppVersion] = useState<string>('');
   const [skillsRefreshTrigger, setSkillsRefreshTrigger] = useState(0);
   const [debugMode, setDebugModeState] = useState(false);
@@ -40,44 +32,23 @@ export function useSettingsDialog({
     updateModel,
     refetch,
   } = useProviderSettings();
-  const myboteam = getMyBoTeam();
 
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-    refetch();
-    myboteam.getDebugMode().then(setDebugModeState);
-    myboteam.getNotificationsEnabled().then(setNotificationsEnabledState);
-    myboteam.getVersion().then(setAppVersion);
-  }, [open, refetch, myboteam]);
-
-  useEffect(() => {
-    if (!open) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: reset on close
-      setSelectedProvider(null);
-      setGridExpanded(false);
-      setCloseWarning(false);
-      setShowModelError(false);
-    } else {
-      setActiveTab(initialTab);
-    }
-  }, [open, initialTab]);
-
-  useEffect(() => {
-    if (!open || loading) {
-      return;
-    }
-    const providerToSelect = initialProvider || settings?.activeProviderId;
-    if (!providerToSelect) {
-      return;
-    }
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: sync with open/initialProvider
-    setSelectedProvider(providerToSelect);
-    if (!FIRST_FOUR_PROVIDERS.includes(providerToSelect as (typeof FIRST_FOUR_PROVIDERS)[number])) {
-      setGridExpanded(true);
-    }
-  }, [open, loading, initialProvider, settings?.activeProviderId]);
+  useSettingsDialogEffects({
+    open,
+    loading,
+    initialProvider,
+    initialTab,
+    activeProviderId: settings?.activeProviderId,
+    refetch,
+    setSelectedProvider,
+    setGridExpanded,
+    setCloseWarning,
+    setShowModelError,
+    setActiveTab,
+    setDebugModeState,
+    setNotificationsEnabledState,
+    setAppVersion,
+  });
 
   const handleOpenChange = useCallback(
     (newOpen: boolean) => {
@@ -160,15 +131,15 @@ export function useSettingsDialog({
 
   const handleDebugToggle = useCallback(async () => {
     const newValue = !debugMode;
-    await myboteam.setDebugMode(newValue);
+    await getMyBoTeam().setDebugMode(newValue);
     setDebugModeState(newValue);
-  }, [debugMode, myboteam]);
+  }, [debugMode]);
 
   const handleNotificationsToggle = useCallback(async () => {
     const newValue = !notificationsEnabled;
-    await myboteam.setNotificationsEnabled(newValue);
+    await getMyBoTeam().setNotificationsEnabled(newValue);
     setNotificationsEnabledState(newValue);
-  }, [notificationsEnabled, myboteam]);
+  }, [notificationsEnabled]);
 
   const handleDone = useCallback(() => {
     if (!settings) {
@@ -237,5 +208,8 @@ export function useSettingsDialog({
     handleNotificationsToggle,
     handleDone,
     handleForceClose,
-  };
+    handleClose: () => onOpenChange(false),
+  } as const;
 }
+
+export type UseSettingsDialogReturn = ReturnType<typeof useSettingsDialog>;

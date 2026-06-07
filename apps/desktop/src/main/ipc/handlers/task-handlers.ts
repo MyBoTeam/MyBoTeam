@@ -1,16 +1,9 @@
-import {
-  createTaskId,
-  type FileAttachmentInfo,
-  sanitizeString,
-  type TaskConfig,
-} from '@myboteam/agent-core/desktop-main';
+import { createTaskId, type TaskConfig } from '@myboteam/agent-core/desktop-main';
 import type { IpcMainInvokeEvent } from 'electron';
 import { BrowserWindow } from 'electron';
 import { trackTaskStart } from '../../analytics/events';
 import { getDaemonClient } from '../../daemon-bootstrap';
 import {
-  isScreencastActive,
-  startBrowserPreviewStream,
   stopAllBrowserPreviewStreams,
   stopBrowserPreviewStream,
 } from '../../services/browserPreview';
@@ -22,26 +15,13 @@ import {
   isMockTaskEventsEnabled,
 } from '../../test-utils/mock-task-flow';
 import { sanitizeAttachments } from './attachment-utils';
+import { hasReadyProviderViaDaemon } from './task-helpers';
+import { registerTaskSessionHandlers } from './task-session-handlers';
 import { assertTrustedWindow, handle } from './utils';
 
-/** Milestone 5 replacement for the local `storage.hasReadyProvider()`.
- *  Route through `provider.getSettings` and apply the same predicate
- *  (`connection_status='connected' AND selected_model_id IS NOT NULL`)
- *  client-side. Returns false on RPC failure so we fall through to the
- *  "no provider configured" error path instead of starting a task that
- *  would immediately fail inside the daemon. */
-async function hasReadyProviderViaDaemon(): Promise<boolean> {
-  try {
-    const settings = await getDaemonClient().call('provider.getSettings');
-    return Object.values(settings.connectedProviders).some(
-      (p) => p?.connectionStatus === 'connected' && !!p.selectedModelId,
-    );
-  } catch {
-    return false;
-  }
-}
-
 export function registerTaskHandlers(): void {
+  registerTaskSessionHandlers();
+
   // ─── Task execution (proxied to daemon) ──────────────────────────────────────
 
   handle('task:start', async (event: IpcMainInvokeEvent, config: TaskConfig) => {
@@ -55,9 +35,6 @@ export function registerTaskHandlers(): void {
 
     const taskId = createTaskId();
 
-    // E2E mock path — bypasses daemon entirely. The mock flow keeps its
-    // own in-memory task state; tests verify renderer events rather than
-    // DB persistence, so no storage write happens here post-M5.
     if (isMockTaskEventsEnabled()) {
       const window = BrowserWindow.fromWebContents(event.sender)!;
       const mockTask = createMockTask(taskId, config.prompt);
@@ -71,10 +48,8 @@ export function registerTaskHandlers(): void {
       return mockTask;
     }
 
-    // Sanitize attachments at the IPC boundary (same as session:resume)
     const sanitizedAttachments = sanitizeAttachments(config.files as unknown[] | undefined);
 
-    // Proxy to daemon via RPC — forward ALL TaskConfig fields
     const client = getDaemonClient();
     const task = await client.call('task.start', {
       prompt: config.prompt,
@@ -89,7 +64,6 @@ export function registerTaskHandlers(): void {
       attachments: sanitizedAttachments,
     });
 
-    // Analytics: track task start
     try {
       trackTaskStart(
         { taskId, sessionId: config.sessionId || '', taskType: 'chat' },
@@ -107,11 +81,9 @@ export function registerTaskHandlers(): void {
       return;
     }
 
-    // Proxy to daemon
     const client = getDaemonClient();
     await client.call('task.cancel', { taskId });
 
-    // Stop browser preview locally (desktop-specific concern)
     await stopBrowserPreviewStream(taskId);
   });
 
@@ -120,16 +92,13 @@ export function registerTaskHandlers(): void {
       return;
     }
 
-    // Proxy to daemon
     const client = getDaemonClient();
     await client.call('task.interrupt', { taskId });
 
-    // Stop browser preview locally (desktop-specific concern)
     await stopBrowserPreviewStream(taskId);
   });
 
   // ─── Task reads (proxied to daemon) ──────────────────────────────────────────
-  // The daemon is the single source of truth for task runtime state.
 
   handle('task:get', async (_event: IpcMainInvokeEvent, taskId: string) => {
     const client = getDaemonClient();
@@ -139,13 +108,7 @@ export function registerTaskHandlers(): void {
   handle('task:list', async (_event: IpcMainInvokeEvent) => {
     const client = getDaemonClient();
     const activeId = workspaceManager.getActiveWorkspace();
-    // Skip workspace filter for the default workspace so unassigned tasks (workspace_id = NULL)
-    // remain visible — the default workspace acts as an "all tasks" view.
     const activeWorkspace = activeId ? workspaceManager.getWorkspace(activeId) : null;
-    // Default workspace: pass its UUID + includeUnassigned=true so NULL-workspace
-    // tasks (created before workspaces existed) are also returned, but tasks
-    // explicitly assigned to other workspaces are excluded.
-    // Non-default workspaces: strict filter, no unassigned tasks included.
     const isDefault = !!activeWorkspace?.isDefault;
     const workspaceId = activeId && activeWorkspace ? activeId : undefined;
     return await client.call('task.list', { workspaceId, includeUnassigned: isDefault });
@@ -154,14 +117,12 @@ export function registerTaskHandlers(): void {
   handle('task:delete', async (_event: IpcMainInvokeEvent, taskId: string) => {
     const client = getDaemonClient();
     await client.call('task.delete', { taskId });
-    // Stop browser preview locally (desktop-specific concern)
     await stopBrowserPreviewStream(taskId);
   });
 
   handle('task:clear-history', async (_event: IpcMainInvokeEvent) => {
     const client = getDaemonClient();
     await client.call('task.clearHistory');
-    // Stop all preview streams locally (desktop-specific concern)
     await stopAllBrowserPreviewStreams();
   });
 
@@ -169,96 +130,4 @@ export function registerTaskHandlers(): void {
     const client = getDaemonClient();
     return await client.call('task.getTodos', { taskId });
   });
-
-  // ─── Browser Preview IPC handlers (ENG-695) ─────────────────────────────────
-  // Desktop-local — not proxied to daemon.
-
-  handle(
-    'browser-preview:start',
-    async (_event: IpcMainInvokeEvent, taskId: string, pageName?: string) => {
-      if (!taskId || typeof taskId !== 'string') {
-        throw new Error('taskId is required');
-      }
-      await startBrowserPreviewStream(taskId, pageName);
-      return { success: true };
-    },
-  );
-
-  handle('browser-preview:stop', async (_event: IpcMainInvokeEvent, taskId: string) => {
-    if (!taskId || typeof taskId !== 'string') {
-      throw new Error('taskId is required');
-    }
-    await stopBrowserPreviewStream(taskId);
-    return { stopped: true };
-  });
-
-  handle('browser-preview:status', async () => {
-    return { active: isScreencastActive() };
-  });
-
-  // ─── Session resume (proxied to daemon) ──────────────────────────────────────
-
-  handle(
-    'session:resume',
-    async (
-      event: IpcMainInvokeEvent,
-      sessionId: string,
-      prompt: string,
-      existingTaskId?: string,
-      attachments?: FileAttachmentInfo[],
-    ) => {
-      assertTrustedWindow(BrowserWindow.fromWebContents(event.sender));
-
-      const validatedSessionId = sanitizeString(sessionId, 'sessionId', 128);
-      const validatedPrompt = sanitizeString(prompt, 'prompt');
-      const validatedExistingTaskId = existingTaskId
-        ? sanitizeString(existingTaskId, 'taskId', 128)
-        : undefined;
-
-      if (!isMockTaskEventsEnabled() && !(await hasReadyProviderViaDaemon())) {
-        throw new Error(
-          'No provider is ready. Please connect a provider and select a model in Settings.',
-        );
-      }
-
-      const sanitizedAttachments = sanitizeAttachments(attachments as unknown[] | undefined);
-
-      // Proxy to daemon via RPC
-      const client = getDaemonClient();
-      const task = await client.call('session.resume', {
-        sessionId: validatedSessionId,
-        prompt: validatedPrompt,
-        existingTaskId: validatedExistingTaskId,
-        workspaceId: workspaceManager.getActiveWorkspace() ?? undefined,
-        attachments: sanitizedAttachments,
-      });
-
-      return task;
-    },
-  );
-
-  // ─── Permission response (proxied to daemon) ────────────────────────────────
-
-  handle(
-    'permission:respond',
-    async (_event: IpcMainInvokeEvent, response: Record<string, unknown>) => {
-      // In E2E mock mode, daemon isn't running — silently succeed
-      if (isMockTaskEventsEnabled()) {
-        return;
-      }
-      const client = getDaemonClient();
-      // Type is now flat PermissionResponse (requestId, taskId, decision, ...)
-      await client.call(
-        'permission.respond',
-        response as {
-          requestId: string;
-          taskId: string;
-          decision: 'allow' | 'deny';
-          message?: string;
-          selectedOptions?: string[];
-          customText?: string;
-        },
-      );
-    },
-  );
 }

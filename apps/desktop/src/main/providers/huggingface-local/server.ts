@@ -9,4 +9,5 @@
  *   - server-lifecycle.ts  — startServer, stopServer, getServerStatus, testConnection
  */
 
-export { getServerStatus, startServer, stopServer, testConnection } from './server-lifecycle';
+export { startServer, stopServer } from './server-lifecycle';
+export { getServerStatus, testConnection } from './server-status';

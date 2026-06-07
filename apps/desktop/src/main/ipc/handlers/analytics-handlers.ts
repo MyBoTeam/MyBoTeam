@@ -1,8 +1,5 @@
 /**
  * Analytics IPC handlers — bridges renderer analytics calls to main process event helpers.
- *
- * The renderer calls window.myboteam.analytics.trackXxx(...) which invokes
- * ipcRenderer.invoke('analytics:xxx', ...) → handled here → calls event helpers.
  */
 
 import type { IpcMainInvokeEvent } from 'electron';
@@ -18,12 +15,8 @@ import {
   trackModelSelectionAbandoned,
   trackModelSelectionComplete,
   trackModelSelectionStep,
-  trackNewTask,
-  trackOpenSettings,
   trackOutputCopied,
   trackPageView,
-  trackPermissionRequested,
-  trackPermissionResponse,
   trackProviderBoxClicked,
   trackProviderDisconnected,
   trackSaveApiKey,
@@ -31,65 +24,20 @@ import {
   trackSelectModel,
   trackSelectProvider,
   trackSkillAction,
-  trackStopAgent,
-  trackSubmitTask,
-  trackTaskComplete,
   trackTaskDetailsExpanded,
-  trackTaskError,
-  trackTaskFeedback,
   trackTaskFromHistory,
   trackTaskLauncherAction,
-  trackTaskStart,
   trackThreadExported,
   trackToggleDebugMode,
-  trackToolUsed,
-  trackUserInteraction,
 } from '../../analytics';
-import type { TaskErrorCategory } from '../../analytics/types';
 import { isAnalyticsEnabled } from '../../config/build-config';
-import { getDaemonClient } from '../../daemon-bootstrap';
-import { handle } from './utils';
-
-/**
- * Look up the currently selected model + provider via the daemon.
- * Used by task-lifecycle analytics events to attach model context.
- *
- * Milestone 5 of the daemon-only-SQLite migration: pre-M5 this ran a
- * raw `SELECT ... FROM provider_configs WHERE is_selected = 1` against
- * main's in-process DB handle. That handle is gone — now we go through
- * `provider.getSettings`, pull the active provider id, and read its
- * `selectedModelId`. Returns an empty object on RPC error so analytics
- * events never block on a slow/broken daemon.
- */
-async function getSelectedModelContext(): Promise<{
-  model?: string;
-  provider?: string;
-}> {
-  try {
-    const settings = await getDaemonClient().call('provider.getSettings');
-    const activeId = settings.activeProviderId;
-    if (!activeId) {
-      return {};
-    }
-    const active = settings.connectedProviders[activeId];
-    return {
-      provider: activeId,
-      model: active?.selectedModelId ?? undefined,
-    };
-  } catch {
-    return {};
-  }
-}
+import { registerAnalyticsLifecycleHandlers } from './analytics-lifecycle-handlers';
+import { createHa } from './analytics-utils';
 
 export function registerAnalyticsHandlers(): void {
-  const analyticsEnabled = isAnalyticsEnabled();
+  registerAnalyticsLifecycleHandlers();
 
-  // When analytics is disabled, register no-op handlers so the renderer's
-  // ipcRenderer.invoke() calls don't produce "No handler registered" errors.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function ha(channel: string, fn: (event: any, ...args: any[]) => Promise<unknown>): void {
-    handle(channel, analyticsEnabled ? fn : async () => {});
-  }
+  const ha = createHa(isAnalyticsEnabled());
 
   // Generic event tracking
   ha(
@@ -110,20 +58,6 @@ export function registerAnalyticsHandlers(): void {
       trackPageView(pagePath, pageTitle);
     },
   );
-
-  // Engagement
-  ha('analytics:submit-task', async () => {
-    const { model, provider } = await getSelectedModelContext();
-    trackSubmitTask(model, provider);
-  });
-
-  ha('analytics:new-task', async () => {
-    trackNewTask();
-  });
-
-  ha('analytics:open-settings', async () => {
-    trackOpenSettings();
-  });
 
   // Settings
   ha(
@@ -152,119 +86,6 @@ export function registerAnalyticsHandlers(): void {
   ha('analytics:toggle-debug-mode', async (_event: IpcMainInvokeEvent, enabled: boolean) => {
     trackToggleDebugMode(enabled);
   });
-
-  // Task Lifecycle (from renderer — e.g., when renderer knows task state)
-  ha(
-    'analytics:task-start',
-    async (_event: IpcMainInvokeEvent, taskId: string, sessionId: string, taskType: string) => {
-      const { model, provider } = await getSelectedModelContext();
-      trackTaskStart({ taskId, sessionId, taskType }, model, provider);
-    },
-  );
-
-  ha(
-    'analytics:task-complete',
-    async (
-      _event: IpcMainInvokeEvent,
-      taskId: string,
-      sessionId: string,
-      taskType: string,
-      durationMs: number,
-      totalSteps: number,
-      hadErrors: boolean,
-    ) => {
-      const { model, provider } = await getSelectedModelContext();
-      trackTaskComplete(
-        { taskId, sessionId, taskType },
-        durationMs,
-        totalSteps,
-        hadErrors,
-        model,
-        undefined,
-        undefined,
-        provider,
-      );
-    },
-  );
-
-  ha(
-    'analytics:task-error',
-    async (
-      _event: IpcMainInvokeEvent,
-      taskId: string,
-      sessionId: string,
-      taskType: string,
-      durationMs: number,
-      totalSteps: number,
-      errorType: string,
-    ) => {
-      const { model, provider } = await getSelectedModelContext();
-      trackTaskError(
-        { taskId, sessionId, taskType },
-        durationMs,
-        totalSteps,
-        errorType as TaskErrorCategory,
-        model,
-        undefined,
-        undefined,
-        provider,
-      );
-    },
-  );
-
-  ha(
-    'analytics:permission-requested',
-    async (
-      _event: IpcMainInvokeEvent,
-      taskId: string,
-      sessionId: string,
-      taskType: string,
-      permissionType: string,
-    ) => {
-      trackPermissionRequested({ taskId, sessionId, taskType }, permissionType);
-    },
-  );
-
-  ha(
-    'analytics:permission-response',
-    async (
-      _event: IpcMainInvokeEvent,
-      taskId: string,
-      sessionId: string,
-      taskType: string,
-      permissionType: string,
-      granted: boolean,
-    ) => {
-      trackPermissionResponse({ taskId, sessionId, taskType }, permissionType, granted);
-    },
-  );
-
-  ha(
-    'analytics:tool-used',
-    async (
-      _event: IpcMainInvokeEvent,
-      taskId: string,
-      sessionId: string,
-      taskType: string,
-      toolName: string,
-    ) => {
-      trackToolUsed({ taskId, sessionId, taskType }, toolName);
-    },
-  );
-
-  ha(
-    'analytics:user-interaction',
-    async (
-      _event: IpcMainInvokeEvent,
-      taskId: string,
-      sessionId: string,
-      taskType: string,
-      interactionType: string,
-      usedSuggestion: boolean,
-    ) => {
-      trackUserInteraction({ taskId, sessionId, taskType }, interactionType, usedSuggestion);
-    },
-  );
 
   // Session
   ha('analytics:app-close', async () => {
@@ -367,41 +188,6 @@ export function registerAnalyticsHandlers(): void {
   ha('analytics:task-launcher-action', async (_event: IpcMainInvokeEvent, action: string) => {
     trackTaskLauncherAction(action);
   });
-
-  // Task Feedback
-  ha(
-    'analytics:task-feedback',
-    async (
-      _event: IpcMainInvokeEvent,
-      taskId: string,
-      sessionId: string,
-      rating: string,
-      taskStatus: string,
-      feedbackStage: string,
-      feedbackReason?: string,
-      feedbackText?: string,
-    ) => {
-      trackTaskFeedback(
-        taskId,
-        sessionId,
-        rating,
-        taskStatus,
-        feedbackStage,
-        undefined,
-        undefined,
-        feedbackReason,
-        feedbackText,
-      );
-    },
-  );
-
-  // Agent Control
-  ha(
-    'analytics:stop-agent',
-    async (_event: IpcMainInvokeEvent, taskId: string, sessionId: string) => {
-      trackStopAgent(taskId, sessionId);
-    },
-  );
 
   // Provider Box
   ha(

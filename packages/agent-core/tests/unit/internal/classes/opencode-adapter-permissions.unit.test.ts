@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { PermissionRequest } from '../../../../src/common/types/permission.js';
-import { OpenCodeAdapter } from '../../../../src/internal/classes/OpenCodeAdapter.js';
+import { OpenCodeAdapter } from '../../../../src/internal/classes/open-code-adapter.js';
 
 describe('OpenCodeAdapter permission request mapping', () => {
   function constructAdapter(): OpenCodeAdapter {

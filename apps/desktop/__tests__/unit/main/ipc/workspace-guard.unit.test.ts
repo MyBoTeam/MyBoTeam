@@ -66,7 +66,7 @@ vi.mock('@main/daemon-bootstrap', () => ({
   }),
 }));
 
-vi.mock('@main/daemon/daemon-connector', () => ({
+vi.mock('@main/daemon/daemon-connector-events', () => ({
   isDaemonStopped: vi.fn(() => mockDaemonStopped),
 }));
 

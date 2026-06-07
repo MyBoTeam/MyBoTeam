@@ -1,133 +1,23 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { initGoogleAccountListener, useGoogleAccountStore } from '@/stores/googleAccountStore';
 import { GoogleAccountCard } from './GoogleAccountCard';
 import { GoogleLabelDialog } from './GoogleLabelDialog';
-
-const POLL_INTERVAL_MS = 2000;
-const POLL_MAX_ATTEMPTS = 15; // 30 s total
+import { useGoogleAuth } from './useGoogleAuth';
 
 export function GoogleAccountsSection() {
   const { accounts, loading, fetchAccounts, removeAccount, authError, clearAuthError } =
     useGoogleAccountStore();
   const [labelDialogOpen, setLabelDialogOpen] = useState(false);
-  const [connecting, setConnecting] = useState(false);
-  const [reconnectId, setReconnectId] = useState<string | null>(null);
-  const [pendingAuthState, setPendingAuthState] = useState<string | null>(null);
-  const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pollCancelRef = useRef<boolean>(false);
+  const { connecting, reconnectId, openAuth, cancelConnecting, setReconnectId } = useGoogleAuth();
 
   useEffect(() => {
     const cleanup = initGoogleAccountListener();
     fetchAccounts();
     return () => {
       cleanup();
-      pollCancelRef.current = true;
-      if (pollTimerRef.current !== null) {
-        clearTimeout(pollTimerRef.current);
-        pollTimerRef.current = null;
-      }
     };
   }, [fetchAccounts]);
-
-  // M5 review finding P2.3 (round-2 P2.B): when the daemon's
-  // background OAuth consumer emits `gws:account:auth-error`, abort the
-  // 30s `connecting` poll immediately. Surfacing the message is handled
-  // by the error banner render below; clearing it is the user's
-  // responsibility via the banner's dismiss button.
-  useEffect(() => {
-    if (!authError) {
-      return;
-    }
-    pollCancelRef.current = true;
-    if (pollTimerRef.current !== null) {
-      clearTimeout(pollTimerRef.current);
-      pollTimerRef.current = null;
-    }
-    setConnecting(false);
-    setPendingAuthState(null);
-    setReconnectId(null);
-  }, [authError]);
-
-  const openAuth = async (
-    label: string,
-    onComplete?: () => void,
-    accountId?: string,
-  ): Promise<void> => {
-    setConnecting(true);
-    try {
-      const result = await window.myboteam?.gws?.startAuth(label);
-      if (result?.authUrl && result.authUrl.length > 0) {
-        if (window.myboteam?.openExternal) {
-          await window.myboteam.openExternal(result.authUrl);
-        } else {
-          window.open(result.authUrl, '_blank');
-        }
-
-        setPendingAuthState(result.state);
-
-        // Poll fetchAccounts until a new account appears or reconnect completes
-        const knownIds = new Set(accounts.map((a) => a.googleAccountId));
-        const targetAccountId = accountId || reconnectId;
-        let attempts = 0;
-        pollCancelRef.current = false;
-        const poll = async (): Promise<void> => {
-          attempts++;
-          try {
-            await fetchAccounts();
-          } catch (_error) {
-            if (pollCancelRef.current) {
-              return;
-            }
-          }
-
-          // Check cancellation after async work
-          if (pollCancelRef.current) {
-            return;
-          }
-
-          const current = useGoogleAccountStore.getState().accounts;
-
-          // Check for new account (add flow)
-          const hasNewAccount = current.some((a) => !knownIds.has(a.googleAccountId));
-
-          // Check for reconnect completion (in-place update)
-          let reconnectComplete = false;
-          if (targetAccountId) {
-            const targetAccount = current.find((a) => a.googleAccountId === targetAccountId);
-            if (targetAccount?.status === 'connected') {
-              reconnectComplete = true;
-            }
-          }
-
-          if (hasNewAccount || reconnectComplete || attempts >= POLL_MAX_ATTEMPTS) {
-            if (pollTimerRef.current !== null) {
-              clearTimeout(pollTimerRef.current);
-              pollTimerRef.current = null;
-            }
-            setPendingAuthState(null);
-            setConnecting(false);
-            onComplete?.();
-            return;
-          }
-
-          // Check cancellation before scheduling next poll
-          if (pollCancelRef.current) {
-            return;
-          }
-
-          pollTimerRef.current = setTimeout(() => void poll(), POLL_INTERVAL_MS);
-        };
-        pollTimerRef.current = setTimeout(() => void poll(), POLL_INTERVAL_MS);
-      } else {
-        setConnecting(false);
-        onComplete?.();
-      }
-    } catch {
-      setConnecting(false);
-      onComplete?.();
-    }
-  };
 
   const handleAddConfirm = async (label: string): Promise<void> => {
     setLabelDialogOpen(false);
@@ -140,22 +30,7 @@ export function GoogleAccountsSection() {
       return;
     }
     setReconnectId(id);
-    // Clear reconnectId only after connecting is fully finished (inside onComplete)
     await openAuth(account.label, () => setReconnectId(null), id);
-  };
-
-  const handleCancelConnecting = async () => {
-    pollCancelRef.current = true;
-    if (pollTimerRef.current !== null) {
-      clearTimeout(pollTimerRef.current);
-      pollTimerRef.current = null;
-    }
-    if (pendingAuthState) {
-      await window.myboteam?.gws?.cancelAuth(pendingAuthState);
-    }
-    setReconnectId(null);
-    setPendingAuthState(null);
-    setConnecting(false);
   };
 
   return (
@@ -223,7 +98,7 @@ export function GoogleAccountsSection() {
               {connecting && (
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">Waiting for Google...</span>
-                  <Button variant="ghost" size="sm" onClick={handleCancelConnecting}>
+                  <Button variant="ghost" size="sm" onClick={cancelConnecting}>
                     Cancel
                   </Button>
                 </div>
@@ -236,7 +111,7 @@ export function GoogleAccountsSection() {
       {connecting && accounts.length === 0 && (
         <div className="mt-2 flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Waiting for Google...</span>
-          <Button variant="ghost" size="sm" onClick={handleCancelConnecting}>
+          <Button variant="ghost" size="sm" onClick={cancelConnecting}>
             Cancel
           </Button>
         </div>

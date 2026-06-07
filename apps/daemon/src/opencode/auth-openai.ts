@@ -72,49 +72,16 @@ import {
 } from '@myboteam/agent-core';
 import type { OpencodeClient } from '@opencode-ai/sdk/v2';
 import { log } from '../logger.js';
-import { createTransientOpencodeClient, type ServerManagerDeps } from './server-manager.js';
-
-const OPENAI_PROVIDER_ID = 'openai';
-const OPENAI_AUTH_TIMEOUT_MS = 2 * 60_000;
-const PREFERRED_OAUTH_LABEL = 'ChatGPT Pro/Plus';
-
-class OAuthLoginError extends Error {
-  constructor(message: string, options?: { cause?: unknown }) {
-    super(message, options as ErrorOptions | undefined);
-    this.name = 'OAuthLoginError';
-  }
-}
-
-function abortError(message: string): Error {
-  const error = new Error(message);
-  error.name = 'AbortError';
-  return error;
-}
-
-/**
- * Pick the OAuth-type auth method the SDK's `provider.auth` response lists
- * for OpenAI. Prefers the `ChatGPT Pro/Plus` label (matches commercial)
- * because that's the flow that produces an `openai.access` JWT from which
- * we decode the chatgpt_plan_type. Falls back to any oauth-type entry.
- */
-function pickOauthMethodIndex(methods: Array<{ type: 'oauth' | 'api'; label: string }>): number {
-  const preferred = methods.findIndex(
-    (m) => m.type === 'oauth' && m.label === PREFERRED_OAUTH_LABEL,
-  );
-  if (preferred !== -1) return preferred;
-  const anyOauth = methods.findIndex((m) => m.type === 'oauth');
-  if (anyOauth !== -1) return anyOauth;
-  throw new OAuthLoginError('OpenAI authentication is not available in this OpenCode runtime.');
-}
-
-interface ActiveSession {
-  sessionId: string;
-  abortController: AbortController;
-  authorizeUrl: string;
-  /** Promise that resolves when the SDK-reported OAuth completes (or rejects on timeout/abort). */
-  completion: Promise<OpenAiOauthPlan>;
-  runtime: { close: () => void };
-}
+import {
+  type ActiveSession,
+  abortError,
+  OAuthLoginError,
+  OPENAI_AUTH_TIMEOUT_MS,
+  OPENAI_PROVIDER_ID,
+  pickOauthMethodIndex,
+} from './auth-openai-utils.js';
+import type { ServerManagerDeps } from './server-config.js';
+import { createTransientOpencodeClient } from './server-transient.js';
 
 export class OpenAiOauthManager {
   private active: ActiveSession | null = null;
@@ -122,24 +89,10 @@ export class OpenAiOauthManager {
 
   constructor(private readonly deps: ServerManagerDeps) {}
 
-  /**
-   * Start a new OAuth flow. Spawns a transient `opencode serve`, asks the
-   * SDK for OpenAI auth methods, issues the oauth.authorize request, and
-   * returns the authorize URL plus a session handle. Desktop's IPC handler
-   * is expected to then call `shell.openExternal(authorizeUrl)` and
-   * follow with `awaitCompletion(sessionId)`.
-   *
-   * The `oauth.callback` RPC is issued in the background (inside `completion`)
-   * so that `awaitCompletion` can surface its resolution to the caller.
-   *
-   * If a prior session is still active it is aborted — users who click the
-   * sign-in button twice should get the fresher flow.
-   */
   async startLogin(): Promise<{ sessionId: string; authorizeUrl: string }> {
     if (this.disposed) {
       throw new OAuthLoginError('OAuth manager is disposed.');
     }
-
     if (this.active) {
       log.info('[auth.openai] Aborting prior in-flight session before starting a new one');
       this.abortActive();
@@ -152,8 +105,6 @@ export class OpenAiOauthManager {
     log.info(
       `[auth.openai] startLogin sessionId=${sessionId.slice(0, 8)} — spawning transient runtime`,
     );
-
-    // Stand up a transient opencode serve for the duration of this flow.
     const runtime = await createTransientOpencodeClient(this.deps, signal);
     if (signal.aborted) {
       runtime.close();
@@ -161,7 +112,6 @@ export class OpenAiOauthManager {
     }
     log.info('[auth.openai] Transient runtime ready, querying provider auth methods');
 
-    // Query available methods, pick an oauth entry.
     const authResult = await runtime.client.provider.auth();
     const methods = (
       authResult.data as Record<string, Array<{ type: 'oauth' | 'api'; label: string }>> | undefined
@@ -174,11 +124,6 @@ export class OpenAiOauthManager {
       `[auth.openai] Provider methods: ${methods.map((m) => `${m.type}:${m.label}`).join(', ')}`,
     );
 
-    // The current SDK's provider.oauth.authorize signature:
-    //   (parameters: { providerID, method?, directory?, workspace?, inputs? }, options?)
-    //   → { data?: { url?: string } }
-    // Commercial 1a320029 was written against an earlier SDK that used
-    // `{ path, body }`; the current SDK shape folds those into flat parameters.
     const methodIndex = pickOauthMethodIndex(methods);
     log.info(`[auth.openai] Calling oauth.authorize with method index ${methodIndex}`);
     const authorize = await runtime.client.provider.oauth.authorize({
@@ -196,17 +141,10 @@ export class OpenAiOauthManager {
         `Arming provider.oauth.callback and waiting for browser completion at localhost:1455.`,
     );
 
-    // Drive the completion side of the two-step OAuth contract. The
-    // `oauth.callback` RPC blocks server-side until the user finishes the
-    // browser flow and opencode has written auth.json; resolving that
-    // promise is what lets `awaitCompletion` return to the caller.
     const deadline = Date.now() + OPENAI_AUTH_TIMEOUT_MS;
     const completion: Promise<OpenAiOauthPlan> = (async () => {
       try {
         await Promise.race([
-          // The SDK's Options type does not declare `signal`, but the
-          // underlying fetch layer accepts it — same pattern we use in
-          // OpenCodeAdapter.runEventSubscription.
           runtime.client.provider.oauth.callback(
             { providerID: OPENAI_PROVIDER_ID, method: methodIndex },
             { throwOnError: true, signal } as unknown as Parameters<
@@ -234,8 +172,6 @@ export class OpenAiOauthManager {
         log.info('[auth.openai] oauth.callback resolved — reading plan from auth.json');
         return await detectOpenAiOauthPlan({ authStatePath: getOpenCodeAuthJsonPath() });
       } finally {
-        // Tear down the transient runtime once the flow resolves or aborts —
-        // regardless of success. Guard against double-close.
         try {
           runtime.close();
         } catch {
@@ -246,10 +182,6 @@ export class OpenAiOauthManager {
         }
       }
     })();
-    // Attach a no-op rejection handler so a rejection here (abort after
-    // dispose, timeout with no waiting caller) never surfaces as an
-    // unhandled rejection on the process. The real rejection still
-    // propagates to whoever is awaiting via `awaitCompletion`.
     completion.catch(() => {});
 
     this.active = {
@@ -263,13 +195,6 @@ export class OpenAiOauthManager {
     return { sessionId, authorizeUrl };
   }
 
-  /**
-   * Block until the given session's flow completes, times out, or is aborted.
-   * Returns `{ ok: true, plan }` on success, `{ ok: false, error }` on
-   * failure. A `timeoutMs` shorter than the internal deadline may be
-   * supplied; it caps how long the RPC call blocks rather than changing the
-   * flow's own deadline (the 2-minute window is enforced inside `startLogin`).
-   */
   async awaitCompletion(params: {
     sessionId: string;
     timeoutMs?: number;
@@ -278,7 +203,6 @@ export class OpenAiOauthManager {
     if (!session || session.sessionId !== params.sessionId) {
       return { ok: false, error: 'No matching in-flight OAuth session.' };
     }
-
     const timeoutMs = params.timeoutMs ?? OPENAI_AUTH_TIMEOUT_MS;
     try {
       const plan = await Promise.race([
@@ -299,12 +223,10 @@ export class OpenAiOauthManager {
     }
   }
 
-  /** Non-flow status read — delegates to the agent-core helper. */
   status(): { connected: boolean; expires?: number } {
     return getOpenAiOauthStatus();
   }
 
-  /** Return the current access token from the OAuth state file, or null. */
   getAccessToken(): string | null {
     return getOpenAiOauthAccessToken();
   }

@@ -32,7 +32,13 @@
       "tailwindDirectives": true
     }
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {
@@ -40,13 +46,24 @@
       "suspicious": {
         "noDebugger": "error",
         "noEmptyBlockStatements": "off",
-        "noConsole": { "level": "error" }
+        "noConsole": {
+          "level": "error"
+        }
       },
       "style": {
         "noDefaultExport": "error"
       },
       "correctness": {
         "noUnusedVariables": "error"
+      },
+      "nursery": {
+        "noExcessiveLinesPerFile": {
+          "level": "error",
+          "options": {
+            "maxLines": 200,
+            "skipBlankLines": true
+          }
+        }
       }
     }
   },
@@ -80,6 +97,9 @@
           },
           "a11y": {
             "useButtonType": "off"
+          },
+          "nursery": {
+            "noExcessiveLinesPerFile": "off"
           }
         }
       }
@@ -132,6 +152,19 @@
         "rules": {
           "suspicious": {
             "noUnknownAtRules": "off"
+          },
+          "nursery": {
+            "noExcessiveLinesPerFile": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/agent-core/src/index.ts"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noExcessiveLinesPerFile": "off"
           }
         }
       }
@@ -175,9 +208,18 @@
       }
     },
     {
-      "includes": ["**/scripts/**/*.cjs", "**/scripts/**/*.mjs", "**/scripts/**/*.js"],
-      "formatter": { "enabled": false },
-      "linter": { "enabled": false }
+      "includes": [
+        "**/scripts/**/*.cjs",
+        "**/scripts/**/*.mjs",
+        "**/scripts/**/*.js",
+        "**/scripts/**/*.ts"
+      ],
+      "formatter": {
+        "enabled": false
+      },
+      "linter": {
+        "enabled": false
+      }
     },
     {
       "includes": ["packages/agent-core/mcp-tools/**"],
@@ -196,6 +238,9 @@
           },
           "style": {
             "noNonNullAssertion": "off"
+          },
+          "nursery": {
+            "noExcessiveLinesPerFile": "off"
           }
         }
       }
@@ -264,8 +309,12 @@
         "**/mcp-tools/dev-browser/server.mjs",
         "**/mcp-tools/dev-browser/.browser-data/**"
       ],
-      "formatter": { "enabled": false },
-      "linter": { "enabled": false }
+      "formatter": {
+        "enabled": false
+      },
+      "linter": {
+        "enabled": false
+      }
     }
   ],
   "javascript": {

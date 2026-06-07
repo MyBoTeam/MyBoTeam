@@ -3,14 +3,13 @@ export {
   isPlaywrightInstalled,
   isSystemChromeInstalled,
 } from './detection.js';
-
 export {
   type BrowserServerConfig,
   ensureDevBrowserServer,
   installPlaywrightChromium,
   isDevBrowserServerReady,
-  type ServerStartResult,
   shutdownDevBrowserServer,
   startDevBrowserServer,
   waitForDevBrowserServer,
 } from './server.js';
+export type { ServerStartResult } from './server-config.js';

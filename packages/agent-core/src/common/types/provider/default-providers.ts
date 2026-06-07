@@ -1,0 +1,136 @@
+import { DEFAULT_PROVIDERS_EXTRAS } from './default-providers-extras.js';
+import type { ProviderConfig } from './provider-types.js';
+
+const DEFAULT_PROVIDERS_CORE: ProviderConfig[] = [
+  {
+    id: 'anthropic',
+    name: 'Anthropic',
+    requiresApiKey: true,
+    apiKeyEnvVar: 'ANTHROPIC_API_KEY',
+    defaultModelId: 'anthropic/claude-opus-4-5',
+    modelsEndpoint: {
+      url: 'https://api.anthropic.com/v1/models',
+      authStyle: 'x-api-key',
+      extraHeaders: { 'anthropic-version': '2023-06-01' },
+      responseFormat: 'anthropic',
+      modelIdPrefix: 'anthropic/',
+      modelFilter: /^claude-/,
+    },
+    models: [],
+  },
+  {
+    id: 'openai',
+    name: 'OpenAI',
+    requiresApiKey: true,
+    apiKeyEnvVar: 'OPENAI_API_KEY',
+    defaultModelId: 'openai/gpt-5.2',
+    modelsEndpoint: {
+      url: 'https://api.openai.com/v1/models',
+      authStyle: 'bearer',
+      responseFormat: 'openai',
+      modelIdPrefix: 'openai/',
+      modelFilter: /^gpt-|^o[134]|^chatgpt-/,
+    },
+    models: [],
+  },
+  {
+    id: 'google',
+    name: 'Google AI',
+    requiresApiKey: true,
+    apiKeyEnvVar: 'GOOGLE_GENERATIVE_AI_API_KEY',
+    defaultModelId: 'google/gemini-3-pro-preview',
+    modelsEndpoint: {
+      url: 'https://generativelanguage.googleapis.com/v1beta/models',
+      authStyle: 'query-param',
+      responseFormat: 'google',
+      modelIdPrefix: 'google/',
+    },
+    models: [],
+  },
+  {
+    id: 'xai',
+    name: 'xAI',
+    requiresApiKey: true,
+    apiKeyEnvVar: 'XAI_API_KEY',
+    baseUrl: 'https://api.x.ai',
+    defaultModelId: 'xai/grok-4',
+    modelsEndpoint: {
+      url: 'https://api.x.ai/v1/models',
+      authStyle: 'bearer',
+      responseFormat: 'openai',
+      modelIdPrefix: 'xai/',
+    },
+    models: [],
+  },
+  {
+    id: 'deepseek',
+    name: 'DeepSeek',
+    requiresApiKey: true,
+    apiKeyEnvVar: 'DEEPSEEK_API_KEY',
+    baseUrl: 'https://api.deepseek.com',
+    defaultModelId: 'deepseek/deepseek-chat',
+    modelsEndpoint: {
+      url: 'https://api.deepseek.com/models',
+      authStyle: 'bearer',
+      responseFormat: 'openai',
+      modelIdPrefix: 'deepseek/',
+    },
+    models: [],
+  },
+  {
+    id: 'moonshot',
+    name: 'Moonshot AI',
+    requiresApiKey: true,
+    apiKeyEnvVar: 'MOONSHOT_API_KEY',
+    baseUrl: 'https://api.moonshot.ai/v1',
+    defaultModelId: 'moonshot/kimi-k2.5',
+    modelsEndpoint: {
+      url: 'https://api.moonshot.ai/v1/models',
+      authStyle: 'bearer',
+      responseFormat: 'openai',
+      modelIdPrefix: 'moonshot/',
+    },
+    models: [],
+  },
+  {
+    id: 'zai',
+    name: 'Z.AI Coding Plan',
+    requiresApiKey: true,
+    apiKeyEnvVar: 'ZAI_API_KEY',
+    baseUrl: 'https://open.bigmodel.cn',
+    defaultModelId: 'zai/glm-4.7-flashx',
+    modelsEndpoint: {
+      url: 'https://open.bigmodel.cn/api/paas/v4/models',
+      authStyle: 'bearer',
+      responseFormat: 'openai',
+      modelIdPrefix: 'zai/',
+    },
+    models: [
+      {
+        id: 'glm-5',
+        displayName: 'GLM-5',
+        provider: 'zai',
+        fullId: 'zai/glm-5',
+        contextWindow: 128000,
+        supportsVision: false,
+      },
+    ],
+  },
+  {
+    id: 'bedrock',
+    name: 'Amazon Bedrock',
+    requiresApiKey: false,
+    models: [],
+  },
+  {
+    id: 'vertex',
+    name: 'Google Vertex AI',
+    requiresApiKey: false,
+    models: [],
+  },
+];
+
+export const DEFAULT_PROVIDERS: ProviderConfig[] = [
+  ...DEFAULT_PROVIDERS_CORE,
+  ...DEFAULT_PROVIDERS_EXTRAS,
+];

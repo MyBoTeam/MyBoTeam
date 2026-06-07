@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { OpenCodeCliNotFoundError } from '../../../src/internal/classes/OpenCodeAdapter.js';
+import { OpenCodeCliNotFoundError } from '../../../src/internal/classes/adapter-types.js';
 
 /**
  * Tests for TaskManager module.

@@ -6,10 +6,6 @@ export {
   type QuestionRequestData,
   type QuestionResponseData,
 } from './permission-handler.js';
-export {
-  createSpeechService,
-  SpeechService,
-  type TranscriptionError,
-  type TranscriptionResult,
-} from './speech.js';
+export { createSpeechService, SpeechService } from './speech.js';
+export type { TranscriptionError, TranscriptionResult } from './speech-types.js';
 export { type GetApiKeyFn, generateTaskSummary } from './summarizer.js';

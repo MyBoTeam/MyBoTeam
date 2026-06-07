@@ -1,18 +1,11 @@
 import type { Task, TaskMessage, TaskStatus } from '../../common/types/task.js';
 import { flushDatabase, getDatabase, withTransaction } from '../database.js';
 import { rowFromResult, rowsFromResult } from '../query-helpers.js';
+import { MAX_HISTORY_ITEMS } from './task-history-types.js';
 import type { StoredTask, TaskRow } from './task-row-mapper.js';
-import { getMessagesForTask, rowToTask } from './task-row-mapper.js';
+import { rowToTask } from './task-row-mapper.js';
 
-export type { StoredTask } from './task-row-mapper.js';
-
-// Todo functions
-export { clearTodosForTask, getTodosForTask, saveTodosForTask } from './task-todos.js';
-
-// Re-export for internal use by other modules
-export { getMessagesForTask };
-
-const MAX_HISTORY_ITEMS = 100;
+export * from './task-history-types.js';
 
 export function getTasks(workspaceId?: string | null, includeUnassigned = false): StoredTask[] {
   const db = getDatabase();
@@ -38,20 +31,33 @@ export function getTasks(workspaceId?: string | null, includeUnassigned = false)
       db.exec('SELECT * FROM tasks ORDER BY created_at DESC LIMIT ?', [MAX_HISTORY_ITEMS]),
     );
   }
-
   return rows.map(rowToTask);
 }
 
 export function getTask(taskId: string): StoredTask | undefined {
   const db = getDatabase();
   const row = rowFromResult<TaskRow>(db.exec('SELECT * FROM tasks WHERE id = ?', [taskId]));
-
   return row ? rowToTask(row) : undefined;
+}
+
+function insertAttachments(
+  db: ReturnType<typeof getDatabase>,
+  messageId: string,
+  attachments: TaskMessage['attachments'],
+): void {
+  if (!attachments?.length) return;
+  for (const att of attachments) {
+    db.run(`INSERT INTO task_attachments (message_id, type, data, label) VALUES (?, ?, ?, ?)`, [
+      messageId,
+      att.type,
+      att.data,
+      att.label || null,
+    ]);
+  }
 }
 
 export function saveTask(task: Task, workspaceId?: string | null): void {
   const db = getDatabase();
-
   withTransaction(db, () => {
     db.run(
       `INSERT OR REPLACE INTO tasks
@@ -69,9 +75,7 @@ export function saveTask(task: Task, workspaceId?: string | null): void {
         workspaceId || null,
       ],
     );
-
     db.run('DELETE FROM task_messages WHERE task_id = ?', [task.id]);
-
     let sortOrder = 0;
     for (const msg of task.messages || []) {
       db.run(
@@ -93,35 +97,20 @@ export function saveTask(task: Task, workspaceId?: string | null): void {
           msg.providerId || null,
         ],
       );
-
-      if (msg.attachments) {
-        for (const att of msg.attachments) {
-          db.run(
-            `INSERT INTO task_attachments (message_id, type, data, label) VALUES (?, ?, ?, ?)`,
-            [msg.id, att.type, att.data, att.label || null],
-          );
-        }
-      }
+      insertAttachments(db, msg.id, msg.attachments);
     }
-
     if (workspaceId) {
       db.run(
-        `DELETE FROM tasks
-         WHERE workspace_id = ?
-           AND id NOT IN (
-             SELECT id FROM tasks WHERE workspace_id = ?
-             ORDER BY created_at DESC LIMIT ?
-           )`,
+        `DELETE FROM tasks WHERE workspace_id = ? AND id NOT IN (
+          SELECT id FROM tasks WHERE workspace_id = ? ORDER BY created_at DESC LIMIT ?
+        )`,
         [workspaceId, workspaceId, MAX_HISTORY_ITEMS],
       );
     } else {
       db.run(
-        `DELETE FROM tasks
-         WHERE workspace_id IS NULL
-           AND id NOT IN (
-             SELECT id FROM tasks WHERE workspace_id IS NULL
-             ORDER BY created_at DESC LIMIT ?
-           )`,
+        `DELETE FROM tasks WHERE workspace_id IS NULL AND id NOT IN (
+          SELECT id FROM tasks WHERE workspace_id IS NULL ORDER BY created_at DESC LIMIT ?
+        )`,
         [MAX_HISTORY_ITEMS],
       );
     }
@@ -131,29 +120,19 @@ export function saveTask(task: Task, workspaceId?: string | null): void {
 
 export function updateTaskStatus(taskId: string, status: TaskStatus, completedAt?: string): void {
   const db = getDatabase();
-
-  if (completedAt) {
-    db.run('UPDATE tasks SET status = ?, completed_at = ? WHERE id = ?', [
-      status,
-      completedAt,
-      taskId,
-    ]);
-  } else {
-    db.run('UPDATE tasks SET status = ? WHERE id = ?', [status, taskId]);
-  }
+  const completedAtClause = completedAt ? ', completed_at = ?' : '';
+  const params = completedAt ? [status, completedAt, taskId] : [status, taskId];
+  db.run(`UPDATE tasks SET status = ?${completedAtClause} WHERE id = ?`, params);
   flushDatabase();
 }
 
 export function addTaskMessage(taskId: string, message: TaskMessage): void {
   const db = getDatabase();
-
   withTransaction(db, () => {
     const maxOrder = rowFromResult<{ max: number | null }>(
       db.exec('SELECT MAX(sort_order) as max FROM task_messages WHERE task_id = ?', [taskId]),
     );
-
     const sortOrder = (maxOrder?.max ?? -1) + 1;
-
     db.run(
       `INSERT INTO task_messages
         (id, task_id, type, content, tool_name, tool_input, timestamp, sort_order,
@@ -180,18 +159,8 @@ export function addTaskMessage(taskId: string, message: TaskMessage): void {
         message.providerId || null,
       ],
     );
-
-    if (message.attachments) {
-      db.run('DELETE FROM task_attachments WHERE message_id = ?', [message.id]);
-      for (const att of message.attachments) {
-        db.run(`INSERT INTO task_attachments (message_id, type, data, label) VALUES (?, ?, ?, ?)`, [
-          message.id,
-          att.type,
-          att.data,
-          att.label || null,
-        ]);
-      }
-    }
+    db.run('DELETE FROM task_attachments WHERE message_id = ?', [message.id]);
+    insertAttachments(db, message.id, message.attachments);
   });
   flushDatabase();
 }
@@ -221,9 +190,7 @@ export function clearHistory(): void {
 }
 
 export function setMaxHistoryItems(_max: number): void {}
-
 export function clearTaskHistoryStore(): void {
   clearHistory();
 }
-
 export function flushPendingTasks(): void {}

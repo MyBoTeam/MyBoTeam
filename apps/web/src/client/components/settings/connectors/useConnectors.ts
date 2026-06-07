@@ -4,15 +4,8 @@ import type {
   OAuthProviderId,
 } from '@myboteam/agent-core/common';
 import { useCallback, useEffect, useState } from 'react';
-import { createLogger } from '@/lib/logger';
 import { getMyBoTeam } from '@/lib/myboteam';
-
-const logger = createLogger('useConnectors');
-
-export interface SlackMcpAuthState {
-  connected: boolean;
-  pendingAuthorization: boolean;
-}
+import type { SlackMcpAuthState } from './useConnectors.types';
 
 export function useConnectors() {
   const [connectors, setConnectors] = useState<McpConnector[]>([]);
@@ -61,7 +54,7 @@ export function useConnectors() {
 
       setError(null);
     } catch (err) {
-      logger.error('Failed to load connectors:', err);
+      console.error('Failed to load connectors:', err);
       setError(err instanceof Error ? err.message : 'Failed to load connectors');
     } finally {
       setLoading(false);

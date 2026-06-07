@@ -100,54 +100,12 @@ export type {
 // ID utilities
 // -----------------------------------------------------------------------------
 export { createMessageId, createTaskId } from './common/utils/id.js';
-// -----------------------------------------------------------------------------
-// MCP OAuth helpers (pure HTTP fetch + PKCE)
-// -----------------------------------------------------------------------------
-export {
-  buildAuthorizationUrl,
-  discoverOAuthMetadata,
-  discoverOAuthProtectedResourceMetadata,
-  exchangeCodeForTokens,
-  generatePkceChallenge,
-  isTokenExpired,
-  refreshAccessToken,
-  registerOAuthClient,
-} from './connectors/mcp-oauth.js';
-export type { DaemonClientOptions } from './daemon/client.js';
-// -----------------------------------------------------------------------------
-// Daemon RPC infrastructure (client + transport + socket paths + PID lock)
-// -----------------------------------------------------------------------------
-export { DaemonClient } from './daemon/client.js';
-export { installCrashHandlers } from './daemon/crash-handlers.js';
-export type { PidLockHandle, PidLockPayload } from './daemon/pid-lock.js';
-export { acquirePidLock, PidLockError } from './daemon/pid-lock.js';
-export { getDaemonDir, getPidFilePath, getSocketPath } from './daemon/socket-path.js';
-export type { SocketTransportOptions } from './daemon/socket-transport.js';
-export { createSocketTransport } from './daemon/socket-transport.js';
-// -----------------------------------------------------------------------------
-// Log writer factory (file I/O only — uses internal LogFileWriter/LogCollector)
-// -----------------------------------------------------------------------------
+// IPC-related re-exports (daemon RPC, OAuth, OpenCode auth)
+export * from './desktop-main-ipc.js';
 export { createLogWriter } from './factories/log-writer.js';
 // Speech service factory (uses SecureStorage for API key — SecureStorage is
 // file-based AES, no SQLite)
 export { createSpeechService } from './factories/speech.js';
-// -----------------------------------------------------------------------------
-// OpenCode auth (reads auth.json from disk — file I/O, no DB)
-// -----------------------------------------------------------------------------
-export {
-  clearSlackMcpAuth,
-  getSlackMcpCallbackUrl,
-  getSlackMcpOauthStatus,
-  OPENCODE_SLACK_MCP_CALLBACK_HOST,
-  OPENCODE_SLACK_MCP_CALLBACK_PATH,
-  OPENCODE_SLACK_MCP_CALLBACK_PORT,
-  OPENCODE_SLACK_MCP_CLIENT_ID,
-  OPENCODE_SLACK_MCP_SERVER_URL,
-  setSlackMcpPendingAuth,
-  setSlackMcpTokens,
-} from './opencode/auth.js';
-// OpenCode CLI resolution (filesystem only)
-export { isCliAvailable, resolveCliPath } from './opencode/cli-resolver.js';
 export { testAzureFoundryConnection, validateAzureFoundry } from './providers/azure-foundry.js';
 export { fetchBedrockModels, validateBedrockCredentials } from './providers/bedrock.js';
 export type {

@@ -1,3 +1,5 @@
+import type { BrowserContext } from 'playwright';
+
 export interface ServeOptions {
   port?: number; // default 9224
   headless?: boolean; // default false (shows the browser window)
@@ -48,4 +50,22 @@ export interface PageStateResponse {
   title: string;
   canGoBack: boolean;
   canGoForward: boolean;
+}
+
+export interface DevBrowserServer {
+  wsEndpoint: string;
+  port: number;
+  stop: () => Promise<void>;
+}
+
+export interface BrowserPageServiceOptions {
+  headless: boolean;
+  ensureBrowserContext: () => Promise<BrowserContext>;
+  withPreservedForeground: <T>(operation: () => Promise<T>) => Promise<T>;
+}
+
+export interface EnsuredPage {
+  name: string;
+  targetId: string;
+  created: boolean;
 }

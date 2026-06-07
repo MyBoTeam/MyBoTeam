@@ -71,6 +71,7 @@ pnpm check && pnpm -F @myboteam/web test && pnpm -F @myboteam/desktop test && pn
 - **Do NOT modify released migration files** — create a new migration instead
 - **Do NOT add root-level test scripts** — tests are workspace-scoped (`-F @myboteam/web`, `-F @myboteam/desktop`, or `-F @myboteam/agent-core`)
 - **Do NOT spawn `npx`/`node`** without adding bundled Node.js bin to PATH (see [architecture.md](docs/architecture.md#spawning-npxnode-in-main-process))
+- **Do NOT create files over 200 lines** — split large files by class/function first, then by logical concern. Enforced by Biome's `noExcessiveLinesPerFile` rule.
 
 ## Architecture
 

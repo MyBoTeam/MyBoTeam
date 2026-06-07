@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { OpenCodeAdapter } from '../../../../src/internal/classes/OpenCodeAdapter.js';
+import { OpenCodeAdapter } from '../../../../src/internal/classes/open-code-adapter.js';
 
 /**
  * REGRESSION (Codex R5 P1): when the SDK delivers a text `message.part.updated`
