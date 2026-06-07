@@ -9,7 +9,8 @@ export {
   resetDatabase,
   resetDatabaseInstance,
 } from './database.js';
-export { CorruptDatabaseError, FutureSchemaError } from './migrations/errors.js';
+export { CorruptDatabaseError } from './migrations/corrupt-database-error.js';
+export { FutureSchemaError } from './migrations/errors.js';
 
 export {
   CURRENT_VERSION,
