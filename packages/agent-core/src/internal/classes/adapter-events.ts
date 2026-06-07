@@ -49,9 +49,12 @@ export function handleSdkEvent(state: AdapterState, event: OpenCodeSdkEvent): vo
     case 'session.error': {
       const props = event.properties as Record<string, unknown>;
       const err = (props.error ?? props) as
-        | { message?: string; name?: string; [k: string]: unknown }
+        | { message?: string; name?: string; data?: { message?: string }; [k: string]: unknown }
         | undefined;
-      const msg = err?.message ?? 'Session error';
+      const msg =
+        (err as { data?: { message?: string } } | undefined)?.data?.message ??
+        err?.message ??
+        'Session error';
       const modelCtx = state.currentModelId
         ? ` (provider=${state.currentProviderId ?? 'unknown'}, model=${state.currentModelId})`
         : '';

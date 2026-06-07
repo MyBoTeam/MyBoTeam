@@ -39,6 +39,11 @@ function killExistingDaemon(timeoutMs = 5000) {
           try {
             process.kill(pid, 0);
           } catch { break; }
+          require('child_process').spawnSync(
+            process.platform === 'win32' ? 'timeout' : 'sleep',
+            process.platform === 'win32' ? ['/t', '0', '/nobreak'] : ['0.05'],
+            { stdio: 'ignore' },
+          );
         }
       } catch {}
     }

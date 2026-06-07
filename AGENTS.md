@@ -66,8 +66,6 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ---
 
-# AGENTS.md
-
 This file provides general guidance for agents working with code in this repository.
 
 ## Project Overview
