@@ -31,6 +31,7 @@ export async function startGoogleOAuth(label: string): Promise<{
   waitForCallback: () => Promise<GoogleAuthResult>;
 }> {
   const clientId = process.env.GOOGLE_CLIENT_ID ?? '';
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET ?? '';
   if (!clientId) {
     getLogCollector().log('WARN', 'main', 'GOOGLE_CLIENT_ID is not set — OAuth will fail');
   }
@@ -114,6 +115,7 @@ export async function startGoogleOAuth(label: string): Promise<{
             codeVerifier,
             redirectUri,
             clientId,
+            clientSecret,
             label,
           );
           getLogCollector().log('INFO', 'main', 'Google account connected', {

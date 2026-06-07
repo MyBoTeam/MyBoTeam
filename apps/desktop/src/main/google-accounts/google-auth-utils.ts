@@ -39,18 +39,23 @@ export async function exchangeCodeForResult(
   codeVerifier: string,
   redirectUri: string,
   clientId: string,
+  clientSecret: string,
   _label: string,
 ): Promise<GoogleAuthResult> {
+  const params: Record<string, string> = {
+    code,
+    client_id: clientId,
+    redirect_uri: redirectUri,
+    code_verifier: codeVerifier,
+    grant_type: 'authorization_code',
+  };
+  if (clientSecret) {
+    params.client_secret = clientSecret;
+  }
   const tokenRes = await fetch(GOOGLE_TOKEN_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      code,
-      client_id: clientId,
-      redirect_uri: redirectUri,
-      code_verifier: codeVerifier,
-      grant_type: 'authorization_code',
-    }).toString(),
+    body: new URLSearchParams(params).toString(),
   });
 
   if (!tokenRes.ok) {
