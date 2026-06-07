@@ -18,7 +18,7 @@ if (isClean) {
   env.CLEAN_START = '1';
 }
 
-function killExistingDaemon() {
+function killExistingDaemon(timeoutMs = 5000) {
   const daemonDir = path.join(require('os').homedir(), '.myboteam');
   const pidPath = path.join(daemonDir, 'daemon.pid');
   const sockPath = process.platform === 'win32'
@@ -34,7 +34,7 @@ function killExistingDaemon() {
         process.kill(pid, 0);
         console.log(`[dev] Stopping existing daemon (pid ${pid})...`);
         killProcessTree(pid, { force: true });
-        const deadline = Date.now() + 5000;
+        const deadline = Date.now() + timeoutMs;
         while (Date.now() < deadline) {
           try {
             process.kill(pid, 0);
@@ -66,6 +66,7 @@ function shutdown(reason) {
   killChildProcess(electron, { force: true });
   killChildProcess(web, { force: true });
   clearPort(5173);
+  killExistingDaemon(2000);
 
   process.exit(resolveExitCode(reason));
 }
