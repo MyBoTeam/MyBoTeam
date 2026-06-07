@@ -1,4 +1,4 @@
-import { WorkspacesPanel } from '@/components/settings/WorkspacesPanel';
+import { WorkspacesPanel } from './components/WorkspacesPanel';
 
 export function WorkspacesPage() {
   return (

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AddSkillDropdown, SkillsPanel } from '@/components/settings/skills';
+import { AddSkillDropdown, SkillsPanel } from './components/';
 
 export function SkillsPage() {
   const { t } = useTranslation('settings');

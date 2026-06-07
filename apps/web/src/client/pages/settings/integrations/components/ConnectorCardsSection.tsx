@@ -1,9 +1,9 @@
 import type { ConnectorAuthStatus } from '@myboteam/agent-core/common';
 import { OAuthProviderId } from '@myboteam/agent-core/common';
 import { useTranslation } from 'react-i18next';
-import { DatadogConnectorCard } from '@/components/settings/connectors/DatadogConnectorCard';
-import { LightdashConnectorCard } from '@/components/settings/connectors/LightdashConnectorCard';
-import { OAuthConnectorCard } from '@/components/settings/connectors/OAuthConnectorCard';
+import { DatadogConnectorCard } from '../../connectors/components/DatadogConnectorCard';
+import { LightdashConnectorCard } from '../../connectors/components/LightdashConnectorCard';
+import { OAuthConnectorCard } from '../../connectors/components/OAuthConnectorCard';
 import githubIcon from '/assets/icons/integrations/github.svg';
 import jiraIcon from '/assets/icons/integrations/jira.svg';
 import mondayIcon from '/assets/icons/integrations/monday.svg';

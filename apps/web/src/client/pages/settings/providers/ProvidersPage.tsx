@@ -4,9 +4,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { FIRST_FOUR_PROVIDERS } from '@/components/layout/settings-tabs';
-import { ProviderGrid } from '@/components/settings/ProviderGrid';
-import { ProviderSettingsPanel } from '@/components/settings/ProviderSettingsPanel';
-import { SandboxSection } from '@/components/settings/SandboxSection';
+import { ProviderGrid } from './components/ProviderGrid';
+import { ProviderSettingsPanel } from './components/ProviderSettingsPanel';
+import { SandboxSection } from '../general/components/SandboxSection';
 import { useSettings } from '@/hooks/useSettings';
 import { settingsTransitions, settingsVariants } from '@/lib/animations';
 

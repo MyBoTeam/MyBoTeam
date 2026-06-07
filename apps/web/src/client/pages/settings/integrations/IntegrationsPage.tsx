@@ -1,4 +1,4 @@
-import { IntegrationsPanel } from '@/components/settings/integrations';
+import { IntegrationsPanel } from './components/';
 
 export function IntegrationsPage() {
   return (

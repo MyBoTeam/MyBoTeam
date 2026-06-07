@@ -1,4 +1,4 @@
-import { GeneralTab } from '@/components/settings/GeneralTab';
+import { GeneralTab } from './components/GeneralTab';
 import { useSettings } from '@/hooks/useSettings';
 
 export function GeneralPage() {

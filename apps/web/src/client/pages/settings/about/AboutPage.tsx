@@ -1,4 +1,4 @@
-import { AboutTab } from '@/components/settings/AboutTab';
+import { AboutTab } from './components/AboutTab';
 
 export function AboutPage() {
   return (

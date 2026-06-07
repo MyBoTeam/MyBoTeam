@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { ConnectorAddForm } from '@/components/settings/connectors/ConnectorAddForm';
-import { ConnectorList } from '@/components/settings/connectors/ConnectorList';
-import { SlackConnectorSection } from '@/components/settings/connectors/SlackConnectorSection';
-import { useConnectorsPanel } from '@/components/settings/connectors/useConnectorsPanel';
+import { ConnectorAddForm } from '../../connectors/components/ConnectorAddForm';
+import { ConnectorList } from '../../connectors/components/ConnectorList';
+import { SlackConnectorSection } from '../../connectors/components/SlackConnectorSection';
+import { useConnectorsPanel } from '../../connectors/components/useConnectorsPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { settingsTransitions, settingsVariants } from '@/lib/animations';
 import { ConnectorCardsSection } from './ConnectorCardsSection';

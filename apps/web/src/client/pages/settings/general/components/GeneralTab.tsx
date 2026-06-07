@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { DaemonSection } from '@/components/settings/DaemonSection';
-import { DebugSection } from '@/components/settings/DebugSection';
-import { LanguageSelector } from '@/components/settings/LanguageSelector';
-import { NotificationsSection } from '@/components/settings/NotificationsSection';
-import { ThemeSelector } from '@/components/settings/ThemeSelector';
+import { DaemonSection } from './DaemonSection';
+import { DebugSection } from './DebugSection';
+import { LanguageSelector } from './LanguageSelector';
+import { NotificationsSection } from './NotificationsSection';
+import { ThemeSelector } from './ThemeSelector';
 import { SpeechSettingsForm } from './SpeechSettingsForm';
 
 interface GeneralTabProps {

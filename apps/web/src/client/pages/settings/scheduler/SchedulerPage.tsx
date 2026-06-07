@@ -1,4 +1,4 @@
-import { SchedulerPanel } from '@/components/settings/scheduler';
+import { SchedulerPanel } from './components/';
 
 export function SchedulerPage() {
   return (

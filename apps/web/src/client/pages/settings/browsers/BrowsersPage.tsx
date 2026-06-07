@@ -1,4 +1,4 @@
-import { CloudBrowsersPanel } from '@/components/settings/CloudBrowsersPanel';
+import { CloudBrowsersPanel } from './components/CloudBrowsersPanel';
 
 export function BrowsersPage() {
   return (

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { CreateSkillModal } from '@/components/skills/CreateSkillModal';
+import { CreateSkillModal } from './CreateSkillModal';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,

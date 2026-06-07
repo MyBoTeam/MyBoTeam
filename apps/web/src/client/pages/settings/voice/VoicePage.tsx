@@ -1,4 +1,4 @@
-import { SpeechSettingsForm } from '@/components/settings/SpeechSettingsForm';
+import { SpeechSettingsForm } from '../general/components/SpeechSettingsForm';
 
 export function VoicePage() {
   return (
