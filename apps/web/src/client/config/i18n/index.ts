@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
-import { createLogger } from '../lib/logger';
+import { createLogger } from '@/utils/logger';
 import { enResources } from './locales/en';
 import { frResources } from './locales/fr';
 import { ruResources } from './locales/ru';
