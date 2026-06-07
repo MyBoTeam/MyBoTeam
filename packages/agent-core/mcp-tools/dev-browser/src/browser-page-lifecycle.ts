@@ -1,3 +1,4 @@
+import type { Page } from 'playwright';
 import {
   attachPageCloseHandler,
   detachReleasedEntry,
@@ -29,7 +30,7 @@ export class PageLifecycleManager {
   readonly registry = new Map<string, PageEntry>();
   readonly releasedPageUrls = new Map<string, string>();
   readonly knownTaskPages = new Set<string>();
-  readonly closeHandlers = new WeakMap<any, () => void>();
+  readonly closeHandlers = new WeakMap<Page, () => void>();
   readonly screencastController = new BrowserScreencastController();
   readonly pageFactory: BrowserTaskPageFactory;
   readonly windowController: BrowserWindowController;

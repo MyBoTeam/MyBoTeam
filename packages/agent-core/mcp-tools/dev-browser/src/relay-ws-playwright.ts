@@ -1,3 +1,4 @@
+import type { WSContext } from 'hono/ws';
 import type { CDPCommand, PlaywrightClient, RelayContext } from './relay-protocol.js';
 import { routeCdpCommand, sendAttachedToTarget, sendToPlaywright } from './relay-transport.js';
 
@@ -15,7 +16,11 @@ export function createPlaywrightWsHandler(ctx: RelayContext) {
           ws.close(1000, 'Client ID already connected');
           return;
         }
-        const client: PlaywrightClient = { id: clientId, ws: ws as any, knownTargets: new Set() };
+        const client: PlaywrightClient = {
+          id: clientId,
+          ws: ws as unknown as WSContext,
+          knownTargets: new Set(),
+        };
         ctx.playwrightClients.set(clientId, client);
         ctx.log(`Playwright client connected: ${clientId}`);
       },

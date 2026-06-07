@@ -50,7 +50,7 @@ export class DaemonRpcServer {
     return false;
   }
 
-  notify(method: string, params: any): void {
+  notify(method: string, params: unknown): void {
     const notification = { jsonrpc: '2.0' as const, method, params };
     const data = `${JSON.stringify(notification)}\n`;
     for (const client of this.clients.values()) {

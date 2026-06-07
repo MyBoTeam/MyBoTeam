@@ -1,3 +1,4 @@
+import type { IpcMainInvokeEvent } from 'electron';
 import { getDaemonClient } from '../../daemon-bootstrap';
 import { handle } from './utils';
 
@@ -21,10 +22,17 @@ export async function getSelectedModelContext(): Promise<{
   }
 }
 
-export type HaFn = (channel: string, fn: (event: any, ...args: any[]) => Promise<unknown>) => void;
+export type HaFn = <Args extends unknown[]>(
+  channel: string,
+  fn: (event: IpcMainInvokeEvent, ...args: Args) => Promise<unknown>,
+) => void;
 
 export function createHa(analyticsEnabled: boolean): HaFn {
-  return (channel: string, fn: (event: any, ...args: any[]) => Promise<unknown>) => {
-    handle(channel, analyticsEnabled ? fn : async () => {});
+  return <Args extends unknown[]>(
+    channel: string,
+    fn: (event: IpcMainInvokeEvent, ...args: Args) => Promise<unknown>,
+  ) => {
+    const noop: (event: IpcMainInvokeEvent, ...args: Args) => Promise<unknown> = async () => ({});
+    handle(channel, analyticsEnabled ? fn : noop);
   };
 }

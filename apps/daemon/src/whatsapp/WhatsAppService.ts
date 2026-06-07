@@ -6,6 +6,7 @@ import type {
 import { EventEmitter } from 'events';
 import path from 'path';
 import { cleanupAuthState } from './authCleanup.js';
+import type { BaileysChat, BaileysMessage, BaileysSocket, BaileysStore } from './baileys-types.js';
 import { clearReconnectTimer, createReconnectState, type ReconnectState } from './reconnection.js';
 import { initBaileysSocket, wireSocketEvents } from './whatsapp-service-init.js';
 import {
@@ -19,8 +20,8 @@ export type { ChatSummary, MessageSummary, WhatsAppServiceEvents } from './whats
 
 export class WhatsAppService extends EventEmitter implements ChannelAdapter {
   readonly channelType: MessagingProviderId = 'whatsapp';
-  private socket: any | null = null;
-  private store: any | null = null;
+  private socket: BaileysSocket | null = null;
+  private store: BaileysStore | null = null;
   private status: MessagingConnectionStatus = 'disconnected';
   private reconnect: ReconnectState = createReconnectState();
   private authStatePath: string;
@@ -67,25 +68,31 @@ export class WhatsAppService extends EventEmitter implements ChannelAdapter {
         socket.end(new Error('WhatsApp service disposed during connect'));
         return;
       }
-      this.socket = socket;
+      this.socket = socket as unknown as BaileysSocket;
       this.store = store;
-      wireSocketEvents(socket, saveCreds, DisconnectReason, jidNormalizedUser, {
-        reconnect: this.reconnect,
-        authStatePath: this.authStatePath,
-        disposed: this.disposed,
-        manualDisconnect: this.manualDisconnect,
-        setStatus: (s) => this.setStatus(s),
-        setQrCode: (qr) => {
-          this.qrCode = qr;
-          this.qrIssuedAt = Date.now();
+      wireSocketEvents(
+        socket as unknown as BaileysSocket,
+        saveCreds,
+        DisconnectReason as unknown as Record<string, number>,
+        jidNormalizedUser,
+        {
+          reconnect: this.reconnect,
+          authStatePath: this.authStatePath,
+          disposed: this.disposed,
+          manualDisconnect: this.manualDisconnect,
+          setStatus: (s) => this.setStatus(s),
+          setQrCode: (qr) => {
+            this.qrCode = qr;
+            this.qrIssuedAt = Date.now();
+          },
+          emitQr: (qr) => this.emit('qr', qr),
+          emitPhoneNumber: (p) => this.emit('phoneNumber', p),
+          emitOwnerLid: (lid) => this.emit('ownerLid', lid),
+          connect: () => this.connect(),
+          sentMessageIds: this.sentMessageIds,
+          emitMessage: (msg) => this.emit('message', msg),
         },
-        emitQr: (qr) => this.emit('qr', qr),
-        emitPhoneNumber: (p) => this.emit('phoneNumber', p),
-        emitOwnerLid: (lid) => this.emit('ownerLid', lid),
-        connect: () => this.connect(),
-        sentMessageIds: this.sentMessageIds,
-        emitMessage: (msg) => this.emit('message', msg),
-      });
+      );
     } catch (err) {
       this.setStatus('disconnected');
       throw err;
@@ -94,7 +101,8 @@ export class WhatsAppService extends EventEmitter implements ChannelAdapter {
   async sendMessage(recipientId: string, text: string): Promise<void> {
     if (!this.socket) throw new Error('WhatsApp is not connected');
     const result = await this.socket.sendMessage(recipientId, { text });
-    if (result?.key?.id) this.sentMessageIds.add(result.key.id as string);
+    const resultKey = (result as { key?: { id?: string } } | undefined)?.key;
+    if (resultKey?.id) this.sentMessageIds.add(resultKey.id);
   }
   getQrCode(): string | null {
     return this.qrCode;
@@ -138,16 +146,16 @@ export class WhatsAppService extends EventEmitter implements ChannelAdapter {
   }
   getChats(limit: number): ChatSummary[] {
     if (!this.store) return [];
-    const chats: any[] = this.store.chats.all() ?? [];
+    const chats: BaileysChat[] = this.store.chats.all() ?? [];
     return chats.slice(0, limit).map((c) => ({
-      jid: c.id as string,
-      name: c.name as string | undefined,
+      jid: c.id,
+      name: c.name,
       lastMessageAt: toTimestamp(c.conversationTimestamp),
     }));
   }
   getMessages(jid: string, limit: number): MessageSummary[] {
     if (!this.store) return [];
-    const msgs: any[] = this.store.messages[jid]?.all() ?? [];
+    const msgs: BaileysMessage[] = this.store.messages[jid]?.all() ?? [];
     return msgs.slice(-limit).flatMap((m) => {
       const text: string | undefined =
         m.message?.conversation ?? m.message?.extendedTextMessage?.text;

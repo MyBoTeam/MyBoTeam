@@ -1,4 +1,5 @@
 import type http from 'node:http';
+import type { HfPreTrainedModel, HfTokenizer } from './hf-types';
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -20,9 +21,9 @@ export interface ServerState {
   loadedModelId: string | null;
   pipeline: unknown;
 
-  tokenizer: (((...args: any[]) => any) & Record<string, any>) | null;
+  tokenizer: HfTokenizer | null;
 
-  model: Record<string, any> | null;
+  model: HfPreTrainedModel | null;
   isLoading: boolean;
 
   isStopping: boolean;

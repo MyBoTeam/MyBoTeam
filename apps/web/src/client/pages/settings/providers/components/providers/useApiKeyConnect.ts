@@ -3,6 +3,7 @@ import { DEFAULT_PROVIDERS } from '@myboteam/agent-core/common';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getMyBoTeam } from '@/config/myboteam';
+import type { ProviderUnion } from '@/config/myboteam-types';
 import { createLogger } from '@/utils/logger';
 import { useProviderModels } from './useProviderModels';
 
@@ -134,7 +135,7 @@ export function useApiKeyConnect({
         return;
       }
 
-      await myboteam.addApiKey(providerId as any, apiKey.trim());
+      await myboteam.addApiKey(providerId as ProviderUnion, apiKey.trim());
       let models: Array<{ id: string; name: string }> | undefined;
       if (providerConfig?.modelsEndpoint) {
         const fetchResult = await myboteam.fetchProviderModels(providerId, {

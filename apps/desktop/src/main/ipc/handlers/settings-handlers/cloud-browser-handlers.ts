@@ -1,3 +1,4 @@
+import type { CloudBrowserConfig } from '@myboteam/agent-core/common';
 import type { IpcMainInvokeEvent } from 'electron';
 import { getDaemonClient } from '../../../daemon-bootstrap';
 import type { IpcHandler } from '../../types';
@@ -58,7 +59,9 @@ export function registerCloudBrowserHandlers(handle: IpcHandler): void {
         }
       }
 
-      await getDaemonClient().call('settings.setCloudBrowserConfig', { config: cfg as any });
+      await getDaemonClient().call('settings.setCloudBrowserConfig', {
+        config: cfg as unknown as CloudBrowserConfig,
+      });
     },
   );
 }

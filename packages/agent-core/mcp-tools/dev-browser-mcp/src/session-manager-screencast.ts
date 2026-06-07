@@ -30,7 +30,7 @@ export async function startScreencast(pageName?: string): Promise<void> {
       quality: 50,
       maxWidth: 800,
       everyNthFrame: 1,
-    } as any);
+    } as Record<string, unknown>);
 
     let lastFrameTime = 0;
 
@@ -39,7 +39,10 @@ export async function startScreencast(pageName?: string): Promise<void> {
         const now = Date.now();
         if (now - lastFrameTime < FRAME_INTERVAL_MS) {
           await session
-            .send('Page.screencastFrameAck', { sessionId: event.sessionId } as any)
+            .send('Page.screencastFrameAck', { sessionId: event.sessionId } as Record<
+              string,
+              unknown
+            >)
             .catch(() => {});
           return;
         }
@@ -55,7 +58,10 @@ export async function startScreencast(pageName?: string): Promise<void> {
           }),
         );
         await session
-          .send('Page.screencastFrameAck', { sessionId: event.sessionId } as any)
+          .send('Page.screencastFrameAck', { sessionId: event.sessionId } as Record<
+            string,
+            unknown
+          >)
           .catch(() => {});
       } catch (err) {
         console.error('[dev-browser-mcp] Error handling screencast frame:', err);

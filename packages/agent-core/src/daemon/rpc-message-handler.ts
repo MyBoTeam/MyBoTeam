@@ -1,12 +1,12 @@
 import type { JsonRpcMessage, JsonRpcRequest, JsonRpcResponse } from '../common/types/daemon.js';
 import { JSON_RPC_ERRORS } from '../common/types/daemon.js';
 
-export type AnyMethodHandler = (params: any) => Promise<unknown> | unknown;
+export type AnyMethodHandler = (params: unknown) => Promise<unknown> | unknown;
 
 export interface RpcClient {
   id: string;
 
-  socket: { destroyed: boolean; write: (data: string) => any };
+  socket: { destroyed: boolean; write: (data: string) => boolean };
   buffer: string;
 }
 

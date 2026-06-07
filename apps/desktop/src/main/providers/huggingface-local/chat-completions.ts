@@ -1,5 +1,6 @@
 import type http from 'node:http';
 import { getLogCollector } from '../../logging';
+import type { HfTensor } from './hf-types';
 import { formatChatPrompt } from './model-loader';
 import { validateSamplingParams, writeJsonError } from './request-helpers';
 import {
@@ -109,7 +110,7 @@ export async function handleStreamingCompletion(
       top_p: topP,
       do_sample: temperature > 0,
 
-      callback_function: (output: any) => {
+      callback_function: (output: HfTensor) => {
         const lastToken = output.slice(null, -1);
 
         const tokenizer = state.tokenizer;

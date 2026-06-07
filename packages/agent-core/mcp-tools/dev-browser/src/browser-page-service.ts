@@ -10,6 +10,7 @@ import {
   navigateEntryPage,
   reloadPage,
 } from './browser-page-navigation.js';
+import type { PageEntry } from './browser-page-service-state.js';
 import { BrowserPageStateReader } from './browser-page-state-reader.js';
 import { isClosedPageError } from './browser-runtime-utils.js';
 import type {
@@ -163,7 +164,7 @@ export class BrowserPageService {
 
   private async runPageOperation(
     name: string,
-    operation: (entry: any) => Promise<void>,
+    operation: (entry: PageEntry) => Promise<void>,
   ): Promise<PageStateResponse | null> {
     const entry = this.registry.get(name);
     if (!entry) return null;
@@ -179,14 +180,14 @@ export class BrowserPageService {
     return this.getPageState(name, entry);
   }
 
-  private deleteStaleEntry(name: string, entry: any): void {
+  private deleteStaleEntry(name: string, entry: PageEntry): void {
     if (this.registry.get(name) === entry) {
       void this.lifecycle.screencastController.stop(entry);
       this.registry.delete(name);
     }
   }
 
-  private async getPageState(name: string, entry: any): Promise<PageStateResponse | null> {
+  private async getPageState(name: string, entry: PageEntry): Promise<PageStateResponse | null> {
     const { page } = entry;
     try {
       if (page.isClosed()) {

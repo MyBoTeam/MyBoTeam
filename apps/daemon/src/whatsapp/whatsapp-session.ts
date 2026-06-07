@@ -1,6 +1,7 @@
 import type { MessagingConnectionStatus } from '@myboteam/agent-core/common';
 import { log } from '../logger.js';
 import { cleanupAuthState } from './authCleanup.js';
+import type { BaileysSocket } from './baileys-types.js';
 import { type ReconnectState, scheduleReconnect } from './reconnection.js';
 
 export interface WhatsAppServiceEvents {
@@ -31,7 +32,7 @@ export interface SessionHandlerContext {
   disposed: boolean;
   manualDisconnect: boolean;
 
-  socket: any | null;
+  socket: BaileysSocket | null;
   setStatus(s: MessagingConnectionStatus): void;
   setQrCode(qr: string | null): void;
   emitQr(qr: string): void;
