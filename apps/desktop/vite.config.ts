@@ -23,7 +23,7 @@ function buildThemeInit(): import('vite').Plugin {
   async function generate() {
     await esbuild.build({
       stdin: {
-        contents: `import { initEarlyTheme } from '../web/src/client/lib/theme-core.ts'; initEarlyTheme();`,
+        contents: `import { initEarlyTheme } from '../web/src/client/utils/theme-core.js'; initEarlyTheme();`,
         resolveDir: __dirname,
         loader: 'ts',
       },

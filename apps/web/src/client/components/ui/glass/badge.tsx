@@ -1,7 +1,7 @@
 import type * as React from 'react';
 import { Badge as BaseBadge } from '@/components/ui/badge';
-import { type HoverEffect, hoverEffects } from '@/lib/hover-effects';
-import { cn } from '@/lib/utils';
+import { type HoverEffect, hoverEffects } from '@/utils/hover-effects';
+import { cn } from '@/utils/utils';
 
 export interface BadgeProps extends Omit<React.ComponentProps<typeof BaseBadge>, 'variant'> {
   variant?: 'glass' | 'frosted' | 'fluted' | 'crystal';

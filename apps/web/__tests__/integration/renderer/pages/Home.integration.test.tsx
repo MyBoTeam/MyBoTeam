@@ -64,7 +64,7 @@ const mockMyBoTeam = {
   onThemeColorChange: vi.fn().mockReturnValue(() => {}),
 };
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => mockMyBoTeam,
   useMyBoTeam: () => mockMyBoTeam,
 }));
@@ -116,7 +116,7 @@ vi.mock('framer-motion', () => ({
 }));
 
 // Mock SettingsDialog
-vi.mock('@/components/layout/SettingsDialog', () => ({
+vi.mock('@/layouts/main/components/SettingsDialog', () => ({
   SettingsDialog: ({
     open,
     onOpenChange,

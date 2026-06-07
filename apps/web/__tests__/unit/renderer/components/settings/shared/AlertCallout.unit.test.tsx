@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { AlertCallout } from '@/components/settings/shared/AlertCallout';
+import { AlertCallout } from '@/pages/settings/providers/components/shared/AlertCallout';
 
 describe('AlertCallout', () => {
   it('renders with title and detail', () => {

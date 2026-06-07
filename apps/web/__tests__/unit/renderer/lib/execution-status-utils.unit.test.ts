@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getStatusTranslationKey } from '@/pages/execution/executionStatusUtils';
+import { getStatusTranslationKey } from '@/pages/conversation/conversationStatusUtils';
 
 describe('getStatusTranslationKey', () => {
   it('maps "interrupted" to "status.stopped"', () => {

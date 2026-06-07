@@ -18,7 +18,7 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-import { OAuthConnectorCard } from '@/components/settings/connectors/OAuthConnectorCard';
+import { OAuthConnectorCard } from '@/pages/settings/connectors/components/OAuthConnectorCard';
 
 const disconnected = { connected: false, pendingAuthorization: false };
 const connected = { connected: true, pendingAuthorization: false };

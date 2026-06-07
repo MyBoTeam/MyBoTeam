@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { applyColorTheme, COLOR_CLASSES, isValidColor, VALID_COLORS } from '@/lib/theme-color';
+import { applyColorTheme, COLOR_CLASSES, isValidColor, VALID_COLORS } from '@/utils/theme-color';
 
 describe('theme-color', () => {
   beforeEach(() => {

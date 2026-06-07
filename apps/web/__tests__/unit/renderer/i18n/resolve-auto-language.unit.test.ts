@@ -16,7 +16,7 @@ vi.mock('react-i18next', () => ({
   initReactI18next: {},
 }));
 
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/config/logger', () => ({
   createLogger: () => ({ info: vi.fn(), warn: vi.fn() }),
 }));
 
@@ -32,7 +32,7 @@ describe('resolveAutoLanguage', () => {
 
   it('returns zh-CN for zh-TW navigator', async () => {
     vi.stubGlobal('navigator', { language: 'zh-TW' });
-    const { changeLanguage } = await import('@/i18n');
+    const { changeLanguage } = await import('@/config/i18n');
     const i18nModule = await import('i18next');
     await changeLanguage('auto');
     expect(i18nModule.default.changeLanguage).toHaveBeenCalledWith('zh-CN');
@@ -40,7 +40,7 @@ describe('resolveAutoLanguage', () => {
 
   it('returns ru for ru-RU navigator', async () => {
     vi.stubGlobal('navigator', { language: 'ru-RU' });
-    const { changeLanguage } = await import('@/i18n');
+    const { changeLanguage } = await import('@/config/i18n');
     const i18nModule = await import('i18next');
     await changeLanguage('auto');
     expect(i18nModule.default.changeLanguage).toHaveBeenCalledWith('ru');
@@ -48,7 +48,7 @@ describe('resolveAutoLanguage', () => {
 
   it('returns fr for fr-FR navigator', async () => {
     vi.stubGlobal('navigator', { language: 'fr-FR' });
-    const { changeLanguage } = await import('@/i18n');
+    const { changeLanguage } = await import('@/config/i18n');
     const i18nModule = await import('i18next');
     await changeLanguage('auto');
     expect(i18nModule.default.changeLanguage).toHaveBeenCalledWith('fr');
@@ -56,7 +56,7 @@ describe('resolveAutoLanguage', () => {
 
   it('returns en for unknown navigator language', async () => {
     vi.stubGlobal('navigator', { language: 'de-DE' });
-    const { changeLanguage } = await import('@/i18n');
+    const { changeLanguage } = await import('@/config/i18n');
     const i18nModule = await import('i18next');
     await changeLanguage('auto');
     expect(i18nModule.default.changeLanguage).toHaveBeenCalledWith('en');
@@ -64,7 +64,7 @@ describe('resolveAutoLanguage', () => {
 
   it('returns en when navigator is undefined', async () => {
     vi.stubGlobal('navigator', undefined);
-    const { changeLanguage } = await import('@/i18n');
+    const { changeLanguage } = await import('@/config/i18n');
     const i18nModule = await import('i18next');
     await changeLanguage('auto');
     expect(i18nModule.default.changeLanguage).toHaveBeenCalledWith('en');

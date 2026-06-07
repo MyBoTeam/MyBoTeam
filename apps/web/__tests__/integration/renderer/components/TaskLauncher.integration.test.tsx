@@ -56,7 +56,7 @@ const mockMyBoTeam = {
   onThemeColorChange: vi.fn().mockReturnValue(() => {}),
 };
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => mockMyBoTeam,
   useMyBoTeam: () => mockMyBoTeam,
 }));
@@ -81,8 +81,8 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-import { TaskLauncher } from '@/components/TaskLauncher/TaskLauncher';
-import { TaskLauncherItem } from '@/components/TaskLauncher/TaskLauncherItem';
+import { TaskLauncher } from '@/components/common/TaskLauncher/TaskLauncher';
+import { TaskLauncherItem } from '@/components/common/TaskLauncher/TaskLauncherItem';
 
 describe('TaskLauncherItem', () => {
   const mockOnClick = vi.fn();

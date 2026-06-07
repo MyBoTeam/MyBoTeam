@@ -2,7 +2,7 @@ import { Check, Copy } from '@phosphor-icons/react';
 import { Highlight, themes } from 'prism-react-renderer';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 const COPIED_TIMEOUT_MS = 1200;
 

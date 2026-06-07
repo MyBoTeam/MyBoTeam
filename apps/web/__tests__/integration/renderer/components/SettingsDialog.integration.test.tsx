@@ -103,7 +103,7 @@ const mockMyBoTeam = new Proxy<Record<string, unknown>>(
   handler,
 );
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => mockMyBoTeam,
   useMyBoTeam: () => mockMyBoTeam,
 }));
@@ -168,7 +168,7 @@ vi.mock('@radix-ui/react-dialog', () => ({
   ),
 }));
 
-import { SettingsDialog } from '@/components/layout/SettingsDialog';
+import { SettingsDialog } from '@/layouts/main/components/SettingsDialog';
 
 describe('SettingsDialog Integration', () => {
   const defaultProps = {

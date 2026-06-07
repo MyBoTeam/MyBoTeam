@@ -20,7 +20,7 @@ describe('MyBoTeam API', () => {
         myboteamShell: { isElectron: true },
       };
 
-      const { isRunningInElectron } = await import('@/lib/myboteam');
+      const { isRunningInElectron } = await import('@/config/myboteam');
       expect(isRunningInElectron()).toBe(true);
     });
 
@@ -29,7 +29,7 @@ describe('MyBoTeam API', () => {
         myboteamShell: { isElectron: false },
       };
 
-      const { isRunningInElectron } = await import('@/lib/myboteam');
+      const { isRunningInElectron } = await import('@/config/myboteam');
       expect(isRunningInElectron()).toBe(false);
     });
 
@@ -44,7 +44,7 @@ describe('MyBoTeam API', () => {
       for (const scenario of unavailableScenarios) {
         vi.resetModules();
         (globalThis as unknown as { window: Record<string, unknown> }).window = scenario;
-        const { isRunningInElectron } = await import('@/lib/myboteam');
+        const { isRunningInElectron } = await import('@/config/myboteam');
         expect(isRunningInElectron()).toBe(false);
       }
     });
@@ -54,7 +54,7 @@ describe('MyBoTeam API', () => {
         myboteamShell: { isElectron: 1 },
       };
 
-      const { isRunningInElectron } = await import('@/lib/myboteam');
+      const { isRunningInElectron } = await import('@/config/myboteam');
       expect(isRunningInElectron()).toBe(false);
     });
   });
@@ -65,7 +65,7 @@ describe('MyBoTeam API', () => {
         myboteamShell: { version: '1.2.3' },
       };
 
-      const { getShellVersion } = await import('@/lib/myboteam');
+      const { getShellVersion } = await import('@/config/myboteam');
       expect(getShellVersion()).toBe('1.2.3');
     });
 
@@ -79,7 +79,7 @@ describe('MyBoTeam API', () => {
       for (const scenario of unavailableScenarios) {
         vi.resetModules();
         (globalThis as unknown as { window: Record<string, unknown> }).window = scenario;
-        const { getShellVersion } = await import('@/lib/myboteam');
+        const { getShellVersion } = await import('@/config/myboteam');
         expect(getShellVersion()).toBeNull();
       }
     });
@@ -92,7 +92,7 @@ describe('MyBoTeam API', () => {
         (globalThis as unknown as { window: { myboteamShell: { version: string } } }).window = {
           myboteamShell: { version },
         };
-        const { getShellVersion } = await import('@/lib/myboteam');
+        const { getShellVersion } = await import('@/config/myboteam');
         expect(getShellVersion()).toBe(version);
       }
     });
@@ -107,7 +107,7 @@ describe('MyBoTeam API', () => {
         (globalThis as unknown as { window: { myboteamShell: { platform: string } } }).window = {
           myboteamShell: { platform },
         };
-        const { getShellPlatform } = await import('@/lib/myboteam');
+        const { getShellPlatform } = await import('@/config/myboteam');
         expect(getShellPlatform()).toBe(platform);
       }
     });
@@ -122,7 +122,7 @@ describe('MyBoTeam API', () => {
       for (const scenario of unavailableScenarios) {
         vi.resetModules();
         (globalThis as unknown as { window: Record<string, unknown> }).window = scenario;
-        const { getShellPlatform } = await import('@/lib/myboteam');
+        const { getShellPlatform } = await import('@/config/myboteam');
         expect(getShellPlatform()).toBeNull();
       }
     });
@@ -141,7 +141,7 @@ describe('MyBoTeam API', () => {
         myboteam: mockApi,
       };
 
-      const { getMyBoTeam } = await import('@/lib/myboteam');
+      const { getMyBoTeam } = await import('@/config/myboteam');
       const result = getMyBoTeam();
 
       expect(result.getVersion).toBeDefined();
@@ -157,7 +157,7 @@ describe('MyBoTeam API', () => {
       for (const scenario of unavailableScenarios) {
         vi.resetModules();
         (globalThis as unknown as { window: Record<string, unknown> }).window = scenario;
-        const { getMyBoTeam } = await import('@/lib/myboteam');
+        const { getMyBoTeam } = await import('@/config/myboteam');
         expect(() => getMyBoTeam()).toThrow('MyBoTeam API not available - not running in Electron');
       }
     });
@@ -170,7 +170,7 @@ describe('MyBoTeam API', () => {
         myboteam: mockApi,
       };
 
-      const { useMyBoTeam } = await import('@/lib/myboteam');
+      const { useMyBoTeam } = await import('@/config/myboteam');
       expect(useMyBoTeam()).toBe(mockApi);
     });
 
@@ -179,7 +179,7 @@ describe('MyBoTeam API', () => {
         myboteam: undefined,
       };
 
-      const { useMyBoTeam } = await import('@/lib/myboteam');
+      const { useMyBoTeam } = await import('@/config/myboteam');
       expect(() => useMyBoTeam()).toThrow('MyBoTeam API not available - not running in Electron');
     });
   });
@@ -196,7 +196,7 @@ describe('MyBoTeam API', () => {
       };
 
       const { isRunningInElectron, getShellVersion, getShellPlatform } = await import(
-        '@/lib/myboteam'
+        '@/config/myboteam'
       );
 
       expect(isRunningInElectron()).toBe(true);
@@ -211,7 +211,7 @@ describe('MyBoTeam API', () => {
       };
 
       const { isRunningInElectron, getShellVersion, getShellPlatform } = await import(
-        '@/lib/myboteam'
+        '@/config/myboteam'
       );
 
       expect(isRunningInElectron()).toBe(true);

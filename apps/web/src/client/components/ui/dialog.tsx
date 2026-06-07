@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { GlassCustomization } from '@/lib/glass-utils';
-import { getGlassStyles } from '@/lib/glass-utils';
-import { cn } from '@/lib/utils';
+import type { GlassCustomization } from '@/utils/glass-utils';
+import { getGlassStyles } from '@/utils/glass-utils';
+import { cn } from '@/utils/utils';
 
 const DialogAnimationContext = React.createContext<{ isOpen: boolean }>({ isOpen: false });
 

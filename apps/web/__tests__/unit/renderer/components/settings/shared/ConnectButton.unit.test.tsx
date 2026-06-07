@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ConnectButton } from '@/components/settings/shared/ConnectButton';
+import { ConnectButton } from '@/pages/settings/providers/components/shared/ConnectButton';
 
 describe('ConnectButton', () => {
   it('renders connect button', () => {

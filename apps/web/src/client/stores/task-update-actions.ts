@@ -1,6 +1,6 @@
 import type { TaskMessage, TaskStatus, TaskUpdateEvent } from '@myboteam/agent-core';
 import { upsertTaskMessages } from '@myboteam/agent-core';
-import { getMyBoTeam } from '../lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import type { TaskState } from './taskStore';
 
 type SetFn = (partial: Partial<TaskState> | ((state: TaskState) => Partial<TaskState>)) => void;

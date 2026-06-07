@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { getModifierKeyLabel } from '@/lib/platform';
+import { getModifierKeyLabel } from '@/config/platform';
 
 describe('getModifierKeyLabel', () => {
   afterEach(() => {

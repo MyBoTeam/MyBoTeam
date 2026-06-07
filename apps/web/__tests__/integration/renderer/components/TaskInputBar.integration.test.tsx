@@ -2,8 +2,8 @@ import { PROMPT_DEFAULT_MAX_LENGTH } from '@myboteam/agent-core/common';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { PlusMenu } from '@/components/landing/PlusMenu';
-import { TaskInputBar } from '@/components/landing/TaskInputBar';
+import { PlusMenu } from '@/pages/home/components/PlusMenu';
+import { TaskInputBar } from '@/pages/home/components/TaskInputBar';
 
 const renderWithRouter = (ui: React.ReactElement) => {
   return render(<MemoryRouter>{ui}</MemoryRouter>);
@@ -47,7 +47,7 @@ const mockMyBoTeam = {
 };
 
 // Mock the myboteam module
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => mockMyBoTeam,
   useMyBoTeam: () => mockMyBoTeam,
 }));

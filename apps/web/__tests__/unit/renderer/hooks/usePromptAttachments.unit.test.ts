@@ -16,12 +16,12 @@ vi.mock('react-i18next', () => ({
 }));
 
 const mockProcessFileAttachments = vi.hoisted(() => vi.fn());
-vi.mock('@/lib/fileUtils', () => ({
+vi.mock('@/config/fileUtils', () => ({
   processFileAttachments: mockProcessFileAttachments,
   MAX_FILES: 10,
 }));
 
-import { usePromptAttachments } from '@/pages/home/usePromptAttachments';
+import { usePromptAttachments } from '@/pages/home/hooks/usePromptAttachments';
 
 describe('buildPromptWithAttachments', () => {
   it('returns prompt unchanged when no files', () => {

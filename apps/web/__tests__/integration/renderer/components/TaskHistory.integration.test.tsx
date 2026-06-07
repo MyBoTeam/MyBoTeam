@@ -46,7 +46,7 @@ function createMockTask(
   };
 }
 
-import TaskHistory from '@/components/history/TaskHistory';
+import TaskHistory from '@/pages/conversations/components/TaskHistory';
 
 describe('TaskHistory Integration', () => {
   beforeEach(() => {

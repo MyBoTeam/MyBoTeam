@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ModelSelector } from '@/components/settings/shared/ModelSelector';
+import { ModelSelector } from '@/pages/settings/providers/components/shared/ModelSelector';
 
 let lastErrorMessage: string | undefined;
 

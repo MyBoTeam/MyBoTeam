@@ -8,7 +8,7 @@ import {
   staggerContainer,
   staggerItem,
   variants,
-} from '@/lib/animations';
+} from '@/utils/animations';
 
 describe('Animation Library', () => {
   describe('Spring Configurations', () => {

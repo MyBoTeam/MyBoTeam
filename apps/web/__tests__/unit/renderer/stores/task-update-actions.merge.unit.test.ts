@@ -12,7 +12,7 @@ import type { Task, TaskMessage, TaskUpdateEvent } from '@myboteam/agent-core';
 import { createTaskUpdateActions } from '@/stores/task-update-actions';
 import type { TaskState } from '@/stores/taskStore';
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => ({ logEvent: vi.fn() }),
 }));
 

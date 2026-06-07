@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getAttachmentIcon } from '@/lib/attachments';
+import { getAttachmentIcon } from '@/utils/attachments';
 
 describe('getAttachmentIcon', () => {
   it('returns FileCode icon for code type', () => {

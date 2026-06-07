@@ -1,7 +1,7 @@
 import { Moon, Sun } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 import { useTheme } from '../../hooks/useTheme';
 
 export function ThemeToggle() {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Switch as BaseSwitch } from '@/components/ui/switch';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 export interface SwitchProps extends Omit<React.ComponentProps<typeof BaseSwitch>, 'variant'> {
   variant?: 'glass' | 'frosted' | 'fluted' | 'crystal';

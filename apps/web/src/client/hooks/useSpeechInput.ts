@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { getMyBoTeam } from '../lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import {
   SpeechRecognitionError,
   type UseSpeechInputOptions,

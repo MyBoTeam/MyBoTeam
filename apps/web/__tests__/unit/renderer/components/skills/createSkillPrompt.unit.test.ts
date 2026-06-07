@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildCreateSkillPrompt } from '@/components/skills/createSkillPrompt';
+import { buildCreateSkillPrompt } from '@/pages/settings/skills/components/createSkillPrompt';
 
 describe('createSkillPrompt', () => {
   describe('buildCreateSkillPrompt', () => {

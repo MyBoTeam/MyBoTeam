@@ -26,7 +26,7 @@ describe('getMyBoTeam - Vertex AI helpers', () => {
   });
 
   it('validateVertexCredentials serializes and calls underlying API', async () => {
-    const { getMyBoTeam } = await import('@/lib/myboteam');
+    const { getMyBoTeam } = await import('@/config/myboteam');
     const result = await getMyBoTeam().validateVertexCredentials({
       clientEmail: 'test@test.com',
       privateKey: 'key',
@@ -39,7 +39,7 @@ describe('getMyBoTeam - Vertex AI helpers', () => {
   });
 
   it('saveVertexCredentials serializes and calls underlying API', async () => {
-    const { getMyBoTeam } = await import('@/lib/myboteam');
+    const { getMyBoTeam } = await import('@/config/myboteam');
     const result = await getMyBoTeam().saveVertexCredentials({
       clientEmail: 'test@test.com',
       privateKey: 'key',
@@ -49,27 +49,27 @@ describe('getMyBoTeam - Vertex AI helpers', () => {
   });
 
   it('getVertexCredentials calls underlying API', async () => {
-    const { getMyBoTeam } = await import('@/lib/myboteam');
+    const { getMyBoTeam } = await import('@/config/myboteam');
     const result = await getMyBoTeam().getVertexCredentials();
     expect(result).toEqual({ projectId: 'proj1' });
   });
 
   it('fetchVertexModels calls underlying API', async () => {
-    const { getMyBoTeam } = await import('@/lib/myboteam');
+    const { getMyBoTeam } = await import('@/config/myboteam');
     const result = getMyBoTeam().fetchVertexModels('creds');
     expect(mockApi.fetchVertexModels).toHaveBeenCalledWith('creds');
     expect(result).toEqual(['model1']);
   });
 
   it('detectVertexProject calls underlying API', async () => {
-    const { getMyBoTeam } = await import('@/lib/myboteam');
+    const { getMyBoTeam } = await import('@/config/myboteam');
     const result = await getMyBoTeam().detectVertexProject();
     expect(mockApi.detectVertexProject).toHaveBeenCalled();
     expect(result).toBe('proj1');
   });
 
   it('listVertexProjects calls underlying API', async () => {
-    const { getMyBoTeam } = await import('@/lib/myboteam');
+    const { getMyBoTeam } = await import('@/config/myboteam');
     const result = await getMyBoTeam().listVertexProjects();
     expect(mockApi.listVertexProjects).toHaveBeenCalled();
     expect(result).toEqual(['proj1', 'proj2']);

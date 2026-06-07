@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { AlertDescription, AlertTitle, Alert as BaseAlert } from '@/components/ui/alert';
-import { type HoverEffect, hoverEffects } from '@/lib/hover-effects';
-import { cn } from '@/lib/utils';
+import { type HoverEffect, hoverEffects } from '@/utils/hover-effects';
+import { cn } from '@/utils/utils';
 
 export interface AlertProps extends Omit<React.ComponentProps<typeof BaseAlert>, 'variant'> {
   variant?: 'glass' | 'frosted' | 'fluted' | 'crystal';

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ConnectedControls } from '@/components/settings/shared/ConnectedControls';
+import { ConnectedControls } from '@/pages/settings/providers/components/shared/ConnectedControls';
 
 describe('ConnectedControls', () => {
   it('renders connected status', () => {

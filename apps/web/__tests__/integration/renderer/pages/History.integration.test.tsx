@@ -18,12 +18,12 @@ vi.mock('@/stores/taskStore', () => ({
   useTaskStore: () => mockStoreState,
 }));
 
-vi.mock('@/components/layout/Header', () => ({
+vi.mock('@/layouts/main/components/Header', () => ({
   default: () => <header data-testid="mock-header" />,
 }));
 
 // Mock TaskHistory to avoid deep nesting in page-level tests
-vi.mock('@/components/history/TaskHistory', () => ({
+vi.mock('@/pages/conversations/components/TaskHistory', () => ({
   default: ({ showTitle }: { showTitle?: boolean }) => (
     <div data-testid="task-history" data-show-title={String(showTitle ?? true)} />
   ),

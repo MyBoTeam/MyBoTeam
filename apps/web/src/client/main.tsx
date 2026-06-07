@@ -1,8 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router';
-import { initI18n } from './i18n';
-import { router } from './router';
+import { initI18n } from './config/i18n';
+import { router } from './routes/router';
 import './styles/globals.css';
 
 const container = document.getElementById('root');

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeLightdashUrl } from '@/components/settings/connectors/lightdash/normalize-url';
+import { normalizeLightdashUrl } from '@/pages/settings/connectors/components/lightdash/normalize-url';
 
 describe('normalizeLightdashUrl', () => {
   it('returns empty string for empty input', () => {

@@ -1,5 +1,5 @@
 import { Microphone } from '@phosphor-icons/react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 export function formatDuration(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000);

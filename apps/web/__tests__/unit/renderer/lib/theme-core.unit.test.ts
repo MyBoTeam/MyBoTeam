@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { COLOR_THEME_KEY } from '@/lib/theme-color';
-import { applyClass, initEarlyTheme, resolveTheme, THEME_KEY } from '@/lib/theme-core';
+import { COLOR_THEME_KEY } from '@/utils/theme-color';
+import { applyClass, initEarlyTheme, resolveTheme, THEME_KEY } from '@/utils/theme-core';
 
 describe('theme-core', () => {
   beforeEach(() => {

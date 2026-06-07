@@ -11,11 +11,11 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => ({}),
 }));
 
-import { SlashCommandPopover } from '@/components/landing/SlashCommandPopover';
+import { SlashCommandPopover } from '@/pages/home/components/SlashCommandPopover';
 
 describe('SlashCommandPopover – rendering', () => {
   let textareaRef: { current: HTMLTextAreaElement };

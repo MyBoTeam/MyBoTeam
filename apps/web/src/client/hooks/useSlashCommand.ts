@@ -1,7 +1,7 @@
 import type { Skill } from '@myboteam/agent-core';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { createLogger } from '@/lib/logger';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
+import { createLogger } from '@/utils/logger';
 import type {
   SlashCommandState,
   UseSlashCommandOptions,
