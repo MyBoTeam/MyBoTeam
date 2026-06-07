@@ -1,6 +1,6 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { waitForPageLoad } from './browser-actions.js';
-import { captureBoundedScreenshot, MAX_SCREENSHOT_BYTES } from './screenshot.js';
+import { captureBoundedScreenshot } from './screenshot.js';
 import { getPage } from './session-manager.js';
 import { getSnapshotWithHistory, selectSnapshotRef } from './snapshot-manager.js';
 import type { BrowserScriptInput } from './types.js';

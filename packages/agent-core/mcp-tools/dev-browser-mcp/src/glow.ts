@@ -2,7 +2,6 @@ import type { Page } from 'playwright';
 import {
   ensureConnected as ensureConnectedRaw,
   getConnectionMode,
-  getFullPageName,
   getPage as getPageRaw,
 } from './connection.js';
 

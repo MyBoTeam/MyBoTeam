@@ -1,6 +1,5 @@
 import crypto from 'node:crypto';
 import type { ConnectorDefinition, OAuthProviderId } from '@myboteam/agent-core/common';
-import { getConnectorDefinition } from '@myboteam/agent-core/common';
 import {
   buildAuthorizationUrl,
   discoverOAuthMetadata,

@@ -1,7 +1,5 @@
-import crypto from 'node:crypto';
 import http from 'node:http';
 import type { GoogleAccountToken } from '@myboteam/agent-core/common';
-import { getLogCollector } from '../logging/index.js';
 import { GOOGLE_TOKEN_ENDPOINT, GOOGLE_USERINFO_EP } from './constants.js';
 
 export interface GoogleAuthResult {

@@ -6,11 +6,7 @@ import {
 import { MYBOTEAM_AGENT_NAME } from '../../opencode/config-generator.js';
 import { serializeError } from '../../utils/error.js';
 import { buildWorkspaceInstructionRuntimeBlock } from './adapter-utils.js';
-import {
-  createLogWatcher,
-  type OpenCodeLogError,
-  OpenCodeLogWatcher,
-} from './OpenCodeLogWatcher.js';
+import { type OpenCodeLogError, OpenCodeLogWatcher } from './OpenCodeLogWatcher.js';
 
 export function createCompletionEnforcer(
   currentSessionId: () => string | null,

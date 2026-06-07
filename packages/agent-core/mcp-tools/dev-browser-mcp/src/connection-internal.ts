@@ -82,7 +82,7 @@ export async function getBuiltinPage(
 }
 
 export async function getRemotePage(
-  config: ConnectionConfig,
+  _config: ConnectionConfig,
   ensureConnected: () => Promise<Browser>,
   getLocalPageRegistry: () => Map<string, import('playwright').Page>,
   fullName: string,
