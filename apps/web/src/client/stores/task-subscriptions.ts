@@ -12,7 +12,6 @@ interface SetupProgressEvent {
   modelName?: string;
 }
 
-/** Registers all global IPC subscriptions for the task store. Called once on module load. */
 export function registerTaskSubscriptions(getStore: () => import('./taskStore').TaskState) {
   if (typeof window === 'undefined' || !window.myboteam) {
     return;
@@ -66,8 +65,6 @@ export function registerTaskSubscriptions(getStore: () => import('./taskStore').
       }
       state.clearStartupStage(updateEvent.taskId);
 
-      // Refresh sidebar task list when ANY task completes — catches scheduled
-      // tasks and other daemon-initiated tasks the UI didn't start.
       void state.loadTasks();
     }
   });
@@ -75,7 +72,7 @@ export function registerTaskSubscriptions(getStore: () => import('./taskStore').
   window.myboteam.onTaskSummary?.((data: { taskId: string; summary: string }) => {
     const state = getStore();
     state.setTaskSummary(data.taskId, data.summary);
-    // Refresh sidebar to show new task with its summary title
+
     void state.loadTasks();
   });
 

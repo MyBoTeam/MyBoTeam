@@ -1,12 +1,3 @@
-/**
- * Daemon Client
- *
- * Sends JSON-RPC 2.0 requests to a DaemonServer via a DaemonTransport
- * and receives notifications pushed by the server.
- *
- * ESM module — use .js extensions on imports.
- */
-
 import type {
   DaemonMethod,
   DaemonMethodMap,
@@ -29,7 +20,7 @@ interface PendingRequest {
 
 export interface DaemonClientOptions {
   transport: DaemonTransport;
-  /** Request timeout in milliseconds (default: 30000) */
+
   timeout?: number;
 }
 
@@ -51,17 +42,6 @@ export class DaemonClient {
     });
   }
 
-  /**
-   * Send a typed RPC request to the daemon and await the result.
-   *
-   * `options.timeoutMs` lets a single call override the client-wide default
-   * (typically 30s). Required for long-blocking RPCs like
-   * `auth.openai.awaitCompletion`, which the daemon may legitimately hold
-   * open for up to two minutes while the user completes the OAuth flow in
-   * a browser. Without this override, OAuth always failed at the 30s mark
-   * with `RPC timeout: auth.openai.awaitCompletion (30000ms)` even though
-   * the daemon-side flow had succeeded.
-   */
   async call<M extends DaemonMethod>(
     method: M,
     params?: DaemonMethodMap[M]['params'],
@@ -93,18 +73,12 @@ export class DaemonClient {
     });
   }
 
-  /**
-   * Register a handler for server-pushed notifications.
-   */
   onNotification<N extends DaemonNotification>(method: N, handler: NotificationHandler<N>): void {
     const handlers = this.notificationHandlers.get(method) ?? [];
     handlers.push(handler as NotificationHandler<DaemonNotification>);
     this.notificationHandlers.set(method, handlers);
   }
 
-  /**
-   * Remove a previously registered notification handler.
-   */
   offNotification<N extends DaemonNotification>(method: N, handler: NotificationHandler<N>): void {
     const handlers = this.notificationHandlers.get(method);
     if (!handlers) {
@@ -116,16 +90,10 @@ export class DaemonClient {
     }
   }
 
-  /**
-   * Health check — ping the daemon.
-   */
   async ping(): Promise<{ status: 'ok'; uptime: number; buildId?: string }> {
     return this.call('daemon.ping');
   }
 
-  /**
-   * Close the client and reject all pending requests.
-   */
   close(): void {
     for (const [id, pending] of this.pending) {
       clearTimeout(pending.timer);
@@ -137,7 +105,6 @@ export class DaemonClient {
   }
 
   private handleMessage(message: JsonRpcMessage): void {
-    // Response to a pending request
     if ('id' in message && !('method' in message)) {
       const response = message as JsonRpcResponse;
       const pending = this.pending.get(response.id);
@@ -159,7 +126,6 @@ export class DaemonClient {
       return;
     }
 
-    // Server-pushed notification (no `id`)
     if ('method' in message && !('id' in message)) {
       const notification = message as { method: string; params?: unknown };
       const handlers = this.notificationHandlers.get(notification.method);

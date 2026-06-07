@@ -131,15 +131,8 @@ describe('createTaskPermissionActions', () => {
         _taskStateToken: 5,
       });
 
-      // Bump the token before the await resolves (simulating a state refresh)
-      // The promise is already created with token=5, but after respondToPermission
-      // returns, the token check uses get() which returns current state.
-      // So we need to make the mock delay so we can change the token.
-      // Instead, let's test the case where requestId doesn't match.
       void actions.respondToPermission(response);
 
-      // The request was already handled - but the token check passed.
-      // Let's verify by checking the request is cleared.
       expect(getState().permissionRequests['tsk-1']).toBeDefined();
     });
 
@@ -154,7 +147,6 @@ describe('createTaskPermissionActions', () => {
 
       await actions.respondToPermission(response);
 
-      // requestId mismatch → should not clear
       expect(getState().permissionRequests['tsk-1']).toBeDefined();
     });
   });

@@ -5,7 +5,6 @@ import { getDaemonClient } from '../../../daemon-bootstrap';
 import { getApiKey } from '../../../store/secureStorage';
 import type { IpcHandler } from '../../types';
 
-// Milestone 5: NIM config reads/writes route through the daemon.
 export function registerNimHandlers(handle: IpcHandler): void {
   handle('nim:test-connection', async (_event: IpcMainInvokeEvent, url: string, apiKey: string) => {
     return testNimConnection(url, apiKey);

@@ -4,8 +4,6 @@ import { TEST_TIMEOUTS } from '../config';
 export class SettingsPage {
   constructor(private page: Page) {}
 
-  // ===== Provider Grid =====
-
   get providerGrid() {
     return this.page.getByTestId('provider-grid');
   }
@@ -30,8 +28,6 @@ export class SettingsPage {
     return this.page.getByTestId(`provider-connected-badge-${providerId}`);
   }
 
-  // ===== Connection Status =====
-
   get connectionStatus() {
     return this.page.getByTestId('connection-status');
   }
@@ -44,8 +40,6 @@ export class SettingsPage {
     return this.page.getByRole('button', { name: 'Connect', exact: true });
   }
 
-  // ===== Model Selection =====
-
   get modelSelector() {
     return this.page.getByTestId('model-selector');
   }
@@ -54,8 +48,6 @@ export class SettingsPage {
     return this.page.getByTestId('model-selector-error');
   }
 
-  // ===== API Key Input =====
-
   get apiKeyInput() {
     return this.page.getByTestId('api-key-input');
   }
@@ -63,8 +55,6 @@ export class SettingsPage {
   get apiKeyHelpLink() {
     return this.page.getByRole('link', { name: 'How can I find it?' });
   }
-
-  // ===== Bedrock Specific =====
 
   get bedrockApiKeyTab() {
     return this.page.getByTestId('bedrock-auth-tab-apikey');
@@ -102,8 +92,6 @@ export class SettingsPage {
     return this.page.getByTestId('bedrock-region-select');
   }
 
-  // ===== Ollama Specific =====
-
   get ollamaServerUrlInput() {
     return this.page.getByTestId('ollama-server-url');
   }
@@ -111,8 +99,6 @@ export class SettingsPage {
   get ollamaConnectionError() {
     return this.page.getByTestId('ollama-connection-error');
   }
-
-  // ===== LiteLLM Specific =====
 
   get litellmServerUrlInput() {
     return this.page.getByTestId('litellm-server-url');
@@ -122,19 +108,13 @@ export class SettingsPage {
     return this.page.getByTestId('litellm-api-key');
   }
 
-  // ===== OpenRouter Specific =====
-
   get openrouterFetchModelsButton() {
     return this.page.getByRole('button', { name: /Fetch Models|Refresh/ });
   }
 
-  // ===== Debug Mode =====
-
   get debugModeToggle() {
     return this.page.getByTestId('settings-debug-toggle');
   }
-
-  // ===== Dialog =====
 
   get settingsDialog() {
     return this.page.getByTestId('settings-dialog');
@@ -156,8 +136,6 @@ export class SettingsPage {
     return this.page.getByTestId('sidebar-settings-button');
   }
 
-  // ===== Actions =====
-
   async navigateToSettings() {
     await this.sidebarSettingsButton.click();
     await this.settingsDialog.waitFor({ state: 'visible', timeout: TEST_TIMEOUTS.NAVIGATION });
@@ -169,7 +147,7 @@ export class SettingsPage {
 
   async selectProvider(providerId: string) {
     await this.getProviderCard(providerId).click();
-    // Wait for provider settings panel to render
+
     await this.connectButton.or(this.connectionStatus).waitFor({ state: 'visible', timeout: 5000 });
   }
 
@@ -208,17 +186,12 @@ export class SettingsPage {
     await this.disconnectButton.click();
   }
 
-  /**
-   * Select a model by ID. Handles both native <select> and custom SearchableSelect.
-   */
   async selectModel(modelId: string) {
     const tagName = await this.modelSelector.evaluate((el) => el.tagName.toLowerCase());
 
     if (tagName === 'select') {
-      // Native <select> element
       await this.modelSelector.selectOption(modelId);
     } else {
-      // Custom SearchableSelect — click to open, then click the option
       await this.modelSelector.click();
       const option = this.page.locator(`[data-model-id="${modelId}"]`);
       await option.waitFor({ state: 'visible', timeout: 5000 });
@@ -226,15 +199,10 @@ export class SettingsPage {
     }
   }
 
-  /**
-   * Select the first available model from a SearchableSelect dropdown.
-   * Useful when you don't know which models are available.
-   */
   async selectFirstModel() {
     const tagName = await this.modelSelector.evaluate((el) => el.tagName.toLowerCase());
 
     if (tagName === 'select') {
-      // Native select — pick the first non-empty option
       await this.modelSelector.evaluate((el) => {
         const select = el as HTMLSelectElement;
         if (select.options.length > 1) {
@@ -243,7 +211,6 @@ export class SettingsPage {
         }
       });
     } else {
-      // Custom SearchableSelect — click to open, then click first option
       await this.modelSelector.click();
       const firstOption = this.page.locator('[data-model-id]').first();
       await firstOption.waitFor({ state: 'visible', timeout: 5000 });
@@ -264,7 +231,6 @@ export class SettingsPage {
     await this.page.keyboard.press('Escape');
   }
 
-  // Bedrock specific actions
   async selectBedrockApiKeyTab() {
     await this.bedrockApiKeyTab.click();
   }
@@ -301,12 +267,10 @@ export class SettingsPage {
     await this.bedrockRegionSelect.selectOption(region);
   }
 
-  // Ollama specific actions
   async enterOllamaServerUrl(url: string) {
     await this.ollamaServerUrlInput.fill(url);
   }
 
-  // LiteLLM specific actions
   async enterLiteLLMServerUrl(url: string) {
     await this.litellmServerUrlInput.fill(url);
   }

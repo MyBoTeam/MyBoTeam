@@ -1,25 +1,3 @@
-/**
- * Connector Auth Store
- *
- * Per-provider OAuth token storage backed by the daemon's encrypted
- * secure storage (AES-256-GCM). Each connector gets one instance, keyed
- * by provider ID. Storage key format on the wire: `<providerKey>`
- * (the daemon applies the `connector-auth:` prefix internally).
- *
- * Milestone 3 sub-chunk 3e of the daemon-only-SQLite migration
- * (plan: /Users/yanai/.claude/plans/squishy-exploring-hamster.md).
- *
- * Before 3e: every method was synchronous and read/wrote `StoredAuthEntry`
- * through the local `StorageAPI` wrapper, causing a concurrent-writer
- * hazard with the daemon's own secure-storage file.
- *
- * After 3e: every method is async and goes through
- * `connectors.authEntry.*` RPCs via `connector-auth-entry.ts`. Every
- * caller already runs inside an `async` OAuth flow (discover → register →
- * exchange → persist), so the only downstream change is inserting `await`
- * at each `store.*` call site.
- */
-
 import type {
   ConnectorAuthStoreConfig,
   OAuthClientRegistration,
@@ -84,7 +62,6 @@ export class ConnectorAuthStore {
     const existing = (await readEntry(this.config)) ?? {};
     const previousUrl = existing.serverUrl?.trim();
 
-    // If URL changed, reset auth state but keep the new URL
     const next: StoredAuthEntry =
       previousUrl === normalized
         ? { ...existing, serverUrl: normalized }
@@ -143,7 +120,6 @@ export class ConnectorAuthStore {
     await writeEntry(this.config, { ...existing, lastOAuthValidatedAt: timestamp });
   }
 
-  /** Clear tokens but preserve client registration (DCR) and server URL (storesServerUrl) */
   async clearTokens(): Promise<void> {
     const existing = await readEntry(this.config);
     if (!existing) {
@@ -163,17 +139,14 @@ export class ConnectorAuthStore {
     }
   }
 
-  /** Nuke the entire entry including DCR registration */
   async clearAuth(): Promise<void> {
     await deleteEntry(this.config);
   }
 
-  /** Get the stored refresh token (needed by token resolver for silent refresh) */
   async getRefreshToken(): Promise<string | undefined> {
     return (await readEntry(this.config))?.refreshToken;
   }
 
-  /** Returns the stored token expiry timestamp (Unix ms), or undefined if not set. */
   async getTokenExpiry(): Promise<number | undefined> {
     return (await readEntry(this.config))?.expiresAt;
   }

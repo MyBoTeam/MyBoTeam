@@ -22,7 +22,6 @@ export function ProviderSubMenu({
 }: ProviderSubMenuProps) {
   const providerName = PROVIDER_META[providerId]?.name ?? providerId;
 
-  // If availableModels is defined (even empty) use it; only fall back to static config when undefined
   const models: Array<{ id: string; displayName: string }> =
     provider.availableModels !== undefined
       ? provider.availableModels.map((m) => ({ id: m.id, displayName: m.name }))

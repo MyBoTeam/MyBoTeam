@@ -1,13 +1,3 @@
-/**
- * GitHub Copilot device OAuth flow handler for the main process.
- *
- * Runs the device-code grant entirely in Node.js (no PTY needed):
- *   1. POST /login/device/code  → get device_code + user_code
- *   2. Open browser to verification_uri
- *   3. Poll /login/oauth/access_token until authorized (background)
- *   4. Persist tokens via setCopilotOAuthTokens (writes auth.json)
- */
-
 import {
   type CopilotDeviceCodeResponse,
   clearCopilotOAuth,
@@ -28,13 +18,7 @@ export interface CopilotLoginResult {
 
 let activeLoginAbortController: AbortController | null = null;
 
-/**
- * Initiate the GitHub Copilot device OAuth flow.
- * Opens the user's browser and returns immediately with the user_code to display in the UI.
- * Token polling continues in the background and persists tokens on success.
- */
 export async function loginGithubCopilot(): Promise<CopilotLoginResult> {
-  // Cancel any in-progress login
   if (activeLoginAbortController) {
     activeLoginAbortController.abort();
     activeLoginAbortController = null;
@@ -52,7 +36,6 @@ export async function loginGithubCopilot(): Promise<CopilotLoginResult> {
 
     log.log?.('INFO', 'opencode', '[CopilotAuth] Device code received');
 
-    // Open the browser for the user to enter the code (non-fatal: user can open manually)
     try {
       await shell.openExternal(deviceCode.verification_uri);
     } catch (err) {
@@ -60,7 +43,6 @@ export async function loginGithubCopilot(): Promise<CopilotLoginResult> {
       log.log?.('WARN', 'opencode', `[CopilotAuth] Failed to open browser: ${msg}`);
     }
 
-    // Poll for the token in the background (fire-and-forget)
     void (async () => {
       try {
         const tokenResponse = await pollCopilotDeviceToken({
@@ -79,21 +61,19 @@ export async function loginGithubCopilot(): Promise<CopilotLoginResult> {
           throw new Error('No access token received from GitHub');
         }
 
-        // Persist to OpenCode-compatible auth.json
         setCopilotOAuthTokens({
           accessToken: tokenResponse.access_token,
-          expiresAt: Date.now() + 8 * 60 * 60 * 1000, // GitHub tokens typically valid 8h
+          expiresAt: Date.now() + 8 * 60 * 60 * 1000,
         });
 
         log.log?.('INFO', 'opencode', '[CopilotAuth] Login successful, tokens saved');
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
         log.log?.('WARN', 'opencode', `[CopilotAuth] Background poll failed: ${msg}`);
-        // Persist the error into auth state so the renderer's getCopilotOAuthStatus poll
-        // can surface it immediately instead of waiting for a generic timeout.
+
         try {
           clearCopilotOAuth();
-          // Write a sentinel error entry so the renderer can distinguish failure from pending.
+
           const fs = await import('node:fs');
           const os = await import('node:os');
           const path = await import('node:path');
@@ -102,15 +82,11 @@ export async function loginGithubCopilot(): Promise<CopilotLoginResult> {
           let auth: Record<string, unknown> = {};
           try {
             auth = JSON.parse(fs.readFileSync(authPath, 'utf8')) as Record<string, unknown>;
-          } catch {
-            // ignore missing/invalid file
-          }
+          } catch {}
           auth['github-copilot-error'] = { message: msg, timestamp: Date.now() };
           fs.mkdirSync(path.dirname(authPath), { recursive: true });
           fs.writeFileSync(authPath, JSON.stringify(auth, null, 2), 'utf8');
-        } catch {
-          // best-effort; don't mask the original error
-        }
+        } catch {}
       } finally {
         if (activeLoginAbortController === abortController) {
           activeLoginAbortController = null;
@@ -118,7 +94,6 @@ export async function loginGithubCopilot(): Promise<CopilotLoginResult> {
       }
     })();
 
-    // Return immediately so the renderer can display the user code
     return {
       ok: true,
       userCode: deviceCode.user_code,

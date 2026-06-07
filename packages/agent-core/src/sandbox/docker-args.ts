@@ -1,17 +1,9 @@
-/**
- * Docker argument construction helpers for the DockerSandboxProvider.
- *
- * Extracted from docker-provider.ts to keep file sizes under 200 lines.
- * Handles building the `docker run ...` args array and shell escaping.
- */
-
 import path from 'node:path';
 import type { SandboxConfig, SandboxPaths, SpawnArgs } from '../common/types/sandbox.js';
 import { createConsoleLogger } from '../utils/logging.js';
 
 const log = createConsoleLogger({ prefix: 'DockerProvider' });
 
-/** Env-var keys forwarded into the container (preeeetham, PR #430) */
 export const FORWARDED_ENV_KEYS = [
   'ANTHROPIC_API_KEY',
   'OPENAI_API_KEY',
@@ -21,7 +13,7 @@ export const FORWARDED_ENV_KEYS = [
   'OPENROUTER_API_KEY',
   'OPENAI_BASE_URL',
   'MYBOTEAM_TASK_ID',
-  // Safe runtime / locale vars
+
   'MYBOTEAM_SANDBOX_MODE',
   'MYBOTEAM_SANDBOX_ENABLED',
   'LANG',
@@ -31,14 +23,6 @@ export const FORWARDED_ENV_KEYS = [
   'NO_COLOR',
 ];
 
-/**
- * Construct the full `docker run ...` argument list.
- *
- * SaaiAravindhRaja (PR #612): networkPolicy, dockerImage, allowed-hosts,
- * Docker image validation regex.
- * preeeetham (PR #430): SandboxPaths volume mounts, env-var allowlist,
- * selective key forwarding.
- */
 export function buildDockerArgs(
   spawnArgs: SpawnArgs,
   config: SandboxConfig,
@@ -47,15 +31,12 @@ export function buildDockerArgs(
   const safeCwd = path.resolve(spawnArgs.cwd);
   const dockerArgs: string[] = ['run', '--rm', '-i'];
 
-  // Mount working directory (SaaiAravindhRaja, PR #612)
   dockerArgs.push('-v', `${safeCwd}:/workspace`, '-w', '/workspace');
 
-  // Mount extra user-allowed paths (SaaiAravindhRaja, PR #612)
   for (const p of config.allowedPaths) {
     dockerArgs.push('-v', `${p}:${p}`);
   }
 
-  // Mount OpenCode config + XDG data dirs from host (preeeetham, PR #430)
   if (getSandboxPaths) {
     const paths = getSandboxPaths();
     dockerArgs.push(
@@ -72,16 +53,13 @@ export function buildDockerArgs(
     );
   }
 
-  // Network policy (SaaiAravindhRaja, PR #612)
   const netPolicy = config.networkPolicy;
   if (netPolicy && !netPolicy.allowOutbound) {
     dockerArgs.push('--network', 'none');
   } else if (config.networkRestricted) {
-    // Legacy networkRestricted field still honoured
     dockerArgs.push('--network', 'none');
   }
 
-  // Warn if per-host allowlists are set — Docker mode doesn't support them
   const hasAllowedHosts =
     (config.allowedHosts && config.allowedHosts.length > 0) ||
     (netPolicy?.allowedHosts && netPolicy.allowedHosts.length > 0);
@@ -91,8 +69,6 @@ export function buildDockerArgs(
     );
   }
 
-  // Forward a curated set of env vars (preeeetham, PR #430 allowlist +
-  // SaaiAravindhRaja, PR #612 BLOCKED_ENV_KEYS exclusion)
   for (const key of FORWARDED_ENV_KEYS) {
     const val = spawnArgs.env[key];
     if (val) {
@@ -100,11 +76,9 @@ export function buildDockerArgs(
     }
   }
 
-  // Docker image (SaaiAravindhRaja, PR #612 — defaults to node:20-slim)
   const image = config.dockerImage || 'node:20-slim';
   dockerArgs.push(image);
 
-  // Run the original command inside the container
   const containerCommand = path.basename(spawnArgs.file);
   const innerCmd = buildShellCommand(containerCommand, spawnArgs.args);
   dockerArgs.push('sh', '-c', innerCmd);
@@ -112,10 +86,6 @@ export function buildDockerArgs(
   return dockerArgs;
 }
 
-/**
- * Redact values of -e flags in a docker args array for safe logging.
- * (SaaiAravindhRaja, PR #612)
- */
 export function redactDockerArgs(dockerArgs: string[]): string[] {
   return dockerArgs.map((arg, i) => {
     if (i > 0 && dockerArgs[i - 1] === '-e' && arg.includes('=')) {

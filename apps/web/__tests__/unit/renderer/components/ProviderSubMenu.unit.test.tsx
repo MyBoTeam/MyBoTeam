@@ -1,7 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
-
 import '@testing-library/jest-dom/vitest';
 import type { ConnectedProvider } from '@myboteam/agent-core/common';
 import { fireEvent, render, screen } from '@testing-library/react';

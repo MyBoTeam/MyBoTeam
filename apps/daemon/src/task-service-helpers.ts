@@ -1,7 +1,3 @@
-/**
- * TaskService helpers for browser-server management and summary generation.
- * Extracted from task-config-builder.ts to maintain 200 line limit.
- */
 import {
   type BrowserServerConfig,
   DEV_BROWSER_PORT,

@@ -1,10 +1,3 @@
-/**
- * Speech Transcription
- *
- * Core transcription logic for the SpeechService using the ElevenLabs STT API.
- * Extracted to keep SpeechService under the 200-line limit.
- */
-
 import { fetchWithTimeout } from '../../utils/fetch.js';
 import { createConsoleLogger } from '../../utils/logging.js';
 
@@ -65,14 +58,6 @@ function parseElevenLabsErrorMessage(
   return statusText || 'Unknown API error';
 }
 
-/**
- * Transcribe audio using ElevenLabs Speech-to-Text API.
- *
- * @param apiKey - ElevenLabs API key
- * @param audioData - Audio data as Buffer
- * @param mimeType - MIME type of the audio (e.g., 'audio/webm')
- * @returns Transcription result or error
- */
 export async function transcribeWithElevenLabs(
   apiKey: string,
   audioData: Buffer,
@@ -114,9 +99,7 @@ export async function transcribeWithElevenLabs(
     let errorData: Record<string, unknown> = {};
     try {
       errorData = JSON.parse(errorText);
-    } catch {
-      // Not JSON, use raw text
-    }
+    } catch {}
 
     log.error('[ElevenLabs] API error:', {
       status: response.status,
@@ -172,9 +155,6 @@ export async function transcribeWithElevenLabs(
   };
 }
 
-/**
- * Validate an ElevenLabs API key by making a test request.
- */
 export async function validateElevenLabsKey(
   key: string,
 ): Promise<{ valid: boolean; error?: string }> {

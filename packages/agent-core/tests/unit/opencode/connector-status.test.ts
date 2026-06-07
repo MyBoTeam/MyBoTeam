@@ -1,13 +1,3 @@
-/**
- * Unit tests for connector-status.ts (T024)
- *
- * Validates:
- * - formatBuiltInConnectorStatusSection returns '' for empty array (fast-path)
- * - All statuses appear in the output string
- * - "connected" / "not connected" wording is correct per status
- * - Output contains the <connected-integrations> wrapper tags
- */
-
 import { describe, expect, it } from 'vitest';
 import {
   type BuiltInConnectorStatus,

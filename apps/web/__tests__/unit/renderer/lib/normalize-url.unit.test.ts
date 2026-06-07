@@ -37,7 +37,6 @@ describe('normalizeLightdashUrl', () => {
   });
 
   it('handles non-http protocols by prepending https', () => {
-    // The function prepends https://, which the URL parser interprets with ftp as hostname
     const result = normalizeLightdashUrl('ftp://example.com');
     expect(result).toContain('api/v1/mcp');
   });
@@ -49,7 +48,6 @@ describe('normalizeLightdashUrl', () => {
   });
 
   it('returns input as-is if URL parsing fails', () => {
-    // URL constructor won't throw on most inputs in jsdom; this covers the catch
     expect(normalizeLightdashUrl('https://')).toBe('https://');
   });
 });

@@ -1,16 +1,16 @@
-/**
- * Download Node.js standalone binaries for bundling with the Electron app.
- *
- * The target version and per-platform archive metadata live in
- * ./node-version.cjs — the single source of truth shared with after-pack.cjs.
- *
- * Supported targets:
- * - darwin-x64, darwin-arm64
- * - linux-x64, linux-arm64
- * - win32-x64
- *
- * Usage: node scripts/download-nodejs.cjs [--platform=<name>]
- */
+   
+                                                                           
+  
+                                                               
+                                                                              
+  
+                     
+                             
+                           
+              
+  
+                                                              
+   
 
 const https = require('https');
 const fs = require('fs');
@@ -35,9 +35,9 @@ if (hasPlatformFlag && filteredPlatforms.length === 0) {
 
 const RESOURCES_DIR = path.join(__dirname, '..', 'resources', 'nodejs');
 
-/**
- * Download a file from URL with progress reporting
- */
+   
+                                                   
+   
 function downloadFile(url, destPath) {
   return new Promise((resolve, reject) => {
     console.log(`Downloading: ${url}`);
@@ -46,7 +46,7 @@ function downloadFile(url, destPath) {
 
     https
       .get(url, (response) => {
-        // Handle redirects
+                           
         if (response.statusCode === 302 || response.statusCode === 301) {
           file.close();
           fs.unlinkSync(destPath);
@@ -89,9 +89,9 @@ function downloadFile(url, destPath) {
   });
 }
 
-/**
- * Verify SHA256 checksum of a file
- */
+   
+                                   
+   
 function verifyChecksum(filePath, expectedHash) {
   console.log('  Verifying checksum...');
   const fileBuffer = fs.readFileSync(filePath);
@@ -105,10 +105,10 @@ function verifyChecksum(filePath, expectedHash) {
   console.log('  Checksum verified');
 }
 
-/**
- * Extract archive to destination
- * Uses execFileSync with array arguments to avoid command injection
- */
+   
+                                 
+                                                                    
+   
 function extractArchive(archivePath, destDir, type) {
   console.log(`  Extracting to ${destDir}...`);
 
@@ -119,11 +119,11 @@ function extractArchive(archivePath, destDir, type) {
   const { execFileSync } = require('child_process');
 
   if (type === 'tar') {
-    // Use execFileSync with array args to avoid shell injection
+                                                                
     execFileSync('tar', ['-xzf', archivePath, '-C', destDir], { stdio: 'inherit' });
   } else if (type === 'zip') {
     if (process.platform === 'win32') {
-      // PowerShell requires -Command with a script block
+                                                         
       execFileSync(
         'powershell',
         [
@@ -141,19 +141,19 @@ function extractArchive(archivePath, destDir, type) {
   console.log('  Extraction complete');
 }
 
-/**
- * Main download and setup function
- */
+   
+                                   
+   
 async function main() {
   console.log(`\nNode.js v${NODE_VERSION} Binary Downloader`);
   console.log('='.repeat(50));
 
-  // Create resources directory
+                               
   if (!fs.existsSync(RESOURCES_DIR)) {
     fs.mkdirSync(RESOURCES_DIR, { recursive: true });
   }
 
-  // Create temp directory for downloads
+                                        
   const tempDir = path.join(RESOURCES_DIR, '.temp');
   if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir, { recursive: true });
@@ -165,14 +165,14 @@ async function main() {
     const archivePath = path.join(tempDir, platform.file);
     const destDir = path.join(RESOURCES_DIR, platform.name);
 
-    // Check if already extracted
+                                 
     const extractedDir = path.join(destDir, platform.file.replace(/\.(tar\.gz|zip)$/, ''));
     if (fs.existsSync(extractedDir)) {
       console.log(`  Already exists: ${extractedDir}`);
       continue;
     }
 
-    // Download if not cached
+                             
     if (!fs.existsSync(archivePath)) {
       const url = `${BASE_URL}/${platform.file}`;
       await downloadFile(url, archivePath);
@@ -180,21 +180,21 @@ async function main() {
       console.log(`  Using cached: ${archivePath}`);
     }
 
-    // Verify checksum
+                      
     verifyChecksum(archivePath, platform.sha256);
 
-    // Extract
+              
     extractArchive(archivePath, destDir, platform.extract);
   }
 
-  // Clean up temp directory
+                            
   console.log('\nCleaning up temp files...');
   fs.rmSync(tempDir, { recursive: true, force: true });
 
   console.log('\nAll Node.js binaries downloaded successfully!');
   console.log(`Location: ${RESOURCES_DIR}`);
 
-  // List what was downloaded
+                             
   console.log('\nDirectory structure:');
   for (const platform of filteredPlatforms) {
     const destDir = path.join(RESOURCES_DIR, platform.name);

@@ -1,7 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
-
 import '@testing-library/jest-dom/vitest';
 import type { ProviderSettings } from '@myboteam/agent-core/common';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';

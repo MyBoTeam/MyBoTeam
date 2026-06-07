@@ -17,15 +17,6 @@ export interface FetchBedrockModelsResult {
   error?: string;
 }
 
-/**
- * Fetches available foundation models from AWS Bedrock.
- *
- * Creates a BedrockClient based on the authentication type (apiKey, accessKeys, or profile),
- * fetches models, filters for TEXT output modality, and returns a formatted list.
- *
- * @param credentials - The Bedrock credentials (apiKey, accessKeys, or profile based)
- * @returns Object with success status, models array, and optional error message
- */
 export async function fetchBedrockModels(
   credentials: BedrockCredentials,
 ): Promise<FetchBedrockModelsResult> {

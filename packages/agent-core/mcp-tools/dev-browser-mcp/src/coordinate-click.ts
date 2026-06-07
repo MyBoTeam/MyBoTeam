@@ -1,5 +1,3 @@
-// Apps that require coordinate-based mouse events because DOM .click() doesn't
-// trigger their canvas or event-delegation handlers.
 const COORDINATE_CLICK_APP_NAMES = new Set([
   'Google Docs',
   'Google Sheets',

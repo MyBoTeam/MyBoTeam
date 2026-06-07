@@ -6,7 +6,6 @@ import { getDaemonClient } from '../../daemon-bootstrap';
 import { assertTrustedWindow, handle } from './utils';
 
 export function registerBugReportHandlers(): void {
-  // Milestone 3 sub-chunk 3c: debug-mode gate routes through the daemon.
   const assertDebugModeEnabled = async () => {
     const snap = await getDaemonClient().call('settings.getAll');
     if (!snap.app.debugMode) {

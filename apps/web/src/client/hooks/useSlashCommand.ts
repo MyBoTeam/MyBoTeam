@@ -13,13 +13,6 @@ export type { SlashCommandState, UseSlashCommandOptions, UseSlashCommandReturn }
 
 const logger = createLogger('useSlashCommand');
 
-/**
- * Hook that manages slash-command autocomplete for skills in a textarea.
- *
- * Detects when the user types `/` at the beginning of a word, fetches and
- * filters enabled skills, handles keyboard navigation (Arrow keys, Enter,
- * Tab, Escape), and inserts the selected skill command at the cursor position.
- */
 export function useSlashCommand({
   value,
   textareaRef,
@@ -88,8 +81,6 @@ export function useSlashCommand({
         return;
       }
 
-      // Fresh-fetch skills when popover first opens so added/removed/toggled
-      // skills are always reflected. While already open, reuse the fetched list.
       if (!state.isOpen) {
         void loadSkills().then((loaded) => {
           if (loaded.length > 0) {
@@ -122,10 +113,6 @@ export function useSlashCommand({
     [state.isOpen, dismiss, loadSkills],
   );
 
-  /**
-   * Intercepts keyboard events when the popover is open.
-   * Returns true if the event was handled (caller should preventDefault/not propagate).
-   */
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent): boolean => {
       if (!state.isOpen || state.filteredSkills.length === 0) {

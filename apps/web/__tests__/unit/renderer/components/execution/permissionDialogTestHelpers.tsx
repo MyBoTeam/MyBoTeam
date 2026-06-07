@@ -1,13 +1,6 @@
-/**
- * Shared test helpers for PermissionDialog unit tests.
- * Exports factory functions and registers shared vi.mock stubs.
- * Import this module BEFORE importing PermissionDialog to ensure mocks are active.
- */
-
 import type { PermissionRequest } from '@myboteam/agent-core';
 import { vi } from 'vitest';
 
-// Mock framer-motion for simpler testing
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => (
@@ -17,7 +10,6 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-// Mock UI components
 vi.mock('@/components/ui/card', () => ({
   Card: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => (
     <div data-slot="card" {...props}>

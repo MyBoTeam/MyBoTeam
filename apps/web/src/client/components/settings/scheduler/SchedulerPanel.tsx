@@ -22,7 +22,6 @@ export function SchedulerPanel() {
       const result = await myboteam.listSchedules(activeWorkspaceId ?? undefined);
       setSchedules(result);
     } catch {
-      // Daemon may be unavailable
       setSchedules([]);
     }
   }, [myboteam, activeWorkspaceId]);
@@ -34,7 +33,6 @@ export function SchedulerPanel() {
         const [, autoStart] = await Promise.all([loadSchedules(), myboteam.isAutoStartEnabled()]);
         setAutoStartEnabled(autoStart);
       } catch {
-        // ignore
       } finally {
         setLoading(false);
       }
@@ -49,7 +47,7 @@ export function SchedulerPanel() {
 
   const handleToggleEnabled = async (id: string, enabled: boolean) => {
     await myboteam.setScheduleEnabled(id, enabled);
-    // Re-fetch to get updated next_run_at (recomputed server-side on enable)
+
     await loadSchedules();
   };
 

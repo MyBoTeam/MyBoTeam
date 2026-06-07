@@ -1,10 +1,3 @@
-/**
- * app-startup.ts — async startup body for `app.whenReady()`.
- *
- * Extracted from main/index.ts to keep index.ts focused on
- * top-level bootstrap (single-instance lock, env, window factory).
- */
-
 import path from 'node:path';
 import { app, type BrowserWindow, dialog, shell } from 'electron';
 import {
@@ -27,9 +20,7 @@ function logMain(level: 'INFO' | 'WARN' | 'ERROR', msg: string, data?: Record<st
   try {
     const l = getLogCollector();
     if (l?.log) l.log(level, 'main', msg, data);
-  } catch (_e) {
-    /* best-effort */
-  }
+  } catch (_e) {}
 }
 
 async function bootstrapDaemonWithRetry(): Promise<'connected' | 'quit'> {

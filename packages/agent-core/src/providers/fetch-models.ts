@@ -17,13 +17,10 @@ export interface FetchProviderModelsOptions {
   endpointConfig: ModelsEndpointConfig;
   apiKey: string;
   timeout?: number;
-  /** Override the endpoint URL (e.g., custom OpenAI base URL, Z.AI regional endpoint) */
+
   urlOverride?: string;
 }
 
-/**
- * Build request URL and headers based on endpoint config.
- */
 function buildRequest(
   config: ModelsEndpointConfig,
   apiKey: string,
@@ -48,10 +45,6 @@ function buildRequest(
   return { url, headers };
 }
 
-/**
- * Parse models from an OpenAI-compatible response format.
- * Shape: { data: Array<{ id: string; ... }> }
- */
 function parseOpenAIResponse(
   data: unknown,
   prefix: string,
@@ -71,10 +64,6 @@ function parseOpenAIResponse(
   }));
 }
 
-/**
- * Parse models from an Anthropic response format.
- * Shape: { data: Array<{ id: string; display_name: string; type: string }> }
- */
 function parseAnthropicResponse(
   data: unknown,
   prefix: string,
@@ -96,10 +85,6 @@ function parseAnthropicResponse(
   }));
 }
 
-/**
- * Parse models from a Google Generative AI response format.
- * Shape: { models: Array<{ name: string; displayName: string; supportedGenerationMethods: string[] }> }
- */
 function parseGoogleResponse(
   data: unknown,
   prefix: string,
@@ -114,12 +99,10 @@ function parseGoogleResponse(
   };
   if (!response.models || !Array.isArray(response.models)) return [];
 
-  // Only include models that support content generation
   const models = response.models.filter((m) =>
     m.supportedGenerationMethods?.includes('generateContent'),
   );
 
-  // Strip "models/" prefix from Google's model names
   const mapped = models.map((m) => {
     const id = m.name.replace(/^models\//, '');
     return { id, displayName: m.displayName || id };
@@ -145,15 +128,6 @@ const PARSERS: Record<
   google: parseGoogleResponse,
 };
 
-/**
- * Generic config-driven function to fetch models from any provider API.
- *
- * The behavior is entirely determined by the ModelsEndpointConfig:
- * - `authStyle` controls how the API key is sent
- * - `responseFormat` selects the appropriate response parser
- * - `modelIdPrefix` is prepended to each model ID
- * - `modelFilter` optionally filters model IDs by regex
- */
 export async function fetchProviderModels(
   options: FetchProviderModelsOptions,
 ): Promise<FetchProviderModelsResult> {

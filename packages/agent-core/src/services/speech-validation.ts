@@ -1,16 +1,7 @@
-/**
- * ElevenLabs API key validation and error response parsing.
- *
- * ESM module — use .js extensions on imports.
- */
-
 import { fetchWithTimeout } from '../utils/fetch.js';
 
 export const ELEVENLABS_API_TIMEOUT_MS = 30000;
 
-/**
- * Validate an ElevenLabs API key by making a test request.
- */
 export async function validateElevenLabsApiKey(
   key: string | null,
 ): Promise<{ valid: boolean; error?: string }> {
@@ -45,9 +36,7 @@ export async function validateElevenLabsApiKey(
     let errorData: Record<string, unknown> = {};
     try {
       errorData = JSON.parse(rawText);
-    } catch {
-      // Not JSON, use raw text below
-    }
+    } catch {}
     const errorMessage =
       (errorData as { error?: { message?: string } })?.error?.message ||
       rawText ||
@@ -65,9 +54,6 @@ export async function validateElevenLabsApiKey(
   }
 }
 
-/**
- * Parse an ElevenLabs error response body into a human-readable message.
- */
 export function parseElevenLabsErrorMessage(
   errorData: Record<string, unknown>,
   errorText: string,

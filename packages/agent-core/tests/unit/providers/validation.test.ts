@@ -3,7 +3,6 @@ import { validateApiKey } from '../../../src/providers/validation.js';
 
 describe('API Key Validation', () => {
   beforeEach(() => {
-    // Mock fetch globally
     vi.stubGlobal('fetch', vi.fn());
   });
 
@@ -201,7 +200,7 @@ describe('API Key Validation', () => {
         const result = await validateApiKey('zai', 'zai-test-key');
 
         expect(result.valid).toBe(true);
-        // Should use international endpoint by default
+
         expect(fetch).toHaveBeenCalledWith(expect.stringContaining('models'), expect.anything());
       });
 
@@ -356,7 +355,6 @@ describe('API Key Validation', () => {
 
         await validateApiKey('anthropic', 'sk-test-key', { timeout: 5000 });
 
-        // Verify fetch was called with signal (for abort controller)
         expect(fetch).toHaveBeenCalledWith(
           expect.any(String),
           expect.objectContaining({

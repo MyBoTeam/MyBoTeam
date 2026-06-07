@@ -1,5 +1,3 @@
-// apps/desktop/src/renderer/components/settings/shared/ConnectedControls.tsx
-
 import { useTranslation } from 'react-i18next';
 import connectedIcon from '/assets/icons/connected.svg';
 

@@ -1,8 +1,3 @@
-/**
- * Behavior block string constants for the MyBoTeam agent system prompt.
- * Imported by system-prompt-sections.ts and ultimately system-prompt.ts.
- */
-
 export const CONVERSATIONAL_BYPASS_BEHAVIOR = `<behavior name="conversational-bypass">
 ##############################################################################
 # CONVERSATIONAL BYPASS - USE FOR SIMPLE CHAT

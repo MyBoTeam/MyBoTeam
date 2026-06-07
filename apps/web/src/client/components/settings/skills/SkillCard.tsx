@@ -1,5 +1,3 @@
-// apps/desktop/src/renderer/components/settings/skills/SkillCard.tsx
-
 import type { Skill } from '@myboteam/agent-core/common';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -52,7 +50,7 @@ export const SkillCard = memo(function SkillCard({
 
   return (
     <div className="group rounded-xl border border-border bg-card/70 p-3.5 transition-all duration-200 hover:border-primary hover:shadow-md">
-      {/* Header: Name + Toggle */}
+      {}
       <div className="mb-1.5 flex items-start justify-between">
         <span className="flex items-center gap-1.5 text-[13px] font-semibold text-foreground">
           {skill.name}
@@ -77,7 +75,7 @@ export const SkillCard = memo(function SkillCard({
         </button>
       </div>
 
-      {/* Description */}
+      {}
       <p className="mb-2.5 line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
         {skill.description}
       </p>

@@ -1,5 +1,3 @@
-/** Standard API-key provider config builders: OpenRouter, Moonshot, LiteLLM, MiniMax. */
-
 import { MINIMAX_DEFAULT_BASE_URL } from '../common/index.js';
 import { getSelectedModel } from '../storage/repositories/index.js';
 import { createConsoleLogger } from '../utils/logging.js';
@@ -33,7 +31,6 @@ export async function buildOpenRouterConfig(
     };
   }
 
-  // Legacy path
   const openrouterKey = getApiKey('openrouter');
   if (openrouterKey) {
     const selectedModel = getSelectedModel();

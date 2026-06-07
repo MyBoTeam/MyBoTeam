@@ -37,7 +37,6 @@ export function diffSnapshots(
     }
   }
 
-  // If >70% of elements changed it's effectively a new page — send full snapshot instead
   const totalElements = current.elements.size;
   const changedCount = changes.length;
   if (totalElements > 0 && changedCount / totalElements > 0.7) return null;

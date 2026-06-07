@@ -4,9 +4,6 @@ import type { IpcMainInvokeEvent } from 'electron';
 import { getDaemonClient } from '../../../daemon-bootstrap';
 import type { IpcHandler } from '../../types';
 
-// Milestone 5 of the daemon-only-SQLite migration: Ollama config
-// reads/writes route through `settings.*OllamaConfig`. Validation stays
-// client-side at the IPC boundary.
 export function registerOllamaHandlers(handle: IpcHandler): void {
   handle('ollama:test-connection', async (_event: IpcMainInvokeEvent, url: string) => {
     return testOllamaConnection(url);

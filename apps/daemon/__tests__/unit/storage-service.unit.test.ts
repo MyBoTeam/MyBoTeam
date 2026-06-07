@@ -1,23 +1,3 @@
-/**
- * Regression tests for `StorageService` bootstrap.
- *
- * The sql.js migration consolidated all workspace tables into `myboteam.db`
- * (the legacy `workspace-meta.db` sibling is gone). This test verifies the
- * post-migration contract:
- *
- *   1. `StorageService.initialize(dataDir)` calls `createStorage` with
- *      `databasePath` pointing at the expected filename under `dataDir`
- *      (dev vs packaged).
- *   2. `storage.initialize()` is invoked and the lifecycle methods
- *      (`close`, `getStorage`, `getRawDatabase`) behave correctly.
- *
- * sql.js WASM bindings can't be loaded in the daemon vitest environment
- * (NODE_MODULE_VERSION mismatch against Electron's bundled Node), so we
- * mock `createStorage` from `@myboteam/agent-core` and the
- * `getDatabase` export. The real helpers are covered by agent-core's
- * integration suite.
- */
-
 import { rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -62,9 +42,7 @@ describe('StorageService bootstrap — consolidated workspace-meta', () => {
     delete process.env.MYBOTEAM_IS_PACKAGED;
     try {
       rmSync(dataDir, { recursive: true, force: true });
-    } catch {
-      /* best-effort */
-    }
+    } catch {}
   });
 
   it('falls back to default data dir when no dataDir is passed', async () => {

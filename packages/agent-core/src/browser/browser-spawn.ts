@@ -1,10 +1,3 @@
-/**
- * Browser Spawn Utilities
- *
- * Helper functions for spawning browser-related processes.
- * Extracted from server.ts to keep it under the 200-line limit.
- */
-
 import fs from 'node:fs';
 import path from 'node:path';
 

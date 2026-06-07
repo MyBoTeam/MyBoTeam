@@ -25,7 +25,7 @@ export function TodoSidebar({ todos }: TodoSidebarProps) {
       exit={{ opacity: 0, x: 20 }}
       className="w-[250px] border-l border-border bg-card/50 glass-bg flex flex-col"
     >
-      {/* Header */}
+      {}
       <div className="px-4 py-3 border-b border-border">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-medium text-foreground tracking-[0.18px]">

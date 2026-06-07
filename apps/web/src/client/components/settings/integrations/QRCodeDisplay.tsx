@@ -1,11 +1,3 @@
-/**
- * QRCodeDisplay — real QR code with expiry countdown
- *
- * Contributed by kartikangiras (PR #455 feature/whatsapp).
- * Renders a standards-compliant SVG QR code from the pairing string using the
- * `qrcode` library, with an expiry timer and an "expired" overlay.
- */
-
 import QRCode from 'qrcode';
 import { useEffect, useState } from 'react';
 
@@ -21,7 +13,6 @@ export function QRCodeDisplay({ qrString, expiresAt, onExpired, size = 200 }: QR
   const [expired, setExpired] = useState(false);
   const [svgDataUrl, setSvgDataUrl] = useState<string | null>(null);
 
-  // Generate real QR code SVG whenever the qrString changes
   useEffect(() => {
     let cancelled = false;
     QRCode.toDataURL(qrString, {
@@ -35,9 +26,7 @@ export function QRCodeDisplay({ qrString, expiresAt, onExpired, size = 200 }: QR
           setSvgDataUrl(url);
         }
       })
-      .catch(() => {
-        // Silently ignore — expired overlay will show if qrString is bad
-      });
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
@@ -56,7 +45,7 @@ export function QRCodeDisplay({ qrString, expiresAt, onExpired, size = 200 }: QR
         }
       }
     };
-    tick(); // run immediately on mount to avoid 1s delay
+    tick();
     interval = setInterval(tick, 1000);
     return () => {
       if (interval) {

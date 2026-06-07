@@ -128,7 +128,6 @@ export async function loadOptionalRuntime(): Promise<OptionalRuntime> {
   let setProxyTaskId: ((taskId: string | undefined) => void) | undefined;
   const OPTIONAL_RUNTIME_MODULE = '@myboteam/llm-gateway-client';
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const runtimeMod = require(OPTIONAL_RUNTIME_MODULE) as {
       setProxyTaskId?: (taskId: string | undefined) => void;
     };

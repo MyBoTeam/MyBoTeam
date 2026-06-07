@@ -1,17 +1,7 @@
-/**
- * whatsappStorageSync — storage mutation helpers for WhatsApp events (daemon version)
- *
- * Handles persistence of phoneNumber, connectionStatus, and lastConnectedAt
- * in response to WhatsApp service events.
- */
 import type { StorageAPI } from '@myboteam/agent-core';
 import type { TaskBridge } from './taskBridge.js';
 import type { WhatsAppService } from './WhatsAppService.js';
 
-/**
- * Registers listeners on `service` that persist WhatsApp state into storage
- * and wire ownerLid into the task bridge.
- */
 export function wireStatusListeners(
   service: WhatsAppService,
   storage: StorageAPI,
@@ -35,9 +25,6 @@ export function wireStatusListeners(
     });
   });
 
-  // ownerLid wiring is handled by wireTaskBridge — this module focuses on storage persistence.
-
-  // When status changes to connected, persist the state
   service.on('status', (status: string) => {
     if (status === 'connected') {
       const config = storage.getMessagingConfig();

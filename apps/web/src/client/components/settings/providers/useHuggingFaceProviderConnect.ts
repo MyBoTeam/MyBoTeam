@@ -55,9 +55,7 @@ export function useHuggingFaceProviderConnect({
           );
         }
       })
-      .catch(() => {
-        // Non-fatal: suggested models will still be shown
-      });
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -141,9 +139,7 @@ export function useHuggingFaceProviderConnect({
     try {
       const myboteam = getMyBoTeam();
       await myboteam.stopHuggingFaceServer();
-    } catch {
-      // Ignore errors during disconnect
-    }
+    } catch {}
     onDisconnect();
   };
 

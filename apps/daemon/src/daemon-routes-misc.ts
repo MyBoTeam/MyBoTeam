@@ -9,7 +9,6 @@ export function registerMiscRoutes(services: RouteServices): void {
   const { rpc, myboteamRuntime, storageService } = services;
   const storage = storageService.getStorage();
 
-  // ── MyBoTeam AI Free Tier ──
   const myboteamStorageDeps: StorageDeps = {
     readKey: (key) => storage.get(key),
     writeKey: (key, value) => storage.set(key, value),
@@ -38,7 +37,6 @@ export function registerMiscRoutes(services: RouteServices): void {
     rpc.notify('myboteam-ai.usage-update', usage);
   });
 
-  // ── Favorites ──
   rpc.registerMethod(
     'favorites.list',
     safeHandler(() => Promise.resolve(storage.getFavorites())),
@@ -74,7 +72,6 @@ export function registerMiscRoutes(services: RouteServices): void {
     }),
   );
 
-  // ── Logs ──
   rpc.registerMethod(
     'logs.getTasksForBugReport',
     safeHandler(() => Promise.resolve(storage.getTasks())),

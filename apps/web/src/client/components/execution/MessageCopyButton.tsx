@@ -47,9 +47,7 @@ export function MessageCopyButton({ content, isUser }: MessageCopyButtonProps) {
       timeoutRef.current = setTimeout(() => {
         setCopied(false);
       }, COPIED_STATE_DURATION_MS);
-    } catch {
-      // clipboard write may fail in non-secure contexts
-    }
+    } catch {}
   }, [content]);
 
   return (

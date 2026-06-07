@@ -1,10 +1,3 @@
-/**
- * Permission Request Builders
- *
- * Functions to build PermissionRequest objects from raw request data.
- * Extracted to keep PermissionRequestHandler under the 200-line limit.
- */
-
 import { FILE_OPERATIONS } from '../../common/index.js';
 import type {
   FileOperation,
@@ -17,11 +10,6 @@ import type {
   QuestionRequestData,
 } from './permission-request-types.js';
 
-/**
- * Validate file permission request data
- * @param data - Raw request data to validate
- * @returns Validation result with error message if invalid
- */
 export function validateFilePermissionRequest(data: unknown): PermissionValidationResult {
   if (!data || typeof data !== 'object') {
     return { valid: false, error: 'Invalid request data' };
@@ -29,7 +17,6 @@ export function validateFilePermissionRequest(data: unknown): PermissionValidati
 
   const requestData = data as FilePermissionRequestData;
 
-  // Check required fields
   if (!requestData.operation) {
     return { valid: false, error: 'operation is required' };
   }
@@ -38,7 +25,6 @@ export function validateFilePermissionRequest(data: unknown): PermissionValidati
     return { valid: false, error: 'operation and either filePath or filePaths are required' };
   }
 
-  // Validate operation type
   if (!FILE_OPERATIONS.includes(requestData.operation as FileOperation)) {
     return {
       valid: false,
@@ -49,11 +35,6 @@ export function validateFilePermissionRequest(data: unknown): PermissionValidati
   return { valid: true };
 }
 
-/**
- * Validate question request data
- * @param data - Raw request data to validate
- * @returns Validation result with error message if invalid
- */
 export function validateQuestionRequest(data: unknown): PermissionValidationResult {
   if (!data || typeof data !== 'object') {
     return { valid: false, error: 'Invalid request data' };
@@ -68,13 +49,6 @@ export function validateQuestionRequest(data: unknown): PermissionValidationResu
   return { valid: true };
 }
 
-/**
- * Build a PermissionRequest object for file operations
- * @param requestId - The request ID
- * @param taskId - The associated task ID
- * @param data - The validated request data
- * @returns PermissionRequest object ready to send to the UI
- */
 export function buildFilePermissionRequest(
   requestId: string,
   taskId: string,
@@ -93,13 +67,6 @@ export function buildFilePermissionRequest(
   };
 }
 
-/**
- * Build a PermissionRequest object for questions
- * @param requestId - The request ID
- * @param taskId - The associated task ID
- * @param data - The validated request data
- * @returns PermissionRequest object ready to send to the UI
- */
 export function buildQuestionRequest(
   requestId: string,
   taskId: string,

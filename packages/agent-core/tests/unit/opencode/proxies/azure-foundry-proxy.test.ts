@@ -6,7 +6,6 @@ import {
   transformRequestBody,
 } from '../../../../src/opencode/proxies/azure-foundry-proxy.js';
 
-// Mock http so tests don't bind a real TCP port
 class MockHttpServer {
   listening = false;
   private _errorHandler?: (err: Error) => void;
@@ -18,7 +17,6 @@ class MockHttpServer {
     return this;
   }
 
-  /** Expose stored error handler so tests can simulate startup errors. */
   emitError(err: Error) {
     this._errorHandler?.(err);
   }
@@ -51,7 +49,7 @@ describe('Azure Foundry Proxy', () => {
 
   afterEach(async () => {
     vi.restoreAllMocks();
-    // Clean up any running proxy
+
     await stopAzureFoundryProxy();
   });
 
@@ -167,9 +165,8 @@ describe('Azure Foundry Proxy', () => {
       const result1 = await ensureAzureFoundryProxy('https://api.azure.com/openai');
       const result2 = await ensureAzureFoundryProxy('https://api.azure.com/openai2');
 
-      // Both should return same proxy URL
       expect(result1.baseURL).toBe(result2.baseURL);
-      // But target should be updated
+
       expect(result2.targetBaseURL).toBe('https://api.azure.com/openai2');
     });
 
@@ -201,7 +198,7 @@ describe('Azure Foundry Proxy', () => {
     });
 
     it('should not throw when proxy not running', async () => {
-      await stopAzureFoundryProxy(); // Should not throw
+      await stopAzureFoundryProxy();
 
       expect(isAzureFoundryProxyRunning()).toBe(false);
     });

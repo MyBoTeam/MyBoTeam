@@ -16,8 +16,6 @@ export const GOOGLE_OAUTH_SCOPES = [
 export const OAUTH_CALLBACK_PORT_PRIMARY = 4567;
 export const OAUTH_CALLBACK_PORT_FALLBACK = 4568;
 
-/** Refresh token 10 minutes before actual expiry to avoid using an expired token */
 export const TOKEN_REFRESH_MARGIN_MS = 10 * 60 * 1000;
 
-/** SecureStorage key for a given Google account's token data */
 export const gwsTokenKey = (accountId: string): string => `gws:token:${accountId}`;

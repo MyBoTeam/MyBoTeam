@@ -11,7 +11,7 @@ export default function Header() {
   return (
     <header className="drag-region sticky top-0 z-50 border-b border-border bg-background-card/80 glass-bg backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-6">
-        {/* Logo */}
+        {}
         <Link to="/" className="no-drag flex items-center gap-2.5">
           <div className="h-7 w-7 rounded-lg bg-primary flex items-center justify-center">
             <svg

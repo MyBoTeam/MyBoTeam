@@ -101,7 +101,6 @@ describe('google-account-handlers', () => {
 
       await handlers['gws:accounts:start-auth']({} as unknown, 'My Account');
 
-      // Wait for all Promise microtasks to flush
       await vi.waitFor(() => {
         expect(mockDaemonClient.call).toHaveBeenCalledTimes(2);
       });

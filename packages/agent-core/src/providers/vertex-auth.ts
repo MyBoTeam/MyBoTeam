@@ -1,11 +1,3 @@
-/**
- * Vertex AI authentication helpers
- *
- * Handles access token acquisition for Google Cloud Vertex AI via:
- * - Service account key (JWT → OAuth2 token exchange)
- * - Application Default Credentials (gcloud CLI)
- */
-
 import { execFile } from 'node:child_process';
 import crypto from 'node:crypto';
 import type { VertexCredentials } from '../common/types/auth.js';
@@ -21,10 +13,6 @@ export interface ServiceAccountKey {
   token_uri?: string;
 }
 
-/**
- * Generates a signed JWT from a GCP service account key and exchanges it
- * for an access token via Google's OAuth2 token endpoint.
- */
 export async function getServiceAccountAccessToken(key: ServiceAccountKey): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const header = { alg: 'RS256', typ: 'JWT' };
@@ -65,9 +53,6 @@ export async function getServiceAccountAccessToken(key: ServiceAccountKey): Prom
   return data.access_token;
 }
 
-/**
- * Gets an access token using Application Default Credentials (gcloud CLI).
- */
 export async function getAdcAccessToken(): Promise<string> {
   try {
     const token = await new Promise<string>((resolve, reject) => {
@@ -103,9 +88,6 @@ export async function getAdcAccessToken(): Promise<string> {
   }
 }
 
-/**
- * Obtains an access token based on the credential type.
- */
 export async function getVertexAccessToken(credentials: VertexCredentials): Promise<string> {
   switch (credentials.authType) {
     case 'serviceAccount': {

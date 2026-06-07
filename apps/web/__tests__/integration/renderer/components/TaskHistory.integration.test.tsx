@@ -1,16 +1,8 @@
-/**
- * Integration tests for TaskHistory component
- * Tests task list rendering, selection, deletion, and history clearing
- * @module __tests__/integration/renderer/components/TaskHistory.integration.test
- * @vitest-environment jsdom
- */
-
 import type { Task, TaskStatus } from '@myboteam/agent-core';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Create mock functions for task store
 const mockLoadTasks = vi.fn();
 const mockDeleteTask = vi.fn();
 const mockClearHistory = vi.fn();
@@ -18,7 +10,6 @@ const mockLoadFavorites = vi.fn();
 const mockAddFavorite = vi.fn().mockResolvedValue(undefined);
 const mockRemoveFavorite = vi.fn().mockResolvedValue(undefined);
 
-// Create a store state holder for testing
 let mockStoreState = {
   tasks: [] as Task[],
   favorites: [] as { taskId: string; prompt: string; summary?: string; favoritedAt: string }[],
@@ -30,12 +21,10 @@ let mockStoreState = {
   clearHistory: mockClearHistory,
 };
 
-// Mock the task store
 vi.mock('@/stores/taskStore', () => ({
   useTaskStore: () => mockStoreState,
 }));
 
-// Helper to create mock tasks
 function createMockTask(
   id: string,
   prompt: string = 'Test task',
@@ -57,13 +46,12 @@ function createMockTask(
   };
 }
 
-// Need to import after mocks are set up
 import TaskHistory from '@/components/history/TaskHistory';
 
 describe('TaskHistory Integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset store state
+
     mockStoreState = {
       tasks: [],
       favorites: [],
@@ -74,13 +62,12 @@ describe('TaskHistory Integration', () => {
       deleteTask: mockDeleteTask,
       clearHistory: mockClearHistory,
     };
-    // Mock window.confirm
+
     vi.spyOn(window, 'confirm').mockImplementation(() => true);
   });
 
   describe('empty state rendering', () => {
     it('should render empty state when no tasks exist', () => {
-      // Arrange & Act
       render(
         <MemoryRouter>
           <TaskHistory />
@@ -92,7 +79,6 @@ describe('TaskHistory Integration', () => {
     });
 
     it('should render helpful message in empty state', () => {
-      // Arrange & Act
       render(
         <MemoryRouter>
           <TaskHistory />
@@ -104,7 +90,6 @@ describe('TaskHistory Integration', () => {
     });
 
     it('should not render task list in empty state', () => {
-      // Arrange & Act
       render(
         <MemoryRouter>
           <TaskHistory />
@@ -131,13 +116,11 @@ describe('TaskHistory Integration', () => {
 
   describe('task list rendering', () => {
     it('should render task list when tasks exist', () => {
-      // Arrange
       mockStoreState.tasks = [
         createMockTask('task-1', 'Send email to John'),
         createMockTask('task-2', 'Create report'),
       ];
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory />
@@ -196,12 +179,10 @@ describe('TaskHistory Integration', () => {
     });
 
     it('should render message count for each task', () => {
-      // Arrange
       mockStoreState.tasks = [
         createMockTask('task-1', 'Task with messages', 'completed', undefined, 5),
       ];
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory />
@@ -213,7 +194,6 @@ describe('TaskHistory Integration', () => {
     });
 
     it('should call loadTasks on mount', () => {
-      // Arrange & Act
       render(
         <MemoryRouter>
           <TaskHistory />
@@ -327,10 +307,8 @@ describe('TaskHistory Integration', () => {
 
   describe('task selection', () => {
     it('should render tasks as clickable links', () => {
-      // Arrange
       mockStoreState.tasks = [createMockTask('task-123', 'Clickable task')];
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory />
@@ -476,10 +454,8 @@ describe('TaskHistory Integration', () => {
     });
 
     it('should not render Clear all button when limit is set', () => {
-      // Arrange
       mockStoreState.tasks = [createMockTask('task-1', 'Test task')];
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory limit={5} showTitle={true} />
@@ -491,11 +467,9 @@ describe('TaskHistory Integration', () => {
     });
 
     it('should show confirmation dialog when Clear all is clicked', () => {
-      // Arrange
       mockStoreState.tasks = [createMockTask('task-1', 'Test task')];
       const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory showTitle={true} />
@@ -504,16 +478,13 @@ describe('TaskHistory Integration', () => {
 
       fireEvent.click(screen.getByText(/clear all/i));
 
-      // Assert
       expect(confirmSpy).toHaveBeenCalledWith('Are you sure you want to clear all task history?');
     });
 
     it('should call clearHistory when confirmation is accepted', () => {
-      // Arrange
       mockStoreState.tasks = [createMockTask('task-1', 'Test task')];
       vi.spyOn(window, 'confirm').mockReturnValue(true);
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory showTitle={true} />
@@ -522,16 +493,13 @@ describe('TaskHistory Integration', () => {
 
       fireEvent.click(screen.getByText(/clear all/i));
 
-      // Assert
       expect(mockClearHistory).toHaveBeenCalled();
     });
 
     it('should not call clearHistory when confirmation is cancelled', () => {
-      // Arrange
       mockStoreState.tasks = [createMockTask('task-1', 'Test task')];
       vi.spyOn(window, 'confirm').mockReturnValue(false);
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory showTitle={true} />
@@ -540,14 +508,12 @@ describe('TaskHistory Integration', () => {
 
       fireEvent.click(screen.getByText(/clear all/i));
 
-      // Assert
       expect(mockClearHistory).not.toHaveBeenCalled();
     });
   });
 
   describe('limit functionality', () => {
     it('should limit displayed tasks when limit prop is provided', () => {
-      // Arrange
       mockStoreState.tasks = [
         createMockTask('task-1', 'Task 1'),
         createMockTask('task-2', 'Task 2'),
@@ -556,7 +522,6 @@ describe('TaskHistory Integration', () => {
         createMockTask('task-5', 'Task 5'),
       ];
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory limit={3} />
@@ -592,14 +557,12 @@ describe('TaskHistory Integration', () => {
     });
 
     it('should link to history page in View all link', () => {
-      // Arrange
       mockStoreState.tasks = [
         createMockTask('task-1', 'Task 1'),
         createMockTask('task-2', 'Task 2'),
         createMockTask('task-3', 'Task 3'),
       ];
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory limit={2} />
@@ -612,13 +575,11 @@ describe('TaskHistory Integration', () => {
     });
 
     it('should not show View all link when tasks fit within limit', () => {
-      // Arrange
       mockStoreState.tasks = [
         createMockTask('task-1', 'Task 1'),
         createMockTask('task-2', 'Task 2'),
       ];
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory limit={5} />
@@ -630,7 +591,6 @@ describe('TaskHistory Integration', () => {
     });
 
     it('should show all tasks when no limit is provided', () => {
-      // Arrange
       mockStoreState.tasks = [
         createMockTask('task-1', 'Task 1'),
         createMockTask('task-2', 'Task 2'),
@@ -639,7 +599,6 @@ describe('TaskHistory Integration', () => {
         createMockTask('task-5', 'Task 5'),
       ];
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory />
@@ -673,11 +632,9 @@ describe('TaskHistory Integration', () => {
     });
 
     it('should show minutes ago for tasks within an hour', () => {
-      // Arrange
       const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
       mockStoreState.tasks = [createMockTask('task-1', 'Old task', 'completed', thirtyMinutesAgo)];
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory />
@@ -689,11 +646,9 @@ describe('TaskHistory Integration', () => {
     });
 
     it('should show hours ago for tasks within a day', () => {
-      // Arrange
       const fiveHoursAgo = new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString();
       mockStoreState.tasks = [createMockTask('task-1', 'Older task', 'completed', fiveHoursAgo)];
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory />
@@ -705,11 +660,9 @@ describe('TaskHistory Integration', () => {
     });
 
     it('should show days ago for tasks older than a day', () => {
-      // Arrange
       const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
       mockStoreState.tasks = [createMockTask('task-1', 'Very old task', 'completed', threeDaysAgo)];
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory />
@@ -723,10 +676,8 @@ describe('TaskHistory Integration', () => {
 
   describe('styling and layout', () => {
     it('should render tasks with card styling', () => {
-      // Arrange
       mockStoreState.tasks = [createMockTask('task-1', 'Styled task')];
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory />
@@ -773,13 +724,11 @@ describe('TaskHistory Integration', () => {
     });
 
     it('should render tasks in a vertical list', () => {
-      // Arrange
       mockStoreState.tasks = [
         createMockTask('task-1', 'Task 1'),
         createMockTask('task-2', 'Task 2'),
       ];
 
-      // Act
       render(
         <MemoryRouter>
           <TaskHistory />

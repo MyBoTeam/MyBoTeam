@@ -1,5 +1,3 @@
-// apps/web/src/client/components/settings/shared/index.ts
-
 export { AlertCallout } from './AlertCallout';
 export { ApiKeyInput } from './ApiKeyInput';
 export { ConnectButton } from './ConnectButton';

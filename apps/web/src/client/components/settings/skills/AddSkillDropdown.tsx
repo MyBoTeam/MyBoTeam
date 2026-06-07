@@ -21,7 +21,7 @@ import { useAddSkill } from './useAddSkill';
 
 interface AddSkillDropdownProps {
   onSkillAdded?: () => void;
-  onClose?: () => void; // Close the settings dialog
+  onClose?: () => void;
 }
 
 export function AddSkillDropdown({ onSkillAdded, onClose }: AddSkillDropdownProps) {

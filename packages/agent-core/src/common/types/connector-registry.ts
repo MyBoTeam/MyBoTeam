@@ -1,7 +1,6 @@
 import type { ConnectorDefinition } from './connector.js';
 import { OAuthProviderId } from './connector.js';
 
-// OAuth callback ports — unique per provider (ADR-F001, research.md)
 export const OAUTH_CALLBACK_PORTS = {
   slack: 3118,
   google: 3119,
@@ -180,7 +179,6 @@ export function getConnectorDefinition(id: OAuthProviderId): ConnectorDefinition
   return CONNECTOR_REGISTRY.find((d) => d.id === id);
 }
 
-/** Returns all connectors that have an MCP-based OAuth strategy (excludes desktop-github) */
 export function getMcpConnectorDefinitions(): readonly ConnectorDefinition[] {
   return CONNECTOR_REGISTRY.filter(
     (d) => d.desktopOAuth.kind !== 'desktop-google' && d.desktopOAuth.kind !== 'desktop-github',

@@ -5,12 +5,12 @@ export interface BrowserNavigateInput {
 
 export interface BrowserSnapshotInput {
   page_name?: string;
-  interactive_only?: boolean; // default true — only buttons, inputs, links
-  full_snapshot?: boolean; // default false
-  max_elements?: number; // default 300, range 1-1000
+  interactive_only?: boolean;
+  full_snapshot?: boolean;
+  max_elements?: number;
   viewport_only?: boolean;
-  include_history?: boolean; // default true
-  max_tokens?: number; // default 8000, range 1000-50000
+  include_history?: boolean;
+  max_tokens?: number;
 }
 
 export type BrowserClickInput =
@@ -57,8 +57,6 @@ export type BrowserHoverInput =
   | { target: 'ref'; ref: string; page_name?: string }
   | { target: 'selector'; selector: string; page_name?: string }
   | { target: 'coords'; x: number; y: number; page_name?: string };
-
-// BrowserScrollInput, BrowserSelectInput already refactored above
 
 export type BrowserGetTextInput =
   | { target: 'ref'; ref: string; page_name?: string }

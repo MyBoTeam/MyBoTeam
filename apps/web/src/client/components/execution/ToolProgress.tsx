@@ -32,7 +32,6 @@ export function ToolProgress({
 }: ToolProgressProps) {
   const thinkingPhrase = useMemo(() => {
     return THINKING_PHRASES[Math.floor(Math.random() * THINKING_PHRASES.length)];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -1,22 +1,3 @@
-/**
- * Docker sandbox provider — runs the agent inside a Docker container.
- *
- * Contributed by:
- *   - preeeetham (PR #430): spawnDocker / spawnNormal helper logic,
- *     SandboxPaths interface, Docker availability check via `docker info`
- *   - SaaiAravindhRaja (PR #612): Docker image config, network policy,
- *     allowed-hosts filtering, env-var allowlist, arg construction tests
- *
- * The provider wraps wrapSpawnArgs() so that when mode === 'docker' the
- * agent binary is executed via:
- *   docker run --rm -i \
- *     -v <cwd>:/workspace -w /workspace \
- *     [-v <extra-path>:<extra-path> ...] \
- *     [--network none] \
- *     [-e KEY=VALUE ...] \
- *     <image> sh -c "<command> <args>"
- */
-
 import { execSync } from 'node:child_process';
 import type {
   SandboxConfig,
@@ -37,7 +18,6 @@ export class DockerSandboxProvider implements SandboxProvider {
     this.getSandboxPaths = getSandboxPaths;
   }
 
-  /** Docker is only supported on macOS and Linux (preeeetham, PR #430) */
   async isAvailable(): Promise<boolean> {
     if (this.platform !== 'darwin' && this.platform !== 'linux') {
       return false;
@@ -50,12 +30,6 @@ export class DockerSandboxProvider implements SandboxProvider {
     }
   }
 
-  /**
-   * Build docker run args and rewire the spawn call to run inside the container.
-   *
-   * Inspired by preeeetham (PR #430) spawnDocker + SaaiAravindhRaja (PR #612)
-   * docker arg construction and network policy handling.
-   */
   async wrapSpawnArgs(args: SpawnArgs, config: SandboxConfig): Promise<SpawnArgs> {
     const sandboxEnv: Record<string, string> = {
       MYBOTEAM_SANDBOX_ENABLED: '1',
@@ -72,9 +46,7 @@ export class DockerSandboxProvider implements SandboxProvider {
     };
   }
 
-  async dispose(): Promise<void> {
-    // nothing to clean up
-  }
+  async dispose(): Promise<void> {}
 
   buildDockerArgs(spawnArgs: SpawnArgs, config: SandboxConfig): string[] {
     return buildDockerArgs(spawnArgs, config, this.getSandboxPaths);

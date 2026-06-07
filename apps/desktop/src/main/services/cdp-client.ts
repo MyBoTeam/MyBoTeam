@@ -1,8 +1,3 @@
-/**
- * CdpClient — lightweight WebSocket-based Chrome DevTools Protocol client.
- * Contributed by Dev0907 (PR #480) for ENG-695.
- */
-
 const COMMAND_TIMEOUT_MS = 10_000;
 
 interface CdpCommandResponse {

@@ -5,7 +5,6 @@ import type { IpcHandler } from '../../types';
 const VALID_CLOUD_BROWSER_PROVIDERS = new Set(['aws-agentcore', 'browserbase', 'steel']);
 
 export function registerCloudBrowserHandlers(handle: IpcHandler): void {
-  // Milestone 3 sub-chunk 3c: config get/set route through daemon RPC.
   handle('settings:cloud-browser-config:get', async (_event: IpcMainInvokeEvent) => {
     return getDaemonClient().call('settings.getCloudBrowserConfig');
   });
@@ -47,7 +46,7 @@ export function registerCloudBrowserHandlers(handle: IpcHandler): void {
         ) {
           throw new Error('Invalid cloud browser config: providers must be a plain object');
         }
-        // When activeProvider is set, ensure the matching entry exists in providers
+
         if (
           cfg.activeProvider !== null &&
           typeof cfg.activeProvider === 'string' &&
@@ -58,10 +57,7 @@ export function registerCloudBrowserHandlers(handle: IpcHandler): void {
           );
         }
       }
-      // The `CloudBrowserConfig` shape is validated field-by-field above;
-      // the RPC wire type is `unknown`-backed on the daemon side anyway
-      // (see `settings.setCloudBrowserConfig` in `common/types/daemon.ts`).
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       await getDaemonClient().call('settings.setCloudBrowserConfig', { config: cfg as any });
     },
   );

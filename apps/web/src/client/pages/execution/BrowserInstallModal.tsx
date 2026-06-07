@@ -11,7 +11,6 @@ interface BrowserInstallModalProps {
   setupDownloadStep: number;
 }
 
-/** Modal overlay shown while the browser is being installed/downloaded. */
 export function BrowserInstallModal({
   setupProgress,
   setupProgressTaskId,

@@ -1,7 +1,3 @@
-/**
- * WhatsApp session/connection update handler.
- * Extracted from WhatsAppService to keep each file under 200 lines.
- */
 import type { MessagingConnectionStatus } from '@myboteam/agent-core/common';
 import { log } from '../logger.js';
 import { cleanupAuthState } from './authCleanup.js';
@@ -34,7 +30,7 @@ export interface SessionHandlerContext {
   authStatePath: string;
   disposed: boolean;
   manualDisconnect: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   socket: any | null;
   setStatus(s: MessagingConnectionStatus): void;
   setQrCode(qr: string | null): void;

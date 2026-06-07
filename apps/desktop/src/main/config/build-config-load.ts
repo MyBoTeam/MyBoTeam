@@ -41,9 +41,7 @@ export function loadBuildConfig(): BuildConfig {
     const content = fs.readFileSync(buildEnvPath, 'utf8');
     raw = dotenvParse(content);
     loadedFromFile = true;
-  } catch {
-    // File absent — expected for OSS builds and dev mode without a local build.env
-  }
+  } catch {}
 
   const parsed = buildConfigSchema.safeParse({
     buildEnvVersion: firstNonEmpty(raw.BUILD_ENV_VERSION, process.env.BUILD_ENV_VERSION),

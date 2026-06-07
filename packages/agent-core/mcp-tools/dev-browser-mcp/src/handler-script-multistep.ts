@@ -156,9 +156,7 @@ export async function handleBrowserScript(args: unknown): Promise<CallToolResult
       try {
         snapshotResult = await getSnapshotWithHistory(page);
         results.push('→ Captured page state at failure');
-      } catch {
-        /* empty */
-      }
+      } catch {}
       const content: CallToolResult['content'] = [
         { type: 'text', text: `Script stopped at step ${stepNum}:\n${results.join('\n')}` },
       ];
@@ -174,9 +172,7 @@ export async function handleBrowserScript(args: unknown): Promise<CallToolResult
       await waitForPageLoad(page, 2000);
       snapshotResult = await getSnapshotWithHistory(page);
       results.push('→ Auto-captured final page state');
-    } catch {
-      /* empty */
-    }
+    } catch {}
   }
   const content: CallToolResult['content'] = [
     { type: 'text', text: `Script completed (${actions.length} actions):\n${results.join('\n')}` },

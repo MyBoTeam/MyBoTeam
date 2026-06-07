@@ -1,5 +1,3 @@
-// apps/desktop/src/renderer/components/settings/shared/ProviderFormHeader.tsx
-
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
@@ -18,7 +16,7 @@ export function ProviderFormHeader({
 
   return (
     <div className="flex items-center gap-3 mb-5">
-      {/* Fixed-size container to prevent layout shift when switching providers */}
+      {}
       <div className="h-8 w-8 flex items-center justify-center flex-shrink-0">
         <img
           src={logoSrc}

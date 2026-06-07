@@ -1,24 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TaskInactivityWatchdog } from '../../../../src/internal/classes/TaskInactivityWatchdog.js';
 
-/**
- * Tests for `TaskInactivityWatchdog` (added by the OpenCode SDK cutover port,
- * commercial PR #720). The watchdog samples the adapter state on a schedule
- * and escalates when the fingerprint stops changing while `inProgress` is
- * true: first a soft timeout (nudge), then a hard timeout after an additional
- * grace window if the nudge produced no progress.
- *
- * These tests use vitest fake timers plus `now` / `setTimeoutFn` injection
- * so we control the clock deterministically.
- */
 describe('TaskInactivityWatchdog', () => {
   let nowMs: number;
   const advance = (ms: number) => {
     nowMs += ms;
     vi.advanceTimersByTime(ms);
   };
-  // Wait for microtasks (the async sample() promise chain) to settle so that
-  // vi.advanceTimersByTime can schedule the next tick immediately afterwards.
+
   const flushMicrotasks = async () => {
     for (let i = 0; i < 10; i++) {
       await Promise.resolve();
@@ -116,7 +105,7 @@ describe('TaskInactivityWatchdog', () => {
     });
 
     watchdog.start();
-    // Advance just past the stall threshold sampling every 1s.
+
     for (let i = 0; i < 11; i++) {
       advance(1000);
       await flushMicrotasks();
@@ -153,7 +142,7 @@ describe('TaskInactivityWatchdog', () => {
     });
 
     watchdog.start();
-    // Reach soft timeout (5s frozen) then continue past post-nudge (3s more).
+
     for (let i = 0; i < 10; i++) {
       advance(1000);
       await flushMicrotasks();
@@ -163,8 +152,6 @@ describe('TaskInactivityWatchdog', () => {
     expect(onHard).toHaveBeenCalledTimes(1);
     expect(onHard.mock.calls[0][0].snapshot.summary).toBe('stuck task');
 
-    // After hard timeout fires the watchdog stops itself; further ticks must
-    // not produce more hard-timeout invocations.
     for (let i = 0; i < 5; i++) {
       advance(1000);
       await flushMicrotasks();
@@ -193,7 +180,7 @@ describe('TaskInactivityWatchdog', () => {
     });
 
     watchdog.start();
-    // Stall long enough to fire the soft timeout.
+
     for (let i = 0; i < 6; i++) {
       advance(1000);
       await flushMicrotasks();
@@ -201,7 +188,6 @@ describe('TaskInactivityWatchdog', () => {
     expect(onSoft).toHaveBeenCalledTimes(1);
     expect(onHard).not.toHaveBeenCalled();
 
-    // Fingerprint changes — progress made. Hard timeout must NOT fire.
     fingerprint = 'B';
     for (let i = 0; i < 2; i++) {
       advance(1000);
@@ -209,8 +195,6 @@ describe('TaskInactivityWatchdog', () => {
     }
     expect(onHard).not.toHaveBeenCalled();
 
-    // And we should start the soft-count over from zero — freezing again
-    // for stallTimeoutMs should produce a FRESH soft timeout, not a hard one.
     for (let i = 0; i < 6; i++) {
       advance(1000);
       await flushMicrotasks();
@@ -245,7 +229,6 @@ describe('TaskInactivityWatchdog', () => {
     await flushMicrotasks();
     watchdog.stop();
 
-    // Fast-forward way past both timeout thresholds.
     advance(30_000);
     await flushMicrotasks();
 

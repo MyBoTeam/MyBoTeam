@@ -1,8 +1,3 @@
-/**
- * Analytics lifecycle IPC handlers — task execution, engagement, feedback,
- * and agent control events.
- */
-
 import type { IpcMainInvokeEvent } from 'electron';
 import {
   trackNewTask,
@@ -25,7 +20,6 @@ import { createHa, getSelectedModelContext } from './analytics-utils';
 export function registerAnalyticsLifecycleHandlers(): void {
   const ha = createHa(isAnalyticsEnabled());
 
-  // Engagement
   ha('analytics:submit-task', async () => {
     const { model, provider } = await getSelectedModelContext();
     trackSubmitTask(model, provider);
@@ -39,7 +33,6 @@ export function registerAnalyticsLifecycleHandlers(): void {
     trackOpenSettings();
   });
 
-  // Task Lifecycle (from renderer)
   ha(
     'analytics:task-start',
     async (_event: IpcMainInvokeEvent, taskId: string, sessionId: string, taskType: string) => {
@@ -152,7 +145,6 @@ export function registerAnalyticsLifecycleHandlers(): void {
     },
   );
 
-  // Task Feedback
   ha(
     'analytics:task-feedback',
     async (
@@ -179,7 +171,6 @@ export function registerAnalyticsLifecycleHandlers(): void {
     },
   );
 
-  // Agent Control
   ha(
     'analytics:stop-agent',
     async (_event: IpcMainInvokeEvent, taskId: string, sessionId: string) => {

@@ -2,12 +2,6 @@ import type { StorageAPI } from '@myboteam/agent-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ConnectorService } from '../../src/connector-service.js';
 
-/**
- * Milestone 2 — ConnectorService is a pass-through to `ConnectorStorageAPI`.
- * The tests pin each method to its StorageAPI counterpart so M3 handler
- * repointing can trust the shape, and a later refactor can't silently
- * swap call targets.
- */
 function makeStorageStub(): StorageAPI {
   return {
     getAllConnectors: vi.fn(() => []),
@@ -20,7 +14,7 @@ function makeStorageStub(): StorageAPI {
     storeConnectorTokens: vi.fn(),
     getConnectorTokens: vi.fn(() => null),
     deleteConnectorTokens: vi.fn(),
-    // Built-in connector auth-entry surface (connector-auth:<key> prefix)
+
     set: vi.fn(),
     get: vi.fn(() => null),
   } as unknown as StorageAPI;
@@ -78,7 +72,6 @@ describe('ConnectorService', () => {
     expect(storage.deleteConnectorTokens).toHaveBeenCalledWith('slack');
   });
 
-  // ── Built-in connector auth-entry surface (review follow-up) ──────────
   describe('authEntry (connector-auth:<key> prefix)', () => {
     it('writeAuthEntry JSON-encodes the blob and writes under the prefixed key', () => {
       const entry = {
@@ -117,10 +110,6 @@ describe('ConnectorService', () => {
     });
 
     it('readAuthEntry returns null for the soft-delete convention (empty string)', () => {
-      // Matches desktop's legacy `deleteEntry`, which writes '' rather than
-      // dropping the key (SecureStorage has no per-key delete). If we broke
-      // this, every existing user's deleted-then-reconnected session would
-      // be resurrected on upgrade.
       vi.mocked(storage.get).mockReturnValue('');
       expect(service.readAuthEntry('jira')).toBeNull();
     });
@@ -132,7 +121,7 @@ describe('ConnectorService', () => {
 
     it('deleteAuthEntry writes the soft-delete sentinel (empty string)', () => {
       service.deleteAuthEntry('jira');
-      // Byte-compat with existing desktop-written profiles.
+
       expect(storage.set).toHaveBeenCalledWith('connector-auth:jira', '');
     });
   });

@@ -1,14 +1,3 @@
-/**
- * Speech-to-Text service using ElevenLabs API
- *
- * This service handles:
- * - API key validation
- * - Audio transcription via ElevenLabs STT API
- *
- * The service requires a SecureStorage instance to be provided,
- * allowing it to be used in different environments (Electron, CLI, etc.)
- */
-
 import type { SecureStorage } from '../storage/secure-storage.js';
 import { fetchWithTimeout } from '../utils/fetch.js';
 import { createConsoleLogger } from '../utils/logging.js';
@@ -25,10 +14,6 @@ import {
 
 const log = createConsoleLogger({ prefix: 'Speech' });
 
-/**
- * Speech service that uses ElevenLabs API for transcription.
- * Requires a SecureStorage instance for API key management.
- */
 export class SpeechService {
   private storage: SecureStorage;
 
@@ -49,9 +34,6 @@ export class SpeechService {
     return validateElevenLabsApiKey(apiKey ?? this.getElevenLabsApiKey());
   }
 
-  /**
-   * Transcribe audio using ElevenLabs Speech-to-Text API
-   */
   async transcribeAudio(
     audioData: Buffer,
     mimeType: string = 'audio/webm',
@@ -107,9 +89,7 @@ export class SpeechService {
         let errorData: Record<string, unknown> = {};
         try {
           errorData = JSON.parse(errorText);
-        } catch {
-          // Not JSON, use raw text
-        }
+        } catch {}
 
         log.error('[ElevenLabs] API error:', {
           status: response.status,

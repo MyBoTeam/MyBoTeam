@@ -1,10 +1,3 @@
-// =============================================================================
-// @myboteam/agent-core/common - Browser-safe exports
-// =============================================================================
-// This file exports browser-safe types and re-exports runtime utilities from
-// common-utils.ts.
-// =============================================================================
-
 export type {
   ApiKeyConfig,
   BedrockAccessKeyCredentials,

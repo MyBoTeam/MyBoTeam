@@ -1,15 +1,7 @@
-/**
- * Electron-specific LogFileWriter wrapper.
- *
- * This thin wrapper injects the Electron app's userData path into the
- * platform-agnostic LogFileWriter from @myboteam/core.
- */
-
 import path from 'node:path';
 import { createLogWriter, type LogWriterAPI } from '@myboteam/agent-core/desktop-main';
 import { app } from 'electron';
 
-// Re-export types from shared package for backward compatibility
 export type { LogEntry, LogLevel, LogSource } from '@myboteam/agent-core/desktop-main';
 
 let instance: LogWriterAPI | null = null;

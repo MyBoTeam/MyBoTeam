@@ -94,31 +94,24 @@ describe('TaskMessage new fields round-trip (v029)', () => {
     expect(afterRunning!.messages[0].toolStatus).toBe('running');
     expect(afterRunning!.messages[0].modelId).toBe('gpt-5.4');
 
-    // REGRESSION (Codex P1 #1): the SDK adapter emits the SAME stable
-    // message ID for running and then completed states of a tool row.
-    // Before the upsert fix, the second addTaskMessage call threw
-    // `SQLITE_CONSTRAINT_PRIMARYKEY` because the insert was plain. The
-    // renderer-side mergeTaskMessage helper collapsed the duplicate in
-    // memory, but persistence broke on every tool-state transition.
     repoModule.addTaskMessage(taskId, {
-      id: 'msg-running', // SAME ID — this is the point of the regression.
+      id: 'msg-running',
       type: 'tool',
       content: 'file contents here',
       toolName: 'read',
       toolStatus: 'completed',
-      // New timestamp on the caller side — upsert preserves the ORIGINAL
-      // timestamp so the UI sort order stays stable.
+
       timestamp: new Date(Date.now() + 5_000).toISOString(),
       modelId: 'gpt-5.4',
       providerId: 'openai',
     });
 
     const afterCompleted = repoModule.getTask(taskId);
-    expect(afterCompleted!.messages).toHaveLength(1); // still ONE row
+    expect(afterCompleted!.messages).toHaveLength(1);
     expect(afterCompleted!.messages[0].id).toBe('msg-running');
     expect(afterCompleted!.messages[0].toolStatus).toBe('completed');
     expect(afterCompleted!.messages[0].content).toBe('file contents here');
-    // Timestamp preserved from the first insert.
+
     expect(afterCompleted!.messages[0].timestamp).toBe(firstTimestamp);
   });
 
@@ -167,7 +160,6 @@ describe('TaskMessage new fields round-trip (v029)', () => {
       label: 'screenshot',
     };
 
-    // First write — running with attachment.
     repoModule.addTaskMessage(taskId, {
       id: 'msg-stable',
       type: 'tool',
@@ -178,11 +170,6 @@ describe('TaskMessage new fields round-trip (v029)', () => {
       attachments: [attachment],
     });
 
-    // Second write — completed with the SAME attachment. The SDK's
-    // `mergeTaskMessage` helper emits the FULL attachment list on every
-    // update, so repeat writes with the same payload are common. Before
-    // the DELETE+INSERT fix this INSERT OR IGNORE against a schema with
-    // no UNIQUE constraint silently duplicated the row.
     repoModule.addTaskMessage(taskId, {
       id: 'msg-stable',
       type: 'tool',
@@ -195,7 +182,7 @@ describe('TaskMessage new fields round-trip (v029)', () => {
 
     const loaded = repoModule.getTask(taskId);
     expect(loaded!.messages).toHaveLength(1);
-    // Exactly ONE attachment, not two.
+
     expect(loaded!.messages[0].attachments).toHaveLength(1);
     expect(loaded!.messages[0].attachments![0].label).toBe('screenshot');
   });

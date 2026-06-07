@@ -1,12 +1,3 @@
-/**
- * Unit tests for Animation library
- *
- * Tests the animation configuration objects:
- * - Spring configurations have expected values
- * - Variants have correct initial/animate/exit states
- * - Interaction presets (hover/tap) have correct scale values
- */
-
 import { describe, expect, it } from 'vitest';
 import {
   buttonPress,

@@ -10,7 +10,6 @@ import type { IpcMainInvokeEvent } from 'electron';
 import { getDaemonClient } from '../../../daemon-bootstrap';
 import type { IpcHandler } from '../../types';
 
-// Milestone 5: LM Studio config reads/writes route through the daemon.
 export function registerLMStudioHandlers(handle: IpcHandler): void {
   handle('lmstudio:test-connection', async (_event: IpcMainInvokeEvent, url: string) => {
     return testLMStudioConnection({ url });

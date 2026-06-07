@@ -1,9 +1,3 @@
-/**
- * Google OAuth2 PKCE flow for connecting a Google account.
- *
- * Requires GOOGLE_CLIENT_ID env var — set this in your .env or CI/CD secrets.
- * Without it, the OAuth redirect will fail at the Google consent screen.
- */
 import crypto from 'node:crypto';
 import type http from 'node:http';
 import { shell } from 'electron';

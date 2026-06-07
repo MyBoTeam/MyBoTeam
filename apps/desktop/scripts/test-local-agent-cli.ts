@@ -77,7 +77,7 @@ function findOpenCodeCli(): string {
       return globalPath;
     }
   } catch {
-    // ignore - fall through to other lookup methods
+                                                    
   }
 
   const homeDir = process.env.HOME || '';
@@ -150,7 +150,7 @@ async function startDevBrowserServer(): Promise<ChildProcess> {
           return;
         }
       } catch {
-        // polling - ignore connection errors
+                                             
       }
       setTimeout(poll, pollInterval);
     };

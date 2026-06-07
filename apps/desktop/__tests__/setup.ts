@@ -1,11 +1,5 @@
-/**
- * Vitest setup file for desktop tests (main process + preload only)
- */
-
 import { vi } from 'vitest';
 
-// Mock the logging module so handlers that call getLogCollector() don't require
-// a real Electron app.getPath() or agent-core createLogWriter during unit tests.
 vi.mock('@main/logging', () => ({
   getLogCollector: vi.fn(() => ({
     write: vi.fn(),

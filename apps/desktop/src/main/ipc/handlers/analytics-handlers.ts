@@ -1,7 +1,3 @@
-/**
- * Analytics IPC handlers — bridges renderer analytics calls to main process event helpers.
- */
-
 import type { IpcMainInvokeEvent } from 'electron';
 import {
   trackAppBackgrounded,
@@ -39,7 +35,6 @@ export function registerAnalyticsHandlers(): void {
 
   const ha = createHa(isAnalyticsEnabled());
 
-  // Generic event tracking
   ha(
     'analytics:track',
     async (
@@ -51,7 +46,6 @@ export function registerAnalyticsHandlers(): void {
     },
   );
 
-  // Navigation
   ha(
     'analytics:page-view',
     async (_event: IpcMainInvokeEvent, pagePath: string, pageTitle?: string) => {
@@ -59,7 +53,6 @@ export function registerAnalyticsHandlers(): void {
     },
   );
 
-  // Settings
   ha(
     'analytics:save-api-key',
     async (
@@ -87,7 +80,6 @@ export function registerAnalyticsHandlers(): void {
     trackToggleDebugMode(enabled);
   });
 
-  // Session
   ha('analytics:app-close', async () => {
     await trackAppClose();
   });
@@ -100,7 +92,6 @@ export function registerAnalyticsHandlers(): void {
     trackAppForegrounded();
   });
 
-  // Model Selection
   ha(
     'analytics:model-selection-step',
     async (
@@ -128,7 +119,6 @@ export function registerAnalyticsHandlers(): void {
     },
   );
 
-  // Feature Usage
   ha('analytics:history-viewed', async () => {
     trackHistoryViewed();
   });
@@ -145,7 +135,6 @@ export function registerAnalyticsHandlers(): void {
     trackOutputCopied();
   });
 
-  // Provider Lifecycle
   ha('analytics:provider-disconnected', async (_event: IpcMainInvokeEvent, provider: string) => {
     trackProviderDisconnected(provider);
   });
@@ -154,7 +143,6 @@ export function registerAnalyticsHandlers(): void {
     trackHelpLinkClicked(provider);
   });
 
-  // Skills
   ha(
     'analytics:skill-action',
     async (
@@ -171,12 +159,10 @@ export function registerAnalyticsHandlers(): void {
     },
   );
 
-  // Voice
   ha('analytics:save-voice-api-key', async (_event: IpcMainInvokeEvent, success: boolean) => {
     trackSaveVoiceApiKey(success);
   });
 
-  // Debug
   ha('analytics:export-logs', async () => {
     trackExportLogs();
   });
@@ -184,12 +170,10 @@ export function registerAnalyticsHandlers(): void {
     trackThreadExported();
   });
 
-  // Task Launcher
   ha('analytics:task-launcher-action', async (_event: IpcMainInvokeEvent, action: string) => {
     trackTaskLauncherAction(action);
   });
 
-  // Provider Box
   ha(
     'analytics:provider-box-clicked',
     async (

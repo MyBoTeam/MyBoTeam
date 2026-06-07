@@ -18,7 +18,7 @@ describe('daemonStore without reconnectFailed', () => {
     window.myboteam = {
       onDaemonDisconnected: vi.fn(() => () => {}),
       onDaemonReconnected: vi.fn(() => () => {}),
-      // Intentionally no onDaemonReconnectFailed
+
       daemonPing: vi.fn().mockResolvedValue({ status: 'ok' }),
     } as typeof window.myboteam;
   });

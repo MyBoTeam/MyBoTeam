@@ -1,12 +1,3 @@
-/**
- * Integration tests: verify all browser_* tools work with remote CDP mode.
- *
- * These tests launch a real headless Chromium browser, connect via remote CDP
- * (no dev-browser HTTP server), and exercise each browser tool function.
- *
- * Run: npx vitest run src/integration.test.ts
- */
-
 import { type ChildProcess, spawn } from 'node:child_process';
 import { chromium } from 'playwright';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -22,7 +13,6 @@ import {
 let chromiumProcess: ChildProcess;
 let cdpEndpoint: string;
 
-// A minimal HTML page for testing interactions
 const TEST_HTML = `data:text/html,
 <html>
 <head><title>Test Page</title></head>
@@ -44,11 +34,6 @@ const TEST_HTML = `data:text/html,
 </body>
 </html>`;
 
-/**
- * Launch Chromium with --remote-debugging-port and return the CDP ws endpoint.
- * We spawn the executable directly to get a raw CDP endpoint that
- * connectOverCDP can work with (as opposed to Playwright's WS protocol).
- */
 async function launchChromiumWithCDP(): Promise<{ process: ChildProcess; wsEndpoint: string }> {
   const executablePath = chromium.executablePath();
   const port = 9333 + Math.floor(Math.random() * 1000);
@@ -69,7 +54,6 @@ async function launchChromiumWithCDP(): Promise<{ process: ChildProcess; wsEndpo
     },
   );
 
-  // Wait for DevTools listening message on stderr
   const wsEndpoint = await new Promise<string>((resolve, reject) => {
     const timeout = setTimeout(
       () => reject(new Error('Timed out waiting for CDP endpoint')),
@@ -79,7 +63,7 @@ async function launchChromiumWithCDP(): Promise<{ process: ChildProcess; wsEndpo
 
     proc.stderr?.on('data', (chunk: Buffer) => {
       stderrData += chunk.toString();
-      // Chromium prints: DevTools listening on ws://127.0.0.1:PORT/devtools/browser/UUID
+
       const match = stderrData.match(/DevTools listening on (ws:\/\/[^\s]+)/);
       if (match) {
         clearTimeout(timeout);
@@ -123,14 +107,10 @@ afterAll(async () => {
 });
 
 describe('Remote CDP Integration', () => {
-  // --- Connection ---
-
   it('connects to headless browser via remote CDP', async () => {
     const browser = await ensureConnected();
     expect(browser.isConnected()).toBe(true);
   });
-
-  // --- Page lifecycle ---
 
   it('creates a new page via getPage()', async () => {
     const page = await getPage('test-main');
@@ -160,16 +140,12 @@ describe('Remote CDP Integration', () => {
     expect(pages).not.toContain('close-test');
   });
 
-  // --- Navigation ---
-
   it('browser_navigate: navigates to URL', async () => {
     const page = await getPage('nav-test');
     await page.goto(TEST_HTML);
     expect(page.url()).toContain('data:text/html');
     expect(await page.title()).toBe('Test Page');
   });
-
-  // --- Snapshot (accessibility tree) ---
 
   it('browser_snapshot: gets accessibility snapshot', async () => {
     const page = await getPage('snap-test');
@@ -179,8 +155,6 @@ describe('Remote CDP Integration', () => {
     expect(snapshot?.children?.length).toBeGreaterThan(0);
   });
 
-  // --- Click ---
-
   it('browser_click: clicks a button', async () => {
     const page = await getPage('click-test');
     await page.goto(TEST_HTML);
@@ -188,8 +162,6 @@ describe('Remote CDP Integration', () => {
     const result = await page.textContent('#result');
     expect(result).toBe('clicked');
   });
-
-  // --- Type ---
 
   it('browser_type: types into input field', async () => {
     const page = await getPage('type-test');
@@ -199,8 +171,6 @@ describe('Remote CDP Integration', () => {
     expect(value).toBe('hello world');
   });
 
-  // --- Screenshot ---
-
   it('browser_screenshot: takes a screenshot', async () => {
     const page = await getPage('screenshot-test');
     await page.goto(TEST_HTML);
@@ -209,16 +179,12 @@ describe('Remote CDP Integration', () => {
     expect(buffer.length).toBeGreaterThan(0);
   });
 
-  // --- Evaluate ---
-
   it('browser_evaluate: evaluates JavaScript on page', async () => {
     const page = await getPage('eval-test');
     await page.goto(TEST_HTML);
     const title = await page.evaluate(() => document.title);
     expect(title).toBe('Test Page');
   });
-
-  // --- Keyboard ---
 
   it('browser_keyboard: presses keys', async () => {
     const page = await getPage('keyboard-test');
@@ -229,8 +195,6 @@ describe('Remote CDP Integration', () => {
     expect(value).toBe('typed');
   });
 
-  // --- Scroll ---
-
   it('browser_scroll: scrolls to element', async () => {
     const page = await getPage('scroll-test');
     await page.goto(TEST_HTML);
@@ -239,15 +203,11 @@ describe('Remote CDP Integration', () => {
     expect(isVisible).toBe(true);
   });
 
-  // --- Hover ---
-
   it('browser_hover: hovers over element', async () => {
     const page = await getPage('hover-test');
     await page.goto(TEST_HTML);
     await page.hover('#btn');
   });
-
-  // --- Select ---
 
   it('browser_select: selects dropdown option', async () => {
     const page = await getPage('select-test');
@@ -257,8 +217,6 @@ describe('Remote CDP Integration', () => {
     expect(value).toBe('b');
   });
 
-  // --- Wait ---
-
   it('browser_wait: waits for selector', async () => {
     const page = await getPage('wait-test');
     await page.goto(TEST_HTML);
@@ -266,16 +224,12 @@ describe('Remote CDP Integration', () => {
     expect(element).toBeDefined();
   });
 
-  // --- Get Text ---
-
   it('browser_get_text: extracts text content', async () => {
     const page = await getPage('text-test');
     await page.goto(TEST_HTML);
     const text = await page.textContent('#heading');
     expect(text).toBe('Hello World');
   });
-
-  // --- Visibility Checks ---
 
   it('browser_is_visible: checks element visibility', async () => {
     const page = await getPage('visible-test');
@@ -300,8 +254,6 @@ describe('Remote CDP Integration', () => {
     expect(await page.isChecked('#checkbox')).toBe(true);
   });
 
-  // --- iFrame ---
-
   it('browser_iframe: accesses iframe content', async () => {
     const page = await getPage('iframe-test');
     await page.goto(TEST_HTML);
@@ -309,8 +261,6 @@ describe('Remote CDP Integration', () => {
     const text = await frame.locator('#iframe-text').textContent();
     expect(text).toBe('Inside iframe');
   });
-
-  // --- Tabs ---
 
   it('browser_tabs: lists and manages tabs', async () => {
     const browser = await ensureConnected();
@@ -323,8 +273,6 @@ describe('Remote CDP Integration', () => {
     await newPage.close();
     expect(context.pages().length).toBe(initialCount);
   });
-
-  // --- Batch Actions ---
 
   it('browser_batch_actions: navigates multiple URLs and extracts data', async () => {
     const page = await getPage('batch-test');
@@ -342,38 +290,29 @@ describe('Remote CDP Integration', () => {
     expect(results[1]?.title).toBe('Page B');
   });
 
-  // --- Sequence ---
-
   it('browser_sequence: executes multiple actions in order', async () => {
     const page = await getPage('sequence-test');
     await page.goto(TEST_HTML);
 
-    // Click button, then verify result
     await page.click('#btn');
     const afterClick = await page.textContent('#result');
     expect(afterClick).toBe('clicked');
 
-    // Type into input
     await page.fill('#input', 'sequence-value');
     const afterType = await page.inputValue('#input');
     expect(afterType).toBe('sequence-value');
   });
 
-  // --- File Upload (structural) ---
-
   it('browser_file_upload: file chooser listener works', async () => {
     const page = await getPage('upload-test');
     await page.goto('data:text/html,<input type="file" id="file" />');
 
-    // Verify file chooser can be intercepted (don't actually upload)
     const [fileChooser] = await Promise.all([
       page.waitForEvent('filechooser', { timeout: 3000 }),
       page.click('#file'),
     ]);
     expect(fileChooser).toBeDefined();
   });
-
-  // --- Edge cases ---
 
   it('returns false when closing a non-existent page', async () => {
     const result = await closePage('nonexistent-page');
@@ -391,11 +330,9 @@ describe('Remote CDP Integration', () => {
     const page = await getPage('isolated-page');
     expect(page).toBeDefined();
 
-    // List should return 'isolated-page' (without the task prefix)
     const pages = await listPages();
     expect(pages).toContain('isolated-page');
 
-    // Clean up
     await closePage('isolated-page');
   });
 

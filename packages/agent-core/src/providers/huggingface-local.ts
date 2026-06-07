@@ -1,30 +1,12 @@
-/**
- * HuggingFace Local provider utilities.
- *
- * Contributions:
- *   - SaaiAravindhRaja (PR #604): HF_LOCAL_DEFAULT_URL, HF_RECOMMENDED_MODELS,
- *     testHuggingFaceLocalConnection(), fetchHuggingFaceLocalModels()
- *   - nancysangani (PR #488): HuggingFaceHubModel type, searchHuggingFaceHubModels(),
- *     getHuggingFaceRecommendedModels() Hub API search
- */
-
 import type { HuggingFaceLocalModelInfo } from '../common/types/provider.js';
 
-/** Default server URL for the local HuggingFace inference server */
 export const HF_LOCAL_DEFAULT_URL = 'http://localhost:8787';
 
-/** Default timeout for HuggingFace local server API requests */
 const HF_LOCAL_API_TIMEOUT_MS = 15_000;
 
-/** Timeout for HuggingFace Hub search API requests */
 const HF_HUB_API_TIMEOUT_MS = 10_000;
 
-// ---------------------------------------------------------------------------
-// Recommended models — SaaiAravindhRaja (#604) + nancysangani (#488)
-// ---------------------------------------------------------------------------
-
 export const HF_RECOMMENDED_MODELS = [
-  // SaaiAravindhRaja (#604) — curated ONNX-web models
   {
     id: 'onnx-community/Llama-3.2-1B-Instruct-q4f16',
     displayName: 'Llama 3.2 1B Instruct (Q4)',
@@ -43,7 +25,7 @@ export const HF_RECOMMENDED_MODELS = [
     size: 500_000_000,
     quantization: 'q4f16',
   },
-  // nancysangani (#488) — Xenova mirror models
+
   {
     id: 'Xenova/Phi-3-mini-4k-instruct',
     displayName: 'Phi-3 Mini 4K (Xenova)',
@@ -58,11 +40,6 @@ export const HF_RECOMMENDED_MODELS = [
   },
 ] as const;
 
-// ---------------------------------------------------------------------------
-// Hub model search — nancysangani (PR #488)
-// ---------------------------------------------------------------------------
-
-/** A model returned from the HuggingFace Hub search API */
 export interface HuggingFaceHubModel {
   id: string;
   modelId: string;
@@ -72,10 +49,6 @@ export interface HuggingFaceHubModel {
   quantizations?: string[];
 }
 
-/**
- * Search the HuggingFace Hub API for ONNX-compatible models.
- * Contributed by nancysangani (PR #488).
- */
 export async function searchHuggingFaceHubModels(
   query: string,
   limit = 20,
@@ -113,13 +86,6 @@ export async function searchHuggingFaceHubModels(
   }
 }
 
-// ---------------------------------------------------------------------------
-// Connection test — SaaiAravindhRaja (PR #604)
-// ---------------------------------------------------------------------------
-
-/**
- * Test connectivity to the local HuggingFace inference server.
- */
 export async function testHuggingFaceLocalConnection(serverUrl: string): Promise<boolean> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), HF_LOCAL_API_TIMEOUT_MS);
@@ -133,13 +99,6 @@ export async function testHuggingFaceLocalConnection(serverUrl: string): Promise
   }
 }
 
-// ---------------------------------------------------------------------------
-// Model list fetch — SaaiAravindhRaja (PR #604)
-// ---------------------------------------------------------------------------
-
-/**
- * Fetch available models from the local inference server.
- */
 export async function fetchHuggingFaceLocalModels(
   serverUrl: string,
 ): Promise<HuggingFaceLocalModelInfo[]> {

@@ -16,10 +16,8 @@ export function TaskLauncher() {
   const myboteam = getMyBoTeam();
   const [openedAt, setOpenedAt] = useState(Date.now);
 
-  // Filter tasks by search query (title only)
   const filteredTasks = useMemo(() => {
     if (!searchQuery.trim()) {
-      // Show last 7 days when no search
       const sevenDaysAgo = openedAt - 7 * 24 * 60 * 60 * 1000;
       return tasks.filter((t) => new Date(t.createdAt).getTime() > sevenDaysAgo);
     }
@@ -27,19 +25,14 @@ export function TaskLauncher() {
     return tasks.filter((t) => t.prompt.toLowerCase().includes(query));
   }, [tasks, searchQuery, openedAt]);
 
-  // Total items: "New task" + filtered tasks
   const totalItems = 1 + filteredTasks.length;
 
-  // Clamp selected index when results change
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: sync derived state from prop change
     setSelectedIndex((i) => Math.min(i, Math.max(0, totalItems - 1)));
   }, [totalItems]);
 
-  // Reset state when launcher opens, use initial prompt if provided
   useEffect(() => {
     if (isLauncherOpen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: reset state on open
       setSearchQuery(launcherInitialPrompt || '');
       setSelectedIndex(0);
       setOpenedAt(Date.now());
@@ -60,12 +53,9 @@ export function TaskLauncher() {
   const handleSelect = useCallback(
     async (index: number) => {
       if (index === 0) {
-        // "New task" selected
         if (searchQuery.trim()) {
-          // Check if any provider is ready before starting task
           const settings = await myboteam.getProviderSettings();
           if (!hasAnyReadyProvider(settings)) {
-            // No ready provider - navigate to home which will show settings
             closeLauncher();
             navigate('/');
             return;
@@ -77,12 +67,10 @@ export function TaskLauncher() {
             navigate(`/execution/${task.id}`);
           }
         } else {
-          // Navigate to home for empty input
           closeLauncher();
           navigate('/');
         }
       } else {
-        // Task selected - navigate to it
         const task = filteredTasks[index - 1];
         if (task) {
           closeLauncher();
@@ -95,7 +83,6 @@ export function TaskLauncher() {
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      // Ignore Enter during IME composition (Chinese/Japanese input)
       if (e.nativeEvent.isComposing || e.keyCode === 229) return;
       switch (e.key) {
         case 'ArrowDown':
@@ -124,7 +111,7 @@ export function TaskLauncher() {
       <AnimatePresence>
         {isLauncherOpen && (
           <DialogPrimitive.Portal forceMount>
-            {/* Overlay */}
+            {}
             <DialogPrimitive.Overlay asChild>
               <motion.div
                 initial={{ opacity: 0 }}

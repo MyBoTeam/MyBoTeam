@@ -1,13 +1,8 @@
-/**
- * @vitest-environment jsdom
- */
-
 import '@testing-library/jest-dom/vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import errorsEn from '../../../../locales/en/errors.json';
 
-// Simple i18n mock that resolves keys from the English locale
 function translateErrorsKey(key: string, options?: Record<string, unknown>): string {
   const value = key.split('.').reduce<unknown>((current, segment) => {
     if (current && typeof current === 'object' && segment in current) {
@@ -34,7 +29,6 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-// Mock framer-motion to avoid animation issues in tests
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (

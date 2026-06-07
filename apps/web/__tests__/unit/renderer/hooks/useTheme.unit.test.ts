@@ -2,14 +2,12 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useTheme } from '@/hooks/useTheme';
 
-// Mock lib/theme so we can track applyTheme calls without the real DOM/IPC side effects
 vi.mock('@/lib/theme', () => ({
   applyTheme: vi.fn(),
   initTheme: vi.fn(),
   cleanupTheme: vi.fn(),
 }));
 
-// Mock getMyBoTeam
 const mockGetTheme = vi.fn(() => Promise.resolve('system'));
 const mockSetTheme = vi.fn(() => Promise.resolve());
 const mockOnThemeChange = vi.fn(() => () => {});
@@ -28,7 +26,6 @@ vi.mock('@/lib/myboteam', () => ({
   }),
 }));
 
-// localStorage mock
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
   return {
@@ -45,7 +42,6 @@ const localStorageMock = (() => {
   };
 })();
 
-// A helper to set up matchMedia so we can toggle system preference in tests.
 function mockMatchMedia(prefersDark: boolean) {
   const listeners: Array<(e: MediaQueryListEvent) => void> = [];
   const mql = {
@@ -86,8 +82,6 @@ describe('useTheme hook', () => {
     vi.clearAllMocks();
   });
 
-  // Flush async effects (e.g. myboteam.getTheme().then()) so state updates
-  // triggered by resolved promises are wrapped in act().
   async function renderThemeHook() {
     const hook = renderHook(() => useTheme());
     await act(async () => {});
@@ -215,14 +209,13 @@ describe('useTheme hook', () => {
       const { result } = await renderThemeHook();
 
       act(() => {
-        result.current.toggleTheme(); // user chose dark
+        result.current.toggleTheme();
       });
 
       act(() => {
-        mql._changeMatches(false); // system goes back to light
+        mql._changeMatches(false);
       });
 
-      // Should still be dark because user made an explicit choice
       expect(result.current.isDark).toBe(true);
     });
   });

@@ -22,7 +22,6 @@
 
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
-// Prevent undici from crashing on Node 20 (undici 8 requires Node 22 APIs)
 vi.mock('undici', () => ({
   ProxyAgent: class ProxyAgent {},
   Agent: class Agent {},
@@ -31,7 +30,6 @@ vi.mock('undici', () => ({
   getGlobalDispatcher: vi.fn(),
 }));
 
-// Mock electron modules before importing handlers
 vi.mock('electron', () => {
   const mockHandlers = new Map<string, (...args: unknown[]) => unknown>();
   const mockListeners = new Map<string, Set<(...args: unknown[]) => unknown>>();
@@ -57,7 +55,7 @@ vi.mock('electron', () => {
           mockListeners.clear();
         }
       }),
-      // Helper to get registered handler for testing
+
       _getHandler: (channel: string) => mockHandlers.get(channel),
       _getHandlers: () => mockHandlers,
       _clear: () => {
@@ -108,7 +106,6 @@ vi.mock('electron', () => {
   };
 });
 
-// Mock task manager instance (will be returned by getTaskManager)
 const mockTaskManager = {
   startTask: vi.fn(),
   cancelTask: vi.fn(),
@@ -122,7 +119,6 @@ const mockTaskManager = {
   dispose: vi.fn(),
 };
 
-// Mock @main/opencode - this is what handlers.ts imports from
 vi.mock('@main/opencode', () => ({
   getTaskManager: vi.fn(() => mockTaskManager),
   disposeTaskManager: vi.fn(),
@@ -130,10 +126,6 @@ vi.mock('@main/opencode', () => ({
   getOpenCodeCliVersion: vi.fn(() => Promise.resolve('1.0.0')),
 }));
 
-// Mock daemon-bootstrap — task handlers now proxy through DaemonClient.
-// Milestone 3 sub-chunk 3c extended the routing to settings, providers,
-// favorites, and the legacy-import surface so handlers that moved onto
-// RPC get back realistic data without needing a live daemon.
 const mockDaemonClient = {
   call: vi.fn(async (method: string, params?: unknown) => {
     if (method === 'task.start') {
@@ -166,10 +158,7 @@ const mockDaemonClient = {
     if (method === 'task.getTodos') {
       return [];
     }
-    // Phase 4a of the SDK cutover port: `api-keys:has-any` and a few other
-    // IPC handlers now route OAuth status reads through the daemon instead
-    // of reading `auth.json` directly. Stub the new surface so unit tests
-    // don't try to spawn a real daemon process.
+
     if (method === 'auth.openai.status') {
       return { connected: false };
     }
@@ -177,7 +166,6 @@ const mockDaemonClient = {
       return null;
     }
 
-    // ---- Milestone 3 sub-chunk 3c: settings + provider surface ----
     if (method === 'settings.getAll') {
       return {
         app: {
@@ -254,7 +242,6 @@ const mockDaemonClient = {
       return undefined;
     }
 
-    // Provider settings RPCs
     if (method === 'provider.getSettings') {
       return {
         activeProviderId: 'anthropic',
@@ -278,7 +265,6 @@ const mockDaemonClient = {
     if (method === 'provider.getHuggingFaceLocalConfig') return null;
     if (method === 'provider.setHuggingFaceLocalConfig') return undefined;
 
-    // Favorites RPCs
     if (method === 'favorites.list') {
       return [...mockFavorites];
     }
@@ -311,7 +297,6 @@ const mockDaemonClient = {
       return mockFavorites.some((f) => f.taskId === p.taskId);
     }
 
-    // Legacy import RPC (daemon-side one-shot from M3 3b)
     if (method === 'legacy.importElectronStoreIfNeeded') {
       return { applied: false, reason: 'already-imported' };
     }
@@ -331,10 +316,6 @@ vi.mock('@main/daemon-bootstrap', () => ({
   registerNotificationForwarding: vi.fn(),
 }));
 
-// Phase 4a of the SDK cutover port introduced IPC handlers that call
-// `ensureDaemonRunning()` directly (auth-handlers, api-key-validation-handlers,
-// model-discovery-handlers). Stub it with the same mock client so tests don't
-// try to spawn a real daemon.
 vi.mock('@main/daemon/daemon-connector', () => ({
   ensureDaemonRunning: vi.fn(async () => mockDaemonClient),
   getDataDir: vi.fn(() => '/tmp/test-data'),
@@ -354,7 +335,6 @@ const authBrowserMocks = vi.hoisted(() => ({
   loginOpenAiWithChatGpt: vi.fn(() => Promise.resolve({ openedUrl: undefined })),
 }));
 
-// Mock HuggingFace Local provider - used by handlers.ts for local inference
 vi.mock('@main/providers/huggingface-local', () => ({
   startHuggingFaceServer: vi.fn(() => Promise.resolve({ success: true, port: 8080 })),
   stopHuggingFaceServer: vi.fn(() => Promise.resolve()),
@@ -381,7 +361,6 @@ const slackAuthMocks = vi.hoisted(() => ({
 vi.mock('@main/opencode/auth-browser', () => authBrowserMocks);
 vi.mock('@main/opencode/slack-auth', () => slackAuthMocks);
 
-// Mock task history (stored in test state)
 const mockTasks: Array<{
   id: string;
   prompt: string;
@@ -398,29 +377,19 @@ const mockFavorites: Array<{
   favoritedAt: string;
 }> = [];
 
-// Mock app settings state
 let mockDebugMode = false;
 let mockOnboardingComplete = false;
 let mockSelectedModel: { provider: string; model: string } | null = null;
 let mockOpenAiBaseUrl = '';
 
-// Milestone 1 of the daemon-only-SQLite migration routed most Electron-main
-// value imports from `@myboteam/agent-core` → `@myboteam/agent-core/desktop-main`.
-// Mirror the comprehensive root mock onto the new subpath so both resolution
-// paths share the same vi.fn() instances and tests can drive either one.
 vi.mock('@myboteam/agent-core/desktop-main', async () => {
   return await vi.importMock('@myboteam/agent-core');
 });
 
-// Mock @myboteam/agent-core - comprehensive mock covering all exports used by handlers.ts
 vi.mock('@myboteam/agent-core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@myboteam/agent-core')>();
 
-  // Storage methods shared between module-level exports and createStorage() return value.
-  // Using a shared object ensures test spy assertions (e.g. `const { setDebugMode } = await import(...)`)
-  // reference the same mock instances that handlers.ts calls via getStorage().
   const storageMethods = {
-    // Task history
     getTasks: vi.fn(() => mockTasks),
     getTask: vi.fn((taskId: string) => mockTasks.find((t) => t.id === taskId)),
     saveTask: vi.fn((task: unknown) => {
@@ -464,7 +433,6 @@ vi.mock('@myboteam/agent-core', async (importOriginal) => {
     getFavorites: vi.fn(() => [...mockFavorites]),
     isFavorite: vi.fn((taskId: string) => mockFavorites.some((f) => f.taskId === taskId)),
 
-    // App settings
     getNotificationsEnabled: vi.fn(() => true),
     setNotificationsEnabled: vi.fn(),
     getDebugMode: vi.fn(() => mockDebugMode),
@@ -499,7 +467,6 @@ vi.mock('@myboteam/agent-core', async (importOriginal) => {
     setLMStudioConfig: vi.fn(),
     clearAppSettings: vi.fn(),
 
-    // Provider settings
     getProviderSettings: vi.fn(() => ({
       activeProviderId: 'anthropic',
       connectedProviders: {
@@ -533,13 +500,11 @@ vi.mock('@myboteam/agent-core', async (importOriginal) => {
     getActiveProviderId: vi.fn(() => 'anthropic'),
     clearProviderSettings: vi.fn(),
 
-    // Database lifecycle
     initialize: vi.fn(),
     isDatabaseInitialized: vi.fn(() => true),
     close: vi.fn(),
     getDatabasePath: vi.fn(() => '/mock/path'),
 
-    // Secure storage
     storeApiKey: vi.fn(),
     getApiKey: vi.fn(() => null),
     deleteApiKey: vi.fn(() => true),
@@ -552,7 +517,6 @@ vi.mock('@myboteam/agent-core', async (importOriginal) => {
   };
 
   return {
-    // Use actual implementations for validation
     validateApiKey: actual.validateApiKey,
     validateHttpUrl: actual.validateHttpUrl,
     validateTaskConfig: actual.validateTaskConfig,
@@ -561,7 +525,6 @@ vi.mock('@myboteam/agent-core', async (importOriginal) => {
     validate: actual.validate,
     permissionResponseSchema: actual.permissionResponseSchema,
 
-    // Utility functions
     createTaskId: vi.fn(() => `task_${Date.now()}`),
     createMessageId: vi.fn(() => `msg-${Date.now()}`),
     sanitizeString: vi.fn((input: unknown, fieldName: string, maxLength = 255) => {
@@ -579,26 +542,20 @@ vi.mock('@myboteam/agent-core', async (importOriginal) => {
     }),
     safeParseJson: vi.fn((s: string) => ({ success: true, data: JSON.parse(s) })),
 
-    // Storage methods at module level (for test spy assertions)
     ...storageMethods,
 
-    // Factory function returning the same mock instances
     createStorage: vi.fn(() => storageMethods),
 
-    // OAuth status
     getOpenAiOauthStatus: vi.fn(() => ({ connected: false })),
     getSlackMcpOauthStatus: vi.fn(() => ({
       connected: false,
       pendingAuthorization: false,
     })),
 
-    // Azure token function
     getAzureEntraToken: vi.fn(() => Promise.resolve({ success: true, token: 'mock-token' })),
 
-    // Task summarization
     generateTaskSummary: vi.fn(() => Promise.resolve('Mock task summary')),
 
-    // API validation functions
     validateAnthropicApiKey: vi.fn(() => Promise.resolve({ valid: true })),
     validateOpenAIApiKey: vi.fn(() => Promise.resolve({ valid: true })),
     validateGoogleApiKey: vi.fn(() => Promise.resolve({ valid: true })),
@@ -617,7 +574,6 @@ vi.mock('@myboteam/agent-core', async (importOriginal) => {
   };
 });
 
-// Mock secure storage
 let mockApiKeys: Record<string, string | null> = {};
 let mockStoredCredentials: Array<{ account: string; password: string }> = [];
 
@@ -646,14 +602,12 @@ vi.mock('@main/store/secureStorage', () => ({
 
 // Note: App settings and provider settings are now mocked via @myboteam/core mock above
 
-// Mock logging module
 const mockLogFn = vi.fn();
 const mockLogCollector = { log: mockLogFn, logEnv: vi.fn() };
 vi.mock('@main/logging', () => ({
   getLogCollector: vi.fn(() => mockLogCollector),
 }));
 
-// Mock fs module for bug report file writes
 vi.mock('fs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('fs')>();
   return {
@@ -681,11 +635,10 @@ vi.mock('fs', async (importOriginal) => {
 });
 
 import fs from 'node:fs';
-// Import after mocks are set up
+
 import { registerIPCHandlers } from '@main/ipc/handlers';
 import { BrowserWindow as _BrowserWindow, dialog, ipcMain, shell } from 'electron';
 
-// Type the mocked ipcMain with helpers
 type MockedIpcMain = typeof ipcMain & {
   _getHandler: (channel: string) => ((...args: unknown[]) => unknown) | undefined;
   _getHandlers: () => Map<string, (...args: unknown[]) => unknown>;
@@ -694,16 +647,12 @@ type MockedIpcMain = typeof ipcMain & {
 
 const mockedIpcMain = ipcMain as MockedIpcMain;
 
-/**
- * Helper to invoke a registered handler
- */
 async function invokeHandler(channel: string, ...args: unknown[]): Promise<unknown> {
   const handler = mockedIpcMain._getHandler(channel);
   if (!handler) {
     throw new Error(`No handler registered for channel: ${channel}`);
   }
 
-  // Create mock event
   const mockEvent = {
     sender: {
       send: vi.fn(),
@@ -716,7 +665,6 @@ async function invokeHandler(channel: string, ...args: unknown[]): Promise<unkno
 
 describe('IPC Handlers Integration', () => {
   beforeEach(() => {
-    // Reset all mocks and state
     vi.clearAllMocks();
     mockedIpcMain._clear();
     mockTasks.length = 0;
@@ -727,7 +675,6 @@ describe('IPC Handlers Integration', () => {
     mockOnboardingComplete = false;
     mockSelectedModel = null;
 
-    // Reset task manager mocks
     mockTaskManager.startTask.mockReset();
     mockTaskManager.cancelTask.mockReset();
     mockTaskManager.interruptTask.mockReset();
@@ -745,13 +692,10 @@ describe('IPC Handlers Integration', () => {
 
   describe('registerIPCHandlers', () => {
     it('should register all expected IPC handlers', () => {
-      // Arrange & Act
       registerIPCHandlers();
 
-      // Assert
       const handlers = mockedIpcMain._getHandlers();
 
-      // Task handlers
       expect(handlers.has('task:start')).toBe(true);
       expect(handlers.has('task:cancel')).toBe(true);
       expect(handlers.has('task:interrupt')).toBe(true);
@@ -760,13 +704,10 @@ describe('IPC Handlers Integration', () => {
       expect(handlers.has('task:delete')).toBe(true);
       expect(handlers.has('task:clear-history')).toBe(true);
 
-      // Permission handler
       expect(handlers.has('permission:respond')).toBe(true);
 
-      // Session handler
       expect(handlers.has('session:resume')).toBe(true);
 
-      // Settings handlers
       expect(handlers.has('settings:api-keys')).toBe(true);
       expect(handlers.has('settings:add-api-key')).toBe(true);
       expect(handlers.has('settings:remove-api-key')).toBe(true);
@@ -774,7 +715,6 @@ describe('IPC Handlers Integration', () => {
       expect(handlers.has('settings:set-debug-mode')).toBe(true);
       expect(handlers.has('settings:app-settings')).toBe(true);
 
-      // API key handlers
       expect(handlers.has('api-key:exists')).toBe(true);
       expect(handlers.has('api-key:set')).toBe(true);
       expect(handlers.has('api-key:get')).toBe(true);
@@ -782,29 +722,23 @@ describe('IPC Handlers Integration', () => {
       expect(handlers.has('api-key:validate-provider')).toBe(true);
       expect(handlers.has('api-key:clear')).toBe(true);
 
-      // Multi-provider API key handlers
       expect(handlers.has('api-keys:all')).toBe(true);
       expect(handlers.has('api-keys:has-any')).toBe(true);
 
-      // OpenCode handlers
       expect(handlers.has('opencode:check')).toBe(true);
       expect(handlers.has('opencode:version')).toBe(true);
       expect(handlers.has('opencode:auth:slack:status')).toBe(true);
       expect(handlers.has('opencode:auth:slack:login')).toBe(true);
       expect(handlers.has('opencode:auth:slack:logout')).toBe(true);
 
-      // Model handlers
       expect(handlers.has('model:get')).toBe(true);
       expect(handlers.has('model:set')).toBe(true);
 
-      // Onboarding handlers
       expect(handlers.has('onboarding:complete')).toBe(true);
       expect(handlers.has('onboarding:set-complete')).toBe(true);
 
-      // Shell handler
       expect(handlers.has('shell:open-external')).toBe(true);
 
-      // HuggingFace Local handlers
       expect(handlers.has('huggingface-local:start-server')).toBe(true);
       expect(handlers.has('huggingface-local:stop-server')).toBe(true);
       expect(handlers.has('huggingface-local:server-status')).toBe(true);
@@ -813,7 +747,6 @@ describe('IPC Handlers Integration', () => {
       expect(handlers.has('huggingface-local:list-models')).toBe(true);
       expect(handlers.has('huggingface-local:delete-model')).toBe(true);
 
-      // Log handler
       expect(handlers.has('log:event')).toBe(true);
     });
   });
@@ -824,63 +757,47 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('api-key:exists should return false when no key is stored', async () => {
-      // Arrange - no keys stored
-
-      // Act
       const result = await invokeHandler('api-key:exists');
 
-      // Assert
       expect(result).toBe(false);
     });
 
     it('api-key:set should store the API key', async () => {
-      // Arrange
       const testKey = 'sk-test-12345678-abcdef';
 
-      // Act
       await invokeHandler('api-key:set', testKey);
-      mockApiKeys.anthropic = testKey; // Simulate storage
+      mockApiKeys.anthropic = testKey;
       const exists = await invokeHandler('api-key:exists');
 
-      // Assert
       expect(exists).toBe(true);
     });
 
     it('api-key:get should retrieve the stored API key', async () => {
-      // Arrange
       const testKey = 'sk-test-retrieve-key';
       mockApiKeys.anthropic = testKey;
 
-      // Act
       const result = await invokeHandler('api-key:get');
 
-      // Assert
       expect(result).toBe(testKey);
     });
 
     it('api-key:clear should remove the stored API key', async () => {
-      // Arrange
       mockApiKeys.anthropic = 'sk-test-to-delete';
 
-      // Act
       await invokeHandler('api-key:clear');
 
-      // Assert - check deleteApiKey was called
       const { deleteApiKey } = await import('@main/store/secureStorage');
       expect(deleteApiKey).toHaveBeenCalledWith('anthropic');
     });
 
     it('api-key:set should reject empty keys', async () => {
-      // Arrange & Act & Assert
       await expect(invokeHandler('api-key:set', '')).rejects.toThrow();
       await expect(invokeHandler('api-key:set', '   ')).rejects.toThrow();
     });
 
     it('api-key:set should reject keys exceeding max length', async () => {
-      // Arrange
       const longKey = 'x'.repeat(300);
 
-      // Act & Assert
       await expect(invokeHandler('api-key:set', longKey)).rejects.toThrow('exceeds maximum length');
     });
   });
@@ -891,31 +808,24 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('settings:debug-mode should return current debug mode', async () => {
-      // Arrange
       mockDebugMode = true;
 
-      // Act
       const result = await invokeHandler('settings:debug-mode');
 
-      // Assert
       expect(result).toBe(true);
     });
 
     it('settings:set-debug-mode should update debug mode', async () => {
-      // Arrange
       mockDebugMode = false;
 
-      // Act
       await invokeHandler('settings:set-debug-mode', true);
 
-      // Assert — now routed through daemon RPC (M3 3c)
       expect(mockDaemonClient.call).toHaveBeenCalledWith('settings.setDebugMode', {
         enabled: true,
       });
     });
 
     it('settings:set-debug-mode should reject non-boolean values', async () => {
-      // Arrange & Act & Assert
       await expect(invokeHandler('settings:set-debug-mode', 'true')).rejects.toThrow(
         'Invalid debug mode flag',
       );
@@ -925,16 +835,13 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('settings:app-settings should return all app settings', async () => {
-      // Arrange
       mockDebugMode = true;
       mockOnboardingComplete = true;
       mockSelectedModel = { provider: 'anthropic', model: 'claude-3-opus' };
       mockOpenAiBaseUrl = '';
 
-      // Act
       const result = await invokeHandler('settings:app-settings');
 
-      // Assert
       expect(result).toEqual({
         debugMode: true,
         onboardingComplete: true,
@@ -944,17 +851,14 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('settings:api-keys should return list of stored API keys', async () => {
-      // Arrange - set the api keys directly via mockApiKeys
       // Note: The handler now uses getAllApiKeys() which reads from mockApiKeys
       mockApiKeys = {
         anthropic: 'sk-ant-12345678',
         openai: 'sk-openai-abcdefgh',
       };
 
-      // Act
       const result = await invokeHandler('settings:api-keys');
 
-      // Assert
       expect(result).toHaveLength(2);
       expect(result).toEqual(
         expect.arrayContaining([
@@ -971,14 +875,11 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('settings:add-api-key should store API key for valid provider', async () => {
-      // Arrange
       const provider = 'anthropic';
       const key = 'sk-ant-new-key-12345';
 
-      // Act
       const result = await invokeHandler('settings:add-api-key', provider, key);
 
-      // Assert
       expect(result).toEqual(
         expect.objectContaining({
           provider: 'anthropic',
@@ -989,20 +890,16 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('settings:add-api-key should reject unsupported providers', async () => {
-      // Arrange & Act & Assert
       await expect(
         invokeHandler('settings:add-api-key', 'unsupported-provider', 'sk-test'),
       ).rejects.toThrow('Unsupported API key provider');
     });
 
     it('settings:remove-api-key should delete the API key', async () => {
-      // Arrange
       mockApiKeys.openai = 'sk-openai-test';
 
-      // Act
       await invokeHandler('settings:remove-api-key', 'local-openai');
 
-      // Assert
       const { deleteApiKey } = await import('@main/store/secureStorage');
       expect(deleteApiKey).toHaveBeenCalledWith('openai');
     });
@@ -1046,13 +943,10 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('task:start should proxy to daemon and return task', async () => {
-      // Arrange
       const config = { prompt: 'Test task prompt' };
 
-      // Act
       const result = await invokeHandler('task:start', config);
 
-      // Assert — task:start now proxies through DaemonClient
       expect(mockDaemonClient.call).toHaveBeenCalledWith(
         'task.start',
         expect.objectContaining({ prompt: 'Test task prompt' }),
@@ -1066,13 +960,10 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('task:start should proxy to daemon', async () => {
-      // Arrange
       const config = { prompt: 'Test prompt' };
 
-      // Act
       const result = await invokeHandler('task:start', config);
 
-      // Assert — proxied to daemon RPC
       expect(mockDaemonClient.call).toHaveBeenCalledWith(
         'task.start',
         expect.objectContaining({ prompt: 'Test prompt' }),
@@ -1081,48 +972,36 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('task:cancel should proxy to daemon', async () => {
-      // Arrange
       const taskId = 'task_to_cancel';
 
-      // Act
       await invokeHandler('task:cancel', taskId);
 
-      // Assert — proxied to daemon RPC
       expect(mockDaemonClient.call).toHaveBeenCalledWith('task.cancel', { taskId });
     });
 
     it('task:cancel should proxy queued task to daemon', async () => {
-      // Arrange
       const taskId = 'task_queued';
 
-      // Act
       await invokeHandler('task:cancel', taskId);
 
-      // Assert — all cancel logic is in the daemon now
       expect(mockDaemonClient.call).toHaveBeenCalledWith('task.cancel', { taskId });
     });
 
     it('task:cancel should do nothing for undefined taskId', async () => {
-      // Act
       await invokeHandler('task:cancel', undefined);
 
-      // Assert — no RPC call for undefined taskId
       expect(mockDaemonClient.call).not.toHaveBeenCalledWith('task.cancel', expect.anything());
     });
 
     it('task:interrupt should proxy to daemon', async () => {
-      // Arrange
       const taskId = 'task_to_interrupt';
 
-      // Act
       await invokeHandler('task:interrupt', taskId);
 
-      // Assert
       expect(mockDaemonClient.call).toHaveBeenCalledWith('task.interrupt', { taskId });
     });
 
     it('task:get should proxy to daemon and return task', async () => {
-      // Arrange
       mockTasks.push({
         id: 'task_existing',
         prompt: 'Existing task',
@@ -1131,10 +1010,8 @@ describe('IPC Handlers Integration', () => {
         createdAt: new Date().toISOString(),
       });
 
-      // Act
       const result = await invokeHandler('task:get', 'task_existing');
 
-      // Assert
       expect(mockDaemonClient.call).toHaveBeenCalledWith('task.get', { taskId: 'task_existing' });
       expect(result).toEqual(
         expect.objectContaining({
@@ -1145,10 +1022,8 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('task:get should return null for non-existent task', async () => {
-      // Act
       const result = await invokeHandler('task:get', 'task_nonexistent');
 
-      // Assert
       expect(mockDaemonClient.call).toHaveBeenCalledWith('task.get', {
         taskId: 'task_nonexistent',
       });
@@ -1156,7 +1031,6 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('task:list should proxy to daemon', async () => {
-      // Arrange
       mockTasks.push(
         {
           id: 'task_1',
@@ -1174,29 +1048,23 @@ describe('IPC Handlers Integration', () => {
         },
       );
 
-      // Act
       const result = await invokeHandler('task:list');
 
-      // Assert
       expect(mockDaemonClient.call).toHaveBeenCalledWith('task.list', expect.any(Object));
       expect(result).toHaveLength(2);
     });
 
     it('task:delete should proxy to daemon', async () => {
-      // Act
       await invokeHandler('task:delete', 'task_to_delete');
 
-      // Assert — proxied to daemon RPC
       expect(mockDaemonClient.call).toHaveBeenCalledWith('task.delete', {
         taskId: 'task_to_delete',
       });
     });
 
     it('task:clear-history should proxy to daemon', async () => {
-      // Act
       await invokeHandler('task:clear-history');
 
-      // Assert — proxied to daemon RPC
       expect(mockDaemonClient.call).toHaveBeenCalledWith('task.clearHistory');
     });
   });
@@ -1207,29 +1075,22 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('onboarding:complete should return false when not completed', async () => {
-      // Arrange
       mockOnboardingComplete = false;
 
-      // Act
       const result = await invokeHandler('onboarding:complete');
 
-      // Assert
       expect(result).toBe(false);
     });
 
     it('onboarding:complete should return true when completed', async () => {
-      // Arrange
       mockOnboardingComplete = true;
 
-      // Act
       const result = await invokeHandler('onboarding:complete');
 
-      // Assert
       expect(result).toBe(true);
     });
 
     it('onboarding:complete should return true if user has task history', async () => {
-      // Arrange
       mockOnboardingComplete = false;
       mockTasks.push({
         id: 'existing_task',
@@ -1239,21 +1100,16 @@ describe('IPC Handlers Integration', () => {
         createdAt: new Date().toISOString(),
       });
 
-      // Act
       const result = await invokeHandler('onboarding:complete');
 
-      // Assert
       expect(result).toBe(true);
     });
 
     it('onboarding:set-complete should update onboarding status', async () => {
-      // Arrange
       mockOnboardingComplete = false;
 
-      // Act
       await invokeHandler('onboarding:set-complete', true);
 
-      // Assert — now routed through daemon RPC (M3 3c)
       expect(mockDaemonClient.call).toHaveBeenCalledWith('settings.setOnboardingComplete', {
         complete: true,
       });
@@ -1266,47 +1122,38 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('permission:respond should proxy to daemon', async () => {
-      // Arrange
       const response = {
         requestId: 'req_123',
         taskId: 'task_active',
         decision: 'allow',
       };
 
-      // Act
       await invokeHandler('permission:respond', response);
 
-      // Assert — proxied to daemon RPC
       expect(mockDaemonClient.call).toHaveBeenCalledWith('permission.respond', response);
     });
 
     it('permission:respond should proxy deny to daemon', async () => {
-      // Arrange
       const response = {
         requestId: 'req_123',
         taskId: 'task_active',
         decision: 'deny',
       };
 
-      // Act
       await invokeHandler('permission:respond', response);
 
-      // Assert
       expect(mockDaemonClient.call).toHaveBeenCalledWith('permission.respond', response);
     });
 
     it('permission:respond should proxy file permission to daemon', async () => {
-      // Arrange
       const response = {
         requestId: 'filereq_123_abc',
         taskId: 'task_active',
         decision: 'allow',
       };
 
-      // Act
       await invokeHandler('permission:respond', response);
 
-      // Assert — daemon handles file permission resolution
       expect(mockDaemonClient.call).toHaveBeenCalledWith('permission.respond', response);
     });
   });
@@ -1317,42 +1164,32 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('model:get should return selected model', async () => {
-      // Arrange
       mockSelectedModel = { provider: 'anthropic', model: 'claude-3-sonnet' };
 
-      // Act
       const result = await invokeHandler('model:get');
 
-      // Assert
       expect(result).toEqual({ provider: 'anthropic', model: 'claude-3-sonnet' });
     });
 
     it('model:get should return null when no model selected', async () => {
-      // Arrange
       mockSelectedModel = null;
 
-      // Act
       const result = await invokeHandler('model:get');
 
-      // Assert
       expect(result).toBeNull();
     });
 
     it('model:set should update selected model', async () => {
-      // Arrange
       const newModel = { provider: 'openai', model: 'gpt-4' };
 
-      // Act
       await invokeHandler('model:set', newModel);
 
-      // Assert — now routed through daemon RPC (M3 3c)
       expect(mockDaemonClient.call).toHaveBeenCalledWith('settings.setSelectedModel', {
         model: newModel,
       });
     });
 
     it('model:set should reject invalid model configuration', async () => {
-      // Arrange & Act & Assert
       await expect(invokeHandler('model:set', null)).rejects.toThrow('Invalid model configuration');
       await expect(invokeHandler('model:set', { provider: 'test' })).rejects.toThrow(
         'Invalid model configuration',
@@ -1369,29 +1206,22 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('shell:open-external should open valid http URL', async () => {
-      // Arrange
       const url = 'https://example.com';
 
-      // Act
       await invokeHandler('shell:open-external', url);
 
-      // Assert
       expect(shell.openExternal).toHaveBeenCalledWith(url);
     });
 
     it('shell:open-external should open valid https URL', async () => {
-      // Arrange
       const url = 'http://localhost:3000';
 
-      // Act
       await invokeHandler('shell:open-external', url);
 
-      // Assert
       expect(shell.openExternal).toHaveBeenCalledWith(url);
     });
 
     it('shell:open-external should reject non-http/https protocols', async () => {
-      // Arrange & Act & Assert
       await expect(invokeHandler('shell:open-external', 'file:///etc/passwd')).rejects.toThrow(
         'must use http or https protocol',
       );
@@ -1401,7 +1231,6 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('shell:open-external should reject invalid URLs', async () => {
-      // Arrange & Act & Assert
       await expect(invokeHandler('shell:open-external', 'not-a-url')).rejects.toThrow();
     });
   });
@@ -1412,16 +1241,12 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('opencode:check should return CLI status', async () => {
-      // Arrange - mocked to return installed
-
-      // Act
       const result = (await invokeHandler('opencode:check')) as {
         installed: boolean;
         version: string;
         installCommand: string;
       };
 
-      // Assert
       expect(result).toEqual(
         expect.objectContaining({
           installed: true,
@@ -1432,12 +1257,8 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('opencode:version should return CLI version', async () => {
-      // Arrange - mocked to return version
-
-      // Act
       const result = await invokeHandler('opencode:version');
 
-      // Assert
       expect(result).toBe('1.0.0');
     });
   });
@@ -1448,7 +1269,6 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('api-keys:all should return masked keys for all providers', async () => {
-      // Arrange
       mockApiKeys = {
         anthropic: 'sk-ant-12345678',
         openai: null,
@@ -1457,13 +1277,11 @@ describe('IPC Handlers Integration', () => {
         custom: null,
       };
 
-      // Act
       const result = (await invokeHandler('api-keys:all')) as Record<
         string,
         { exists: boolean; prefix?: string }
       >;
 
-      // Assert
       expect(result.anthropic).toEqual({
         exists: true,
         prefix: 'sk-ant-1...',
@@ -1476,23 +1294,16 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('api-keys:has-any should return true when any key exists', async () => {
-      // Arrange
       mockApiKeys.anthropic = 'sk-test';
 
-      // Act
       const result = await invokeHandler('api-keys:has-any');
 
-      // Assert
       expect(result).toBe(true);
     });
 
     it('api-keys:has-any should return false when no keys exist', async () => {
-      // Arrange - no keys
-
-      // Act
       const result = await invokeHandler('api-keys:has-any');
 
-      // Assert
       expect(result).toBe(false);
     });
   });
@@ -1503,14 +1314,11 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('session:resume should proxy to daemon with session ID', async () => {
-      // Arrange
       const sessionId = 'session_123';
       const prompt = 'Continue with the task';
 
-      // Act
       const result = await invokeHandler('session:resume', sessionId, prompt);
 
-      // Assert — proxied to daemon RPC
       expect(mockDaemonClient.call).toHaveBeenCalledWith(
         'session.resume',
         expect.objectContaining({
@@ -1527,15 +1335,12 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('session:resume should pass existing task ID to daemon', async () => {
-      // Arrange
       const sessionId = 'session_123';
       const prompt = 'Continue';
       const existingTaskId = 'task_existing';
 
-      // Act
       await invokeHandler('session:resume', sessionId, prompt, existingTaskId);
 
-      // Assert — existingTaskId passed to daemon RPC
       expect(mockDaemonClient.call).toHaveBeenCalledWith(
         'session.resume',
         expect.objectContaining({
@@ -1547,13 +1352,11 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('session:resume should validate session ID', async () => {
-      // Arrange & Act & Assert
       await expect(invokeHandler('session:resume', '', 'prompt')).rejects.toThrow();
       await expect(invokeHandler('session:resume', '   ', 'prompt')).rejects.toThrow();
     });
 
     it('session:resume should validate prompt', async () => {
-      // Arrange & Act & Assert
       await expect(invokeHandler('session:resume', 'session_123', '')).rejects.toThrow();
       await expect(invokeHandler('session:resume', 'session_123', '   ')).rejects.toThrow();
     });
@@ -1565,17 +1368,14 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('log:event should return ok response', async () => {
-      // Arrange
       const payload = {
         level: 'info',
         message: 'Test log message',
         context: { key: 'value' },
       };
 
-      // Act
       const result = await invokeHandler('log:event', payload);
 
-      // Assert
       expect(result).toEqual({ ok: true });
     });
   });
@@ -1591,13 +1391,10 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('task:start should proxy to daemon and return task', async () => {
-      // Arrange
       const config = { prompt: 'Test task prompt' };
 
-      // Act
       const result = await invokeHandler('task:start', config);
 
-      // Assert — proxied to daemon RPC
       expect(mockDaemonClient.call).toHaveBeenCalledWith(
         'task.start',
         expect.objectContaining({ prompt: 'Test task prompt' }),
@@ -1608,18 +1405,9 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('task:start should call daemon for each invocation', async () => {
-      // Arrange & Act - start two tasks
       await invokeHandler('task:start', { prompt: 'First task' });
       await invokeHandler('task:start', { prompt: 'Second task' });
 
-      // Assert — task.start is invoked once per call. Milestone 5 of the
-      // daemon-only-SQLite migration added a pre-check via
-      // `provider.getSettings` to replace the pre-M5
-      // `storage.hasReadyProvider()` predicate, so each `task:start`
-      // now makes 2 RPCs (`provider.getSettings` + `task.start`). The
-      // `task.start` position checks below pin the important assertion
-      // (the prompt round-trips intact) regardless of how many probe
-      // RPCs surround it.
       const startCalls = mockDaemonClient.call.mock.calls.filter(
         ([method]) => method === 'task.start',
       );
@@ -1629,29 +1417,23 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('task:start should return daemon response directly', async () => {
-      // Arrange
       const config = { prompt: 'My test prompt' };
 
-      // Act
       const result = (await invokeHandler('task:start', config)) as {
         id: string;
         prompt: string;
         status: string;
       };
 
-      // Assert — result comes from daemon mock
       expect(result.prompt).toBe('My test prompt');
       expect(result.status).toBe('running');
     });
 
     it('task:start should proxy to daemon without calling storage directly', async () => {
-      // Arrange
       const config = { prompt: 'Save me' };
 
-      // Act
       await invokeHandler('task:start', config);
 
-      // Assert — storage is NOT called directly; daemon handles persistence
       const { saveTask } = await import('@myboteam/agent-core');
       expect(saveTask).not.toHaveBeenCalled();
       expect(mockDaemonClient.call).toHaveBeenCalledWith(
@@ -1661,16 +1443,13 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('task:start should pass prompt and workingDirectory to daemon', async () => {
-      // Arrange
       const config = {
         prompt: 'Full config test',
         workingDirectory: '/some/path',
       };
 
-      // Act
       await invokeHandler('task:start', config);
 
-      // Assert — config fields are forwarded to daemon
       expect(mockDaemonClient.call).toHaveBeenCalledWith(
         'task.start',
         expect.objectContaining({
@@ -1681,13 +1460,10 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('task:start should generate a taskId and pass it to daemon', async () => {
-      // Arrange
       const config = { prompt: 'Tools test' };
 
-      // Act
       await invokeHandler('task:start', config);
 
-      // Assert — a taskId is generated and sent to daemon
       expect(mockDaemonClient.call).toHaveBeenCalledWith(
         'task.start',
         expect.objectContaining({
@@ -1697,30 +1473,23 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('task:cancel should do nothing when taskId is undefined', async () => {
-      // Arrange & Act
       await invokeHandler('task:cancel', undefined);
 
-      // Assert
       expect(mockTaskManager.cancelTask).not.toHaveBeenCalled();
       expect(mockTaskManager.cancelQueuedTask).not.toHaveBeenCalled();
     });
 
     it('task:interrupt should do nothing when taskId is undefined', async () => {
-      // Arrange & Act
       await invokeHandler('task:interrupt', undefined);
 
-      // Assert
       expect(mockTaskManager.interruptTask).not.toHaveBeenCalled();
     });
 
     it('task:interrupt should do nothing for inactive task', async () => {
-      // Arrange
       mockTaskManager.hasActiveTask.mockReturnValue(false);
 
-      // Act
       await invokeHandler('task:interrupt', 'task_inactive');
 
-      // Assert
       expect(mockTaskManager.interruptTask).not.toHaveBeenCalled();
     });
   });
@@ -1731,15 +1500,12 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('session:resume should proxy to daemon with existing task ID', async () => {
-      // Arrange
       const sessionId = 'session_existing';
       const prompt = 'Follow-up message';
       const existingTaskId = 'task_existing';
 
-      // Act
       await invokeHandler('session:resume', sessionId, prompt, existingTaskId);
 
-      // Assert — proxied to daemon RPC with all params
       expect(mockDaemonClient.call).toHaveBeenCalledWith(
         'session.resume',
         expect.objectContaining({
@@ -1751,32 +1517,26 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('session:resume should return task from daemon', async () => {
-      // Arrange
       const sessionId = 'session_status';
       const prompt = 'Status update test';
       const existingTaskId = 'task_status';
 
-      // Act
       const result = (await invokeHandler('session:resume', sessionId, prompt, existingTaskId)) as {
         id: string;
         status: string;
       };
 
-      // Assert — daemon returns the task; storage is NOT called directly
       expect(result).toEqual(expect.objectContaining({ id: existingTaskId, status: 'running' }));
       const { updateTaskStatus } = await import('@myboteam/agent-core');
       expect(updateTaskStatus).not.toHaveBeenCalled();
     });
 
     it('session:resume should proxy to daemon without existing task ID', async () => {
-      // Arrange
       const sessionId = 'session_new';
       const prompt = 'New session';
 
-      // Act
       await invokeHandler('session:resume', sessionId, prompt);
 
-      // Assert — proxied without existingTaskId
       expect(mockDaemonClient.call).toHaveBeenCalledWith(
         'session.resume',
         expect.objectContaining({
@@ -1784,7 +1544,7 @@ describe('IPC Handlers Integration', () => {
           prompt: 'New session',
         }),
       );
-      // Storage not called directly
+
       const { addTaskMessage } = await import('@myboteam/agent-core');
       expect(addTaskMessage).not.toHaveBeenCalled();
     });
@@ -1796,7 +1556,6 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('permission:respond should proxy to daemon with selectedOptions', async () => {
-      // Arrange
       const response = {
         requestId: 'req_456',
         taskId: 'task_options',
@@ -1804,25 +1563,20 @@ describe('IPC Handlers Integration', () => {
         selectedOptions: ['option1', 'option2', 'option3'],
       };
 
-      // Act
       await invokeHandler('permission:respond', response);
 
-      // Assert — proxied to daemon RPC
       expect(mockDaemonClient.call).toHaveBeenCalledWith('permission.respond', response);
     });
 
     it('permission:respond should proxy to daemon for file permission requests', async () => {
-      // Arrange
       const response = {
         requestId: 'filereq_notfound',
         taskId: 'task_notfound',
         decision: 'allow',
       };
 
-      // Act
       await invokeHandler('permission:respond', response);
 
-      // Assert — proxied to daemon; no local logging
       expect(mockDaemonClient.call).toHaveBeenCalledWith('permission.respond', response);
     });
   });
@@ -1833,7 +1587,6 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('should throw error when window is destroyed', async () => {
-      // Arrange
       const { BrowserWindow } = await import('electron');
       (BrowserWindow.fromWebContents as Mock).mockReturnValue({
         id: 1,
@@ -1841,33 +1594,29 @@ describe('IPC Handlers Integration', () => {
         webContents: { send: vi.fn(), isDestroyed: () => true },
       });
 
-      // Act & Assert
       await expect(invokeHandler('task:start', { prompt: 'Test' })).rejects.toThrow(
         'Untrusted window',
       );
     });
 
     it('should throw error when window is null', async () => {
-      // Arrange
       const { BrowserWindow } = await import('electron');
       (BrowserWindow.fromWebContents as Mock).mockReturnValue(null);
 
-      // Act & Assert
       await expect(invokeHandler('task:start', { prompt: 'Test' })).rejects.toThrow(
         'Untrusted window',
       );
     });
 
     it('should throw error when IPC from non-focused window with multiple windows', async () => {
-      // Arrange
       const { BrowserWindow } = await import('electron');
       (BrowserWindow.fromWebContents as Mock).mockReturnValue({
-        id: 2, // Different from focused window
+        id: 2,
         isDestroyed: () => false,
         webContents: { send: vi.fn(), isDestroyed: () => false },
       });
       (BrowserWindow.getFocusedWindow as Mock).mockReturnValue({
-        id: 1, // Different ID
+        id: 1,
         isDestroyed: () => false,
       });
       (BrowserWindow.getAllWindows as Mock).mockReturnValue([{ id: 1 }, { id: 2 }]);
@@ -1880,14 +1629,12 @@ describe('IPC Handlers Integration', () => {
         createdAt: new Date().toISOString(),
       });
 
-      // Act & Assert
       await expect(invokeHandler('task:start', { prompt: 'Test' })).rejects.toThrow(
         'IPC request must originate from the focused window',
       );
     });
 
     it('should allow IPC when only one window exists', async () => {
-      // Arrange
       const { BrowserWindow } = await import('electron');
       (BrowserWindow.fromWebContents as Mock).mockReturnValue({
         id: 1,
@@ -1895,10 +1642,10 @@ describe('IPC Handlers Integration', () => {
         webContents: { send: vi.fn(), isDestroyed: () => false },
       });
       (BrowserWindow.getFocusedWindow as Mock).mockReturnValue({
-        id: 2, // Different but only one window
+        id: 2,
         isDestroyed: () => false,
       });
-      (BrowserWindow.getAllWindows as Mock).mockReturnValue([{ id: 1 }]); // Only one window
+      (BrowserWindow.getAllWindows as Mock).mockReturnValue([{ id: 1 }]);
 
       mockTaskManager.startTask.mockResolvedValue({
         id: 'task_single',
@@ -1908,10 +1655,8 @@ describe('IPC Handlers Integration', () => {
         createdAt: new Date().toISOString(),
       });
 
-      // Act
       const result = await invokeHandler('task:start', { prompt: 'Test' });
 
-      // Assert
       expect(result).toBeDefined();
     });
   });
@@ -1922,36 +1667,28 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('onboarding:complete should return true when E2E_SKIP_AUTH env is set', async () => {
-      // Arrange
       const originalEnv = process.env.E2E_SKIP_AUTH;
       process.env.E2E_SKIP_AUTH = '1';
 
-      // Act
       const result = await invokeHandler('onboarding:complete');
 
-      // Assert
       expect(result).toBe(true);
 
-      // Cleanup
       process.env.E2E_SKIP_AUTH = originalEnv;
     });
 
     it('opencode:check should return mock status when E2E_SKIP_AUTH is set', async () => {
-      // Arrange
       const originalEnv = process.env.E2E_SKIP_AUTH;
       process.env.E2E_SKIP_AUTH = '1';
 
-      // Act
       const result = (await invokeHandler('opencode:check')) as {
         installed: boolean;
         version: string;
       };
 
-      // Assert
       expect(result.installed).toBe(true);
       expect(result.version).toBe('1.0.0-test');
 
-      // Cleanup
       process.env.E2E_SKIP_AUTH = originalEnv;
     });
   });
@@ -1968,7 +1705,6 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('api-key:validate should handle abort error', async () => {
-      // Arrange
       vi.stubGlobal(
         'fetch',
         vi.fn().mockImplementation(() => {
@@ -1978,34 +1714,28 @@ describe('IPC Handlers Integration', () => {
         }),
       );
 
-      // Act
       const result = (await invokeHandler('api-key:validate', 'sk-test-key')) as {
         valid: boolean;
         error: string;
       };
 
-      // Assert
       expect(result.valid).toBe(false);
       expect(result.error).toContain('timed out');
     });
 
     it('api-key:validate should handle network errors', async () => {
-      // Arrange
       vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network error')));
 
-      // Act
       const result = (await invokeHandler('api-key:validate', 'sk-test-key')) as {
         valid: boolean;
         error: string;
       };
 
-      // Assert
       expect(result.valid).toBe(false);
       expect(result.error).toContain('Failed to validate');
     });
 
     it('api-key:validate should return invalid for non-200 response', async () => {
-      // Arrange
       vi.stubGlobal(
         'fetch',
         vi.fn().mockResolvedValue({
@@ -2015,19 +1745,16 @@ describe('IPC Handlers Integration', () => {
         }),
       );
 
-      // Act
       const result = (await invokeHandler('api-key:validate', 'sk-test-key')) as {
         valid: boolean;
         error: string;
       };
 
-      // Assert
       expect(result.valid).toBe(false);
       expect(result.error).toContain('Invalid API key');
     });
 
     it('api-key:validate should return valid for 200 response', async () => {
-      // Arrange
       vi.stubGlobal(
         'fetch',
         vi.fn().mockResolvedValue({
@@ -2037,12 +1764,10 @@ describe('IPC Handlers Integration', () => {
         }),
       );
 
-      // Act
       const result = (await invokeHandler('api-key:validate', 'sk-test-key')) as {
         valid: boolean;
       };
 
-      // Assert
       expect(result.valid).toBe(true);
     });
   });
@@ -2057,7 +1782,6 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('api-key:validate-provider should reject unsupported provider', async () => {
-      // Act
       const result = (await invokeHandler(
         'api-key:validate-provider',
         'invalid-provider',
@@ -2067,30 +1791,25 @@ describe('IPC Handlers Integration', () => {
         error: string;
       };
 
-      // Assert
       expect(result.valid).toBe(false);
       expect(result.error).toBe('Unsupported provider');
     });
 
     it('api-key:validate-provider should skip validation for custom provider', async () => {
-      // Act
       const result = (await invokeHandler('api-key:validate-provider', 'custom', 'any-key')) as {
         valid: boolean;
       };
 
-      // Assert
       expect(result.valid).toBe(true);
     });
 
     it('api-key:validate-provider should validate OpenAI key', async () => {
-      // Arrange
       const mockFetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({}),
       });
       vi.stubGlobal('fetch', mockFetch);
 
-      // Act
       const result = (await invokeHandler(
         'api-key:validate-provider',
         'openai',
@@ -2099,7 +1818,6 @@ describe('IPC Handlers Integration', () => {
         valid: boolean;
       };
 
-      // Assert
       expect(result.valid).toBe(true);
       expect(mockFetch).toHaveBeenCalledWith(
         'https://api.openai.com/v1/models',
@@ -2113,14 +1831,12 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('api-key:validate-provider should validate Google key', async () => {
-      // Arrange
       const mockFetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({}),
       });
       vi.stubGlobal('fetch', mockFetch);
 
-      // Act
       const result = (await invokeHandler(
         'api-key:validate-provider',
         'google',
@@ -2129,7 +1845,6 @@ describe('IPC Handlers Integration', () => {
         valid: boolean;
       };
 
-      // Assert
       expect(result.valid).toBe(true);
       expect(mockFetch).toHaveBeenCalledWith(
         'https://generativelanguage.googleapis.com/v1beta/models?key=AIza-test-key',
@@ -2140,24 +1855,20 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('api-key:validate-provider should handle AbortError', async () => {
-      // Arrange
       const abortError = new Error('Request aborted');
       abortError.name = 'AbortError';
       vi.stubGlobal('fetch', vi.fn().mockRejectedValue(abortError));
 
-      // Act
       const result = (await invokeHandler('api-key:validate-provider', 'openai', 'sk-key')) as {
         valid: boolean;
         error: string;
       };
 
-      // Assert
       expect(result.valid).toBe(false);
       expect(result.error).toContain('timed out');
     });
 
     it('api-key:validate-provider should handle failed response with error message', async () => {
-      // Arrange
       vi.stubGlobal(
         'fetch',
         vi.fn().mockResolvedValue({
@@ -2167,19 +1878,16 @@ describe('IPC Handlers Integration', () => {
         }),
       );
 
-      // Act
       const result = (await invokeHandler('api-key:validate-provider', 'openai', 'sk-bad-key')) as {
         valid: boolean;
         error: string;
       };
 
-      // Assert
       expect(result.valid).toBe(false);
       expect(result.error).toBe('Access denied');
     });
 
     it('api-key:validate-provider should handle failed response without error message', async () => {
-      // Arrange
       vi.stubGlobal(
         'fetch',
         vi.fn().mockResolvedValue({
@@ -2189,13 +1897,11 @@ describe('IPC Handlers Integration', () => {
         }),
       );
 
-      // Act
       const result = (await invokeHandler('api-key:validate-provider', 'openai', 'sk-key')) as {
         valid: boolean;
         error: string;
       };
 
-      // Assert
       expect(result.valid).toBe(false);
       expect(result.error).toContain('API returned status 500');
     });
@@ -2207,41 +1913,33 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('settings:add-api-key should accept and return custom label', async () => {
-      // Arrange
       const provider = 'anthropic';
       const key = 'sk-custom-labeled-key';
       const label = 'My Production Key';
 
-      // Act
       const result = (await invokeHandler('settings:add-api-key', provider, key, label)) as {
         label: string;
       };
 
-      // Assert
       expect(result.label).toBe('My Production Key');
     });
 
     it('settings:add-api-key should use default label when not provided', async () => {
-      // Arrange
       const provider = 'anthropic';
       const key = 'sk-no-label-key';
 
-      // Act
       const result = (await invokeHandler('settings:add-api-key', provider, key)) as {
         label: string;
       };
 
-      // Assert
       expect(result.label).toBe('Local API Key');
     });
 
     it('settings:add-api-key should validate label length', async () => {
-      // Arrange
       const provider = 'anthropic';
       const key = 'sk-valid-key';
       const longLabel = 'x'.repeat(200);
 
-      // Act & Assert
       await expect(invokeHandler('settings:add-api-key', provider, key, longLabel)).rejects.toThrow(
         'exceeds maximum length',
       );
@@ -2254,26 +1952,19 @@ describe('IPC Handlers Integration', () => {
     });
 
     it('settings:api-keys should handle empty password', async () => {
-      // Arrange - use mockApiKeys directly
       // Note: The handler now uses getAllApiKeys() which reads from mockApiKeys
       mockApiKeys = {
-        anthropic: '', // Empty key value
+        anthropic: '',
       };
 
-      // Act
       const result = (await invokeHandler('settings:api-keys')) as Array<{ keyPrefix: string }>;
 
-      // Assert
       expect(result).toHaveLength(1);
       expect(result[0].keyPrefix).toBe('');
     });
   });
 
   // Note: Callback execution tests for onStatusChange, onDebug, onError, onComplete
-  // are complex to set up due to vitest mock hoisting for webContents.send.
-  // The callback logic is exercised through the task lifecycle tests above.
-  // The utility functions (extractScreenshots, sanitizeToolOutput)
-  // are tested in handlers-utils.unit.test.ts as pure function tests.
 
   describe('Favorites Handlers', () => {
     beforeEach(() => {
@@ -2295,8 +1986,6 @@ describe('IPC Handlers Integration', () => {
 
       await invokeHandler('favorites:add', taskId);
 
-      // Now routed through daemon RPC (M3 3c): handler fetches task via
-      // `task.get` then calls `favorites.add` with the full payload.
       expect(mockDaemonClient.call).toHaveBeenCalledWith('favorites.add', {
         taskId,
         prompt: 'Complete me',
@@ -2366,7 +2055,6 @@ describe('IPC Handlers Integration', () => {
       vi.clearAllMocks();
       mockedIpcMain._clear();
 
-      // Reset BrowserWindow mock to include capturePage and executeJavaScript
       (_BrowserWindow.fromWebContents as Mock).mockReturnValue({
         id: 1,
         isDestroyed: vi.fn(() => false),
@@ -2390,16 +2078,13 @@ describe('IPC Handlers Integration', () => {
         { id: 1, webContents: { send: vi.fn() } },
       ]);
 
-      // Reset dialog mock
       (dialog.showSaveDialog as Mock).mockResolvedValue({
         canceled: false,
         filePath: '/tmp/bug-report.json',
       });
 
-      // Enable debug mode for all debug handler tests
       mockDebugMode = true;
 
-      // Reset fs mocks
       (fs.writeFileSync as Mock).mockReset();
       (fs.promises.writeFile as unknown as Mock).mockReset();
       (fs.promises.writeFile as unknown as Mock).mockResolvedValue(undefined);
@@ -2561,11 +2246,9 @@ describe('IPC Handlers Integration', () => {
       };
 
       expect(result.success).toBe(true);
-      // fs.promises.writeFile is used (not writeFileSync)
+
       expect(fs.promises.writeFile).toHaveBeenCalledTimes(2);
 
-      // First call: PNG screenshot (written before JSON so hasScreenshot is accurate)
-      // Second call: JSON report
       const calls = (fs.promises.writeFile as unknown as Mock).mock.calls;
       const jsonCall = calls.find((c: unknown[]) => typeof c[1] === 'string') as
         | [string, string]

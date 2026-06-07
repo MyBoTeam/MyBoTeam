@@ -1,5 +1,3 @@
-// apps/desktop/src/renderer/components/settings/shared/ApiKeyInput.tsx
-
 import { useTranslation } from 'react-i18next';
 
 interface ApiKeyInputProps {

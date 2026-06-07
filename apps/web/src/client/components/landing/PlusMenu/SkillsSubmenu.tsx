@@ -1,5 +1,3 @@
-// apps/desktop/src/renderer/components/landing/PlusMenu/SkillsSubmenu.tsx
-
 import type { Skill } from '@myboteam/agent-core/common';
 import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
@@ -41,7 +39,7 @@ export function SkillsSubmenu({
 
   return (
     <div className="flex flex-col">
-      {/* Search Input */}
+      {}
       <div className="p-2">
         <Input
           type="text"
@@ -58,7 +56,7 @@ export function SkillsSubmenu({
 
       <DropdownMenuSeparator />
 
-      {/* Skills List */}
+      {}
       <div className="max-h-[300px] overflow-y-auto">
         {filteredSkills.length === 0 ? (
           <div className="p-3 text-center text-sm text-muted-foreground">
@@ -115,7 +113,7 @@ export function SkillsSubmenu({
 
       <DropdownMenuSeparator />
 
-      {/* Footer Actions */}
+      {}
       <div className="flex gap-2 p-2.5">
         <button
           onClick={onCreateNewSkill}

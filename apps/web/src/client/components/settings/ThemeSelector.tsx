@@ -47,8 +47,7 @@ function getStoredTheme(): ThemeValue {
 
 export function ThemeSelector() {
   const { t } = useTranslation('settings');
-  // Use localStorage as a synchronous fallback for the initial render.
-  // The real value is loaded async from the backend in the effect below.
+
   const [current, setCurrent] = useState<ThemeValue>(getStoredTheme);
   const [open, setOpen] = useState(false);
   const requestSeqRef = useRef(0);
@@ -56,8 +55,6 @@ export function ThemeSelector() {
   useEffect(() => {
     const myboteam = getMyBoTeam();
 
-    // Load the authoritative theme value from the backend and sync both the
-    // selector state and the DOM (applyTheme writes localStorage + applies class).
     myboteam
       .getTheme()
       .then((theme) => {
@@ -66,11 +63,8 @@ export function ThemeSelector() {
           applyTheme(theme);
         }
       })
-      .catch(() => {
-        // Ignore — keep the localStorage fallback already set in useState.
-      });
+      .catch(() => {});
 
-    // Subscribe to live theme changes (e.g. changed from another window/process).
     const unsubscribe = myboteam.onThemeChange?.((data) => {
       if (isThemeValue(data.theme)) {
         setCurrent(data.theme);
@@ -93,7 +87,6 @@ export function ThemeSelector() {
 
       const previousTheme = current;
 
-      // Optimistically update UI and localStorage (applyTheme writes THEME_KEY).
       setCurrent(value);
       applyTheme(value);
 
@@ -101,11 +94,10 @@ export function ThemeSelector() {
       try {
         await myboteam.setTheme(value);
       } catch {
-        // Guard against stale async rollback: only revert if this is still the latest request.
         if (requestSeqRef.current !== requestId) {
           return;
         }
-        // Revert UI state; applyTheme(previousTheme) also restores localStorage.
+
         setCurrent(previousTheme);
         applyTheme(previousTheme);
       }

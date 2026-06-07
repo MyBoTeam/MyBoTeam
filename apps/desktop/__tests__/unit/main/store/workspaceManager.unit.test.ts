@@ -212,7 +212,7 @@ describe('workspaceManager', () => {
     it('should delete from cache on workspace.deleted notification', async () => {
       const ws2 = mockWorkspace('ws-2', 'Other');
       mockDaemonClient.call.mockResolvedValue(undefined);
-      // Pre-populate cache with ws2
+
       import('@main/store/workspaceManager').then(() => {});
 
       await notificationHandler!({ kind: 'workspace.deleted', workspaceId: 'ws-2' });

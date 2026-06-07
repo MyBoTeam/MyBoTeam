@@ -23,14 +23,6 @@ interface LiteLLMModelsResponse {
   }>;
 }
 
-/**
- * Tests connection to a LiteLLM proxy server and retrieves available models.
- * Makes an HTTP request to the OpenAI-compatible /v1/models endpoint.
- *
- * @param url - The LiteLLM proxy base URL
- * @param apiKey - Optional API key for authentication
- * @returns Connection result with available models on success
- */
 export async function testLiteLLMConnection(
   url: string,
   apiKey?: string,
@@ -93,13 +85,6 @@ export interface FetchLiteLLMModelsOptions {
   apiKey?: string;
 }
 
-/**
- * Fetches available models from a configured LiteLLM proxy.
- * Formats model names for display with provider prefixes.
- *
- * @param options - Configuration and optional API key
- * @returns Result with formatted models on success
- */
 export async function fetchLiteLLMModels(
   options: FetchLiteLLMModelsOptions,
 ): Promise<LiteLLMConnectionResult> {

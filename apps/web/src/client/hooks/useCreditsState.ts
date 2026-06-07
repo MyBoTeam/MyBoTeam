@@ -91,7 +91,6 @@ export function useCreditsState() {
     setShowQuotaInline(true);
   }, []);
 
-  // Initial fetch — inline to avoid ESLint set-state-in-effect warning
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -102,16 +101,13 @@ export function useCreditsState() {
         ]);
         if (cancelled || !usageData) return;
         applyLiveUsage(settings, usageData);
-      } catch {
-        // MyBoTeam AI not connected — no-op
-      }
+      } catch {}
     })();
     return () => {
       cancelled = true;
     };
   }, [myboteam, applyLiveUsage]);
 
-  // Subscribe to live usage updates
   useEffect(() => {
     const unsubscribe = myboteam.onMyboteamAiUsageUpdate?.((liveUsage) => {
       void (async () => {

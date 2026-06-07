@@ -1,12 +1,3 @@
-/**
- * electron-updater event-handler registration. Split out so updater/index.ts
- * can stay focused on lifecycle orchestration (init, setFeedURL, check, quit)
- * and stay under the per-file LOC cap.
- *
- * Handlers mutate state through updater/state.ts and fire analytics + logs
- * through the standard wrappers — nothing here is updater-internal state.
- */
-
 import { app, dialog } from 'electron';
 import type { AppUpdater, UpdateInfo } from 'electron-updater';
 import {
@@ -29,11 +20,6 @@ import {
   setUserCheckInFlight,
 } from './state';
 
-/**
- * Wire the five electron-updater lifecycle events. Caller passes `quitAndInstall`
- * so the update-downloaded dialog's "Restart Now" button can trigger it without
- * a circular import.
- */
 export function registerAutoUpdaterListeners(
   autoUpdater: AppUpdater,
   quitAndInstall: () => Promise<void>,

@@ -1,20 +1,3 @@
-/**
- * useBrowserPreview — State management and IPC event hook for BrowserPreview.
- *
- * Encapsulates:
- *  - Frame / URL / status / error state
- *  - Visibility-based pause logic
- *  - Auto-start on browser_* tool detection
- *  - IPC subscription to browser:frame, browser:navigate, browser:status events
- *
- * IPC subscription logic lives in useBrowserPreviewIpc.ts (extracted to keep
- * this file under 200 lines — CodeRabbit suggestion).
- *
- * State types and reducer live in browserPreviewState.ts.
- *
- * Extracted from BrowserPreview as part of ENG-982 refactor.
- */
-
 import { useCallback, useEffect, useReducer, useRef } from 'react';
 import { initialPreviewState, isViewStatus, previewReducer } from './browserPreviewState';
 import type { ViewStatus } from './StatusBadge';
@@ -49,19 +32,16 @@ export function useBrowserPreview({
 
   const [state, dispatch] = useReducer(previewReducer, initialPreviewState);
 
-  // Reset all preview state when taskId changes to avoid stale guard/frame bleed
   useEffect(() => {
     screencastStartedRef.current = false;
     statusRef.current = 'idle';
     dispatch({ type: 'RESET' });
   }, []);
 
-  // Sync isCollapsedRef with isCollapsed state so handleFrame can skip updates when collapsed
   useEffect(() => {
     isCollapsedRef.current = state.isCollapsed;
   }, [state.isCollapsed]);
 
-  // Pause frame updates when the tab is hidden
   useEffect(() => {
     const handleVisibility = () => {
       isPausedRef.current = document.hidden;
@@ -73,14 +53,11 @@ export function useBrowserPreview({
     };
   }, []);
 
-  // Auto-start screencast when a browser_* tool becomes active
-  // Contributed by dhruvawani17 (PR #489)
   useEffect(() => {
     if (!currentTool) {
       return;
     }
-    // Tool names arrive with the MCP server prefix (e.g. "dev-browser-mcp_browser_navigate")
-    // or without it (e.g. "browser_navigate") depending on how the tool event was emitted.
+
     const toolSuffix = currentTool.includes('_browser_')
       ? currentTool.slice(currentTool.lastIndexOf('_browser_') + 1)
       : currentTool;
@@ -103,7 +80,7 @@ export function useBrowserPreview({
       if (cancelled) {
         return;
       }
-      // Dev-browser server may not be ready yet — reset so we can retry on next tool call
+
       screencastStartedRef.current = false;
       statusRef.current = 'idle';
       dispatch({ type: 'IDLE' });
@@ -114,7 +91,6 @@ export function useBrowserPreview({
     };
   }, [currentTool, taskId]);
 
-  // IPC event handlers — defined here so they can close over dispatch and refs
   const handleFrame = useCallback(
     (event: { taskId: string; pageName: string; frame: string; timestamp: number }) => {
       if (event.taskId !== taskId) {
@@ -184,7 +160,6 @@ export function useBrowserPreview({
     dispatch({ type: 'SET_COLLAPSED', value });
   }, []);
 
-  // Delegate IPC subscription and preview-stop-on-unmount to the dedicated sub-hook
   useBrowserPreviewIpc({ taskId, handleFrame, handleNavigate, handleStatus });
 
   return {

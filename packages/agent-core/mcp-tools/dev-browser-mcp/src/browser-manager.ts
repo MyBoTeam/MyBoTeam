@@ -67,16 +67,13 @@ export class BrowserManager {
   }
 
   async resetConnection(): Promise<void> {
-    // Gracefully close all pages in the local registry before clearing
     const closePromises: Promise<void>[] = [];
     for (const page of this.localPageRegistry.values()) {
       try {
         if (!page.isClosed()) {
           closePromises.push(page.close().catch(() => {}));
         }
-      } catch {
-        // Ignore errors when closing pages during reset
-      }
+      } catch {}
     }
     await Promise.all(closePromises);
     this.localPageRegistry.clear();
@@ -96,7 +93,6 @@ export class BrowserManager {
     baseDelayMs = 100,
     allowRetry = false,
   ): Promise<T> {
-    // Validate maxAttempts
     if (!Number.isFinite(maxAttempts) || maxAttempts <= 0) {
       throw new RangeError(`maxAttempts must be a positive integer, got: ${maxAttempts}`);
     }

@@ -11,7 +11,6 @@ interface UseClassicProviderConnectOptions {
   defaultBaseUrl: string;
 }
 
-/** Thin orchestrator — composes useApiKeyConnect + useOAuthSignIn. */
 export function useClassicProviderConnect({
   providerId,
   connectedProvider,

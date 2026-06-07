@@ -1,10 +1,3 @@
-/**
- * StatusBadge — Connection status indicator for BrowserPreview.
- *
- * Displays a small visual badge reflecting the current ViewStatus.
- * Extracted from BrowserPreview as part of ENG-982 refactor.
- */
-
 import { AlertCircle, Loader2 } from 'lucide-react';
 
 export type ViewStatus = 'idle' | 'starting' | 'streaming' | 'stopping' | 'error';

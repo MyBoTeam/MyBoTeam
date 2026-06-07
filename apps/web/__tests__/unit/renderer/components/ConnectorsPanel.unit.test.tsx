@@ -1,10 +1,3 @@
-/**
- * @vitest-environment jsdom
- *
- * Tests the Connectors section of the unified IntegrationsPanel
- * (previously tested via the now-removed ConnectorsPanel component).
- */
-
 import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -68,7 +61,6 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-// Mock WhatsAppCard to isolate the Connectors section under test
 vi.mock('@/components/settings/integrations/WhatsAppCard', () => ({
   WhatsAppCard: () => <div data-testid="whatsapp-card-mock" />,
 }));

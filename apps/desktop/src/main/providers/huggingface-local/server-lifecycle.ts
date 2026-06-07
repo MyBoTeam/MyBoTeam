@@ -1,8 +1,3 @@
-/**
- * Server lifecycle management for the HuggingFace Local inference server.
- * Handles start, stop, status, and connection testing.
- */
-
 import http from 'node:http';
 import { getDaemonClient } from '../../daemon-bootstrap';
 import { getLogCollector } from '../../logging';
@@ -16,9 +11,6 @@ import {
   state,
 } from './server-state';
 
-/**
- * Start the local inference HTTP server.
- */
 export async function startServer(
   modelId: string,
 ): Promise<{ success: boolean; port?: number; error?: string }> {
@@ -40,7 +32,6 @@ async function _startServerImpl(
   modelId: string,
 ): Promise<{ success: boolean; port?: number; error?: string }> {
   if (state.server) {
-    // Server already running - just load the new model
     try {
       await loadModel(modelId);
       return { success: true, port: state.port! };
@@ -70,7 +61,6 @@ async function _startServerImpl(
   return new Promise((resolve) => {
     const server = http.createServer(createRequestHandler());
 
-    // Listen on a random available port on localhost only
     server.listen(0, '127.0.0.1', () => {
       const address = server.address();
       if (address && typeof address !== 'string') {
@@ -80,11 +70,7 @@ async function _startServerImpl(
           'INFO',
           `[HF Server] Listening on http://127.0.0.1:${address.port}`,
         );
-        // Persist the chosen port so clients can reconnect after restart.
-        // Milestone 5: HF config round-trips through the daemon's
-        // `provider.*HuggingFaceLocalConfig` RPCs instead of the local
-        // DB. Fire-and-forget — the port write is best-effort; if the
-        // daemon is disconnected we log and continue.
+
         void (async () => {
           try {
             const client = getDaemonClient();
@@ -113,23 +99,16 @@ async function _startServerImpl(
   });
 }
 
-/**
- * Stop the local inference server and unload the model.
- */
 export async function stopServer(): Promise<void> {
-  // Signal any in-flight loadModel IIFE to abort state mutation
   state.isStopping = true;
-  // Capture any in-flight loadModel promise so we can wait for it to observe
-  // the isStopping flag before we reset it at the end of this function.
+
   const pendingLoad = loadModelPromise;
 
   if (state.server) {
     await new Promise<void>((resolve) => {
-      // Close all keep-alive connections first so server.close() resolves promptly
       const srv = state.server!;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       if ('closeAllConnections' in srv && typeof (srv as any).closeAllConnections === 'function') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (srv as any).closeAllConnections();
       }
       srv.close(() => {
@@ -139,19 +118,15 @@ export async function stopServer(): Promise<void> {
     });
   }
 
-  // Wait for active generations to complete (max 10s)
   const drainStart = Date.now();
   while (activeGenerations > 0 && Date.now() - drainStart < 10000) {
     await new Promise((r) => setTimeout(r, 100));
   }
 
-  // Dispose model only after HTTP server is fully closed and generations drained
   if (state.model) {
     try {
       await state.model.dispose?.();
-    } catch {
-      // Ignore dispose errors
-    }
+    } catch {}
   }
 
   state.server = null;
@@ -161,12 +136,9 @@ export async function stopServer(): Promise<void> {
   state.tokenizer = null;
   state.model = null;
   state.isLoading = false;
-  // Wait for any in-flight loadModel to finish observing isStopping before
-  // we clear the flag, so a concurrent startup can't assign state after shutdown.
+
   if (pendingLoad) {
-    await pendingLoad.catch(() => {
-      // Ignore errors from the aborted load
-    });
+    await pendingLoad.catch(() => {});
   }
   state.isStopping = false;
 }

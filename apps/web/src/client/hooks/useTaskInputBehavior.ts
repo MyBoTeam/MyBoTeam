@@ -16,7 +16,7 @@ interface UseTaskInputBehaviorOptions {
   isRecording: boolean;
   slashCommand: SlashCommandHandle;
   onSubmit: () => void;
-  /** Optional external ref for pending auto-submit value (avoids circular dependency). */
+
   pendingAutoSubmitRef?: MutableRefObject<string | null>;
 }
 

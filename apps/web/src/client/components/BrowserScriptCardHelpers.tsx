@@ -1,8 +1,3 @@
-/**
- * Internal helpers for BrowserScriptCard.
- * Not intended for direct use outside BrowserScriptCard.tsx.
- */
-
 import {
   Camera,
   Clock,
@@ -105,7 +100,6 @@ export function formatActionLabel(
 export { ActionChip } from './ActionChip';
 export { Arrow } from './Arrow';
 
-// Generate stable key for action based on content, not index
 export function getActionKey(action: BrowserAction, index: number): string {
   const parts = [action.action];
   if (action.url) {
@@ -129,7 +123,6 @@ export function getActionKey(action: BrowserAction, index: number): string {
   return `${parts.join('-')}-${index}`;
 }
 
-// Custom comparison for memo - compare actions by content, not reference
 export function arePropsEqual(
   prevProps: { actions: BrowserAction[]; isRunning?: boolean },
   nextProps: { actions: BrowserAction[]; isRunning?: boolean },

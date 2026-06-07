@@ -1,18 +1,7 @@
-/**
- * Azure Foundry Proxy request transformation helpers
- *
- * Handles URL normalization, request body transformation, and path validation
- * for the Azure Foundry local proxy server.
- */
-
 import { createConsoleLogger } from '../../utils/logging.js';
 
 const log = createConsoleLogger({ prefix: 'AzureFoundryProxy' });
 
-/**
- * Normalize an Azure Foundry base URL, stripping trailing slashes.
- * Validates that the protocol is http or https.
- */
 export function normalizeBaseUrl(url: string): string {
   try {
     const parsed = new URL(url);
@@ -28,12 +17,6 @@ export function normalizeBaseUrl(url: string): string {
   }
 }
 
-/**
- * Transform a raw request body buffer, converting OpenAI parameter names
- * that Azure OpenAI handles differently:
- * - Strips unsupported `reasoning_effort`
- * - Converts `max_tokens` → `max_completion_tokens`
- */
 export function transformRequestBody(body: Buffer): Buffer {
   const text = body.toString('utf8');
   try {
@@ -64,10 +47,6 @@ export function transformRequestBody(body: Buffer): Buffer {
   return body;
 }
 
-/**
- * Returns true if the request path is a valid Azure OpenAI API path
- * that the proxy should forward.
- */
 export function isValidRequestPath(requestPath: string): boolean {
   if (requestPath === '/health') return true;
   if (requestPath.startsWith('/openai/')) return true;

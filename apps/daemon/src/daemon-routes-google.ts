@@ -11,7 +11,6 @@ import { safeHandler } from './daemon-routes-middleware.js';
 export function registerGoogleRoutes(services: RouteServices): void {
   const { rpc, googleAccountService, skillsService } = services;
 
-  // ── Google accounts ──
   rpc.registerMethod(
     'gwsAccount.list',
     safeHandler(() => Promise.resolve(googleAccountService.list())),
@@ -100,7 +99,6 @@ export function registerGoogleRoutes(services: RouteServices): void {
     rpc.notify('gwsAccount.statusChanged', payload);
   });
 
-  // ── Skills ──
   rpc.registerMethod(
     'skills.list',
     safeHandler(() => Promise.resolve(skillsService.list())),

@@ -1,12 +1,3 @@
-/**
- * Daemon Logger
- *
- * Lightweight structured logger for daemon internals.
- * Wraps console methods with a consistent prefix / level format.
- *
- * ESM module — use .js extensions on imports.
- */
-
 export interface DaemonLogger {
   info(message: string, ...args: unknown[]): void;
   warn(message: string, ...args: unknown[]): void;
@@ -29,5 +20,4 @@ function createLogger(namespace: string): DaemonLogger {
 
 export { createLogger };
 
-/** Shared daemon logger instance. */
 export const logger = createLogger('Daemon');

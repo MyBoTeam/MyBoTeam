@@ -1,5 +1,3 @@
-/** @vitest-environment node */
-
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
@@ -74,7 +72,6 @@ describe('Favorites repository', () => {
       return;
     }
 
-    // Control the clock so each insert gets a distinct timestamp
     const base = new Date('2025-01-01T00:00:00.000Z').getTime();
     vi.useFakeTimers();
     vi.setSystemTime(base);

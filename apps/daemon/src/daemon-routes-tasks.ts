@@ -15,7 +15,6 @@ export function registerTaskRoutes(services: RouteServices): void {
   const { rpc, taskService, schedulerService, storageService } = services;
   const storage = storageService.getStorage();
 
-  // ── Task CRUD ──
   rpc.registerMethod(
     'task.start',
     safeHandler((params) => {
@@ -106,7 +105,6 @@ export function registerTaskRoutes(services: RouteServices): void {
     safeHandler(() => Promise.resolve(taskService.getActiveTaskCount())),
   );
 
-  // ── Permission ──
   rpc.registerMethod(
     'permission.respond',
     safeHandler(async (params) => {
@@ -127,7 +125,6 @@ export function registerTaskRoutes(services: RouteServices): void {
     }),
   );
 
-  // ── Session ──
   rpc.registerMethod(
     'session.resume',
     safeHandler((params) => {
@@ -136,13 +133,11 @@ export function registerTaskRoutes(services: RouteServices): void {
     }),
   );
 
-  // ── Health ──
   rpc.registerMethod(
     'health.check',
     safeHandler(() => Promise.resolve(services.healthService.getStatus())),
   );
 
-  // ── Scheduler ──
   rpc.registerMethod(
     'task.schedule',
     safeHandler((params) => {

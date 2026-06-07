@@ -1,17 +1,3 @@
-/**
- * Tests for DockerSandboxProvider.
- *
- * Contributed by SaaiAravindhRaja (PR #612):
- *   - Docker args construction tests (working dir, allowed paths, network,
- *     custom image, default image, env-var forwarding, env-var redaction,
- *     shell arg escaping)
- *   - SandboxConfig type validation tests
- *   - Migration version test
- *
- * Adapted by Avishay Maor for the pluggable-provider architecture used in
- * this repository (DockerSandboxProvider instead of inline adapter methods).
- */
-
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SandboxConfig, SpawnArgs } from '../../../src/common/types/sandbox.js';
 import { DockerSandboxProvider } from '../../../src/sandbox/docker-provider.js';
@@ -144,10 +130,10 @@ describe('DockerSandboxProvider', () => {
         },
       };
       const args = provider.buildDockerArgs(spawnArgs, DOCKER_CONFIG);
-      // API keys should be forwarded
+
       expect(args.some((a) => a === 'ANTHROPIC_API_KEY=sk-ant-test')).toBe(true);
       expect(args.some((a) => a === 'OPENAI_API_KEY=sk-openai-test')).toBe(true);
-      // PATH, HOME, USER should NOT be forwarded
+
       const envArgValues = args.filter((_, i) => i > 0 && args[i - 1] === '-e');
       expect(envArgValues.every((v) => !v.startsWith('PATH='))).toBe(true);
       expect(envArgValues.every((v) => !v.startsWith('HOME='))).toBe(true);
@@ -195,7 +181,7 @@ describe('DockerSandboxProvider', () => {
     it('should preserve cwd and include original env vars merged with sandbox env', async () => {
       const result = await provider.wrapSpawnArgs(BASE_SPAWN_ARGS, DOCKER_CONFIG);
       expect(result.cwd).toBe(BASE_SPAWN_ARGS.cwd);
-      // env is a new merged object: original vars preserved + MYBOTEAM_SANDBOX_MODE injected
+
       expect(result.env).toMatchObject(BASE_SPAWN_ARGS.env);
       expect(result.env.MYBOTEAM_SANDBOX_MODE).toBe('docker');
     });

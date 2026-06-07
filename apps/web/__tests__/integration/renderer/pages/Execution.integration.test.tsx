@@ -1,17 +1,9 @@
-/**
- * Integration tests for Execution page
- * Tests rendering with active task, message display, and permission dialog
- * @module __tests__/integration/renderer/pages/Execution.integration.test
- * @vitest-environment jsdom
- */
-
 import type { PermissionRequest, Task, TaskMessage, TaskStatus } from '@myboteam/agent-core';
 import { OAuthProviderId, PROMPT_DEFAULT_MAX_LENGTH } from '@myboteam/agent-core/common';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Create mock functions
 const mockLoadTaskById = vi.fn();
 const mockAddTaskUpdate = vi.fn();
 const mockAddTaskUpdateBatch = vi.fn();
@@ -30,7 +22,6 @@ const mockGetEnabledSkills = vi.fn();
 const mockGetConnectors = vi.fn();
 const mockResyncSkills = vi.fn();
 
-// Helper to create mock task
 function createMockTask(
   id: string,
   prompt: string = 'Test task',
@@ -46,7 +37,6 @@ function createMockTask(
   };
 }
 
-// Helper to create mock message
 function createMockMessage(
   id: string,
   type: 'assistant' | 'user' | 'tool' | 'system' = 'assistant',
@@ -60,7 +50,6 @@ function createMockMessage(
   };
 }
 
-// Mock myboteam API
 const mockMyBoTeam = {
   onTaskUpdate: mockOnTaskUpdate.mockReturnValue(() => {}),
   onTaskUpdateBatch: mockOnTaskUpdateBatch.mockReturnValue(() => {}),
@@ -86,7 +75,7 @@ const mockMyBoTeam = {
     },
     debugMode: false,
   }),
-  // Provider settings methods
+
   setActiveProvider: vi.fn().mockResolvedValue(undefined),
   setConnectedProvider: vi.fn().mockResolvedValue(undefined),
   removeConnectedProvider: vi.fn().mockResolvedValue(undefined),
@@ -125,13 +114,11 @@ const mockMyBoTeam = {
   onThemeColorChange: vi.fn().mockReturnValue(() => {}),
 };
 
-// Mock the myboteam module
 vi.mock('@/lib/myboteam', () => ({
   getMyBoTeam: () => mockMyBoTeam,
   useMyBoTeam: () => mockMyBoTeam,
 }));
 
-// Mock store state holder
 let mockStoreState: {
   currentTask: Task | null;
   loadTaskById: typeof mockLoadTaskById;
@@ -174,16 +161,13 @@ let mockStoreState: {
   setupDownloadStep: 1,
 };
 
-// Mock the task store - needs both hook usage and .getState() for direct calls
 vi.mock('@/stores/taskStore', () => {
-  // Create a function that will be used as useTaskStore
   const useTaskStoreFn = () => mockStoreState;
-  // Add getState method for direct store access (used by getTodosForTask callback)
+
   useTaskStoreFn.getState = () => mockStoreState;
   return { useTaskStore: useTaskStoreFn };
 });
 
-// Mock framer-motion for simpler testing
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => (

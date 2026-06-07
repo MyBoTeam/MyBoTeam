@@ -9,7 +9,6 @@ interface ProviderAdvancedSettingsProps {
   readOnly?: boolean;
 }
 
-/** Base URL input shown for providers with editable base URL. */
 export function ProviderAdvancedSettings({
   fieldId,
   value,

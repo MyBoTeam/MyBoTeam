@@ -56,18 +56,15 @@ export function addFromFolder(folderPath: string, userSkillsPath: string): Skill
   const resolvedSourceDir = path.resolve(folderPath);
   const resolvedDestDir = path.resolve(destDir);
 
-  // Skip delete+copy when re-importing an already-installed skill (same directory)
   if (resolvedSourceDir === resolvedDestDir) {
     return persistSkill(frontmatter, destSkillMdPath, 'custom');
   }
 
-  // Remove existing contents so re-imports don't leave stale files
   if (fs.existsSync(destDir)) {
     fs.rmSync(destDir, { recursive: true });
     fs.mkdirSync(destDir, { recursive: true });
   }
 
-  // Copy only top-level files from source folder
   const entries = fs.readdirSync(folderPath, { withFileTypes: true });
   for (const entry of entries) {
     if (entry.isFile()) {
@@ -96,7 +93,6 @@ export function resolveGithubRawUrl(rawUrl: string): string {
   }
 
   if (parsedUrl.hostname === 'raw.githubusercontent.com') {
-    // Validate path: /owner/repo/branch/...
     const rawParts = parsedUrl.pathname.split('/').filter(Boolean);
     if (rawParts.length < 3) {
       throw new Error(
@@ -106,10 +102,8 @@ export function resolveGithubRawUrl(rawUrl: string): string {
     return rawUrl;
   }
 
-  // Validate path has at least owner/repo/branch segments
   const pathParts = parsedUrl.pathname.split('/').filter(Boolean);
-  // github.com paths: /owner/repo or /owner/repo/tree/branch/... etc.
-  // We need at least owner/repo/branch — so after stripping tree|blob prefix we need 3 segments
+
   const pathWithoutTreeBlob = parsedUrl.pathname
     .replace('/tree/', '/')
     .replace('/blob/', '/')

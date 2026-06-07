@@ -1,11 +1,3 @@
-/**
- * @vitest-environment jsdom
- *
- * Tests useTheme when myboteam.onThemeChange is undefined (no subscription).
- * Also tests the getTheme failure path.
- * Separate file because vi.mock is hoisted and must be at the module level.
- */
-
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -23,7 +15,6 @@ vi.mock('@/lib/myboteam', () => ({
     setTheme: vi.fn(),
     getThemeColor: vi.fn(() => Promise.reject(new Error('not available'))),
     setThemeColor: vi.fn(),
-    // Intentionally no onThemeChange or onThemeColorChange property
   }),
 }));
 
@@ -65,7 +56,7 @@ describe('useTheme hook - without subscription', () => {
     }));
 
     const { result } = await renderThemeHook();
-    // Falls back to default (system)
+
     expect(result.current.theme).toBe('system');
     expect(result.current.isDark).toBe(false);
   });

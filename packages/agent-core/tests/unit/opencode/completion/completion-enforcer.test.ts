@@ -26,7 +26,6 @@ describe('CompletionEnforcer', () => {
 
     enforcer = new CompletionEnforcer(callbacks);
 
-    // Suppress console output
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
@@ -59,7 +58,6 @@ describe('CompletionEnforcer', () => {
   describe('markToolsUsed', () => {
     it('should mark tools as used', () => {
       enforcer.markToolsUsed();
-      // This affects handleStepFinish behavior - tested below
     });
   });
 
@@ -136,7 +134,7 @@ describe('CompletionEnforcer', () => {
       const result = enforcer.handleCompleteTaskDetection(null);
 
       expect(result).toBe(true);
-      expect(enforcer.getState()).toBe(CompletionFlowState.BLOCKED); // unknown status
+      expect(enforcer.getState()).toBe(CompletionFlowState.BLOCKED);
     });
   });
 
@@ -260,7 +258,7 @@ describe('CompletionEnforcer', () => {
 
     it('should start continuation when pending', async () => {
       enforcer.markToolsUsed();
-      enforcer.handleStepFinish('stop'); // Schedule continuation
+      enforcer.handleStepFinish('stop');
 
       await enforcer.handleProcessExit(0);
 
@@ -335,7 +333,7 @@ describe('CompletionEnforcer', () => {
 
     it('should call onComplete when exit code is non-zero', async () => {
       enforcer.markToolsUsed();
-      enforcer.handleStepFinish('stop'); // Schedule continuation
+      enforcer.handleStepFinish('stop');
 
       await enforcer.handleProcessExit(1);
 
@@ -400,7 +398,7 @@ describe('CompletionEnforcer', () => {
     it('should return true when MAX_RETRIES_REACHED', () => {
       const limitedEnforcer = new CompletionEnforcer(callbacks, 0);
       limitedEnforcer.markToolsUsed();
-      limitedEnforcer.handleStepFinish('stop'); // Will reach max retries
+      limitedEnforcer.handleStepFinish('stop');
 
       expect(limitedEnforcer.shouldComplete()).toBe(true);
     });
@@ -432,7 +430,6 @@ describe('CompletionEnforcer', () => {
 
   describe('isConversationalTurn permutations', () => {
     it('should be conversational when no tools, no taskRequiresCompletion, no taskToolsWereUsedEver', () => {
-      // Fresh enforcer, nothing called
       expect(enforcer.handleStepFinish('stop')).toBe('complete');
     });
 
@@ -453,20 +450,18 @@ describe('CompletionEnforcer', () => {
     });
 
     it('should NOT be conversational after tools used in previous turn (taskToolsWereUsedEver is sticky)', async () => {
-      // First turn: use tools, trigger continuation
       enforcer.markToolsUsed(true);
       enforcer.handleStepFinish('stop');
-      // handleProcessExit resets taskToolsWereUsed but NOT taskToolsWereUsedEver
+
       await enforcer.handleProcessExit(0);
 
-      // Second turn: text-only, but taskToolsWereUsedEver is still true
       const result = enforcer.handleStepFinish('stop');
-      expect(result).toBe('pending'); // NOT conversational
+      expect(result).toBe('pending');
     });
 
     it('should NOT be conversational when helper tools and real tools are mixed', () => {
-      enforcer.markToolsUsed(false); // helper
-      enforcer.markToolsUsed(true); // real
+      enforcer.markToolsUsed(false);
+      enforcer.markToolsUsed(true);
       expect(enforcer.handleStepFinish('stop')).toBe('pending');
     });
   });
@@ -479,7 +474,6 @@ describe('CompletionEnforcer', () => {
 
       enforcer.reset();
 
-      // Should be conversational again
       expect(enforcer.handleStepFinish('stop')).toBe('complete');
     });
 
@@ -487,11 +481,9 @@ describe('CompletionEnforcer', () => {
       enforcer.markToolsUsed(true);
       enforcer.handleStepFinish('stop');
       await enforcer.handleProcessExit(0);
-      // taskToolsWereUsedEver is true here
 
       enforcer.reset();
 
-      // After reset, fresh text-only turn should be conversational
       expect(enforcer.handleStepFinish('stop')).toBe('complete');
     });
   });
@@ -501,13 +493,13 @@ describe('CompletionEnforcer', () => {
       enforcer.updateTodos([
         { id: '1', content: 'Do something', status: 'pending', priority: 'high' },
       ]);
-      // No tools used, but taskRequiresCompletion is set → not conversational
+
       expect(enforcer.handleStepFinish('stop')).toBe('pending');
     });
 
     it('should NOT set taskRequiresCompletion when todos are empty', () => {
       enforcer.updateTodos([]);
-      // Empty list doesn't set taskRequiresCompletion → still conversational
+
       expect(enforcer.handleStepFinish('stop')).toBe('complete');
     });
   });
@@ -620,11 +612,10 @@ describe('CompletionEnforcer', () => {
       expect(limitedEnforcer.getContinuationAttempts()).toBe(3);
       expect(onStartContinuationMock).toHaveBeenCalledTimes(3);
 
-      // Exceeds maxAttempts — circuit breaker kicks in
       limitedEnforcer.markToolsUsed();
       const action = limitedEnforcer.handleStepFinish('stop');
 
-      expect(action).toBe('complete'); // Max retries reached
+      expect(action).toBe('complete');
     });
   });
 });

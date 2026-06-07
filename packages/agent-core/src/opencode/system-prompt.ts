@@ -1,9 +1,3 @@
-/**
- * MyBoTeam agent system prompt.
- *
- * Heavy sections are defined in system-prompt-sections.ts /
- * system-prompt-behaviors.ts to keep each file under 200 lines.
- */
 export { getPlatformEnvironmentInstructions } from './system-prompt-sections.js';
 
 import {
@@ -13,16 +7,6 @@ import {
   TASK_PLANNING_BEHAVIOR,
 } from './system-prompt-behaviors.js';
 
-/**
- * The MyBoTeam agent system prompt template.
- *
- * Placeholder tokens:
- * - `{{AGENT_ROLE}}` — replaced with the agent role (e.g., "task execution")
- * - `{{LANGUAGE_INSTRUCTION}}` — language instruction (or empty when auto/English)
- * - `{{ENVIRONMENT_INSTRUCTIONS}}` — replaced by getPlatformEnvironmentInstructions()
- * - `{{BROWSER_CAPABILITY}}` — browser capability line (or empty)
- * - `{{BROWSER_BEHAVIOR}}` — browser behavior rules (or empty)
- */
 export const MYBOTEAM_SYSTEM_PROMPT_TEMPLATE = `<identity>
 You are MyBoTeam, a {{AGENT_ROLE}} assistant.
 </identity>

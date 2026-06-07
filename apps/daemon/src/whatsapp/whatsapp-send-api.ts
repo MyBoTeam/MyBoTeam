@@ -1,13 +1,3 @@
-/**
- * WhatsApp Send HTTP API — exposes whatsapp.sendMessage to local MCP tools.
- *
- * Follows the same pattern as PermissionService's HTTP servers:
- * - Listens on a well-known port (WHATSAPP_API_PORT = 9230)
- * - Requires Bearer token auth on every request
- * - Returns structured JSON so the MCP tool can relay human-readable errors
- *
- * Route logic lives in whatsapp-routes.ts; this file owns only lifecycle.
- */
 import type http from 'node:http';
 import { createHttpServer } from '../http-server-factory.js';
 import { RateLimiter } from '../rate-limiter.js';

@@ -4,19 +4,18 @@ import { Button } from '@/components/ui/button';
 import { getOAuthStatusKey, oauthStatusDotClass, oauthStatusTextClass } from './oauth-status';
 
 interface OAuthConnectorCardProps {
-  /** Path to the connector's icon, e.g. /assets/icons/integrations/jira.svg */
   iconSrc: string;
-  /** Display name shown in the card header */
+
   displayName: string;
-  /** Current auth state for this provider */
+
   authState: Pick<ConnectorAuthStatus, 'connected' | 'pendingAuthorization'>;
-  /** Whether an action (connect/disconnect) is in progress */
+
   actionLoading: boolean;
   onAuthenticate: () => void;
   onDisconnect: () => void;
-  /** Optional link shown below the description (e.g. monday.com marketplace) */
+
   marketplaceUrl?: string;
-  /** data-testid prefix for the card root */
+
   testId: string;
 }
 

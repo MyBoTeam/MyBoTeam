@@ -1,15 +1,5 @@
-/**
- * Native dialog wrappers for the auto-updater. All copy is platform-agnostic —
- * the "Download the latest installer" wording works for macOS/Windows/Linux users
- * regardless of package format (AppImage / deb / dmg / NSIS / extracted tarball).
- */
-
 import { app, clipboard, dialog, shell } from 'electron';
 
-/**
- * "Update Ready" dialog — shown after electron-updater has downloaded a new version
- * in the background. Offers to restart now or later.
- */
 export async function showUpdateReadyDialog(
   version: string,
   quitAndInstall: () => Promise<void>,
@@ -28,10 +18,6 @@ export async function showUpdateReadyDialog(
   }
 }
 
-/**
- * "No Updates" dialog — shown when a user-initiated check finds nothing new.
- * Silent auto-checks never reach this dialog.
- */
 export async function showNoUpdatesDialog(): Promise<void> {
   await dialog.showMessageBox({
     type: 'info',
@@ -42,11 +28,6 @@ export async function showNoUpdatesDialog(): Promise<void> {
   });
 }
 
-/**
- * "Update Check Failed" dialog — shown on fetch failure, manifest parse failure,
- * or unparseable version strings during a user-initiated check. Silent checks
- * never reach this dialog (error is still tracked).
- */
 export async function showUpdateCheckFailedDialog(): Promise<void> {
   await dialog.showMessageBox({
     type: 'error',
@@ -57,10 +38,6 @@ export async function showUpdateCheckFailedDialog(): Promise<void> {
   });
 }
 
-/**
- * "Update Available" dialog for the manual path (Windows / non-AppImage Linux),
- * where the app cannot auto-install. Offers Download / Copy URL / Later.
- */
 export async function showManualUpdateDialog(
   currentVersion: string,
   newVersion: string,

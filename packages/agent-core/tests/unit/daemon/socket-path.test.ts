@@ -1,7 +1,6 @@
 import { join } from 'node:path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Mock os.platform and os.homedir before importing the module under test.
 const mockPlatform = vi.fn<() => NodeJS.Platform>(() => 'darwin');
 const mockHomedir = vi.fn(() => '/Users/testuser');
 
@@ -10,7 +9,6 @@ vi.mock('node:os', () => ({
   homedir: () => mockHomedir(),
 }));
 
-// Import after mocks are set up
 const { getSocketPath, getPidFilePath, getDaemonDir } = await import(
   '../../../src/daemon/socket-path.js'
 );

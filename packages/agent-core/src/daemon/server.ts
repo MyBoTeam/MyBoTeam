@@ -1,12 +1,3 @@
-/**
- * Daemon Server
- *
- * Listens for JSON-RPC 2.0 requests on a DaemonTransport, dispatches them
- * to registered method handlers, and pushes notifications to connected clients.
- *
- * ESM module — use .js extensions on imports.
- */
-
 import type {
   DaemonMethod,
   DaemonMethodMap,
@@ -36,7 +27,6 @@ export class DaemonServer {
   constructor(options: DaemonServerOptions) {
     this.transport = options.transport;
 
-    // Register built-in health check (buildId used for version-guard on app upgrade)
     this.registerMethod('daemon.ping', () => ({
       status: 'ok' as const,
       uptime: Date.now() - this.startTime,
@@ -48,16 +38,10 @@ export class DaemonServer {
     });
   }
 
-  /**
-   * Register a handler for an RPC method.
-   */
   registerMethod<M extends DaemonMethod>(method: M, handler: MethodHandler<M>): void {
     this.handlers.set(method, handler as unknown as MethodHandler<DaemonMethod>);
   }
 
-  /**
-   * Push a notification to the connected client.
-   */
   notify<N extends DaemonNotification>(method: N, params: DaemonNotificationMap[N]): void {
     const notification: JsonRpcNotification<DaemonNotificationMap[N]> = {
       jsonrpc: '2.0',
@@ -67,16 +51,12 @@ export class DaemonServer {
     this.transport.send(notification as JsonRpcMessage);
   }
 
-  /**
-   * Shut down the server and close the transport.
-   */
   close(): void {
     this.transport.close();
     this.handlers.clear();
   }
 
   private async handleMessage(message: JsonRpcMessage): Promise<void> {
-    // Only handle requests (messages with an `id`)
     if (!('id' in message) || !('method' in message)) {
       return;
     }

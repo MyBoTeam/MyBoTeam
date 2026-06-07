@@ -3,14 +3,8 @@ export interface SpeechInputButtonProps {
 
   isTranscribing: boolean;
 
-  /**
-   * Current recording duration in milliseconds
-   */
   recordingDuration?: number;
 
-  /**
-   * Error | null
-   */
   error?: Error | null;
 
   isConfigured?: boolean;
@@ -25,10 +19,6 @@ export interface SpeechInputButtonProps {
 
   onRetry?: () => void;
 
-  /**
-   * Called when user clicks the button while not configured
-   * (to open settings dialog)
-   */
   onOpenSettings?: () => void;
 
   size?: 'sm' | 'md' | 'lg';

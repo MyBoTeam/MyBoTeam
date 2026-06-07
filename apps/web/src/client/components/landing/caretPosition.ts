@@ -1,8 +1,3 @@
-/**
- * Calculate the visual position of a character in a textarea via an off-screen mirror.
- * Extracted from SlashCommandPopover to keep the component under 200 lines.
- */
-
 const MIRRORED_PROPERTIES = [
   'fontFamily',
   'fontSize',

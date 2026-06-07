@@ -71,9 +71,7 @@ export class PageLifecycleManager {
     await this.screencastController.stop(entry);
     try {
       await entry.page.close();
-    } catch {
-      /* ignore */
-    }
+    } catch {}
     this.registry.delete(name);
     return true;
   }
@@ -114,18 +112,14 @@ export class PageLifecycleManager {
     for (const entry of this.registry.values()) {
       try {
         await entry.page.close();
-      } catch {
-        /* intentionally empty */
-      }
+      } catch {}
     }
     this.registry.clear();
     this.knownTaskPages.clear();
     this.releasedPageUrls.clear();
     try {
       await this.pageFactory.closeReusableStartupPage();
-    } catch {
-      /* intentionally empty */
-    }
+    } catch {}
     this.pageFactory.reset();
   }
   private async createAndRegisterPageEntry(options: {
@@ -176,9 +170,7 @@ export class PageLifecycleManager {
     } catch (error) {
       try {
         await entry.page.close();
-      } catch {
-        /* ignore */
-      }
+      } catch {}
       throw error;
     }
     this.registry.set(options.name, entry);

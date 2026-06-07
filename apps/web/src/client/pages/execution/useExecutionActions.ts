@@ -9,7 +9,6 @@ const logger = createLogger('ExecutionActions');
 
 type CoreState = ReturnType<typeof useExecutionCore>;
 
-/** Action callbacks for the execution page. Derived from core state. */
 export function useExecutionActions(s: CoreState) {
   const { id, navigate, myboteam } = s;
 
@@ -53,7 +52,6 @@ export function useExecutionActions(s: CoreState) {
     }
     s.pendingSpeechFollowUpRef.current = null;
     void handleFollowUp();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     s.canFollowUp,
     s.followUp,

@@ -14,9 +14,7 @@ function log(level: 'INFO' | 'WARN' | 'ERROR', msg: string): void {
     if (l?.log) {
       l.log(level, 'daemon', msg);
     }
-  } catch {
-    /* best-effort */
-  }
+  } catch {}
 }
 
 export let windowGetter: (() => BrowserWindow | null) | null = null;
@@ -52,9 +50,7 @@ export function registerNotificationHandlers(
     }
     try {
       win.webContents.send(channel, data);
-    } catch {
-      /* Window torn down between check and send */
-    }
+    } catch {}
   };
 
   client.onNotification('task.progress', (data) => {
@@ -84,9 +80,7 @@ export function registerNotificationHandlers(
         false,
       );
       taskContextMap.delete(data.taskId);
-    } catch {
-      /* best-effort analytics */
-    }
+    } catch {}
   });
 
   client.onNotification('task.error', (data) => {
@@ -101,9 +95,7 @@ export function registerNotificationHandlers(
         classifyErrorCategory(data.error ?? 'unknown'),
       );
       taskContextMap.delete(data.taskId);
-    } catch {
-      /* best-effort analytics */
-    }
+    } catch {}
   });
 
   client.onNotification('task.statusChange', (data) => {
@@ -150,9 +142,7 @@ export function registerNotificationHandlers(
     }
     try {
       win.webContents.send('gws:account:status-changed', payload.googleAccountId, payload.status);
-    } catch {
-      /* window torn down between check and send */
-    }
+    } catch {}
   });
 
   client.onNotification('skills.changed', (data) => {

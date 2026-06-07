@@ -10,7 +10,7 @@ export function extractBody(payload: gmail_v1.Schema$MessagePart | undefined): s
   if (payload.mimeType === 'text/plain' && payload.body?.data) {
     return Buffer.from(payload.body.data, 'base64').toString('utf-8');
   }
-  // Scan parts: prefer plain-text, remember HTML as fallback
+
   let htmlFallback = '';
   for (const part of payload.parts ?? []) {
     if (part.mimeType === 'text/plain') {
@@ -25,7 +25,7 @@ export function extractBody(payload: gmail_v1.Schema$MessagePart | undefined): s
   if (htmlFallback) {
     return htmlFallback;
   }
-  // HTML fallback for HTML-only messages (no plain-text part found)
+
   if (payload.mimeType === 'text/html' && payload.body?.data) {
     return Buffer.from(payload.body.data, 'base64').toString('utf-8');
   }

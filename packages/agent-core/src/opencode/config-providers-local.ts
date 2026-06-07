@@ -1,4 +1,3 @@
-/** Local/self-hosted provider config builders: Ollama, LM Studio. */
 import { getLMStudioConfig, getOllamaConfig } from '../storage/repositories/index.js';
 import { createConsoleLogger } from '../utils/logging.js';
 import type { ProviderModelConfig } from './config-generator.js';
@@ -40,7 +39,6 @@ export async function buildOllamaConfig(ctx: ProviderBuildContext): Promise<Prov
     };
   }
 
-  // Legacy path: getOllamaConfig()
   const ollamaConfig = getOllamaConfig();
   const ollamaModels = ollamaConfig?.models;
   if (ollamaConfig?.enabled && ollamaModels && ollamaModels.length > 0) {
@@ -98,7 +96,6 @@ export async function buildLMStudioConfig(ctx: ProviderBuildContext): Promise<Pr
     };
   }
 
-  // Legacy path: getLMStudioConfig()
   const lmstudioConfig = getLMStudioConfig();
   const lmstudioModels = lmstudioConfig?.models;
   if (lmstudioConfig?.enabled && lmstudioModels && lmstudioModels.length > 0) {

@@ -4,7 +4,6 @@ import type { TaskState } from './taskStore';
 type SetFn = (partial: Partial<TaskState> | ((state: TaskState) => Partial<TaskState>)) => void;
 type GetFn = () => TaskState;
 
-/** Setup, launcher, todos, and auth error slice. */
 export function createTaskSetupActions(set: SetFn, get: GetFn) {
   return {
     setSetupProgress: (taskId: string | null, message: string | null) => {

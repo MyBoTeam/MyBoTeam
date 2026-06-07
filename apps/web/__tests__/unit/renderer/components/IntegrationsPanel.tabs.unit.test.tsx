@@ -1,19 +1,3 @@
-/**
- * @vitest-environment jsdom
- *
- * Unit tests for IntegrationsPanel 3-tab layout (T035 / US8)
- *
- * Validates:
- * - Three tabs (Messaging, Connectors, Custom) are rendered
- * - Messaging tab is the default active tab
- * - WhatsApp card and Slack card appear in Messaging tab
- * - Google accounts section appears in Connectors tab
- * - OAuth connector cards (Jira, GitHub, etc.) appear in Connectors tab
- * - Custom tab shows the connector add form
- * - Shared error zone appears between tabs and tab content (always visible)
- * - Error zone dismiss button clears the error
- */
-
 import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

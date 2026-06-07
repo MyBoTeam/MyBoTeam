@@ -85,11 +85,8 @@ describe('validateTaskConfig', () => {
     expect(validated.source).toBeUndefined();
   });
 
-  // Regression: `TaskService.startTask` writes `config.workspaceId` but an
-  // earlier version of `validateTaskConfig` rebuilt the object field-by-field
-  // and silently dropped this one. Downstream, `resolveTaskConfig` never saw
   // the workspace and skipped knowledge-note injection for every non-resume
-  // task. This test pins the fix so the field always makes it through.
+
   it('preserves workspaceId on the validated config', () => {
     const config: TaskConfig = {
       prompt: 'Workspace task',

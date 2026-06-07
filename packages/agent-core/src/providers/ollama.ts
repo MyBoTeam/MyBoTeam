@@ -5,12 +5,8 @@ import { sanitizeString } from '../utils/sanitize.js';
 import { validateHttpUrl } from '../utils/url.js';
 import { testOllamaModelToolSupport } from './tool-support-testing.js';
 
-/** Default timeout for Ollama API requests in milliseconds */
 const OLLAMA_API_TIMEOUT_MS = 15000;
 
-/**
- * Ollama model information with tool support status
- */
 export interface OllamaModel {
   id: string;
   displayName: string;
@@ -18,31 +14,16 @@ export interface OllamaModel {
   toolSupport?: ToolSupportStatus;
 }
 
-/**
- * Result of testing connection to an Ollama server
- */
 export interface OllamaConnectionResult {
   success: boolean;
   error?: string;
   models?: OllamaModel[];
 }
 
-/** Response type from Ollama /api/tags endpoint */
 interface OllamaTagsResponse {
   models?: Array<{ name: string; size: number }>;
 }
 
-/**
- * Tests connection to an Ollama server and retrieves available models.
- *
- * This function:
- * 1. Validates and sanitizes the provided URL
- * 2. Calls the Ollama /api/tags endpoint to list available models
- * 3. For each model, tests whether it supports tool calling
- *
- * @param url - The Ollama server URL (e.g., 'http://localhost:11434')
- * @returns Connection result with success status and available models
- */
 export async function testOllamaConnection(url: string): Promise<OllamaConnectionResult> {
   const sanitizedUrl = sanitizeString(url, 'ollamaUrl', 256);
 

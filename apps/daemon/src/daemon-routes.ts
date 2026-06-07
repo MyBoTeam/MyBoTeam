@@ -1,10 +1,3 @@
-/**
- * Daemon RPC method registration and task event forwarding.
- * Extracted from index.ts to keep the entry point under 200 lines.
- *
- * NO electron imports — this runs as plain Node.js.
- */
-
 import type { DaemonRpcServer, MyboteamRuntime } from '@myboteam/agent-core';
 import type { ConnectorService } from './connector-service.js';
 import type { GoogleAccountService } from './google-account-service.js';

@@ -75,9 +75,7 @@ export async function executeMockTaskFlow(
       if (l?.log) {
         l.log('WARN', 'main', '[MockTaskFlow] Window destroyed, skipping mock flow');
       }
-    } catch (_e) {
-      /* best-effort logging */
-    }
+    } catch (_e) {}
     return;
   }
 

@@ -29,7 +29,6 @@ describe('SkillsManager', () => {
   });
 
   beforeEach(async () => {
-    // Create a unique temporary directory for each test
     testDir = path.join(
       os.tmpdir(),
       `skills-test-${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -40,7 +39,6 @@ describe('SkillsManager', () => {
     fs.mkdirSync(bundledSkillsPath, { recursive: true });
     fs.mkdirSync(userSkillsPath, { recursive: true });
 
-    // Initialize the database singleton (used by repository functions)
     await initializeDatabase!({ databasePath: ':memory:', runMigrations: true });
 
     manager = new SkillsManager!({
@@ -48,7 +46,6 @@ describe('SkillsManager', () => {
       userSkillsPath,
     });
 
-    // Suppress console.log during tests
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -101,7 +98,6 @@ This is the skill content for ${fm.name}.
     it('should initialize and create user skills directory', async () => {
       if (!manager) return;
 
-      // Remove user skills directory
       fs.rmSync(userSkillsPath, { recursive: true, force: true });
 
       await manager.initialize();
@@ -113,7 +109,7 @@ This is the skill content for ${fm.name}.
       if (!manager) return;
 
       await manager.initialize();
-      await manager.initialize(); // Should not throw
+      await manager.initialize();
     });
   });
 
@@ -187,7 +183,6 @@ This is the skill content for ${fm.name}.
     it('should handle missing frontmatter fields', async () => {
       if (!manager) return;
 
-      // Create minimal skill file
       const skillDir = path.join(bundledSkillsPath, 'minimal');
       fs.mkdirSync(skillDir, { recursive: true });
       fs.writeFileSync(
@@ -235,7 +230,6 @@ Content here.
 
       await manager.initialize();
 
-      // Query database directly via singleton
       const db = getDatabase();
       const [rowResult] = db.exec("SELECT * FROM skills WHERE name = 'db-skill'");
       expect(rowResult.values.length).toBeGreaterThan(0);
@@ -250,7 +244,6 @@ Content here.
 
       await manager.initialize();
 
-      // Update the skill file
       const newContent = `---
 name: update-skill
 description: Updated description
@@ -260,7 +253,6 @@ Updated content.
 `;
       fs.writeFileSync(skillPath, newContent);
 
-      // Resync
       await manager.resync();
 
       const skills = manager.getAllSkills();
@@ -280,7 +272,6 @@ Updated content.
 
       expect(manager.getAllSkills().length).toBe(2);
 
-      // Remove the temporary skill
       fs.rmSync(tempSkillDir, { recursive: true, force: true });
 
       await manager.resync();
@@ -302,16 +293,13 @@ Updated content.
       const skills = manager.getAllSkills();
       const skill = skills.find((s) => s.name === 'toggle-skill')!;
 
-      // Skills are enabled by default
       expect(skill.isEnabled).toBe(true);
 
-      // Disable
       manager.setSkillEnabled(skill.id, false);
 
       const updated = manager.getSkillById(skill.id);
       expect(updated?.isEnabled).toBe(false);
 
-      // Enable
       manager.setSkillEnabled(skill.id, true);
 
       const reEnabled = manager.getSkillById(skill.id);
@@ -346,7 +334,6 @@ Updated content.
       const skill = manager.getAllSkills()[0];
       manager.setSkillEnabled(skill.id, false);
 
-      // Resync
       await manager.resync();
 
       const updated = manager.getSkillById(skill.id);
@@ -414,7 +401,6 @@ Updated content.
 
       await manager.initialize();
 
-      // Create a source skill file
       const sourceDir = path.join(testDir, 'source');
       fs.mkdirSync(sourceDir, { recursive: true });
 
@@ -434,7 +420,6 @@ Imported content.
       expect(skill?.name).toBe('Imported Skill');
       expect(skill?.source).toBe('custom');
 
-      // Verify it was copied to user skills directory (normalizeSkillSlug lowercases)
       const copiedPath = path.join(userSkillsPath, 'imported-skill', 'SKILL.md');
       expect(fs.existsSync(copiedPath)).toBe(true);
     });
@@ -521,7 +506,6 @@ Uses template_layouts.md and data.json for reference.
       expect(deleted).toBe(true);
       expect(manager.getSkillById(skill.id)).toBeNull();
 
-      // Directory should be removed
       expect(fs.existsSync(path.join(userSkillsPath, 'deletable-skill'))).toBe(false);
     });
 
@@ -557,7 +541,6 @@ Uses template_layouts.md and data.json for reference.
 
       await manager.initialize();
 
-      // Create a source skill file with a dangerous name
       const sourceDir = path.join(testDir, 'source-dangerous');
       fs.mkdirSync(sourceDir, { recursive: true });
 
@@ -571,13 +554,11 @@ Content.
       const sourcePath = path.join(sourceDir, 'SKILL.md');
       fs.writeFileSync(sourcePath, skillContent);
 
-      // The manager sanitizes dangerous names rather than throwing
-      // This is actually better security - sanitize and proceed safely
       const skill = await manager.addSkill(sourcePath);
       expect(skill).not.toBeNull();
-      // The sanitized name should not contain path traversal characters
+
       expect(skill!.id).toBe('custom-etc-passwd');
-      // Verify the file was created in the user skills directory, not /etc/
+
       expect(skill!.filePath.startsWith(testDir)).toBe(true);
       expect(skill!.filePath).not.toContain('/etc/passwd');
     });

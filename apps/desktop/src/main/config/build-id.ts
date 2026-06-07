@@ -19,9 +19,7 @@ export function getBuildId(): string {
       stdio: 'pipe',
     }).trim();
     return cachedBuildId;
-  } catch {
-    // Not in a git repo or git not available
-  }
+  } catch {}
 
   cachedBuildId = app.getVersion();
   return cachedBuildId;

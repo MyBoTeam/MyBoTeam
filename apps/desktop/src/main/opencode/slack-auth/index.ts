@@ -35,11 +35,6 @@ export class SlackMcpOAuthFlow {
     let callbackServer: OAuthCallbackServer | null = null;
 
     try {
-      // Phase 4b of the OpenCode SDK cutover port removed the pre-emptive
-      // `generateOpenCodeConfig()` call here. Under the SDK architecture the
-      // daemon owns task-runtime config generation and writes it lazily when
-      // a task starts; pre-staging an `opencode.json` from the desktop main
-      // process is no longer required for the Slack OAuth handshake itself.
       const metadata = await discoverOAuthMetadata(OPENCODE_SLACK_MCP_SERVER_URL);
       const resourceMetadata = await discoverOAuthProtectedResourceMetadata(
         OPENCODE_SLACK_MCP_SERVER_URL,

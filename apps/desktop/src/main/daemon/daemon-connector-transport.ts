@@ -1,9 +1,3 @@
-/**
- * Daemon Connector - Transport Layer
- *
- * Daemon process spawning, log path resolution, and log tailing.
- */
-
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -12,13 +6,8 @@ import { getBuildConfig, getBuildId } from '../config/build-config';
 import { getNodePath } from '../utils/bundled-node';
 import { getDaemonEntryPath, getDataDir, log } from './daemon-connector';
 
-/** Active log tail watcher — only one at a time */
 let logWatcher: fs.FSWatcher | null = null;
 
-/**
- * Start tailing the daemon log file in dev mode.
- * Safe to call multiple times — replaces any existing tail.
- */
 export function tailDaemonLog(): void {
   if (app.isPackaged) {
     return;
@@ -58,15 +47,10 @@ export function tailDaemonLog(): void {
           process.stdout.write(`${CYAN}[Daemon]${RESET} ${line}\n`);
         }
       }
-    } catch {
-      // File may have been deleted or rotated
-    }
+    } catch {}
   });
 }
 
-/**
- * Stop tailing the daemon log file.
- */
 export function stopTailingDaemonLog(): void {
   if (logWatcher) {
     logWatcher.close();
@@ -74,14 +58,10 @@ export function stopTailingDaemonLog(): void {
   }
 }
 
-// ── Daemon spawning ──────────────────────────────────────────────────
-
 function getDevNodePath(): string {
   try {
     return getNodePath();
-  } catch {
-    // Bundled Node not downloaded yet
-  }
+  } catch {}
 
   const pnpmNode = process.env.npm_node_execpath;
   if (pnpmNode && fs.existsSync(pnpmNode)) {
@@ -148,9 +128,7 @@ export function getDaemonLogPath(dataDir: string): string {
         fs.unlinkSync(path.join(logsDir, old));
       }
     }
-  } catch {
-    // Best-effort cleanup
-  }
+  } catch {}
 
   return logPath;
 }

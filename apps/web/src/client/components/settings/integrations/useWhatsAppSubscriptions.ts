@@ -1,7 +1,3 @@
-/**
- * useWhatsAppSubscriptions — IPC event subscription hook for WhatsApp status updates.
- * Extracted from useWhatsAppCard to keep files under 200 lines.
- */
 import { useEffect } from 'react';
 import type { WhatsAppCardState } from './useWhatsAppCard';
 

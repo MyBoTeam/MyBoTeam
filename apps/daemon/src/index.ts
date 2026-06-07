@@ -40,7 +40,6 @@ async function main(): Promise<void> {
   const services: BootResult = await bootDaemon(bootConfig);
   log.info(`[Daemon] Listening on ${paths.socketPath}`);
 
-  // ── Graceful shutdown ──────────────────────────────────────────────
   let shuttingDown = false;
   const shutdown = async () => {
     if (shuttingDown) return;

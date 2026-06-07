@@ -40,9 +40,7 @@ export async function checkInteractionMode(page: Page, pageName?: string): Promi
       interactionModePages.delete(fullName);
       await backgroundPageWindow(pageName);
     }
-  } catch {
-    // best-effort — window management must never break the tool call
-  }
+  } catch {}
 }
 
 export {

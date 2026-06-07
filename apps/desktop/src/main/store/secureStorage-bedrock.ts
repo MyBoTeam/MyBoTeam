@@ -8,6 +8,4 @@ export async function storeBedrockCredentials(credentials: string): Promise<void
   await getDaemonClient().call('secrets.storeBedrockCredentials', { credentials });
 }
 
-export function clearSecureStorage(): void {
-  // intentionally empty
-}
+export function clearSecureStorage(): void {}

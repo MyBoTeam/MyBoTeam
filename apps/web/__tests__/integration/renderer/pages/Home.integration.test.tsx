@@ -1,16 +1,8 @@
-/**
- * Integration tests for Home page
- * Tests initial render, task input integration, and loading state
- * @module __tests__/integration/renderer/pages/Home.integration.test
- * @vitest-environment jsdom
- */
-
 import type { Task, TaskStatus } from '@myboteam/agent-core';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Create mock functions
 const mockStartTask = vi.fn();
 const mockInterruptTask = vi.fn();
 const mockAddTaskUpdate = vi.fn();
@@ -20,7 +12,6 @@ const mockOnTaskUpdate = vi.fn();
 const mockOnPermissionRequest = vi.fn();
 const mockLogEvent = vi.fn();
 
-// Helper to create a mock task
 function createMockTask(
   id: string,
   prompt: string = 'Test task',
@@ -35,7 +26,6 @@ function createMockTask(
   };
 }
 
-// Mock myboteam API
 const mockMyBoTeam = {
   hasAnyApiKey: mockHasAnyApiKey,
   getSelectedModel: vi.fn().mockResolvedValue({ provider: 'anthropic', id: 'claude-3-opus' }),
@@ -56,7 +46,7 @@ const mockMyBoTeam = {
     },
     debugMode: false,
   }),
-  // Provider settings methods
+
   setActiveProvider: vi.fn().mockResolvedValue(undefined),
   setConnectedProvider: vi.fn().mockResolvedValue(undefined),
   removeConnectedProvider: vi.fn().mockResolvedValue(undefined),
@@ -74,13 +64,11 @@ const mockMyBoTeam = {
   onThemeColorChange: vi.fn().mockReturnValue(() => {}),
 };
 
-// Mock the myboteam module
 vi.mock('@/lib/myboteam', () => ({
   getMyBoTeam: () => mockMyBoTeam,
   useMyBoTeam: () => mockMyBoTeam,
 }));
 
-// Mock store state holder
 let mockStoreState = {
   startTask: mockStartTask,
   interruptTask: mockInterruptTask,
@@ -92,7 +80,6 @@ let mockStoreState = {
   loadFavorites: vi.fn().mockResolvedValue(undefined),
 };
 
-// Mock the task store — applies selector so individual fields resolve correctly
 vi.mock('@/stores/taskStore', () => ({
   useTaskStore: (selector?: (state: Record<string, unknown>) => unknown) => {
     if (selector) return selector(mockStoreState);
@@ -100,7 +87,6 @@ vi.mock('@/stores/taskStore', () => ({
   },
 }));
 
-// Mock framer-motion for simpler testing
 vi.mock('framer-motion', () => ({
   motion: {
     h1: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => (
@@ -224,7 +210,6 @@ describe('Home Page Integration', () => {
     });
 
     it('should render the task input bar', () => {
-      // Arrange & Act
       render(
         <MemoryRouter initialEntries={['/']}>
           <HomePage />
@@ -397,10 +382,8 @@ describe('Home Page Integration', () => {
 
   describe('loading state', () => {
     it('should disable input when loading', () => {
-      // Arrange
       mockStoreState.isLoading = true;
 
-      // Act
       render(
         <MemoryRouter initialEntries={['/']}>
           <HomePage />
@@ -429,7 +412,6 @@ describe('Home Page Integration', () => {
     });
 
     it('should interrupt instead of submitting when already loading', async () => {
-      // Arrange
       mockStoreState.isLoading = true;
 
       render(

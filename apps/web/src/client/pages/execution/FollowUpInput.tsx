@@ -32,7 +32,6 @@ interface FollowUpInputProps {
   onOpenSpeechSettings: () => void;
 }
 
-/** Follow-up input bar shown when the user can send a message. */
 export function FollowUpInput(props: FollowUpInputProps) {
   const { t: tCommon } = useTranslation('common');
   const { t } = useTranslation('execution');

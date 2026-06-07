@@ -1,5 +1,3 @@
-// apps/desktop/src/renderer/components/skills/CreateSkillModal.tsx
-
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
@@ -32,7 +30,6 @@ export function CreateSkillModal({ open, onOpenChange, onSettingsClose }: Create
   const navigate = useNavigate();
   const { t } = useTranslation('settings');
 
-  // Check if there's an active provider when modal opens
   useEffect(() => {
     if (open) {
       const myboteam = getMyBoTeam();

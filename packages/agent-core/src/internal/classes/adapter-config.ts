@@ -48,7 +48,6 @@ export function createCompletionEnforcer(
 }
 
 export function setupLogWatcher(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   logWatcher: { on: (event: string, listener: (...args: any[]) => void) => void },
   hasCompleted: () => boolean,
   client: () => unknown,

@@ -1,14 +1,3 @@
-/**
- * Application menu. Installed only when the auto-updater is enabled (see
- * app-startup.ts — `initMenu()` runs after a successful `initUpdater()`).
- *
- * The menu exposes "Check for Updates…" (or "Restart to Update (vX.X.X)…" once
- * electron-updater has downloaded a new version). On macOS the updater item sits
- * under the app menu next to About; on Windows/Linux it sits at the top of Help.
- *
- * OSS builds never install this menu — Electron's default menu stays in place.
- */
-
 import { app, dialog, Menu, shell } from 'electron';
 import { checkForUpdates, getUpdateState, quitAndInstall, setOnUpdateDownloaded } from './updater';
 
@@ -126,6 +115,6 @@ export function refreshAppMenu(): void {
 
 export function initMenu(): void {
   buildAppMenu();
-  // After electron-updater downloads a new version, flip the menu label to "Restart to Update…".
+
   setOnUpdateDownloaded(() => refreshAppMenu());
 }

@@ -127,7 +127,6 @@ export function useConnectors() {
     );
   }, []);
 
-  // Built-in connector actions
   const authenticateBuiltIn = useCallback(
     async (providerId: OAuthProviderId) => {
       setBuiltInAuthStates((prev) => ({

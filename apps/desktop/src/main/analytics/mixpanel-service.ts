@@ -1,12 +1,3 @@
-/**
- * mixpanel-service.ts — Mixpanel event tracking.
- *
- * No-ops gracefully when MIXPANEL_TOKEN is not configured (OSS builds).
- *
- * Ported from myboteam-commercial-fork with:
- * - Hardcoded MIXPANEL_TOKEN removed — read from build config
- */
-
 import Mixpanel from 'mixpanel';
 import { getBuildConfig } from '../config/build-config';
 import { buildCommonTrackingFields } from '../utils/tracking-context';
@@ -15,11 +6,6 @@ import { getDeviceFingerprint, getFirstSeenAt } from './analytics-service';
 
 let mixpanelClient: Mixpanel.Mixpanel | null = null;
 
-/**
- * Initialize Mixpanel client and identify the user.
- * Call once after initAnalytics() so getClientId() returns a value.
- * No-ops if MIXPANEL_TOKEN is not configured.
- */
 export function initMixpanel(): void {
   const token = getBuildConfig().mixpanelToken;
   if (!token) return;
@@ -47,10 +33,6 @@ export function initMixpanel(): void {
   console.log('[Mixpanel] Initialized with distinct_id:', `${distinctId.substring(0, 8)}...`);
 }
 
-/**
- * Track an event to Mixpanel with the same shape as GA4 events.
- * No-ops silently if initMixpanel() hasn't been called yet.
- */
 export function trackMixpanelEvent(eventName: string, params: EventParams = {}): void {
   try {
     if (!mixpanelClient) return;
@@ -71,7 +53,6 @@ export function trackMixpanelEvent(eventName: string, params: EventParams = {}):
       }
     }
 
-    // Replace GA4 user_id with Mixpanel's $user_id so events are marked as "identified"
     delete properties.user_id;
     properties.$user_id = distinctId;
 
@@ -81,12 +62,4 @@ export function trackMixpanelEvent(eventName: string, params: EventParams = {}):
   }
 }
 
-/**
- * Flush pending Mixpanel events (call on app quit).
- * The Node SDK sends events immediately per track() call in the default config.
- * This function exists for API symmetry with flushAnalytics().
- */
-export function flushMixpanel(): void {
-  // Mixpanel Node SDK does not expose a flush/close method.
-  // Events are sent immediately per track() call in the default config.
-}
+export function flushMixpanel(): void {}

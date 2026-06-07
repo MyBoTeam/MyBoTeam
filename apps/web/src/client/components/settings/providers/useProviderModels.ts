@@ -15,7 +15,6 @@ interface UseProviderModelsOptions {
   connectedProviderBaseUrl?: string;
 }
 
-/** Fetches available models for a provider whenever the connection state changes. */
 export function useProviderModels({
   providerId,
   connectedProvider,

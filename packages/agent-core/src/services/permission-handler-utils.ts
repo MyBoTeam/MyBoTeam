@@ -1,8 +1,3 @@
-/**
- * Shared types and pure utility functions for PermissionRequestHandler.
- * These have no dependency on the handler's internal state.
- */
-
 import {
   createFilePermissionRequestId,
   createQuestionRequestId,
@@ -14,20 +9,17 @@ import type {
   PermissionRequest,
 } from '../common/types/permission.js';
 
-/** Generic pending request interface */
 export interface PendingRequest<T> {
   resolve: (result: T) => void;
   reject: (error: Error) => void;
   timeoutId: NodeJS.Timeout;
 }
 
-/** Validation result for permission request data */
 export interface PermissionValidationResult {
   valid: boolean;
   error?: string;
 }
 
-/** Raw file permission request data (from HTTP request body) */
 export interface FilePermissionRequestData {
   operation?: string;
   filePath?: string;
@@ -36,7 +28,6 @@ export interface FilePermissionRequestData {
   contentPreview?: string;
 }
 
-/** Raw question request data (from HTTP request body) */
 export interface QuestionRequestData {
   question?: string;
   header?: string;
@@ -44,7 +35,6 @@ export interface QuestionRequestData {
   multiSelect?: boolean;
 }
 
-/** Question response data */
 export interface QuestionResponseData {
   selectedOptions?: string[];
   customText?: string;
@@ -53,7 +43,6 @@ export interface QuestionResponseData {
 
 export { createFilePermissionRequestId, createQuestionRequestId };
 
-/** Validate file permission request data */
 export function validateFilePermissionRequest(data: unknown): PermissionValidationResult {
   if (!data || typeof data !== 'object') {
     return { valid: false, error: 'Invalid request data' };
@@ -79,7 +68,6 @@ export function validateFilePermissionRequest(data: unknown): PermissionValidati
   return { valid: true };
 }
 
-/** Validate question request data */
 export function validateQuestionRequest(data: unknown): PermissionValidationResult {
   if (!data || typeof data !== 'object') {
     return { valid: false, error: 'Invalid request data' };
@@ -94,7 +82,6 @@ export function validateQuestionRequest(data: unknown): PermissionValidationResu
   return { valid: true };
 }
 
-/** Build a PermissionRequest object for file operations */
 export function buildFilePermissionRequest(
   requestId: string,
   taskId: string,
@@ -113,7 +100,6 @@ export function buildFilePermissionRequest(
   };
 }
 
-/** Build a PermissionRequest object for questions */
 export function buildQuestionRequest(
   requestId: string,
   taskId: string,

@@ -53,17 +53,12 @@ export function getBundledOpenCodeVersion(): string | null {
         const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
         return pkg.version;
       }
-    } catch {
-      // intentionally empty
-    }
+    } catch {}
   }
 
   try {
     const { command } = getOpenCodeCliPath();
-    // Use execFileSync (no shell) so installation paths that contain spaces
-    // (e.g. "C:\Users\My Name\...") are passed directly to the OS without
-    // cmd.exe quoting ambiguity.
-    // See: https://github.com/myboteam-ai/myboteam/issues/596
+
     const output = execFileSync(command, ['--version'], {
       encoding: 'utf-8',
       timeout: 5000,

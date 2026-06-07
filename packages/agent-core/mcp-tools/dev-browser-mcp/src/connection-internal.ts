@@ -72,7 +72,6 @@ export async function getBuiltinPage(
       };
       if (targetInfo.targetId === data.targetId) return page;
     } catch {
-      // try next
     } finally {
       if (session) await session.detach().catch(() => {});
     }

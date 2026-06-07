@@ -5,18 +5,14 @@ import { getProviderTestConfig } from '../provider-test-configs';
 
 const config = getProviderTestConfig('ollama');
 
-// Ollama doesn't require API key secrets — it just needs a reachable server.
-// Skip only when there's no env var pointing to a remote server AND no local install.
 const ollamaAvailable = !!process.env.E2E_OLLAMA_SERVER_URL || isOllamaInstalled();
 
 test.describe('Ollama Provider', () => {
   test.skip(!ollamaAvailable, 'Ollama not available — skipping');
 
-  // OllamaTestDriver handles undefined secrets with sensible defaults
   const ollama = new OllamaTestDriver(config?.secrets as { serverUrl?: string; modelId?: string });
 
-  // Ollama tests may need extra time for model pulling + local inference
-  test.setTimeout(600000); // 10 minutes
+  test.setTimeout(600000);
 
   test.beforeAll(ollama.beforeAll);
   test.afterAll(ollama.afterAll);
@@ -35,7 +31,6 @@ test.describe('Ollama Provider', () => {
 
     await settingsPage.clickConnect();
 
-    // Ollama connection also fetches models, so allow extra time
     await settingsPage.waitForConnection(60000);
 
     await settingsPage.selectFirstModel();

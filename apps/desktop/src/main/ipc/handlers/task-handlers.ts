@@ -22,8 +22,6 @@ import { assertTrustedWindow, handle } from './utils';
 export function registerTaskHandlers(): void {
   registerTaskSessionHandlers();
 
-  // ─── Task execution (proxied to daemon) ──────────────────────────────────────
-
   handle('task:start', async (event: IpcMainInvokeEvent, config: TaskConfig) => {
     assertTrustedWindow(BrowserWindow.fromWebContents(event.sender));
 
@@ -69,9 +67,7 @@ export function registerTaskHandlers(): void {
         { taskId, sessionId: config.sessionId || '', taskType: 'chat' },
         config.modelId,
       );
-    } catch {
-      /* best-effort analytics */
-    }
+    } catch {}
 
     return task;
   });
@@ -97,8 +93,6 @@ export function registerTaskHandlers(): void {
 
     await stopBrowserPreviewStream(taskId);
   });
-
-  // ─── Task reads (proxied to daemon) ──────────────────────────────────────────
 
   handle('task:get', async (_event: IpcMainInvokeEvent, taskId: string) => {
     const client = getDaemonClient();

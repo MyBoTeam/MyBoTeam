@@ -31,7 +31,6 @@ export function useMyboteamAiConnect(
       const update = onUpdateProviderRef.current ?? onConnectRef.current;
       update({ ...connectedProvider, availableModels: STATIC_MODELS });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectedProvider?.connectionStatus, connectedProvider?.availableModels, connectedProvider]);
 
   useEffect(() => {
@@ -85,7 +84,6 @@ export function useMyboteamAiConnect(
       cancelled = true;
       if (ref.timeout) clearTimeout(ref.timeout);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectedProvider?.connectionStatus, t]);
 
   useEffect(() => {

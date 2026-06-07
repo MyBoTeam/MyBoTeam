@@ -1,25 +1,3 @@
-/**
- * BrowserPreview — Embedded live CDP screencast in the execution chat.
- *
- * Receives base64 JPEG frames from the main process via IPC (browser:frame),
- * URL navigation events (browser:navigate), and status events (browser:status).
- *
- * Features:
- *  - Displays live browser frames as they arrive
- *  - Shows current URL and streaming/loading status
- *  - Collapsible / expandable panel
- *  - Auto-starts preview when a browser_* tool is detected (dhruvawani17, PR #489)
- *  - Pauses frame updates when the document/tab is hidden
- *  - Smooth Framer Motion transitions (david-mamani, PR #553)
- *
- * Contributed by:
- *  - david-mamani (PR #553) — component structure, animation, status indicator
- *  - dhruvawani17 (PR #489) — auto-start on browser_* tool, visibility pause
- *  - samarthsinh2660 (PR #414) — taskStore integration, collapse/expand
- *
- * ENG-695
- */
-
 import { motion } from 'framer-motion';
 import { ChevronDown, ChevronUp, Globe } from 'lucide-react';
 import { memo } from 'react';
@@ -31,9 +9,9 @@ import { useBrowserPreview } from './useBrowserPreview';
 
 interface BrowserPreviewProps {
   taskId: string;
-  /** The page name that this preview is scoped to — IPC events not matching this page are ignored. */
+
   pageName?: string | null;
-  /** The currently active tool name — auto-starts the screencast when a browser_* tool is detected. */
+
   currentTool?: string | null;
   className?: string;
 }
@@ -48,7 +26,6 @@ export const BrowserPreview = memo(function BrowserPreview({
   const { frameData, currentUrl, status, error, isCollapsed, setIsCollapsed, imgRef } =
     useBrowserPreview({ taskId, pageName, currentTool });
 
-  // Don't render until we have at least a starting state or a frame
   if (status === 'idle' && !frameData) {
     return null;
   }
@@ -63,7 +40,7 @@ export const BrowserPreview = memo(function BrowserPreview({
         className,
       )}
     >
-      {/* Header bar */}
+      {}
       <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-muted/50">
         <Globe className="h-3.5 w-3.5 text-primary shrink-0" />
         <span className="text-xs text-muted-foreground truncate flex-1 font-mono">
@@ -82,7 +59,7 @@ export const BrowserPreview = memo(function BrowserPreview({
         </button>
       </div>
 
-      {/* Content area */}
+      {}
       <div id={contentId}>
         <PreviewBody
           status={status}

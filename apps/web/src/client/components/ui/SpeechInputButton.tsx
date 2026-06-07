@@ -1,12 +1,3 @@
-/**
- * Speech Input Button Component
- *
- * A microphone button that toggles recording and shows status during transcription.
- * Supports two modes:
- * 1. Click toggle: click to start, click again to stop and transcribe
- * 2. Push-to-talk: hold Alt (configurable) to record, release to transcribe
- */
-
 import { Microphone, SpinnerGap, WarningCircle } from '@phosphor-icons/react';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -142,7 +133,7 @@ export function SpeechInputButton({
         </TooltipContent>
       </Tooltip>
 
-      {/* Recording timer */}
+      {}
       {isRecording && (
         <div className="text-xs font-mono text-destructive shrink-0 min-w-[40px]">
           {formatDuration(recordingDuration)}
@@ -154,7 +145,7 @@ export function SpeechInputButton({
         <div className="text-xs text-blue-600 dark:text-blue-400 shrink-0">Processing...</div>
       )}
 
-      {/* Error retry helper text */}
+      {}
       {error && !isRecording && !isTranscribing && (
         <div className="text-xs text-orange-600 dark:text-orange-400 shrink-0">Retry</div>
       )}

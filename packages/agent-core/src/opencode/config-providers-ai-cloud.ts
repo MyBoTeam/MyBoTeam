@@ -1,4 +1,3 @@
-/** AI cloud provider config builders with dynamic model registration: xAI, Google AI, Z.AI. */
 import { DEFAULT_PROVIDERS, ZAI_ENDPOINTS } from '../common/index.js';
 import type { ZaiCredentials } from '../common/types/providerSettings.js';
 import { createConsoleLogger } from '../utils/logging.js';

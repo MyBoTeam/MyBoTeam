@@ -1,8 +1,3 @@
-/**
- * BrowserWindow creation and configuration.
- * Extracted from index.ts to keep main entry point under 200 lines.
- */
-
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { app, BrowserWindow, Menu, nativeImage, nativeTheme, shell } from 'electron';
@@ -16,19 +11,13 @@ function logMain(level: 'INFO' | 'WARN' | 'ERROR', msg: string) {
     if (l?.log) {
       l.log(level, 'main', msg);
     }
-  } catch (_e) {
-    /* best-effort logging */
-  }
+  } catch (_e) {}
 }
 
 function getPreloadPath(): string {
   return path.join(__dirname, '../preload/index.cjs');
 }
 
-/**
- * Create and configure the main application BrowserWindow.
- * Returns the created window.
- */
 export function createMainWindow(opts: {
   ROUTER_URL: string | undefined;
   WEB_DIST: string;
@@ -110,7 +99,6 @@ export function createMainWindow(opts: {
     mainWindow.webContents.openDevTools({ mode: 'right' });
   }
 
-  // dev mode needs 'unsafe-inline' for @vitejs/plugin-react HMR preamble (never distributed)
   mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
     const scriptSrc = app.isPackaged ? "'self'" : "'self' 'unsafe-inline'";
     const csp = `default-src 'self' https:; script-src ${scriptSrc}; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https: ws: wss:; font-src 'self' https: data:; worker-src 'self' blob:`;

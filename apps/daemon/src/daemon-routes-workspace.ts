@@ -59,7 +59,6 @@ export function registerWorkspaceRoutes(services: RouteServices): void {
     }),
   );
 
-  // ── Knowledge notes ──
   const noteKeyParam = z.object({
     noteId: z.string().min(1),
     workspaceId: z.string().min(1),

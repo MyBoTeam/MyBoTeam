@@ -1,19 +1,7 @@
-/**
- * SecureStorage crypto helpers
- *
- * AES-256-GCM encryption/decryption, PBKDF2 key derivation utilities,
- * and the canonical API key provider list for SecureStorage.
- * Extracted to keep the main class file under 200 lines.
- */
-
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import type { ApiKeyProvider } from '../../common/types/provider.js';
 
-/**
- * Perform an atomic write: write to a temp file, then rename.
- * Prevents data loss if the process crashes mid-write.
- */
 export function atomicWriteFile(filePath: string, content: string): void {
   const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) {
@@ -26,14 +14,11 @@ export function atomicWriteFile(filePath: string, content: string): void {
   } catch (error) {
     try {
       fs.unlinkSync(tempPath);
-    } catch {
-      // Ignore cleanup errors
-    }
+    } catch {}
     throw error;
   }
 }
 
-/** The complete list of supported API key providers stored in SecureStorage. */
 export const ALL_API_KEY_PROVIDERS: ApiKeyProvider[] = [
   'anthropic',
   'openai',
@@ -55,25 +40,15 @@ export const ALL_API_KEY_PROVIDERS: ApiKeyProvider[] = [
 import * as crypto from 'node:crypto';
 import * as os from 'node:os';
 
-/**
- * Derive a 32-byte encryption key from machine identity + salt using PBKDF2.
- */
 export function deriveMachineKey(appId: string, salt: Buffer): Buffer {
   const machineData = [os.platform(), os.homedir(), os.userInfo().username, appId].join(':');
   return crypto.pbkdf2Sync(machineData, salt, 100000, 32, 'sha256');
 }
 
-/**
- * Generate a random 32-byte salt for key derivation.
- */
 export function generateSalt(): Buffer {
   return crypto.randomBytes(32);
 }
 
-/**
- * Encrypt a UTF-8 string value using AES-256-GCM.
- * Returns a colon-delimited string: base64(iv):base64(authTag):base64(ciphertext)
- */
 export function encryptValue(value: string, key: Buffer): string {
   const iv = crypto.randomBytes(12);
   const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
@@ -85,10 +60,6 @@ export function encryptValue(value: string, key: Buffer): string {
   return `${iv.toString('base64')}:${authTag.toString('base64')}:${encrypted}`;
 }
 
-/**
- * Decrypt a value previously encrypted by encryptValue.
- * Returns null if decryption fails (bad key, corrupt data, etc.).
- */
 export function decryptValue(encryptedData: string, key: Buffer): string | null {
   try {
     const parts = encryptedData.split(':');

@@ -75,7 +75,6 @@ export function useZaiProviderConnect({
         }
       })
       .catch((err) => logger.error('Operation failed:', err));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isConnected,
     storedCredentials?.region,

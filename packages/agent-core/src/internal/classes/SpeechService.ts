@@ -1,14 +1,3 @@
-/**
- * Speech-to-Text service using ElevenLabs API
- *
- * This service handles:
- * - API key validation
- * - Audio transcription via ElevenLabs STT API
- *
- * The service requires a SecureStorage instance to be provided,
- * allowing it to be used in different environments (Electron, CLI, etc.)
- */
-
 import type { SecureStorage } from './SecureStorage.js';
 import {
   callElevenLabsTranscribe,
@@ -18,10 +7,6 @@ import {
 
 export type { TranscriptionError, TranscriptionResult } from './speech-api.js';
 
-/**
- * Speech service that uses ElevenLabs API for transcription.
- * Requires a SecureStorage instance for API key management.
- */
 export class SpeechService {
   private storage: SecureStorage;
 
@@ -29,24 +14,15 @@ export class SpeechService {
     this.storage = storage;
   }
 
-  /**
-   * Get the configured ElevenLabs API key
-   */
   getElevenLabsApiKey(): string | null {
     const key = this.storage.getApiKey('elevenlabs');
     return key?.trim() ? key : null;
   }
 
-  /**
-   * Check if ElevenLabs is configured
-   */
   isElevenLabsConfigured(): boolean {
     return this.getElevenLabsApiKey() !== null;
   }
 
-  /**
-   * Validate ElevenLabs API key by making a test request
-   */
   async validateElevenLabsApiKey(apiKey?: string): Promise<{ valid: boolean; error?: string }> {
     const key = apiKey || this.getElevenLabsApiKey();
     if (!key?.trim()) {
@@ -55,13 +31,6 @@ export class SpeechService {
     return validateElevenLabsApiKey(key);
   }
 
-  /**
-   * Transcribe audio using ElevenLabs Speech-to-Text API
-   *
-   * @param audioData - Audio data as Buffer (from renderer via IPC)
-   * @param mimeType - MIME type of the audio (e.g., 'audio/webm')
-   * @returns Transcription result or error
-   */
   async transcribeAudio(
     audioData: Buffer,
     mimeType: string = 'audio/webm',
@@ -86,9 +55,6 @@ export class SpeechService {
   }
 }
 
-/**
- * Create a new SpeechService instance
- */
 export function createSpeechService(storage: SecureStorage): SpeechService {
   return new SpeechService(storage);
 }

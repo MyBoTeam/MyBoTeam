@@ -1,7 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
-
 import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
@@ -26,7 +22,7 @@ describe('Input', () => {
 
   it('does not set type when not provided (defaults to text in HTML)', () => {
     const { container } = render(<Input />);
-    // When type prop is not passed, React omits the attribute; HTML defaults to "text"
+
     expect(container.querySelector('input')).not.toHaveAttribute('type');
   });
 

@@ -30,7 +30,6 @@ export default function ProviderForm({
   onToggleActive,
   onRemove,
 }: ProviderFormProps) {
-  // Initialize from config; ProviderForm is re-mounted each time it opens (conditional render)
   const [formValues, setFormValues] = useState<Record<string, string>>(() => {
     const values: Record<string, string> = {};
     for (const field of provider.fields) {
@@ -55,7 +54,6 @@ export default function ProviderForm({
   };
 
   const handleSetActive = async () => {
-    // Save current form values first (preserving unsaved edits), then toggle active
     if (isFormValid) {
       await onSave(buildProviderConfig());
     }

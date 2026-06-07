@@ -32,7 +32,7 @@ describe('classifyProcessError', () => {
     it('matches resource_exhausted (Gemini quota)', () => {
       const result = classifyProcessError(1, 'RESOURCE_EXHAUSTED: quota exceeded');
       expect(result).toContain('quota');
-      // Must NOT be classified as rate limit
+
       expect(result).not.toContain('Rate limit');
     });
   });

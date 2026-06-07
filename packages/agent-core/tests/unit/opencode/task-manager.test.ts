@@ -85,8 +85,7 @@ describe('TaskManager', () => {
     it('should be thrown when runtime is not available', async () => {
       const error = new OpenCodeCliNotFoundError();
       expect(error.name).toBe('OpenCodeCliNotFoundError');
-      // Message updated in Phase 1b of the SDK cutover port ('CLI' → 'runtime');
-      // the error name is retained so existing error-classification paths still work.
+
       expect(error.message).toContain('OpenCode runtime is not available');
     });
   });
@@ -162,7 +161,6 @@ describe('TaskManager', () => {
 
       expect(isFirstTask).toBe(true);
 
-      // After first task starts
       isFirstTask = false;
       expect(isFirstTask).toBe(false);
     });
@@ -190,11 +188,9 @@ describe('TaskManager', () => {
       const maxConcurrent = 2;
       let activeCount = 2;
 
-      // Simulate task completion
       activeCount--;
       expect(activeCount < maxConcurrent).toBe(true);
 
-      // Should start next queued task
       const nextTask = queue.shift();
       expect(nextTask?.taskId).toBe('task-3');
       expect(queue.length).toBe(1);

@@ -1,14 +1,3 @@
-/**
- * ScreencastController — CDP-based live browser frame capture.
- *
- * Attaches a CDP session to a Playwright page, starts the Chrome
- * Page.startScreencast protocol, and streams JPEG frames via callbacks.
- * Handles idempotent stop/start, page-close events, and proper cleanup to
- * prevent CDP session leaks.
- *
- * Originally authored by david-mamani (PR #553) for ENG-695.
- */
-
 import type { BrowserContext, CDPSession, Page } from 'playwright';
 import { createConsoleLogger } from '../../../src/utils/logging.js';
 import type { ScreencastConfig, ScreencastFrame, ScreencastStatus } from './types.js';
@@ -72,7 +61,6 @@ export class ScreencastController {
         try {
           this.onFrame?.(frame);
         } finally {
-          // Acknowledge frame to allow CDP to send the next one (always, even if onFrame throws)
           this.cdpSession
             ?.send('Page.screencastFrameAck', {
               sessionId: params.sessionId,
@@ -134,14 +122,10 @@ export class ScreencastController {
     if (this.cdpSession) {
       try {
         await this.cdpSession.send('Page.stopScreencast');
-      } catch {
-        // Page may already be closed
-      }
+      } catch {}
       try {
         await this.cdpSession.detach();
-      } catch {
-        // Session may already be detached
-      }
+      } catch {}
       this.cdpSession = null;
     }
     if (this.activePage && this.onPageClose) {

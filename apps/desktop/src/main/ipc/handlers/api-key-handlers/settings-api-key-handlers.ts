@@ -9,20 +9,12 @@ import {
 } from '../../../store/secureStorage';
 import { handle } from '../utils';
 
-// Cloud-browser providers store their keys in app_settings.cloud_browser_config,
-// not in secure storage. Exclude them from the standard api-key flow.
 const CLOUD_BROWSER_PROVIDERS = new Set(['aws-agentcore', 'browserbase', 'steel']);
 
-// Milestone 5: Azure Foundry config reads/writes for the
-// api-keys settings listing now route through the daemon's
-// `settings.*AzureFoundryConfig` RPCs.
 export function registerSettingsApiKeyHandlers(): void {
   handle('settings:api-keys', async (_event: IpcMainInvokeEvent) => {
     const storedKeys = await getAllApiKeys();
-    // Pre-fetch bedrock credentials ONCE. `getBedrockCredentials` is async
-    // post-M3 (RPC round-trip), and we can't await inside `Array.map` without
-    // reshaping the whole pipeline to `Promise.all`. Bedrock appears at most
-    // once in the map, so a single fetch is both correct and cheaper.
+
     const bedrockCreds = storedKeys.bedrock ? await getBedrockCredentials() : null;
 
     const keys = Object.entries(storedKeys)
@@ -56,7 +48,6 @@ export function registerSettingsApiKeyHandlers(): void {
           keyPrefix = apiKey && apiKey.length > 0 ? `${apiKey.substring(0, 8)}...` : '';
         }
 
-        // Derive label to match bedrock:save / vertex:save output exactly
         let label: string;
         if (provider === 'bedrock') {
           if (bedrockCreds?.authType === 'accessKeys') {
@@ -116,16 +107,12 @@ export function registerSettingsApiKeyHandlers(): void {
         throw new Error('Unsupported API key provider');
       }
 
-      // Cloud-browser providers (aws-agentcore, browserbase, steel) store their keys
-      // in app_settings.cloud_browser_config — not in secure storage.
       if (CLOUD_BROWSER_PROVIDERS.has(provider)) {
         throw new Error(
           `Provider '${provider}' keys must be saved via the cloud browser settings panel`,
         );
       }
 
-      // Vertex stores a JSON credential document that can exceed 256 chars.
-      // Use a generous limit; the vertex:save handler validates structure separately.
       const maxKeyLength = provider === 'vertex' ? 8192 : 256;
       const sanitizedKey = sanitizeString(key, 'apiKey', maxKeyLength);
       const sanitizedLabel = label ? sanitizeString(label, 'label', 128) : undefined;
@@ -147,14 +134,10 @@ export function registerSettingsApiKeyHandlers(): void {
     const sanitizedId = sanitizeString(id, 'id', 128);
     const provider = sanitizedId.replace('local-', '');
 
-    // Config-backed entries (e.g. local-azure-foundry synthesized from AzureFoundryConfig)
-    // are not stored in secure storage — routing them to deleteApiKey() would be a no-op
-    // and the entry would reappear on next load. Instead, update the backing config.
     if (provider === 'azure-foundry') {
       const client = getDaemonClient();
       const existingConfig = await client.call('settings.getAzureFoundryConfig');
       if (existingConfig) {
-        // Disable Entra ID auth by clearing the config entry
         await client.call('settings.setAzureFoundryConfig', {
           config: { ...existingConfig, enabled: false, authType: 'api-key' },
         });

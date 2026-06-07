@@ -6,24 +6,6 @@ vi.mock('@opencode-ai/sdk/v2', () => ({
   createOpencodeClient: vi.fn(),
 }));
 
-/**
- * REGRESSION: the adapter used to call `client.session.create(...)`
- * unconditionally on every `startTask`, ignoring `config.sessionId`.
- * That broke conversation continuity across follow-up turns — every
- * `resumeSession(sessionId, prompt)` → `_runTask` → `startTask` created
- * a brand-new SDK session with ZERO memory of prior turns, producing
- * the user-visible bug: "What is 7+4?" → "7+4=11" → "add 5 to the
- * result" → clarification popup because the agent didn't know what
- * "the result" referred to.
- *
- * The fix (commit 73fe6272) reuses `config.sessionId` when provided
- * and only calls `session.create` for genuinely new tasks. These
- * tests pin the branch.
- *
- * Full exercise of the SDK spawn path is out of scope here — we
- * validate the decision at a narrow seam by mocking the SDK client
- * factory and asserting whether `session.create` gets called.
- */
 describe('OpenCodeAdapter session resume (sessionId reuse)', () => {
   beforeEach(() => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -45,10 +27,6 @@ describe('OpenCodeAdapter session resume (sessionId reuse)', () => {
     lastText?: string;
   }
 
-  /**
-   * Build a fake SDK client exposing just the surface `startTask` uses.
-   * Returns the client plus introspection handles for the mocks.
-   */
   function buildFakeClient(): {
     client: unknown;
     sessionCreate: SessionCreateMock;
@@ -73,15 +51,10 @@ describe('OpenCodeAdapter session resume (sessionId reuse)', () => {
       },
       event: {
         subscribe: async () => {
-          // Match the SDK shape the adapter consumes: `subscription.stream`
-          // is an AsyncIterable<Event>, plus an optional close(). The
-          // stream never yields — enough for startTask to open a
-          // subscription and return; the test asserts on synchronous
-          // side-effects (session.create / session.prompt call counts).
           const stream: AsyncIterable<unknown> = {
             [Symbol.asyncIterator]() {
               return {
-                next: () => new Promise(() => {}), // never resolves
+                next: () => new Promise(() => {}),
               };
             },
           };
@@ -101,13 +74,9 @@ describe('OpenCodeAdapter session resume (sessionId reuse)', () => {
     config: { prompt: string; sessionId?: string; modelId?: string },
     fake: ReturnType<typeof buildFakeClient>,
   ): Promise<void> {
-    // Inject the fake SDK client via the mocked "createOpencodeClient".
     adapter.options.getServerUrl = async () => 'http://127.0.0.1:4096';
     vi.mocked(createOpencodeClient).mockReturnValue(fake.client as never);
 
-    // Kick off startTask in the background — it will block on the
-    // never-resolving event iterator. Race against a short timer so
-    // the test doesn't hang on a regression.
     const startPromise = adapter.startTask({ ...config, taskId: 'tsk_test' });
     await Promise.race([
       startPromise.catch(() => undefined),
@@ -141,8 +110,6 @@ describe('OpenCodeAdapter session resume (sessionId reuse)', () => {
       fake,
     );
 
-    // The real bug: session.create used to be called every time,
-    // creating a fresh session per turn and destroying memory.
     expect(fake.sessionCreate.calls).toBe(0);
     expect(fake.sessionPrompt.calls).toBe(1);
     expect(fake.sessionPrompt.lastSessionID).toBe('session_from_turn_1');

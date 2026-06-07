@@ -9,7 +9,6 @@ interface AttachmentListProps {
   removeAttachment: (id: string) => void;
 }
 
-/** Horizontal scrollable row of attached file chips. */
 export function AttachmentList({ attachments, removeAttachment }: AttachmentListProps) {
   if (attachments.length === 0) {
     return null;

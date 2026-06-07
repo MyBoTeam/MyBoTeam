@@ -1,5 +1,3 @@
-// apps/desktop/src/renderer/components/settings/ProviderSettingsPanel.tsx
-
 import type { ConnectedProvider, ProviderId } from '@myboteam/agent-core/common';
 import { AnimatePresence, motion } from 'framer-motion';
 import { settingsTransitions, settingsVariants } from '@/lib/animations';
@@ -24,8 +22,6 @@ export function ProviderSettingsPanel({
   onModelChange,
   showModelError,
 }: ProviderSettingsPanelProps) {
-  // Wrap in min-height container to prevent layout shifts when switching providers
-  // Different forms have different heights; this ensures consistent layout
   return (
     <div className="min-h-[260px]">
       <AnimatePresence mode="wait">

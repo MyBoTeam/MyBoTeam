@@ -1,10 +1,3 @@
-/**
- * Integration tests for TaskInputBar component
- * Tests component rendering and user interactions with mocked window.myboteam API
- * @module __tests__/integration/renderer/components/TaskInputBar.integration.test
- * @vitest-environment jsdom
- */
-
 import { PROMPT_DEFAULT_MAX_LENGTH } from '@myboteam/agent-core/common';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
@@ -12,7 +5,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PlusMenu } from '@/components/landing/PlusMenu';
 import { TaskInputBar } from '@/components/landing/TaskInputBar';
 
-// Helper to render with Router context (required for PlusMenu -> CreateSkillModal -> useNavigate)
 const renderWithRouter = (ui: React.ReactElement) => {
   return render(<MemoryRouter>{ui}</MemoryRouter>);
 };
@@ -310,13 +302,11 @@ describe('TaskInputBar Integration', () => {
         />,
       );
 
-      // Assert - stop button is rendered with Stop label
       const submitButton = screen.getByRole('button', { name: /stop/i });
       expect(submitButton).toBeInTheDocument();
     });
 
     it('should show stop indicator in submit button when loading', () => {
-      // Arrange
       const onChange = vi.fn();
       const onSubmit = vi.fn();
 
@@ -329,7 +319,6 @@ describe('TaskInputBar Integration', () => {
         />,
       );
 
-      // Assert - Check for the stop icon (square) inside the submit button
       const submitButton = screen.getByRole('button', { name: /stop/i });
       expect(submitButton).toBeInTheDocument();
     });
@@ -348,7 +337,7 @@ describe('TaskInputBar Integration', () => {
       );
 
       // Note: In jsdom, keydown events still fire on disabled elements,
-      // but in a real browser, disabled elements don't receive keyboard input
+
       const textarea = screen.getByRole('textbox');
       expect(textarea).toBeDisabled();
     });
@@ -480,7 +469,6 @@ describe('TaskInputBar Integration', () => {
         <TaskInputBar value="" onChange={onChange} onSubmit={onSubmit} large={true} />,
       );
 
-      // Assert - now uses consistent text-[16px] regardless of large prop
       const textarea = screen.getByRole('textbox');
       expect(textarea.className).toContain('text-[16px]');
     });
@@ -493,7 +481,6 @@ describe('TaskInputBar Integration', () => {
         <TaskInputBar value="" onChange={onChange} onSubmit={onSubmit} large={false} />,
       );
 
-      // Assert - now uses consistent text-[16px] regardless of large prop
       const textarea = screen.getByRole('textbox');
       expect(textarea.className).toContain('text-[16px]');
     });

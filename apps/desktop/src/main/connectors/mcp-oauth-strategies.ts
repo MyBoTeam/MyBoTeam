@@ -1,10 +1,3 @@
-/**
- * MCP OAuth Strategies
- *
- * Implements the mcp-dcr (Dynamic Client Registration + PKCE) and
- * mcp-fixed-client (pre-registered client + PKCE) OAuth flows.
- */
-
 import crypto from 'node:crypto';
 import type { ConnectorDefinition, OAuthProviderId } from '@myboteam/agent-core/common';
 import { getConnectorDefinition } from '@myboteam/agent-core/common';
@@ -103,7 +96,6 @@ export async function performMcpDcrFlow(
       return { ok: true, accessToken: tokens.accessToken };
     } finally {
       if (!authSucceeded) {
-        // clears codeVerifier/oauthState so pendingAuthorization resets
         await store.clearTokens();
       }
       callbackServer.shutdown();

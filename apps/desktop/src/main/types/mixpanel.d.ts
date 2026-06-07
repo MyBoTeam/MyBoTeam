@@ -1,7 +1,3 @@
-/**
- * Minimal type declarations for the mixpanel Node.js SDK.
- * The official package does not ship types.
- */
 declare module 'mixpanel' {
   interface Mixpanel {
     track(eventName: string, properties?: Record<string, unknown>): void;

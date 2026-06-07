@@ -40,11 +40,8 @@ export function useKnowledgeNotes(
   const [editType, setEditType] = useState<KnowledgeNoteType>('context');
   const [editContent, setEditContent] = useState('');
 
-  // Shared request counter — incrementing it abandons any in-flight fetch.
   const activeRequestRef = useRef(0);
-  // Tracks the active workspace. Updated via useLayoutEffect (runs synchronously
-  // after each commit, before microtasks) so async callbacks can detect a
-  // workspace switch that occurred while they were in flight.
+
   const workspaceIdRef = useRef(workspaceId);
   useLayoutEffect(() => {
     workspaceIdRef.current = workspaceId;
@@ -65,9 +62,6 @@ export function useKnowledgeNotes(
     }
   }, [myboteam, workspaceId]);
 
-  // Initial load on mount / workspaceId change. Uses the same activeRequestRef
-  // guard so a cleanup (workspace switch) abandons any in-flight request from
-  // either this effect or a concurrent mutation-triggered loadNotes call.
   useEffect(() => {
     const requestId = ++activeRequestRef.current;
     myboteam
@@ -84,7 +78,6 @@ export function useKnowledgeNotes(
         }
       });
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       activeRequestRef.current++;
     };
   }, [myboteam, workspaceId]);

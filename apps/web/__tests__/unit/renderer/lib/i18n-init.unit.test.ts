@@ -1,10 +1,5 @@
-/**
- * @vitest-environment jsdom
- */
-
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Mock i18next before importing the module
 const mocks = vi.hoisted(() => {
   const i18nMock = {
     changeLanguage: vi.fn(),

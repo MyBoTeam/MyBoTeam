@@ -2,15 +2,6 @@ import * as fs from 'node:fs';
 import type { OpenAiOauthPlan } from '../common/types/providerSettings.js';
 import { getOpenCodeAuthJsonPath } from './auth-paths.js';
 
-// -----------------------------------------------------------------------------
-// OpenAI ChatGPT-OAuth plan detection
-// -----------------------------------------------------------------------------
-//
-// Ported from commercial 1a320029:packages/agent-core/src/opencode/auth/openai.ts
-// as part of the OpenCode SDK cutover port (Phase 4a). Consumed by the
-// daemon's `auth.openai.awaitCompletion` RPC so the renderer can populate
-// provider models from the free vs paid set once login completes.
-
 export interface DetectOpenAiOauthPlanOptions {
   authStatePath?: string;
   timeoutMs?: number;
@@ -40,12 +31,6 @@ function decodeJwtPayload(token: string): OpenAiAuthTokenPayload {
   return JSON.parse(Buffer.from(normalizedPayload, 'base64').toString('utf-8'));
 }
 
-/**
- * Read the ChatGPT plan from the OpenCode-persisted OAuth state file.
- * Throws when the file is missing the OpenAI entry, when the JWT payload is
- * malformed, or when the token does not include a `chatgpt_plan_type`
- * claim. Callers that want polling behaviour should use `detectOpenAiOauthPlan`.
- */
 export function readOpenAiOauthPlan(authStatePath = getOpenCodeAuthJsonPath()): OpenAiOauthPlan {
   const authState = JSON.parse(fs.readFileSync(authStatePath, 'utf-8')) as {
     openai?: { access?: string };
@@ -64,12 +49,6 @@ export function readOpenAiOauthPlan(authStatePath = getOpenCodeAuthJsonPath()): 
   return planType === 'free' ? 'free' : 'paid';
 }
 
-/**
- * Poll the OAuth state file until the plan is readable or `timeoutMs` is
- * exceeded. Used immediately after the SDK OAuth flow completes — the auth
- * file is written asynchronously, so a brief poll window covers the gap
- * between "flow reports success" and "plan extractable".
- */
 export async function detectOpenAiOauthPlan(
   options: DetectOpenAiOauthPlanOptions = {},
 ): Promise<OpenAiOauthPlan> {

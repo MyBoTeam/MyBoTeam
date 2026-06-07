@@ -51,9 +51,7 @@ export class GoogleAccountService extends EventEmitter {
           this.timers,
           () => void this.refreshToken(account.googleAccountId),
         );
-      } catch {
-        // Malformed stored token — skip
-      }
+      } catch {}
     }
   }
 

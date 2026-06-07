@@ -1,6 +1,3 @@
-// Provider config handlers are split into focused per-provider sub-modules.
-// This file orchestrates registration of all provider config handlers.
-
 import { registerAzureFoundryHandlers } from './provider-config-handlers/azure-foundry-handlers';
 import { registerLiteLLMHandlers } from './provider-config-handlers/litellm-handlers';
 import { registerLMStudioHandlers } from './provider-config-handlers/lmstudio-handlers';

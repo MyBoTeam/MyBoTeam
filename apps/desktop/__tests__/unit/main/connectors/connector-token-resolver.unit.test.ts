@@ -1,22 +1,4 @@
-/**
- * Unit tests for connector-token-resolver.ts
- *
- * Validates:
- * - connectBuiltInConnector dispatches the correct OAuth strategy per oauthKind
- * - Unknown provider returns { error: 'not-configured' }
- * - desktop-github: gh not found → { error: 'gh-not-found' }
- * - desktop-github: gh auth token returns token without login
- * - desktop-github: no existing token → falls through to gh auth login
- * - desktop-google: always returns ok (delegates to google-accounts)
- * - mcp-dcr / mcp-fixed-client: no-server-url when serverUrl absent
- */
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-// ---------------------------------------------------------------------------
-// Hoisted mock factories — vi.mock() is hoisted before imports, so we must
-// declare shared mock function references here using vi.hoisted().
-// ---------------------------------------------------------------------------
 
 const { mockExecFileAsync, mockShellOpenExternal } = vi.hoisted(() => ({
   mockExecFileAsync: vi.fn<
@@ -26,9 +8,6 @@ const { mockExecFileAsync, mockShellOpenExternal } = vi.hoisted(() => ({
   mockShellOpenExternal: vi.fn<[string], Promise<void>>().mockResolvedValue(undefined),
 }));
 
-// child_process: the module exports `execFile` which is immediately promisify()'d.
-// By making execFile already promise-returning and making promisify an identity fn,
-// execFileAsync in the module-under-test becomes === our mockExecFileAsync.
 vi.mock('child_process', () => ({ execFile: mockExecFileAsync }));
 vi.mock('util', () => ({ promisify: (fn: unknown) => fn }));
 vi.mock('electron', () => ({ shell: { openExternal: mockShellOpenExternal } }));
@@ -101,15 +80,7 @@ vi.mock('@main/connectors/connector-auth-registry', () => ({
   getConnectorAuthStore: vi.fn().mockReturnValue(mockStore),
 }));
 
-// ---------------------------------------------------------------------------
-// Import SUT after mocks are registered
-// ---------------------------------------------------------------------------
-
 import { connectBuiltInConnector } from '@main/connectors/connector-token-resolver';
-
-// ---------------------------------------------------------------------------
-// Helper definitions
-// ---------------------------------------------------------------------------
 
 const jiraDef = {
   displayName: 'Jira',
@@ -143,16 +114,10 @@ const ghVersion = {
 };
 const emptyStdout = { stdout: '', stderr: '' };
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
-
 describe('connectBuiltInConnector', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Milestone 3 sub-chunk 3e: ConnectorAuthStore methods are now async
-    // (daemon RPC). Every getter/setter returns a Promise; update mock
-    // defaults accordingly so `await store.X()` resolves correctly.
+
     mockStore.getServerUrl.mockResolvedValue('https://mcp.example.com/mcp');
     mockStore.getClientRegistration.mockResolvedValue(null);
     mockStore.getAccessToken.mockResolvedValue(null);
@@ -162,10 +127,6 @@ describe('connectBuiltInConnector', () => {
     mockStore.setPendingAuth.mockResolvedValue(undefined);
     mockStore.clearTokens.mockResolvedValue(undefined);
   });
-
-  // -------------------------------------------------------------------------
-  // Unknown provider
-  // -------------------------------------------------------------------------
 
   it('returns not-configured for an unknown provider', async () => {
     mockGetConnectorDefinition.mockReturnValue(undefined);
@@ -177,10 +138,6 @@ describe('connectBuiltInConnector', () => {
     });
   });
 
-  // -------------------------------------------------------------------------
-  // desktop-google
-  // -------------------------------------------------------------------------
-
   describe('desktop-google strategy', () => {
     it('returns ok with sentinel accessToken', async () => {
       mockGetConnectorDefinition.mockReturnValue(googleDef);
@@ -189,17 +146,12 @@ describe('connectBuiltInConnector', () => {
     });
   });
 
-  // -------------------------------------------------------------------------
-  // desktop-github
-  // -------------------------------------------------------------------------
-
   describe('desktop-github strategy', () => {
     beforeEach(() => {
       mockGetConnectorDefinition.mockReturnValue(githubDef);
     });
 
     it('returns gh-not-found when gh binary is absent from PATH', async () => {
-      // Both --version calls fail (only 'gh' in candidates list)
       mockExecFileAsync.mockRejectedValue(Object.assign(new Error('ENOENT'), { code: 'ENOENT' }));
 
       const result = await connectBuiltInConnector('github' as never);
@@ -212,8 +164,8 @@ describe('connectBuiltInConnector', () => {
 
     it('returns ok without login when gh auth token yields a token', async () => {
       mockExecFileAsync
-        .mockResolvedValueOnce(ghVersion) // gh --version
-        .mockResolvedValueOnce({ stdout: 'gho_existingToken\n', stderr: '' }); // gh auth token
+        .mockResolvedValueOnce(ghVersion)
+        .mockResolvedValueOnce({ stdout: 'gho_existingToken\n', stderr: '' });
 
       const result = await connectBuiltInConnector('github' as never);
       expect(result).toEqual({ ok: true, accessToken: 'gho_existingToken' });
@@ -225,14 +177,14 @@ describe('connectBuiltInConnector', () => {
 
     it('falls through to gh auth login when no existing token', async () => {
       mockExecFileAsync
-        .mockResolvedValueOnce(ghVersion) // gh --version
-        .mockResolvedValueOnce(emptyStdout) // gh auth token → empty
-        .mockResolvedValueOnce(emptyStdout) // gh auth login
-        .mockResolvedValueOnce({ stdout: 'gho_freshToken\n', stderr: '' }); // gh auth token after login
+        .mockResolvedValueOnce(ghVersion)
+        .mockResolvedValueOnce(emptyStdout)
+        .mockResolvedValueOnce(emptyStdout)
+        .mockResolvedValueOnce({ stdout: 'gho_freshToken\n', stderr: '' });
 
       const result = await connectBuiltInConnector('github' as never);
       expect(result).toEqual({ ok: true, accessToken: 'gho_freshToken' });
-      // Verify login was attempted
+
       expect(mockExecFileAsync).toHaveBeenCalledWith(
         'gh',
         ['auth', 'login', '--git-protocol', 'https', '--web'],
@@ -242,10 +194,10 @@ describe('connectBuiltInConnector', () => {
 
     it('returns oauth-failed when login succeeds but token is still empty', async () => {
       mockExecFileAsync
-        .mockResolvedValueOnce(ghVersion) // gh --version
-        .mockResolvedValueOnce(emptyStdout) // gh auth token → empty
-        .mockResolvedValueOnce(emptyStdout) // gh auth login
-        .mockResolvedValueOnce(emptyStdout); // gh auth token → still empty
+        .mockResolvedValueOnce(ghVersion)
+        .mockResolvedValueOnce(emptyStdout)
+        .mockResolvedValueOnce(emptyStdout)
+        .mockResolvedValueOnce(emptyStdout);
 
       const result = await connectBuiltInConnector('github' as never);
       expect(result).toEqual({
@@ -257,9 +209,9 @@ describe('connectBuiltInConnector', () => {
 
     it('returns oauth-failed when gh auth login itself throws', async () => {
       mockExecFileAsync
-        .mockResolvedValueOnce(ghVersion) // gh --version
-        .mockResolvedValueOnce(emptyStdout) // gh auth token → empty
-        .mockRejectedValueOnce(new Error('login cancelled')); // gh auth login fails
+        .mockResolvedValueOnce(ghVersion)
+        .mockResolvedValueOnce(emptyStdout)
+        .mockRejectedValueOnce(new Error('login cancelled'));
 
       const result = await connectBuiltInConnector('github' as never);
       expect(result).toEqual({
@@ -269,10 +221,6 @@ describe('connectBuiltInConnector', () => {
       });
     });
   });
-
-  // -------------------------------------------------------------------------
-  // mcp-dcr strategy
-  // -------------------------------------------------------------------------
 
   describe('mcp-dcr strategy', () => {
     beforeEach(() => {
@@ -348,10 +296,6 @@ describe('connectBuiltInConnector', () => {
       expect(mockRegisterOAuthClient).not.toHaveBeenCalled();
     });
   });
-
-  // -------------------------------------------------------------------------
-  // mcp-fixed-client strategy
-  // -------------------------------------------------------------------------
 
   describe('mcp-fixed-client strategy', () => {
     beforeEach(() => {

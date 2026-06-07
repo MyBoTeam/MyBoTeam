@@ -84,7 +84,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request): Promise<CallToo
   const rest = parts.slice(1);
   const flags = parseFlags(rest);
 
-  // free-time always uses all accounts — skip normal resolution
   if (subcommand === 'free-time') {
     try {
       const result = await cmdFreeTime(accounts, flags);

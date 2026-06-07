@@ -1,8 +1,3 @@
-/**
- * Model loader for the HuggingFace Local inference server.
- * Handles loading/unloading Transformers.js models into shared state.
- */
-
 import path from 'node:path';
 import { app } from 'electron';
 import { getDaemonClient } from '../../daemon-bootstrap';
@@ -15,26 +10,16 @@ import {
   state,
 } from './server-state';
 
-/**
- * Load a model into memory using Transformers.js.
- */
 export async function loadModel(modelId: string): Promise<void> {
-  // Gate fast-returns on !isStopping — stopServer() keeps the flag set while
-  // it disposes the model, so we must not report success while shutdown is active.
   if (!state.isStopping && state.loadedModelId === modelId && state.tokenizer && state.model) {
     getLogCollector().logEnv('INFO', `[HF Server] Model ${modelId} already loaded`);
     return;
   }
 
-  // Prevent concurrent loads — queue onto existing promise.
-  // Swallow rejections so a failed/cancelled prior load doesn't abort this
-  // caller; re-check state below to decide whether to proceed.
   if (loadModelPromise) {
     try {
       await loadModelPromise;
-    } catch {
-      // Previous load failed or was cancelled — re-evaluate state below
-    }
+    } catch {}
     if (!state.isStopping && state.loadedModelId === modelId && state.tokenizer && state.model) {
       return;
     }
@@ -42,7 +27,7 @@ export async function loadModel(modelId: string): Promise<void> {
 
   const promise = (async () => {
     state.isLoading = true;
-    // Capture stop flag at start so we can detect a concurrent stopServer() call
+
     const stoppedAtStart = state.isStopping;
     getLogCollector().logEnv('INFO', `[HF Server] Loading model: ${modelId}`);
 
@@ -55,24 +40,16 @@ export async function loadModel(modelId: string): Promise<void> {
       env.localModelPath = cacheDir;
       env.allowRemoteModels = false;
 
-      // Stage new model and tokenizer
       const tokenizer = await AutoTokenizer.from_pretrained(modelId);
 
-      // Get config to determine quantization + device preference.
-      // Milestone 5: config comes from the daemon via `settings.getAll` —
-      // the `huggingFaceLocalConfig` field on the snapshot carries the
-      // same blob the pre-M5 `storage.getHuggingFaceLocalConfig()` returned.
       let quantization: string | null = null;
       let devicePreference: string | null = null;
       try {
         const snap = await getDaemonClient().call('settings.getAll');
         quantization = snap.huggingFaceLocalConfig?.quantization ?? null;
         devicePreference = snap.huggingFaceLocalConfig?.devicePreference ?? null;
-      } catch {
-        // Daemon unreachable — defaults below.
-      }
-      // Patch env.backends.onnx.device without clobbering other backend settings
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch {}
+
       const envAny = env as any;
       envAny.backends ??= {};
       envAny.backends.onnx ??= {};
@@ -82,14 +59,12 @@ export async function loadModel(modelId: string): Promise<void> {
         delete envAny.backends.onnx.device;
       }
 
-      // Use saved quantization, fall back to q4 then fp32
       const dtypesToTry: string[] = quantization ? [quantization] : ['q4'];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       let model: any;
       for (const dtype of dtypesToTry) {
         try {
           model = await AutoModelForCausalLM.from_pretrained(modelId, {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             dtype: dtype as any,
           });
           break;
@@ -99,7 +74,7 @@ export async function loadModel(modelId: string): Promise<void> {
               'WARN',
               `[HF Server] Failed to load ${dtype} model, trying fp32: ${err}`,
             );
-            // Last fallback: try fp32 (only if we haven't already tried fp32)
+
             model = await AutoModelForCausalLM.from_pretrained(modelId, {
               dtype: 'fp32',
             });
@@ -109,8 +84,6 @@ export async function loadModel(modelId: string): Promise<void> {
         }
       }
 
-      // If stopServer() was called while we were loading, dispose the freshly
-      // created resources and skip state mutation to avoid stale references.
       if (state.isStopping || stoppedAtStart) {
         getLogCollector().logEnv(
           'INFO',
@@ -118,15 +91,10 @@ export async function loadModel(modelId: string): Promise<void> {
         );
         try {
           await model?.dispose?.();
-        } catch {
-          // Ignore dispose errors
-        }
+        } catch {}
         throw new DOMException('Load cancelled by stopServer()', 'AbortError');
       }
 
-      // Successfully loaded new model — drain in-flight generations before
-      // disposing the previous model instance to avoid tearing it down while
-      // a request is still using it (mirrors the shutdown drain in server-lifecycle).
       if (state.model) {
         const start = Date.now();
         while (activeGenerations > 0 && Date.now() - start < 10000) {
@@ -134,9 +102,7 @@ export async function loadModel(modelId: string): Promise<void> {
         }
         try {
           await state.model.dispose?.();
-        } catch {
-          // Ignore dispose errors
-        }
+        } catch {}
       }
 
       state.tokenizer = tokenizer;
@@ -145,8 +111,6 @@ export async function loadModel(modelId: string): Promise<void> {
       state.loadedModelId = modelId;
       getLogCollector().logEnv('INFO', `[HF Server] Model loaded: ${modelId}`);
     } catch (error) {
-      // AbortError is an expected cancellation (stopServer called during load) — log at INFO
-      // to avoid false failure noise; all other errors are real failures logged at ERROR.
       const isAbort = error instanceof DOMException && error.name === 'AbortError';
       getLogCollector().logEnv(
         isAbort ? 'INFO' : 'ERROR',
@@ -164,11 +128,6 @@ export async function loadModel(modelId: string): Promise<void> {
   return promise;
 }
 
-/**
- * Format chat messages into a prompt string.
- * Uses the tokenizer's chat template if available.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function formatChatPrompt(messages: ChatMessage[], tokenizer: any): string {
   try {
     if (tokenizer.apply_chat_template) {
@@ -178,11 +137,8 @@ export function formatChatPrompt(messages: ChatMessage[], tokenizer: any): strin
       });
       return formatted;
     }
-  } catch {
-    // Fall through to manual formatting
-  }
+  } catch {}
 
-  // Manual fallback
   return `${messages
     .map((m) => {
       if (m.role === 'system') {

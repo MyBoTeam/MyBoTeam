@@ -1,11 +1,3 @@
-/**
- * Unit tests for the pure version/manifest helpers (updater/versioning.ts).
- *
- * These are pure functions — no Electron, no network, no filesystem. Kept
- * separate from the orchestrator tests so semver edge cases don't have to
- * pay the cost of the mock setup that manual-manifest tests need.
- */
-
 import { describe, expect, it } from 'vitest';
 
 import { isNewer, normalizeVersion, parseManifest } from '../../../src/main/updater/versioning';
@@ -18,8 +10,6 @@ describe('versioning', () => {
     });
 
     it('strips build metadata (per semver spec; irrelevant for comparison)', () => {
-      // semver.valid() normalizes away build metadata — which is what we want,
-      // since semver treats `1.2.3+a` and `1.2.3+b` as equal precedence anyway.
       expect(normalizeVersion('1.2.3+build.5')).toBe('1.2.3');
     });
 

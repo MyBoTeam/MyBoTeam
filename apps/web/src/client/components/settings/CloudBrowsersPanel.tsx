@@ -27,7 +27,6 @@ export function CloudBrowsersPanel() {
         const message = err instanceof Error ? err.message : 'Failed to load configuration';
         setSaveError(message);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- myboteam is a stable singleton
   }, [myboteam.getCloudBrowserConfig]);
 
   const saveConfig = useCallback(

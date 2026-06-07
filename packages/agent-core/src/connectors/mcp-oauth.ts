@@ -6,9 +6,6 @@ export type { OAuthProtectedResourceMetadata } from './oauth-metadata.js';
 export { discoverOAuthMetadata, discoverOAuthProtectedResourceMetadata } from './oauth-metadata.js';
 export { exchangeCodeForTokens, isTokenExpired, refreshAccessToken } from './oauth-tokens.js';
 
-/**
- * Register an OAuth client dynamically with the authorization server.
- */
 export async function registerOAuthClient(
   metadata: OAuthMetadata,
   redirectUri: string,
@@ -50,24 +47,16 @@ export async function registerOAuthClient(
   };
 }
 
-/**
- * Generate a PKCE code verifier and code challenge (S256).
- */
 export function generatePkceChallenge(): { codeVerifier: string; codeChallenge: string } {
-  // Generate a random 43-character code verifier (base64url-encoded 32 bytes)
   const verifierBytes = crypto.randomBytes(32);
   const codeVerifier = verifierBytes.toString('base64url');
 
-  // S256: SHA-256 hash of the verifier, base64url-encoded
   const hash = crypto.createHash('sha256').update(codeVerifier).digest();
   const codeChallenge = hash.toString('base64url');
 
   return { codeVerifier, codeChallenge };
 }
 
-/**
- * Build the OAuth 2.0 authorization URL.
- */
 export function buildAuthorizationUrl(params: {
   authorizationEndpoint: string;
   clientId: string;

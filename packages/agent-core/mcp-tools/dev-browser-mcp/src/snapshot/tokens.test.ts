@@ -9,7 +9,7 @@ describe('token estimation', () => {
         name: 'Submit',
         ref: 'e1',
       });
-      // role (1) + name (2) + ref (2) + yaml overhead (5) + attributes (2-5)
+
       expect(tokens).toBeGreaterThanOrEqual(10);
       expect(tokens).toBeLessThanOrEqual(20);
     });
@@ -22,10 +22,10 @@ describe('token estimation', () => {
       });
       const longName = estimateElementTokens({
         role: 'button',
-        name: 'A'.repeat(1000), // Very long name
+        name: 'A'.repeat(1000),
         ref: 'e2',
       });
-      // Difference should be at most 50 (capped)
+
       expect(longName - shortName).toBeLessThanOrEqual(50);
     });
 
@@ -52,7 +52,7 @@ describe('token estimation', () => {
 - textbox "Email" [ref=e2]
 - link "Home" [ref=e3]`;
       const tokens = estimateTokens(yaml);
-      // ~15 tokens per element * 3 = ~45
+
       expect(tokens).toBeGreaterThanOrEqual(30);
       expect(tokens).toBeLessThanOrEqual(60);
     });

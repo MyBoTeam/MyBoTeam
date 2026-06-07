@@ -1,24 +1,11 @@
-/**
- * Integration tests for Preload script
- *
- * Tests the REAL preload script by:
- * 1. Mocking electron APIs (external dependency)
- * 2. Importing the real preload module (triggers contextBridge.exposeInMainWorld)
- * 3. Verifying the exposed API calls the correct IPC channels
- *
- * This is a proper integration test - only external dependencies are mocked.
- */
-
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import pkg from '../../../package.json';
 
-// Create mock functions for electron
 const mockExposeInMainWorld = vi.fn();
 const mockInvoke = vi.fn(() => Promise.resolve(undefined));
 const mockOn = vi.fn();
 const mockRemoveListener = vi.fn();
 
-// Mock electron module before importing preload
 vi.mock('electron', () => ({
   contextBridge: {
     exposeInMainWorld: mockExposeInMainWorld,
@@ -30,7 +17,6 @@ vi.mock('electron', () => ({
   },
 }));
 
-// Store captured APIs from exposeInMainWorld calls
 let capturedMyBoTeamAPI: Record<string, unknown> = {};
 let capturedMyBoTeamShell: Record<string, unknown> = {};
 
@@ -40,10 +26,8 @@ describe('Preload Script Integration', () => {
     capturedMyBoTeamAPI = {};
     capturedMyBoTeamShell = {};
 
-    // Set the package version env var (normally set by npm/pnpm when running scripts)
     process.env.npm_package_version = pkg.version;
 
-    // Capture what the real preload exposes
     mockExposeInMainWorld.mockImplementation((name: string, api: unknown) => {
       if (name === 'myboteam') {
         capturedMyBoTeamAPI = api as Record<string, unknown>;
@@ -52,7 +36,6 @@ describe('Preload Script Integration', () => {
       }
     });
 
-    // Reset module cache and import the REAL preload module
     vi.resetModules();
     await import('../../../src/preload/index');
   });
@@ -370,12 +353,10 @@ describe('Preload Script Integration', () => {
       const callback = vi.fn();
       (capturedMyBoTeamAPI.onTaskUpdate as (cb: (e: unknown) => void) => () => void)(callback);
 
-      // Get the registered listener from mockOn calls
       const registeredListener = mockOn.mock.calls.find(
         (call: unknown[]) => call[0] === 'task:update',
       )?.[1] as (event: unknown, data: unknown) => void;
 
-      // Simulate IPC event
       const eventData = { taskId: 'task_123', type: 'message' };
       registeredListener(null, eventData);
 

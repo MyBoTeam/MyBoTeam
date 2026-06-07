@@ -4,7 +4,7 @@ import { normalizeIpcError } from '../../ipc/validation';
 import { getLogCollector } from '../../logging';
 
 export const API_KEY_VALIDATION_TIMEOUT_MS = 15000;
-export const MAX_ATTACHMENT_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+export const MAX_ATTACHMENT_FILE_SIZE = 10 * 1024 * 1024;
 
 export function assertTrustedWindow(window: BrowserWindow | null): BrowserWindow {
   if (!window || window.isDestroyed()) {
@@ -54,9 +54,7 @@ export function handle<Args extends unknown[], ReturnType = unknown>(
               error: String(error),
             });
           }
-        } catch {
-          /* best-effort logging */
-        }
+        } catch {}
         throw normalizeIpcError(error);
       }
       try {
@@ -64,9 +62,7 @@ export function handle<Args extends unknown[], ReturnType = unknown>(
         if (l?.log) {
           l.log('ERROR', 'ipc', `IPC handler ${channel} failed`, { error: String(error) });
         }
-      } catch (_e) {
-        /* best-effort logging */
-      }
+      } catch (_e) {}
       throw normalizeIpcError(error);
     }
   });

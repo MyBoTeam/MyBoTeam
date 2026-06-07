@@ -222,10 +222,7 @@ describe('legacyMigration', () => {
 
   it('should use correct db names based on app.isPackaged at call time', () => {
     // Note: NEW_DB_NAME and SECURE_STORAGE_NAME are captured at module import
-    // time when app.isPackaged was false, so they are dev variants.
-    // getLegacyPaths() reads app.isPackaged at call time.
-    // So in packaged mode, legacy paths use packaged db names but the
-    // destination still uses dev names (captured at import).
+
     mockIsPackaged.current = true;
     mockGetPath.mockImplementation((name: string) => {
       if (name === 'userData') return '/mock/userData';
@@ -246,12 +243,7 @@ describe('legacyMigration', () => {
     const result = migrateLegacyData();
 
     expect(result).toBe(true);
-    // getLegacyPaths() uses isPackaged at call time, so Openwork path gets dbName='openwork.db'
-    // getFilesToMigrate('openwork.db') returns:
-    //   { src: 'openwork.db', dest: 'myboteam-dev.db' } - copy
-    //   { src: 'openwork.db-wal', dest: 'myboteam-dev.db-wal' } - copy
-    //   { src: 'openwork.db-shm', dest: 'myboteam-dev.db-shm' } - dest doesn't exist -> skip
-    //   { src: 'secure-storage-dev.json', dest: 'secure-storage-dev.json' } - same -> continue
+
     expect(mockCopyFileSync).toHaveBeenCalledTimes(3);
   });
 });

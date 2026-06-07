@@ -1,10 +1,3 @@
-/**
- * ElevenLabs Speech API helpers
- *
- * Handles HTTP interactions with the ElevenLabs Speech-to-Text and validation
- * APIs, including error parsing and response normalization.
- */
-
 import { fetchWithTimeout } from '../../utils/fetch.js';
 import { createConsoleLogger } from '../../utils/logging.js';
 import { handleTranscribeErrorResponse } from './speech-api-utils.js';
@@ -71,9 +64,6 @@ export async function validateElevenLabsApiKey(
   }
 }
 
-/**
- * Call ElevenLabs Speech-to-Text API.
- */
 export async function callElevenLabsTranscribe(
   apiKey: string,
   audioData: Buffer,

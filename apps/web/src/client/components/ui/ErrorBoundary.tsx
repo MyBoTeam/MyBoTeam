@@ -5,7 +5,7 @@ import { Button } from './button';
 
 interface Props {
   children: ReactNode;
-  /** Custom fallback. Receives the caught Error and a reset callback. */
+
   fallback?: (error: Error, reset: () => void) => ReactNode;
 }
 
@@ -38,7 +38,7 @@ export class ErrorBoundary extends Component<Props, State> {
 interface FallbackProps {
   error: Error;
   reset: () => void;
-  /** Make it compact for inline use (e.g. inside a conversation) */
+
   compact?: boolean;
 }
 

@@ -63,7 +63,5 @@ export async function autoStartScreencast(
       const pageName = taskPages[0].substring(taskPrefix.length);
       await startBrowserPreviewStream(taskId, pageName);
     }
-  } catch {
-    // Server not ready yet — will be triggered later via IPC
-  }
+  } catch {}
 }

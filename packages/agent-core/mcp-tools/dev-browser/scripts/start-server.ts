@@ -66,7 +66,7 @@ try {
         }
         await new Promise((resolve) => setTimeout(resolve, 500));
       } catch {
-        // intentionally empty
+                              
       }
     } else {
       console.log(`Launch server already running on port ${MYBOTEAM_HTTP_PORT}`);
@@ -74,7 +74,7 @@ try {
     }
   }
 } catch {
-  // intentionally empty
+                        
 }
 
 try {
@@ -100,7 +100,7 @@ try {
     }
   }
 } catch {
-  // intentionally empty
+                        
 }
 
 const profileDirs = [join(profileDir, 'chrome-profile'), join(profileDir, 'playwright-profile')];
@@ -139,7 +139,7 @@ function installPlaywrightChromium(): void {
       pm = manager;
       break;
     } catch {
-      // intentionally empty
+                            
     }
   }
 

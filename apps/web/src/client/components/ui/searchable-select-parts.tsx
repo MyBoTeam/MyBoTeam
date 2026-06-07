@@ -1,8 +1,3 @@
-/**
- * Internal sub-components for SearchableSelect.
- * Not intended for use outside searchable-select.tsx.
- */
-
 import { motion } from 'framer-motion';
 import { settingsTransitions, settingsVariants } from '@/lib/animations';
 

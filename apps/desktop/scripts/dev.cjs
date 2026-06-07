@@ -20,8 +20,8 @@ if (isClean) {
 try {
   runNodeScript('patch-electron-name.cjs', env);
 
-  // Historically this ran electron-rebuild for native modules.
-  // sql.js (WASM) needs no native rebuild.
+                                                               
+                                           
 
   if (!isCheck) {
     fs.rmSync(path.join(desktopRoot, 'dist-electron'), { recursive: true, force: true });

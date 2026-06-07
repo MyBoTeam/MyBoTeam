@@ -1,9 +1,3 @@
-/**
- * Type definitions for config-generator.ts
- *
- * ESM module — use .js extensions on imports.
- */
-
 import type { ProviderId } from '../common/types/providerSettings.js';
 import type { Skill } from '../common/types/skills.js';
 
@@ -21,63 +15,36 @@ export interface ConfigGeneratorOptions {
   isPackaged: boolean;
   providerConfigs?: ProviderConfig[];
   azureFoundryToken?: string;
-  /** Port for the WhatsApp HTTP API (daemon). Omit to disable the MCP tool. */
+
   whatsappApiPort?: number;
-  /** Optional auth token for daemon API endpoints */
+
   authToken?: string;
   userDataPath: string;
   model?: string;
   smallModel?: string;
   enabledProviders?: string[];
-  /** Browser configuration. Defaults to { mode: 'builtin' } */
+
   browser?: import('./generator-mcp.js').BrowserConfig;
-  /** Connected MCP remote servers with OAuth access tokens */
+
   connectors?: Array<{
     id: string;
     name: string;
     url: string;
     accessToken: string;
   }>;
-  /**
-   * Binding, `instruction`-type workspace knowledge notes. Rendered under a
-   * MANDATORY wrapper that explicitly overrides conversational-bypass
-   * default-concise behavior. Pre-formatted as a bullet list (one `- ...`
-   * per line). Empty/undefined when no instruction notes exist.
-   */
+
   knowledgeInstructions?: string;
-  /**
-   * Soft, `context`/`reference`-type workspace knowledge notes. Rendered
-   * under a "persistent workspace context" wrapper — background info, not
-   * binding rules. Pre-formatted with `### Context` / `### Reference`
-   * sub-headers. Empty/undefined when no context notes exist.
-   */
+
   knowledgeContext?: string;
-  /** UI language preference — instructs the agent to reply in the user's language */
+
   language?: string;
-  /**
-   * Custom config file name (default: 'opencode.json').
-   * Use a per-task name (e.g. 'opencode-tsk_abc123.json') to prevent
-   * concurrent tasks from overwriting each other's config.
-   */
+
   configFileName?: string;
 
-  /**
-   * Path to the GWS accounts manifest JSON file.
-   * When set, gmail-mcp, calendar-mcp, and gws-mcp are registered and
-   * receive this path via the GWS_ACCOUNTS_MANIFEST env var.
-   */
   gwsAccountsManifestPath?: string;
 
-  /**
-   * Summary of connected Google accounts for system-prompt injection.
-   * Only accounts with status 'connected' should be included.
-   */
   gwsAccountsSummary?: Array<{ label: string; email: string; status: string }>;
 
-  /**
-   * Live connection status of all 8 built-in connectors for system-prompt injection.
-   * Populated by the desktop layer from ConnectorAuthStore instances.
-   */
   builtInConnectorStatuses?: Array<{ displayName: string; connected: boolean }>;
 }
 

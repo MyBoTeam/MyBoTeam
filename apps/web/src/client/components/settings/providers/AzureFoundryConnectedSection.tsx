@@ -20,7 +20,7 @@ export function AzureFoundryConnectedSection({
 
   return (
     <>
-      {/* Display saved credentials info */}
+      {}
       <div className="space-y-3">
         <div>
           <label className="mb-2 block text-sm font-medium text-foreground">

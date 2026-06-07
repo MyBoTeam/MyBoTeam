@@ -8,7 +8,6 @@ interface ProviderModelSelectProps {
   onDisconnect: () => void;
 }
 
-/** Model selector + disconnect controls shown when a provider is connected. */
 export function ProviderModelSelect({
   models,
   selectedModelId,

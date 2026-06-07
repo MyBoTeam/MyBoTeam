@@ -72,10 +72,7 @@ export function resolveLlamaCppRuntimeModelName(
 
 export function normalizeSelectedModelForSdk(
   selectedModel: SelectedModel | null,
-  // Kept for API parity with commercial 1a320029 — the `local-model` branch
-  // (which consumed these options via `resolveLlamaCppRuntimeModelName`) is
-  // commercial-only and excluded from OSS. If/when OSS adds `local-model`
-  // provider support, re-use the parameter instead of renaming it back.
+
   _options: RuntimeModelResolutionOptions = {},
 ): SdkSelectedModelRef | null {
   if (!selectedModel) {
@@ -125,9 +122,6 @@ export function normalizeSelectedModelForSdk(
   }
 
   // Note: commercial 1a320029 branches for 'local-model' and 'auto-model-routing'
-  // providers are OSS-divergent — those providers do not exist in OSS's
-  // `ProviderId` union. If/when OSS adds them, reintroduce the branches from
-  // the commercial snapshot verbatim.
 
   if (selectedModel.provider === 'vertex') {
     return {

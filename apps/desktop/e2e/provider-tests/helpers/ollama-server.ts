@@ -1,24 +1,12 @@
-/**
- * Ollama server lifecycle driver for E2E tests.
- *
- * Handles:
- * - Auto-starting Ollama if installed but not running
- * - Checking if Ollama is running
- * - Pulling models if needed
- * - Auto-stopping Ollama on teardown (only if we started it)
- */
-
 import { type ChildProcess, execSync, spawn } from 'node:child_process';
 import type { OllamaSecrets } from '../types';
 
 const DEFAULT_OLLAMA_URL = 'http://localhost:11434';
 const DEFAULT_TEST_MODEL = 'llama3.2:1b';
-const SERVER_STARTUP_TIMEOUT = 30_000; // 30s
-const SERVER_POLL_INTERVAL = 500; // 500ms
-const SIGTERM_GRACE_PERIOD = 5_000; // 5s
-const MODEL_PULL_TIMEOUT = 600_000; // 10 minutes
-
-// ── Private helpers ──────────────────────────────────────────────────
+const SERVER_STARTUP_TIMEOUT = 30_000;
+const SERVER_POLL_INTERVAL = 500;
+const SIGTERM_GRACE_PERIOD = 5_000;
+const MODEL_PULL_TIMEOUT = 600_000;
 
 async function isOllamaRunning(serverUrl: string): Promise<boolean> {
   try {
@@ -76,7 +64,7 @@ async function pullModel(serverUrl: string, modelId: string): Promise<void> {
 
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split('\n');
-      buffer = lines.pop() ?? ''; // Keep incomplete last line for next chunk
+      buffer = lines.pop() ?? '';
 
       for (const line of lines) {
         if (!line.trim()) continue;
@@ -124,19 +112,6 @@ async function waitForServerReady(serverUrl: string, timeout: number): Promise<v
   throw new Error(`Ollama server did not become ready within ${timeout}ms`);
 }
 
-// ── Public driver ────────────────────────────────────────────────────
-
-/**
- * Encapsulates Ollama server lifecycle for E2E tests.
- *
- * Usage in specs:
- * ```ts
- * const ollama = new OllamaTestDriver(secrets);
- * test.beforeAll(ollama.beforeAll);
- * test.afterAll(ollama.afterAll);
- * // later: ollama.serverUrl, ollama.modelId
- * ```
- */
 export class OllamaTestDriver {
   private ollamaProcess: ChildProcess | null = null;
   private serverStartedByUs = false;
@@ -156,7 +131,6 @@ export class OllamaTestDriver {
     return this._modelId;
   }
 
-  /** Wire into test.beforeAll — starts server + pulls model */
   beforeAll = async (): Promise<void> => {
     const running = await isOllamaRunning(this._serverUrl);
     if (running) {
@@ -201,7 +175,6 @@ export class OllamaTestDriver {
     }
   };
 
-  /** Wire into test.afterAll — stops server if we started it */
   afterAll = async (): Promise<void> => {
     if (!this.serverStartedByUs || !this.ollamaProcess) return;
 

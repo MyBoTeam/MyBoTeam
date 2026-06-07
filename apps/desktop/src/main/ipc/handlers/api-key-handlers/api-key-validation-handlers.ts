@@ -52,7 +52,7 @@ export function registerApiKeyValidationHandlers(): void {
       _event: IpcMainInvokeEvent,
       provider: string,
       key: string,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       rawOptions?: Record<string, any>,
     ) => {
       if (!ALLOWED_API_KEY_PROVIDERS.has(provider)) {
@@ -165,7 +165,6 @@ export function registerApiKeyValidationHandlers(): void {
   });
 }
 
-// Re-export getAllApiKeys for use by other sub-modules
 import { getAllApiKeys } from '../../../store/secureStorage';
 
 export { getAllApiKeys };

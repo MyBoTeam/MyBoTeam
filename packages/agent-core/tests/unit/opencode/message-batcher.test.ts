@@ -9,7 +9,6 @@ import {
 
 describe('message-batcher', () => {
   afterEach(() => {
-    // Clean up batchers to avoid cross-test pollution
     flushAndCleanupBatcher('task-1');
     flushAndCleanupBatcher('task-qm-1');
     flushAndCleanupBatcher('task-qm-2');
@@ -74,15 +73,14 @@ describe('message-batcher', () => {
 
       batcher.flush();
 
-      // msg1 failed, msg2 succeeded
       expect(addTaskMessage).toHaveBeenCalledTimes(2);
       expect(forwardToRenderer).toHaveBeenCalledWith('task:update:batch', {
         taskId: 'task-1',
         messages: [msg2],
       });
-      // failed message stays in pending
+
       expect(batcher.pendingMessages).toEqual([msg1]);
-      // should set a retry timeout
+
       expect(batcher.timeout).not.toBeNull();
     });
 
@@ -112,10 +110,8 @@ describe('message-batcher', () => {
       const msg: TaskMessage = { role: 'assistant', content: 'Test', ts: 100 };
       queueMessage('task-qm-1', msg, forwardToRenderer, addTaskMessage);
 
-      // Message is queued but not yet flushed
       expect(addTaskMessage).not.toHaveBeenCalled();
 
-      // Manually flush and clean up
       flushAndCleanupBatcher('task-qm-1');
 
       expect(addTaskMessage).toHaveBeenCalledWith('task-qm-1', msg);
@@ -135,7 +131,6 @@ describe('message-batcher', () => {
       queueMessage('task-qm-2', msg1, forwardToRenderer, addTaskMessage);
       queueMessage('task-qm-2', msg2, forwardToRenderer, addTaskMessage);
 
-      // Manually flush - both messages should be in one batch
       flushAndCleanupBatcher('task-qm-2');
 
       expect(addTaskMessage).toHaveBeenCalledTimes(2);
@@ -162,7 +157,6 @@ describe('message-batcher', () => {
         messages: [msg],
       });
 
-      // Subsequent queue creates a new batcher (old one was cleaned up)
       addTaskMessage.mockClear();
       forwardToRenderer.mockClear();
       const msg2: TaskMessage = { role: 'assistant', content: 'After cleanup', ts: 200 };
@@ -176,7 +170,6 @@ describe('message-batcher', () => {
       const forwardToRenderer = vi.fn();
       const addTaskMessage = vi.fn();
 
-      // Should not throw
       flushAndCleanupBatcher('nonexistent');
       expect(addTaskMessage).not.toHaveBeenCalled();
     });

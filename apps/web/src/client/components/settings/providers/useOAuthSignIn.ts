@@ -7,7 +7,6 @@ import { getMyBoTeam } from '@/lib/myboteam';
 
 const logger = createLogger('useOAuthSignIn');
 
-// Fallback models for OpenAI OAuth flow where no API key is available.
 export const OPENAI_OAUTH_FALLBACK_MODELS: Array<{ id: string; name: string }> = [
   { id: 'openai/gpt-5.2', name: 'GPT 5.2' },
   { id: 'openai/gpt-5.2-codex', name: 'GPT 5.2 Codex' },
@@ -26,7 +25,6 @@ export interface UseOAuthSignInReturn {
   handleChatGptSignIn: () => Promise<void>;
 }
 
-/** Handles ChatGPT OAuth polling flow for ClassicProviderForm. */
 export function useOAuthSignIn({
   providerId,
   onConnect,
@@ -35,10 +33,9 @@ export function useOAuthSignIn({
   const { t } = useTranslation('settings');
   const [signingIn, setSigningIn] = useState(false);
   const oauthPollAbortRef = useRef<AbortController | null>(null);
-  // Issue #4: track attempt id so superseded attempts don't mutate state
+
   const signInAttemptRef = useRef(0);
 
-  // Abort any in-flight poll on unmount.
   useEffect(() => {
     return () => {
       oauthPollAbortRef.current?.abort();
@@ -46,9 +43,8 @@ export function useOAuthSignIn({
   }, []);
 
   const handleChatGptSignIn = async () => {
-    // Increment attempt id so any previous in-flight attempt becomes stale.
     const attemptId = ++signInAttemptRef.current;
-    // Abort previous poll if any, then start a fresh controller.
+
     oauthPollAbortRef.current?.abort();
     const abortController = new AbortController();
     oauthPollAbortRef.current = abortController;
@@ -77,17 +73,8 @@ export function useOAuthSignIn({
       pollStarted = true;
 
       const POLL_INTERVAL_MS = 5000;
-      const MAX_ATTEMPTS = 36; // 3 minutes
+      const MAX_ATTEMPTS = 36;
 
-      // Phase 4a of the SDK cutover port: the `loginOpenAiWithChatGpt()` IPC
-      // now blocks until the daemon-side `auth.openai.awaitCompletion` RPC
-      // resolves — so by the time we reach here the underlying OAuth flow is
-      // already complete. Checking status immediately (before the loop's 5s
-      // sleep) removes a redundant 5-second wait between "auth done" and
-      // "provider marked connected" that was baked in for the old
-      // fire-and-forget IPC shape. The loop retains its 5s inter-attempt
-      // sleep as a retry cadence for the rare case where the first check
-      // races the auth-state file write.
       const poll = async () => {
         for (let i = 0; i < MAX_ATTEMPTS; i++) {
           if (i > 0) {
@@ -113,7 +100,7 @@ export function useOAuthSignIn({
               }
             }
             if (abortController.signal.aborted || attemptId !== signInAttemptRef.current) return;
-            // Issue #5: only preselect defaultModelId if it's in availableModels
+
             onConnect({
               providerId,
               connectionStatus: 'connected',
@@ -155,7 +142,6 @@ export function useOAuthSignIn({
       }
       setError(err instanceof Error ? err.message : t('status.signInFailed'));
     } finally {
-      // Cleanup: only set signingIn to false if we didn't start polling and we're not bailing due to abort/stale attempt
       if (!pollStarted && !shouldBail) {
         setSigningIn(false);
       }

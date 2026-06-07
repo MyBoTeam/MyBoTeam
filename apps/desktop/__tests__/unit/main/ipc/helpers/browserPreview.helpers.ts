@@ -1,13 +1,4 @@
-/**
- * Shared mock/setup helpers for BrowserPreview IPC handler tests.
- *
- * Extracted from handlers.browserpreview.unit.test.ts to keep the test file
- * focused on assertions rather than boilerplate (CodeRabbit suggestion).
- */
-
 import { vi } from 'vitest';
-
-// ── Electron mock factory ────────────────────────────────────────────────────
 
 export const mockHandlers = new Map<string, (...args: unknown[]) => unknown>();
 
@@ -45,8 +36,6 @@ export function createMockElectron() {
     app: { isPackaged: false, getPath: vi.fn(() => '/tmp/test-app') },
   };
 }
-
-// ── Storage mock factory ─────────────────────────────────────────────────────
 
 export function createMockStorage() {
   return {
@@ -125,8 +114,6 @@ export function createMockStorage() {
     updateConnector: vi.fn(),
   };
 }
-
-// ── Test helpers ─────────────────────────────────────────────────────────────
 
 export function createMockEvent() {
   return {

@@ -1,17 +1,6 @@
-/**
- * HTTP utility helpers for the HuggingFace Local inference server.
- * Contains body-reading, JSON response helpers, and request validation.
- */
-
 import type http from 'node:http';
 import type { ChatCompletionRequest } from './server-state';
 
-/**
- * Read the full request body as a string.
- * Enforces a max size limit (default 10MB) to prevent OOM.
- * Does NOT destroy the socket on overflow — the caller is responsible for
- * sending a 413 response and ending the connection.
- */
 export function readBody(
   req: http.IncomingMessage,
   limitBytes = 10 * 1024 * 1024,
@@ -41,9 +30,6 @@ export function readBody(
   });
 }
 
-/**
- * Write a JSON error response.
- */
 export function writeJsonError(
   res: http.ServerResponse,
   status: number,
@@ -54,10 +40,6 @@ export function writeJsonError(
   res.end(JSON.stringify({ error: { message, type } }));
 }
 
-/**
- * Validate sampling parameters and write a 400 error if invalid.
- * Returns true if valid, false if an error was written.
- */
 export function validateSamplingParams(
   chatReq: ChatCompletionRequest,
   res: http.ServerResponse,
@@ -81,9 +63,6 @@ export function validateSamplingParams(
   return true;
 }
 
-/**
- * Set CORS headers on the response, restricted to localhost origins.
- */
 export function setCorsHeaders(req: http.IncomingMessage, res: http.ServerResponse): void {
   const origin = req.headers.origin;
   if (origin && /^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(origin)) {

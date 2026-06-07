@@ -6,7 +6,6 @@ import type { TaskState } from './taskStore';
 type SetFn = (partial: Partial<TaskState> | ((state: TaskState) => Partial<TaskState>)) => void;
 type GetFn = () => TaskState;
 
-/** Task update event handling slice of the task store. */
 export function createTaskUpdateActions(set: SetFn, _get: GetFn) {
   return {
     addTaskUpdate: (event: TaskUpdateEvent) => {
@@ -22,11 +21,6 @@ export function createTaskUpdateActions(set: SetFn, _get: GetFn) {
         let updatedTasks = state.tasks;
         let newStatus: TaskStatus | null = null;
         if (event.type === 'message' && event.message && isCurrentTask && state.currentTask) {
-          // Phase 1c of the SDK cutover port — merge by stable ID so a tool
-          // row's `{ toolStatus: 'running' }` followed by
-          // `{ toolStatus: 'completed' }` (same id) collapses into ONE row,
-          // not two. Before this, raw append produced duplicate bubbles on
-          // every tool-state transition.
           updatedCurrentTask = {
             ...state.currentTask,
             messages: upsertTaskMessages(state.currentTask.messages, [event.message]),
@@ -66,7 +60,6 @@ export function createTaskUpdateActions(set: SetFn, _get: GetFn) {
             if (t.id !== event.taskId) return t;
             const taskUpdate: Partial<typeof t> = { status: finalStatus };
             if (isCurrentTask && updatedCurrentTask) {
-              // Keep tasks array in sync with currentTask for terminal fields
               taskUpdate.messages = updatedCurrentTask.messages;
               if ('result' in updatedCurrentTask) taskUpdate.result = updatedCurrentTask.result;
               if ('sessionId' in updatedCurrentTask && updatedCurrentTask.sessionId != null) {
@@ -87,8 +80,7 @@ export function createTaskUpdateActions(set: SetFn, _get: GetFn) {
           const isInterrupted = event.type === 'complete' && event.result?.status === 'interrupted';
           shouldClearTodos = !isInterrupted;
         }
-        // Only clear isLoading when the event is for the currently active task
-        // Also clear isLoading when the task transitions out of 'queued'
+
         const wasQueued =
           state.currentTask?.id === event.taskId && state.currentTask?.status === 'queued';
         const shouldClearLoading = isCurrentTask && (newStatus !== null || wasQueued);
@@ -112,14 +104,13 @@ export function createTaskUpdateActions(set: SetFn, _get: GetFn) {
         if (!state.currentTask || state.currentTask.id !== event.taskId) {
           return state;
         }
-        // Merge-by-stable-id for the batch path, same reason as the
-        // single-message branch above.
+
         const updatedMessages = upsertTaskMessages(state.currentTask.messages, event.messages);
         const updatedTask = {
           ...state.currentTask,
           messages: updatedMessages,
         };
-        // Keep tasks array in sync with currentTask batch messages
+
         const updatedTasks = state.tasks.map((t) =>
           t.id === event.taskId ? { ...t, messages: updatedMessages } : t,
         );

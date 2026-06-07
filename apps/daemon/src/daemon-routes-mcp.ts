@@ -6,7 +6,6 @@ import { safeHandler } from './daemon-routes-middleware.js';
 export function registerMcpRoutes(services: RouteServices): void {
   const { rpc, connectorService, secretsService } = services;
 
-  // ── Secrets ──
   rpc.registerMethod(
     'secrets.storeApiKey',
     safeHandler((params) => {
@@ -60,7 +59,6 @@ export function registerMcpRoutes(services: RouteServices): void {
     }),
   );
 
-  // ── Connectors ──
   rpc.registerMethod(
     'connectors.list',
     safeHandler(() => Promise.resolve(connectorService.list())),
@@ -138,7 +136,6 @@ export function registerMcpRoutes(services: RouteServices): void {
     }),
   );
 
-  // ── Connector auth entries ──
   const connectorKeyParam = z.object({ connectorKey: z.string().min(1) });
   rpc.registerMethod(
     'connectors.authEntry.read',

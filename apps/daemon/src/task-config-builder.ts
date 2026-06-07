@@ -25,12 +25,6 @@ export interface TaskConfigBuilderOptions {
   myboteamRuntime?: MyboteamRuntime;
 }
 
-// Phase 4b of the OpenCode SDK cutover port removed the dead `getCliCommand`,
-// `buildEnvironment`, and `buildCliArgs` helpers. The SDK adapter no longer
-// spawns a CLI per task — `OpenCodeServerManager` runs `opencode serve`
-// directly via `child_process.spawn` and the SDK uses HTTP. The
-// per-task spawn environment is built inside the server-manager itself.
-
 export function getBundledNodeBinPath(opts: TaskConfigBuilderOptions): string | undefined {
   const paths = getBundledNodePaths({
     isPackaged: opts.isPackaged,
@@ -53,29 +47,6 @@ export async function isCliAvailable(opts: TaskConfigBuilderOptions): Promise<bo
   return coreIsCliAvailable(cliConfig);
 }
 
-/**
- * Pre-task hook invoked from two places:
- *   1. `OpenCodeAdapter.startTask` (agent-core) — writes the per-task config
- *      file, then calls `session.create` against the running `opencode serve`.
- *   2. `OpenCodeTaskRuntime.doStart` (server-manager) — writes the same
- *      config file and surfaces `OPENCODE_CONFIG[_DIR]` into the env the
- *      `opencode serve` child inherits.
- *
- * Both calls route through `resolveTaskConfig` — the shared "one brain"
- * that injects skills, connectors (with token refresh), cloud browser,
- * knowledge notes, language, GWS accounts manifest, and OpenAI store:false
- * into a single `ConfigGeneratorOptions` payload.
- *
- * The `ctx` argument carries per-task context:
- *   - `ctx.taskId` → lets us emit a per-task config filename
- *     (`opencode-<taskId>.json`) so concurrent tasks don't race on the same
- *     `opencode.json`.
- *   - `ctx.workspaceId` → workspace-scoped knowledge notes.
- *
- * The transient OAuth flow (`createTransientOpencodeClient`) passes an empty
- * ctx; in that case we fall back to the default `opencode.json` filename and
- * skip the workspace context.
- */
 export async function onBeforeStart(
   storage: StorageAPI,
   opts: TaskConfigBuilderOptions,
@@ -83,17 +54,7 @@ export async function onBeforeStart(
 ): Promise<{
   configPath: string;
   env: NodeJS.ProcessEnv;
-  /**
-   * `instruction`-type workspace knowledge notes pre-formatted as a
-   * bullet list. Returned here (in addition to being baked into
-   * `agent.myboteam.prompt` in the generated config file) so the
-   * adapter can inject them as a compact runtime `system` block on
-   * every `session.prompt` call. See `OpenCodeAdapter.buildWorkspaceInstructionRuntimeBlock`
-   * for the rationale — provider-native instruction channels (OpenAI/
-   * Codex path especially) crowd out the agent-level prompt, so we
-   * carry the mandatory rules through the SDK's first-class `system`
-   * field as well.
-   */
+
   workspaceInstructions?: string;
 }> {
   const authPath = getOpenCodeAuthJsonPath();
@@ -104,9 +65,6 @@ export async function onBeforeStart(
 
   const skills = getEnabledSkills();
 
-  // Resolve the database lazily. Tests or daemon callers that initialize
-  // storage differently may not have `getDatabase()` set up — treat it as
-  // optional (GWS manifest step then silently skips).
   let database: ReturnType<typeof getDatabase> | undefined;
   try {
     database = getDatabase();
@@ -131,21 +89,13 @@ export async function onBeforeStart(
     myboteamStorageDeps: {
       readKey: (key) => storage.get(key),
       writeKey: (key, value) => storage.set(key, value),
-      readGaClientId: () => null, // GA client ID not available in daemon — fingerprint fallback used
+      readGaClientId: () => null,
     },
     database,
   });
 
   const result = generateConfig(configOptions);
 
-  // Prepend the bundled Node.js bin dir to the env's PATH so the
-  // `apps/desktop/node_modules/.bin/opencode` shell wrapper (and the
-  // packaged equivalent) can find `node` even when the daemon runs as a
-  // login item with a minimal PATH (e.g. `/usr/bin:/bin:/usr/sbin:/sbin`
-  // with no user-installed Node.js). The deleted PTY-era `buildEnvironment`
-  // helper used to do this; the SDK adapter still needs it because
-  // `opencode serve` is launched by `OpenCodeServerManager.spawnOpenCodeServer`
-  // through the same shell shim.
   const env: NodeJS.ProcessEnv = {
     OPENCODE_CONFIG: result.configPath,
     OPENCODE_CONFIG_DIR: path.dirname(result.configPath),

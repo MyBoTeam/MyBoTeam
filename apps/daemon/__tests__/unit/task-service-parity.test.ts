@@ -1,19 +1,9 @@
-/**
- * Tests for Phase 2 parity requirements:
- * - startTask passes attachments into validated config
- * - resumeSession passes attachments into resumed config
- * - saveTask uses workspaceId
- * - per-task config file isolation under concurrency
- */
-
 import type { FileAttachmentInfo, Task, TaskConfig } from '@myboteam/agent-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Track what TaskManager.startTask receives
 let capturedTaskConfigs: Array<{ taskId: string; config: TaskConfig }> = [];
 let capturedSavedTasks: Array<{ task: Task; workspaceId?: string | null }> = [];
 
-// Mock agent-core to avoid DB/pty dependencies
 vi.mock('@myboteam/agent-core', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
   return {
@@ -178,9 +168,6 @@ describe('TaskService parity', () => {
     expect(capturedTaskConfigs[0].config.files).toEqual(attachments);
   });
 
-  // Regression: `resumeSession` used to not accept `workspaceId` at all,
-  // so every follow-up turn in a workspace conversation ran without
-  // workspace-scoped knowledge notes. This test pins the explicit forward.
   it('resumeSession forwards caller-supplied workspaceId into the resumed TaskConfig', async () => {
     const storage = createMockStorage();
     const service = new TaskService(storage as never, {
@@ -199,11 +186,6 @@ describe('TaskService parity', () => {
     expect(capturedTaskConfigs[0].config.workspaceId).toBe('ws_explicit');
   });
 
-  // Regression: without an explicit workspaceId, `resumeSession` should
-  // fall back to the workspace the existing task was originally saved
-  // under — otherwise users who scheduled a workspace task and later
-  // resume via a daemon-only source (WhatsApp, scheduler) would still
-  // lose workspace knowledge notes on the resumed turn.
   it('resumeSession falls back to the stored task workspaceId when none is provided', async () => {
     const storage = createMockStorage();
     (storage.getTask as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -229,8 +211,6 @@ describe('TaskService parity', () => {
     expect(capturedTaskConfigs[0].config.workspaceId).toBe('ws_from_storage');
   });
 
-  // Regression: when the resumed task has no workspaceId anywhere,
-  // `resumeSession` must not invent one — it stays undefined so the
   // resolver skips the knowledge-note step cleanly.
   it('resumeSession leaves workspaceId undefined when neither params nor stored task has one', async () => {
     const storage = createMockStorage();
@@ -265,17 +245,10 @@ describe('TaskService parity', () => {
     });
 
     service.listTasks('ws-filter');
-    // `TaskService.listTasks` forwards both the workspace filter and the
-    // `includeUnassigned` flag (default `false`). `toHaveBeenCalledWith`
-    // checks the full argument list, so the assertion must include the flag.
+
     expect(storage.getTasks).toHaveBeenCalledWith('ws-filter', false);
   });
 
-  // REGRESSION (Codex review P1): `stopTask` used to only update storage
-  // to `'cancelled'` without emitting any terminal event. Callbacks are
-  // wired only off `'complete'`/`'error'`/`'statusChange'`, so every
-  // cancelled task leaked its `taskSources` entry and its per-task
-  // `opencode serve` runtime until the daemon was restarted.
   describe('stopTask cleanup', () => {
     it('emits statusChange { status: "cancelled" } for queued tasks', async () => {
       const storage = createMockStorage();
@@ -283,8 +256,7 @@ describe('TaskService parity', () => {
         userDataPath: '/data',
         mcpToolsPath: '/tools',
       });
-      // Force the queued branch: `isTaskQueued` returns true, `hasActiveTask`
-      // returns false (the default mock already does this).
+
       const taskManager = (
         service as unknown as { taskManager: { isTaskQueued: ReturnType<typeof vi.fn> } }
       ).taskManager;
@@ -338,14 +310,6 @@ describe('TaskService parity', () => {
     });
   });
 
-  // REGRESSION (Max residual #1): the `permission.respond` RPC handler in
-  // `daemon-routes.ts` now gates on `taskService.hasActiveTask(taskId)`
-  // before forwarding the response. Without the guard a bogus taskId
-  // cascades an error from deep inside `OpenCodeAdapter.sendResponse`
-  // (pending === null, or the adapter doesn't exist) producing a
-  // confusing stack trace rather than a clean "unknown task" RPC error.
-  // This suite pins the contract that hasActiveTask returns false for
-  // unknown taskIds and the handler throws a readable error.
   describe('permission.respond bogus taskId guard', () => {
     it('hasActiveTask returns false for unknown taskIds', () => {
       const storage = createMockStorage();
@@ -353,15 +317,11 @@ describe('TaskService parity', () => {
         userDataPath: '/data',
         mcpToolsPath: '/tools',
       });
-      // TaskManager's default mock returns false — this assertion pins the
-      // contract TaskService.hasActiveTask delegates through to it.
+
       expect(service.hasActiveTask('tsk_nonexistent')).toBe(false);
     });
 
     it('mirrors the guard logic from daemon-routes: throws when task is unknown', async () => {
-      // Replicate the handler's gate + forward pattern. The real handler
-      // lives in `apps/daemon/src/daemon-routes.ts`; this test pins the
-      // contract so a refactor that drops the gate fails fast.
       const storage = createMockStorage();
       const service = new TaskService(storage as never, {
         userDataPath: '/data',

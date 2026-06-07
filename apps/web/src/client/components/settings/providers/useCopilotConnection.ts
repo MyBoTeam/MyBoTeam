@@ -42,7 +42,6 @@ export function useCopilotConnection({
   const [userCode, setUserCode] = useState<string | null>(null);
   const [verificationUri, setVerificationUri] = useState<string | null>(null);
 
-  // Check if already connected on mount
   useEffect(() => {
     if (isConnected) {
       return;
@@ -57,7 +56,7 @@ export function useCopilotConnection({
         }
       })
       .catch((err) => logger.error('Failed to check Copilot status:', err));
-  }, [onConnect, isConnected]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [onConnect, isConnected]);
 
   const handleConnect = async () => {
     setConnecting(true);
@@ -70,8 +69,6 @@ export function useCopilotConnection({
     try {
       const myboteam = getMyBoTeam();
 
-      // loginGithubCopilot now returns immediately with the user code;
-      // polling continues in the background on the main process side.
       const result = await myboteam.loginGithubCopilot();
 
       if (result.ok) {
@@ -81,10 +78,9 @@ export function useCopilotConnection({
         if (result.verificationUri) {
           setVerificationUri(result.verificationUri);
         }
-        // Keep connecting=true while the background poll is in flight to prevent re-clicks.
+
         pollStarted = true;
 
-        // Drive timeout from the real expires_in returned by the main process (default 900s).
         const POLL_INTERVAL_MS = 5000;
         const expiresInMs = (result.expiresIn ?? 900) * 1000;
         const MAX_ATTEMPTS = Math.max(1, Math.ceil(expiresInMs / POLL_INTERVAL_MS));
@@ -118,7 +114,6 @@ export function useCopilotConnection({
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Connection failed');
     } finally {
-      // Only clear connecting if we didn't hand off to the background poll.
       if (!pollStarted) {
         setConnecting(false);
       }

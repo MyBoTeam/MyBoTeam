@@ -1,17 +1,3 @@
-/**
- * Small persistent daemon status indicator.
- * Rendered in the sidebar — always visible regardless of current page.
- *
- * Color/animation behavior:
- *   connected        → steady green
- *   starting         → blinking green
- *   stopped          → steady red
- *   stopping         → blinking red
- *   reconnecting     → blinking yellow
- *   disconnected     → blinking yellow
- *   reconnect-failed → steady red
- */
-
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { type DaemonStatus, useDaemonStore } from '@/stores/daemonStore';

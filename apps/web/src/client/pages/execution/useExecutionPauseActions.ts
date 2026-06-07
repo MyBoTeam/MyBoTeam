@@ -21,7 +21,7 @@ export function useExecutionPauseActions(s: CoreState) {
       }
       return await s.sendFollowUp(message, []);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- s is a stable hook result; individual actions are listed
+
     [
       myboteam,
       s.setPendingFollowUp,
@@ -45,7 +45,6 @@ export function useExecutionPauseActions(s: CoreState) {
     setTaskActionError(null);
     setIsTaskActionRunning(true);
     try {
-      // Slack MCP is currently the only supported oauth-connect provider.
       const status = await myboteam.getSlackMcpOauthStatus();
       if (status.pendingAuthorization) {
         await myboteam.logoutSlackMcp();

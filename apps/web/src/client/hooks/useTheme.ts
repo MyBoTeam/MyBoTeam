@@ -13,9 +13,7 @@ function getStoredPreference(): ThemePreference {
     if (stored === 'light' || stored === 'dark' || stored === 'system') {
       return stored;
     }
-  } catch {
-    // localStorage unavailable (privacy mode, SSR)
-  }
+  } catch {}
   return 'system';
 }
 
@@ -38,26 +36,22 @@ function resolveIsDark(preference: ThemePreference): boolean {
 export function useTheme() {
   const [preference, setPreference] = useState<ThemePreference>(getStoredPreference);
   const [isDark, setIsDark] = useState(() => resolveIsDark(getStoredPreference()));
-  // Guard: prevents async bootstrap from overwriting a user toggle that happened before it resolves
+
   const hasLocalOverrideRef = useRef(false);
   const [themeColor, setThemeColorState] = useState<ThemeColor>('neutral');
 
-  // Sync from Electron backend on mount and subscribe to host-driven changes
   useEffect(() => {
     const myboteam = getMyBoTeam();
     myboteam
       .getTheme()
       .then((theme) => {
-        // Skip if the user already made a choice before this async call resolved
         if (hasLocalOverrideRef.current) return;
         if (theme === 'light' || theme === 'dark' || theme === 'system') {
           setPreference(theme);
           setIsDark(resolveIsDark(theme));
         }
       })
-      .catch(() => {
-        // fall back to locally stored preference
-      });
+      .catch(() => {});
 
     if (myboteam.onThemeChange) {
       const cleanup = myboteam.onThemeChange(({ theme, resolved }) => {
@@ -71,7 +65,6 @@ export function useTheme() {
     return undefined;
   }, []);
 
-  // Sync color theme from backend on mount and subscribe
   useEffect(() => {
     const myboteam = getMyBoTeam();
     myboteam
@@ -96,7 +89,6 @@ export function useTheme() {
     return undefined;
   }, []);
 
-  // Follow OS theme changes when preference is 'system'
   useEffect(() => {
     if (preference !== 'system') {
       return undefined;
@@ -122,9 +114,7 @@ export function useTheme() {
     applyLibTheme(newPreference);
     getMyBoTeam()
       .setTheme(newPreference)
-      .catch(() => {
-        // ignore
-      });
+      .catch(() => {});
   };
 
   const changeThemeColor = (color: ThemeColor) => {

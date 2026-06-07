@@ -1,8 +1,3 @@
-/**
- * Tokenize a command string while preserving quoted sequences.
- * Handles both single and double quotes.
- * Example: 'create --title "Team Sync" --start 2024-01-01' → ['create', '--title', 'Team Sync', '--start', '2024-01-01']
- */
 export function tokenizeCommand(command: string): string[] {
   const tokens: string[] = [];
   let current = '';

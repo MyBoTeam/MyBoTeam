@@ -18,7 +18,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { createMemoryRouter, Navigate, RouterProvider } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Create mock functions for myboteam API
 const mockSetOnboardingComplete = vi.fn();
 const mockLogEvent = vi.fn();
 const mockListTasks = vi.fn();
@@ -26,7 +25,6 @@ const mockOnTaskStatusChange = vi.fn();
 const mockOnTaskUpdate = vi.fn();
 const mockGetTask = vi.fn();
 
-// Mock myboteam API
 const mockMyBoTeam = {
   setOnboardingComplete: mockSetOnboardingComplete,
   logEvent: mockLogEvent.mockResolvedValue(undefined),
@@ -49,7 +47,7 @@ const mockMyBoTeam = {
     },
     debugMode: false,
   }),
-  // Provider settings methods
+
   setActiveProvider: vi.fn().mockResolvedValue(undefined),
   setConnectedProvider: vi.fn().mockResolvedValue(undefined),
   removeConnectedProvider: vi.fn().mockResolvedValue(undefined),
@@ -66,14 +64,12 @@ const mockMyBoTeam = {
   onThemeColorChange: vi.fn().mockReturnValue(() => {}),
 };
 
-// Mock the myboteam module - always return true for isRunningInElectron for most tests
 vi.mock('@/lib/myboteam', () => ({
   getMyBoTeam: () => mockMyBoTeam,
   useMyBoTeam: () => mockMyBoTeam,
   isRunningInElectron: () => true,
 }));
 
-// Mock framer-motion to simplify testing animations
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({
@@ -151,7 +147,6 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-// Mock animation utilities
 vi.mock('@/lib/animations', () => ({
   springs: {
     bouncy: { type: 'spring', stiffness: 300 },
@@ -168,7 +163,6 @@ vi.mock('@/lib/animations', () => ({
   staggerItem: {},
 }));
 
-// Mock the task store
 const mockLoadTasks = vi.fn();
 const mockReset = vi.fn();
 let mockStoreState = {
@@ -186,7 +180,6 @@ vi.mock('@/stores/taskStore', () => ({
   useTaskStore: () => mockStoreState,
 }));
 
-// Mock the Sidebar component
 vi.mock('@/components/layout/Sidebar', () => ({
   default: () => <div data-testid="sidebar">Sidebar</div>,
 }));
@@ -244,20 +237,16 @@ describe('App Integration', () => {
 
   describe('router setup', () => {
     it('should render sidebar in ready state', async () => {
-      // Arrange & Act
       renderApp();
 
-      // Assert
       await waitFor(() => {
         expect(screen.getByTestId('sidebar')).toBeInTheDocument();
       });
     });
 
     it('should render main content area', async () => {
-      // Arrange & Act
       renderApp();
 
-      // Assert
       await waitFor(() => {
         const main = document.querySelector('main');
         expect(main).toBeInTheDocument();
@@ -265,10 +254,8 @@ describe('App Integration', () => {
     });
 
     it('should render drag region for window dragging', async () => {
-      // Arrange & Act
       renderApp();
 
-      // Assert
       await waitFor(() => {
         const dragRegion = document.querySelector('.drag-region');
         expect(dragRegion).toBeInTheDocument();
@@ -278,20 +265,16 @@ describe('App Integration', () => {
 
   describe('route rendering - Home', () => {
     it('should render home page at root route', async () => {
-      // Arrange & Act
       renderApp('/');
 
-      // Assert
       await waitFor(() => {
         expect(screen.getByTestId('home-page')).toBeInTheDocument();
       });
     });
 
     it('should render home page content', async () => {
-      // Arrange & Act
       renderApp('/');
 
-      // Assert
       await waitFor(() => {
         expect(screen.getByText('Home Page Content')).toBeInTheDocument();
       });
@@ -300,30 +283,24 @@ describe('App Integration', () => {
 
   describe('route rendering - Execution', () => {
     it('should render execution page at /execution/:id route', async () => {
-      // Arrange & Act
       renderApp('/execution/task-123');
 
-      // Assert
       await waitFor(() => {
         expect(screen.getByTestId('execution-page')).toBeInTheDocument();
       });
     });
 
     it('should render execution page content', async () => {
-      // Arrange & Act
       renderApp('/execution/task-123');
 
-      // Assert
       await waitFor(() => {
         expect(screen.getByText('Execution Page Content')).toBeInTheDocument();
       });
     });
 
     it('should handle different task IDs', async () => {
-      // Arrange & Act
       renderApp('/execution/different-task-456');
 
-      // Assert
       await waitFor(() => {
         expect(screen.getByTestId('execution-page')).toBeInTheDocument();
       });
@@ -332,30 +309,24 @@ describe('App Integration', () => {
 
   describe('route rendering - Fallback', () => {
     it('should redirect unknown routes to home', async () => {
-      // Arrange & Act
       renderApp('/unknown-route');
 
-      // Assert
       await waitFor(() => {
         expect(screen.getByTestId('home-page')).toBeInTheDocument();
       });
     });
 
     it('should redirect /history to home (since it is not defined)', async () => {
-      // Arrange & Act
       renderApp('/history');
 
-      // Assert
       await waitFor(() => {
         expect(screen.getByTestId('home-page')).toBeInTheDocument();
       });
     });
 
     it('should redirect deeply nested unknown routes to home', async () => {
-      // Arrange & Act
       renderApp('/some/deeply/nested/route');
 
-      // Assert
       await waitFor(() => {
         expect(screen.getByTestId('home-page')).toBeInTheDocument();
       });
@@ -364,10 +335,8 @@ describe('App Integration', () => {
 
   describe('layout structure', () => {
     it('should render with flex layout', async () => {
-      // Arrange & Act
       renderApp();
 
-      // Assert
       await waitFor(() => {
         const flexContainer = document.querySelector('.flex.h-screen');
         expect(flexContainer).toBeInTheDocument();
@@ -375,10 +344,8 @@ describe('App Integration', () => {
     });
 
     it('should prevent overflow on app container', async () => {
-      // Arrange & Act
       renderApp();
 
-      // Assert
       await waitFor(() => {
         const container = document.querySelector('.overflow-hidden');
         expect(container).toBeInTheDocument();
@@ -386,10 +353,8 @@ describe('App Integration', () => {
     });
 
     it('should render main content with flex-1 for proper sizing', async () => {
-      // Arrange & Act
       renderApp();
 
-      // Assert
       await waitFor(() => {
         const main = document.querySelector('main.flex-1');
         expect(main).toBeInTheDocument();
@@ -399,10 +364,8 @@ describe('App Integration', () => {
 
   describe('accessibility', () => {
     it('should have main landmark element', async () => {
-      // Arrange & Act
       renderApp();
 
-      // Assert
       await waitFor(() => {
         const main = screen.getByRole('main');
         expect(main).toBeInTheDocument();

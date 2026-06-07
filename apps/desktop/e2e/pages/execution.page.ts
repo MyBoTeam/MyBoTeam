@@ -36,32 +36,26 @@ export class ExecutionPage {
     return this.page.getByTestId('permission-deny-button');
   }
 
-  /** Get all question option buttons inside the permission card */
   get questionOptions() {
     return this.permissionCard.locator('button').filter({ hasText: /Option|Other/ });
   }
 
-  /** Get the custom response textarea (always visible below options) */
   get customResponseInput() {
     return this.page.getByPlaceholder('Enter a different option...');
   }
 
-  /** Get the messages scroll container */
   get messagesScrollContainer() {
     return this.page.getByTestId('messages-scroll-container');
   }
 
-  /** Get the scroll-to-bottom button (visible when scrolled up) */
   get scrollToBottomButton() {
     return this.page.getByTestId('scroll-to-bottom-button');
   }
 
-  /** Get all copy buttons on the page */
   get copyButtons() {
     return this.page.getByTestId('message-copy-button');
   }
 
-  /** Get all code block copy buttons (syntax highlighter) */
   get codeBlockCopyButtons() {
     return this.page.getByTestId('code-block-copy-button');
   }
@@ -74,7 +68,6 @@ export class ExecutionPage {
     return this.page.getByTestId('start-new-task');
   }
 
-  /** Select a question option by index (0-based) */
   async selectQuestionOption(index: number) {
     await this.questionOptions.nth(index).click();
   }

@@ -1,11 +1,3 @@
-/**
- * Permission Request Handler
- *
- * Reusable logic for handling permission and question requests.
- * This module manages request state, timeouts, and validation.
- * The Electron-specific parts (IPC, HTTP servers) remain in the desktop app.
- */
-
 import { PERMISSION_REQUEST_TIMEOUT_MS } from '../common/index.js';
 import type { PermissionRequest } from '../common/types/permission.js';
 import {
@@ -30,10 +22,6 @@ export type {
   QuestionResponseData,
 } from './permission-handler-utils.js';
 
-/**
- * Handles permission and question request lifecycle.
- * Manages pending requests, timeouts, and validation.
- */
 export class PermissionRequestHandler {
   private pendingPermissions = new Map<string, PendingRequest<boolean>>();
   private pendingQuestions = new Map<string, PendingRequest<QuestionResponseData>>();
@@ -43,7 +31,6 @@ export class PermissionRequestHandler {
     this.defaultTimeoutMs = timeoutMs;
   }
 
-  /** Create a new permission request and wait for response */
   createPermissionRequest(timeoutMs?: number): { requestId: string; promise: Promise<boolean> } {
     const requestId = createFilePermissionRequestId();
     const timeout = timeoutMs ?? this.defaultTimeoutMs;
@@ -60,7 +47,6 @@ export class PermissionRequestHandler {
     return { requestId, promise };
   }
 
-  /** Create a new question request and wait for response */
   createQuestionRequest(timeoutMs?: number): {
     requestId: string;
     promise: Promise<QuestionResponseData>;
@@ -80,7 +66,6 @@ export class PermissionRequestHandler {
     return { requestId, promise };
   }
 
-  /** Resolve a pending permission request. Returns true if found and resolved. */
   resolvePermissionRequest(requestId: string, allowed: boolean): boolean {
     const pending = this.pendingPermissions.get(requestId);
     if (!pending) {
@@ -93,7 +78,6 @@ export class PermissionRequestHandler {
     return true;
   }
 
-  /** Resolve a pending question request. Returns true if found and resolved. */
   resolveQuestionRequest(requestId: string, response: QuestionResponseData): boolean {
     const pending = this.pendingQuestions.get(requestId);
     if (!pending) {
@@ -106,17 +90,14 @@ export class PermissionRequestHandler {
     return true;
   }
 
-  /** Validate file permission request data */
   validateFilePermissionRequest(data: unknown): PermissionValidationResult {
     return validateFilePermissionRequest(data);
   }
 
-  /** Validate question request data */
   validateQuestionRequest(data: unknown): PermissionValidationResult {
     return validateQuestionRequest(data);
   }
 
-  /** Build a PermissionRequest object for file operations */
   buildFilePermissionRequest(
     requestId: string,
     taskId: string,
@@ -125,7 +106,6 @@ export class PermissionRequestHandler {
     return buildFilePermissionRequest(requestId, taskId, data);
   }
 
-  /** Build a PermissionRequest object for questions */
   buildQuestionRequest(
     requestId: string,
     taskId: string,
@@ -134,27 +114,22 @@ export class PermissionRequestHandler {
     return buildQuestionRequest(requestId, taskId, data);
   }
 
-  /** Check if there are any pending permission requests */
   hasPendingPermissions(): boolean {
     return this.pendingPermissions.size > 0;
   }
 
-  /** Check if there are any pending question requests */
   hasPendingQuestions(): boolean {
     return this.pendingQuestions.size > 0;
   }
 
-  /** Get the count of pending permission requests */
   getPendingPermissionCount(): number {
     return this.pendingPermissions.size;
   }
 
-  /** Get the count of pending question requests */
   getPendingQuestionCount(): number {
     return this.pendingQuestions.size;
   }
 
-  /** Clear all pending requests (e.g., on shutdown). Rejects all pending promises. */
   clearAll(): void {
     for (const [_requestId, pending] of this.pendingPermissions) {
       clearTimeout(pending.timeoutId);

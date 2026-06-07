@@ -1,20 +1,20 @@
-/**
- * Single source of truth for the Node.js version bundled with the packaged
- * Electron app, plus per-platform download metadata.
- *
- * Consumed by:
- *   - scripts/download-nodejs.cjs  (fetch + verify the per-platform archive)
- *   - scripts/after-pack.cjs       (locate the extracted node-vX.Y.Z-<platform>-<arch>
- *                                    directory that electron-builder copies into the
- *                                    packaged app)
- *
- * Keep this module as the ONLY place the version string lives in packaging
- * scripts. A mismatch between the downloader and the after-pack hook causes
- * packaging to silently copy a stale or missing Node binary.
- *
- * SHA256 values come from https://nodejs.org/dist/v<NODE_VERSION>/SHASUMS256.txt
- * and must match the exact tarball filename.
- */
+   
+                                                                           
+                                                     
+  
+               
+                                                                             
+                                                                                       
+                                                                                     
+                                                   
+  
+                                                                           
+                                                                            
+                                                             
+  
+                                                                                 
+                                             
+   
 
 'use strict';
 

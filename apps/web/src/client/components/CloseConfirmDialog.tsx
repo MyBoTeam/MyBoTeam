@@ -1,9 +1,3 @@
-/**
- * CloseConfirmDialog — themed close confirmation shown when the user
- * clicks the window close button. Replaces the native OS dialog with
- * a Radix-based dialog matching the app's design system.
- */
-
 import { ArrowRight, Power, Warning } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -68,7 +62,7 @@ export function CloseConfirmDialog() {
         </DialogHeader>
 
         <div className="flex flex-col gap-3 py-2">
-          {/* Option 1: Keep daemon */}
+          {}
           <button
             type="button"
             onClick={() => setDecision('keep-daemon')}
@@ -94,7 +88,7 @@ export function CloseConfirmDialog() {
             </div>
           </button>
 
-          {/* Option 2: Stop daemon */}
+          {}
           <button
             type="button"
             onClick={() => setDecision('stop-daemon')}
@@ -120,7 +114,7 @@ export function CloseConfirmDialog() {
             </div>
           </button>
 
-          {/* Warning when stop-daemon is selected */}
+          {}
           {!isKeepDaemon && (
             <div className="flex items-start gap-2 rounded-md bg-destructive/10 border border-destructive/20 p-3">
               <Warning className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" weight="bold" />

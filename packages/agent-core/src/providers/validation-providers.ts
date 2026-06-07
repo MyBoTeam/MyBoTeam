@@ -1,18 +1,9 @@
-/**
- * Provider-specific API key validation fetch helpers.
- * Each function performs a minimal HTTP request to verify the key is valid.
- */
-
 import type { ProviderType } from '../common/types/provider.js';
 import { DEFAULT_PROVIDERS, ZAI_ENDPOINTS } from '../common/types/provider.js';
 import type { ZaiRegion } from '../common/types/providerSettings.js';
 import { fetchWithTimeout } from '../utils/fetch.js';
 import type { ValidationOptions } from './validation.js';
 
-/**
- * Perform the provider-specific HTTP request for API key validation.
- * Returns a Response, or null if the provider skips validation (always valid).
- */
 export async function fetchValidationResponse(
   provider: ProviderType,
   apiKey: string,
@@ -150,8 +141,6 @@ export async function fetchValidationResponse(
       return null;
 
     default: {
-      // Data-driven validation: fetch from modelsEndpoint configured in DEFAULT_PROVIDERS.
-      // This enables validation for any OpenAI-compatible provider without adding new cases.
       const providerConfig = DEFAULT_PROVIDERS.find((p) => p.id === provider);
       if (providerConfig?.modelsEndpoint) {
         const { url, authStyle } = providerConfig.modelsEndpoint;

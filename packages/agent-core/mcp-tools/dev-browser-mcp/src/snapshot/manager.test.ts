@@ -1,5 +1,3 @@
-// packages/core/mcp-tools/dev-browser-mcp/src/snapshot/manager.test.ts
-
 import { beforeEach, describe, expect, it } from 'vitest';
 import { SnapshotManager } from './manager.js';
 
@@ -20,30 +18,24 @@ describe('SnapshotManager', () => {
   });
 
   it('returns diff on second call with same page', () => {
-    // First call
     manager.processSnapshot(simpleSnapshot, 'https://example.com', 'Test');
 
-    // Second call - same URL
     const result = manager.processSnapshot(simpleSnapshot, 'https://example.com', 'Test');
 
     expect(result.type).toBe('diff');
   });
 
   it('returns full snapshot when URL changes', () => {
-    // First call
     manager.processSnapshot(simpleSnapshot, 'https://example.com/page1', 'Page 1');
 
-    // Second call - different URL
     const result = manager.processSnapshot(simpleSnapshot, 'https://example.com/page2', 'Page 2');
 
     expect(result.type).toBe('full');
   });
 
   it('returns full snapshot when full_snapshot option is true', () => {
-    // First call
     manager.processSnapshot(simpleSnapshot, 'https://example.com', 'Test');
 
-    // Second call with full_snapshot: true
     const result = manager.processSnapshot(simpleSnapshot, 'https://example.com', 'Test', {
       fullSnapshot: true,
     });
@@ -52,10 +44,8 @@ describe('SnapshotManager', () => {
   });
 
   it('normalizes URLs for same-page detection', () => {
-    // First call
     manager.processSnapshot(simpleSnapshot, 'https://example.com/page#section1', 'Test');
 
-    // Second call - same URL, different hash
     const result = manager.processSnapshot(
       simpleSnapshot,
       'https://example.com/page#section2',
@@ -66,13 +56,10 @@ describe('SnapshotManager', () => {
   });
 
   it('resets state correctly', () => {
-    // First call
     manager.processSnapshot(simpleSnapshot, 'https://example.com', 'Test');
 
-    // Reset
     manager.reset();
 
-    // Should act like first call again
     const result = manager.processSnapshot(simpleSnapshot, 'https://example.com', 'Test');
 
     expect(result.type).toBe('full');
@@ -80,7 +67,6 @@ describe('SnapshotManager', () => {
 
   describe('session history', () => {
     it('should track navigation history', () => {
-      // Process snapshots for different pages
       manager.processSnapshot(simpleSnapshot, 'https://example.com/page1', 'Page 1');
       manager.processSnapshot(simpleSnapshot, 'https://example.com/page2', 'Page 2');
       manager.processSnapshot(simpleSnapshot, 'https://example.com/page3', 'Page 3');
@@ -114,7 +100,6 @@ describe('SnapshotManager', () => {
 
   describe('full optimization pipeline', () => {
     it('should produce optimized output with all tiers', () => {
-      // Create test YAML with various element types
       const yaml1 = `- button "Home" [ref=e1]
 - link "About" [ref=e2]
 - navigation "Main Nav" [ref=e3]`;
@@ -123,21 +108,16 @@ describe('SnapshotManager', () => {
 - textbox "Query" [ref=e5]
 - link "Results" [ref=e6]`;
 
-      // Simulate navigation to first page
       const result1 = manager.processSnapshot(yaml1, 'https://example.com/home', 'Home', {});
 
-      // First snapshot should be full
       expect(result1.type).toBe('full');
       expect(result1.content).toBe(yaml1);
 
-      // Simulate navigation to second page
       const result2 = manager.processSnapshot(yaml2, 'https://example.com/search', 'Search', {});
 
-      // New page should also be full snapshot
       expect(result2.type).toBe('full');
       expect(result2.content).toBe(yaml2);
 
-      // Verify session tracking
       const summary = manager.getSessionSummary();
       expect(summary.pagesVisited).toBe(2);
       expect(summary.history).toContain('Home');
@@ -152,7 +132,6 @@ describe('SnapshotManager', () => {
 - textbox "Name" [ref=e2]
 - text "Success!" [ref=e3]`;
 
-      // First snapshot
       const result1 = manager.processSnapshot(
         initialYaml,
         'https://example.com/form',
@@ -161,7 +140,6 @@ describe('SnapshotManager', () => {
       );
       expect(result1.type).toBe('full');
 
-      // Same page update should use diff
       const result2 = manager.processSnapshot(
         updatedYaml,
         'https://example.com/form',
@@ -170,14 +148,12 @@ describe('SnapshotManager', () => {
       );
       expect(result2.type).toBe('diff');
 
-      // Session should show only one unique page visit path
       const summary = manager.getSessionSummary();
-      expect(summary.pagesVisited).toBe(2); // Both snapshots recorded
+      expect(summary.pagesVisited).toBe(2);
       expect(summary.history).toContain('Form Page');
     });
 
     it('should combine navigation tracking with diff optimization', () => {
-      // Simulate a real user flow: home -> search -> results -> back to search
       const homeYaml = `- link "Search" [ref=e1]
 - navigation "Main" [ref=e2]`;
 
@@ -189,13 +165,10 @@ describe('SnapshotManager', () => {
 - link "Result 1" [ref=e5]
 - link "Result 2" [ref=e6]`;
 
-      // Visit home
       manager.processSnapshot(homeYaml, 'https://example.com/', 'Home', {});
 
-      // Navigate to search
       manager.processSnapshot(searchYaml, 'https://example.com/search', 'Search', {});
 
-      // Update search page with results (same page, should diff)
       const resultUpdate = manager.processSnapshot(
         searchWithResultsYaml,
         'https://example.com/search',
@@ -204,7 +177,6 @@ describe('SnapshotManager', () => {
       );
       expect(resultUpdate.type).toBe('diff');
 
-      // Verify full navigation history is tracked
       const summary = manager.getSessionSummary();
       expect(summary.pagesVisited).toBe(3);
       expect(summary.history).toContain('Home');

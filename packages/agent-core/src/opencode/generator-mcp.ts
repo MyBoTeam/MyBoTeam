@@ -9,10 +9,10 @@ export { resolveMcpCommand } from './generator-mcp-tools.js';
 export interface BuildMcpServersOptions {
   mcpToolsPath: string;
   nodeExe: string;
-  /** Port for the WhatsApp HTTP API (daemon). Omit to disable the tool. */
+
   whatsappApiPort?: number;
   browserConfig: BrowserConfig;
-  /** Auth token for daemon HTTP APIs. MCP tools send this as Authorization header. */
+
   authToken?: string;
   connectors?: Array<{
     id: string;
@@ -20,17 +20,10 @@ export interface BuildMcpServersOptions {
     url: string;
     accessToken: string;
   }>;
-  /**
-   * Path to GWS accounts manifest JSON. When set, gmail-mcp, calendar-mcp,
-   * and gws-mcp are registered and receive this path via GWS_ACCOUNTS_MANIFEST.
-   */
+
   gwsAccountsManifestPath?: string;
 }
 
-/**
- * Builds the MCP server configuration map for OpenCode.
- * Includes built-in tools, browser config, and connected remote MCP connectors.
- */
 export function buildMcpServers(options: BuildMcpServersOptions): Record<string, McpServerConfig> {
   const {
     mcpToolsPath,
@@ -42,7 +35,6 @@ export function buildMcpServers(options: BuildMcpServersOptions): Record<string,
     gwsAccountsManifestPath,
   } = options;
 
-  // Auth env for daemon HTTP APIs — MCP tools send this as Authorization header
   const authEnv: Record<string, string> = authToken
     ? { MYBOTEAM_DAEMON_AUTH_TOKEN: authToken }
     : {};
@@ -120,9 +112,7 @@ export function buildMcpServers(options: BuildMcpServersOptions): Record<string,
         environment: gwsEnv,
         timeout: 60000,
       };
-    } catch {
-      // gmail-mcp not available (not yet built or installed)
-    }
+    } catch {}
     try {
       mcpServers['calendar-mcp'] = {
         type: 'local',
@@ -131,9 +121,7 @@ export function buildMcpServers(options: BuildMcpServersOptions): Record<string,
         environment: gwsEnv,
         timeout: 60000,
       };
-    } catch {
-      // calendar-mcp not available
-    }
+    } catch {}
     try {
       mcpServers['gws-mcp'] = {
         type: 'local',
@@ -142,9 +130,7 @@ export function buildMcpServers(options: BuildMcpServersOptions): Record<string,
         environment: gwsEnv,
         timeout: 60000,
       };
-    } catch {
-      // gws-mcp not available (requires @googleworkspace/cli)
-    }
+    } catch {}
     try {
       mcpServers['request-google-file-picker'] = {
         type: 'local',
@@ -158,9 +144,7 @@ export function buildMcpServers(options: BuildMcpServersOptions): Record<string,
         environment: gwsEnv,
         timeout: 30000,
       };
-    } catch {
-      // request-google-file-picker not available
-    }
+    } catch {}
   }
 
   if (connectors) {

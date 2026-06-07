@@ -1,10 +1,3 @@
-/**
- * Unit tests for the auto-updater public API (updater/index.ts).
- *
- * Manual-manifest path coverage (Win / non-AppImage Linux) lives in
- * updater.manual-manifest.unit.test.ts to keep each file under ~250 LOC.
- */
-
 import { EventEmitter } from 'node:events';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -21,7 +14,7 @@ vi.mock('electron', () => ({
     getVersion: vi.fn(() => '0.3.8'),
     getPath: vi.fn(() => '/tmp/test-userdata'),
     getAppPath: vi.fn(() => '/tmp/test-app'),
-    isPackaged: true, // skips the dev-app-update.yml fs write in initUpdater
+    isPackaged: true,
     name: 'MyBoTeam',
   },
   dialog: {
@@ -43,8 +36,7 @@ const mockAutoUpdater = {
   quitAndInstall: vi.fn(),
   on: vi.fn(),
 };
-// electron-updater is CommonJS. In the ESM main bundle, dynamic import exposes
-// `autoUpdater` under `default`, not as a named export.
+
 vi.mock('electron-updater', () => ({
   default: { autoUpdater: mockAutoUpdater },
 }));
@@ -199,7 +191,7 @@ describe('updater', () => {
           provider: 'generic',
           url: 'https://d.myboteam.app',
         });
-        // Pin: no channel key in the arg.
+
         const arg = mockAutoUpdater.setFeedURL.mock.calls[0][0] as Record<string, unknown>;
         expect(arg).not.toHaveProperty('channel');
       } finally {
@@ -265,7 +257,7 @@ describe('updater', () => {
   describe('gate-off triple — URL empty disables init, check, auto-check', () => {
     beforeEach(async () => {
       const { getBuildConfig } = await import('../../../src/main/config/build-config');
-      vi.mocked(getBuildConfig).mockReturnValue({ ...emptyConfig }); // URL empty
+      vi.mocked(getBuildConfig).mockReturnValue({ ...emptyConfig });
     });
 
     it('initUpdater does not touch electron-updater when URL is empty', async () => {
@@ -371,16 +363,8 @@ describe('updater', () => {
     });
 
     it('Windows/manual path: second autoCheckForUpdates after successful fetch is throttled (regression test)', async () => {
-      // End-to-end regression for the P1 fix: the manual path must record
-      // lastUpdateCheck after a trustworthy manifest, otherwise Windows and
-      // non-AppImage Linux auto-checks re-fetch on every launch. Uses the real
-      // updater/store.ts module (not a mock) so the shared storeData tracks the
-      // real write from recordCheckedNow().
       const restore = setPlatform('win32');
       try {
-        // Serve a valid manifest with SAME version as the mocked app (0.3.8) and
-        // a same-apex `path:` so the origin check passes. This is the "valid
-        // result" case that should record the throttle.
         mockHttpsGet.mockImplementation((_url: string, cb: (res: unknown) => void) => {
           const res = new EventEmitter() as EventEmitter & {
             statusCode: number;
@@ -400,14 +384,11 @@ describe('updater', () => {
         expect(storeData.lastUpdateCheck).toBeUndefined();
         const { autoCheckForUpdates } = await import('../../../src/main/updater');
 
-        // First launch: throttle is not set → auto-check fetches.
         autoCheckForUpdates();
         await new Promise((r) => setTimeout(r, 20));
         expect(mockHttpsGet).toHaveBeenCalledTimes(1);
         expect(typeof storeData.lastUpdateCheck).toBe('number');
 
-        // Second launch (same session): throttle is set, fetched within 1 day.
-        // autoCheckForUpdates must bail — no new network request.
         mockHttpsGet.mockClear();
         autoCheckForUpdates();
         await new Promise((r) => setTimeout(r, 20));

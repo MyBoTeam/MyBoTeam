@@ -12,8 +12,6 @@ import {
 } from './myboteam-ai-utils';
 import { useMyboteamAiConnect } from './useMyboteamAiConnect';
 
-// ─── Main form ────────────────────────────────────────────────────────────────
-
 interface MyboteamAiProviderFormProps {
   connectedProvider?: ConnectedProvider;
   onConnect: (provider: ConnectedProvider) => void;
@@ -68,15 +66,13 @@ export function MyboteamAiProviderForm({
           ) : null}
         </AnimatePresence>
 
-        {/* Disconnect button */}
+        {}
         {connectedProvider?.connectionStatus === 'connected' && (
           <button
             onClick={async () => {
               try {
                 await getMyBoTeam().myboteamAiDisconnect();
-              } catch {
-                // best-effort
-              }
+              } catch {}
               onDisconnect();
             }}
             className="mt-2 text-xs text-muted-foreground hover:text-destructive transition-colors"

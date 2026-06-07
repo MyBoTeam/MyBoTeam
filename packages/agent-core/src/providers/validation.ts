@@ -26,7 +26,6 @@ export async function validateApiKey(
   try {
     const response = await fetchValidationResponse(provider, apiKey, options ?? {}, timeout);
 
-    // null means the provider skips validation (always valid)
     if (response === null) {
       return { valid: true };
     }

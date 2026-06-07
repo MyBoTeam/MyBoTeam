@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { settingsTransitions, settingsVariants } from '@/lib/animations';
 import { getMyBoTeam } from '@/lib/myboteam';
-// Import OpenRouter logo
+
 import openrouterLogo from '/assets/ai-logos/openrouter.svg';
 import { ConnectButton, FormError, ProviderFormHeader } from '../shared';
 import { OpenRouterConnectedSection } from './OpenRouterConnectedSection';
@@ -46,7 +46,6 @@ export function OpenRouterProviderForm({
     try {
       const myboteam = getMyBoTeam();
 
-      // Validate key
       const validation = await myboteam.validateApiKeyForProvider('openrouter', apiKey.trim());
       if (!validation.valid) {
         setError(validation.error || t('apiKey.invalidKey'));
@@ -54,10 +53,8 @@ export function OpenRouterProviderForm({
         return;
       }
 
-      // Save key
       await myboteam.addApiKey('openrouter', apiKey.trim());
 
-      // Fetch models
       const result = await myboteam.fetchOpenRouterModels();
       if (!result.success) {
         setError(result.error || t('openrouter.fetchModelsFailed'));
@@ -72,7 +69,6 @@ export function OpenRouterProviderForm({
         })) || [];
       setAvailableModels(models);
 
-      // Store longer key prefix for display
       const trimmedKey = apiKey.trim();
       const provider: ConnectedProvider = {
         providerId: 'openrouter',
@@ -123,7 +119,7 @@ export function OpenRouterProviderForm({
               transition={settingsTransitions.enter}
               className="space-y-3"
             >
-              {/* API Key Section */}
+              {}
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium text-foreground">{t('apiKey.title')}</label>
                 {meta.helpUrl && (

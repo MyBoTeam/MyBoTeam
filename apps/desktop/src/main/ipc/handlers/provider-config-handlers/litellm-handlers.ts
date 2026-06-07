@@ -9,7 +9,6 @@ import { getDaemonClient } from '../../../daemon-bootstrap';
 import { getApiKey } from '../../../store/secureStorage';
 import type { IpcHandler } from '../../types';
 
-// Milestone 5: LiteLLM config reads/writes route through the daemon.
 export function registerLiteLLMHandlers(handle: IpcHandler): void {
   handle(
     'litellm:test-connection',

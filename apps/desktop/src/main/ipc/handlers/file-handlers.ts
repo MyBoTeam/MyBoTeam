@@ -9,18 +9,13 @@ import { assertTrustedWindow, handle, MAX_ATTACHMENT_FILE_SIZE } from './utils';
 
 const MAX_DROPPED_FILES = 5;
 
-/**
- * Validates that a renderer-provided path is safe to access.
- * Ensures the path is absolute, exists, and does not escape outside
- * the user's home/data directories via traversal sequences.
- */
 function validateRendererPath(filePath: string): void {
   const resolved = path.resolve(filePath);
-  // Reject paths with traversal sequences that survived resolve
+
   if (resolved !== path.normalize(filePath) && !path.isAbsolute(filePath)) {
     throw new Error(`Invalid file path: ${path.basename(filePath)}`);
   }
-  // Allow access only under the user's home directory or app userData
+
   const homeDir = app.getPath('home');
   const userDataDir = app.getPath('userData');
   if (!resolved.startsWith(homeDir) && !resolved.startsWith(userDataDir)) {
@@ -87,9 +82,7 @@ function buildFileAttachmentInfo(filePath: string): FileAttachmentInfo {
   if (type === 'text' || type === 'code') {
     try {
       info.content = fs.readFileSync(filePath, 'utf-8');
-    } catch {
-      // Non-fatal: content stays undefined
-    }
+    } catch {}
   }
 
   return info;
@@ -153,9 +146,7 @@ export function registerFileHandlers(): void {
         if (l?.log) {
           l.log('ERROR', 'ipc', 'Failed to open external URL', { error: String(error) });
         }
-      } catch (_e) {
-        /* best-effort logging */
-      }
+      } catch (_e) {}
       throw error;
     }
   });

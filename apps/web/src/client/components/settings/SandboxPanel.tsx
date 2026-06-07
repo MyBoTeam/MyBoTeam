@@ -1,14 +1,3 @@
-/**
- * SandboxPanel — Docker sandbox configuration UI.
- *
- * Contributed by SaaiAravindhRaja (PR #612):
- *   - Docker image selection with format validation
- *   - Network access toggle + allowed-hosts textarea
- *   - Filesystem path mounting textarea
- *   - Save error / config error display
- *   - Status indicator pill
- */
-
 import { SandboxModeSelector } from './SandboxModeSelector';
 import { useSandboxPanel } from './useSandboxPanel';
 
@@ -52,7 +41,7 @@ export function SandboxPanel() {
 
       {isDockerMode && (
         <>
-          {/* Docker image */}
+          {}
           <div className="rounded-lg border border-border bg-card/70 p-5">
             <div className="font-medium text-foreground">Docker Image</div>
             <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
@@ -72,7 +61,7 @@ export function SandboxPanel() {
             {configError && <p className="mt-1.5 text-sm text-destructive">{configError}</p>}
           </div>
 
-          {/* Network access */}
+          {}
           <div className="rounded-lg border border-border bg-card/70 p-5">
             <div className="flex items-center justify-between">
               <div>

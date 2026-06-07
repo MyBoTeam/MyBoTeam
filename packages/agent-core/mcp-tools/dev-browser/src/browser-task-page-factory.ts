@@ -53,9 +53,7 @@ export class BrowserTaskPageFactory {
     }
     try {
       await page.close();
-    } catch {
-      // Ignore errors when closing the reusable startup page
-    }
+    } catch {}
   }
 
   private takeReusableStartupPage(): Page | null {
@@ -80,8 +78,6 @@ export class BrowserTaskPageFactory {
       this.clearUnavailableReusableStartupPage(params.activeTaskPageCount);
     }
 
-    // For background-normal mode, ensure the OS window stays minimized after page creation.
-    // Fire-and-forget: window management must NOT block page registration.
     if (params.launchMode === 'background-normal' && !this.options.headless) {
       void this.options.windowController
         .backgroundPage(result.createdPage.page, params.browserContext)

@@ -106,7 +106,5 @@ export async function getElementCoordinates(element: ElementHandle): Promise<{
 export async function waitForPageLoad(page: Page, timeout = 3000): Promise<void> {
   try {
     await page.waitForLoadState('domcontentloaded', { timeout });
-  } catch {
-    // intentionally empty
-  }
+  } catch {}
 }

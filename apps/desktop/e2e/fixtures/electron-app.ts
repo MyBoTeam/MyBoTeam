@@ -11,22 +11,13 @@ import { TEST_TIMEOUTS } from '../config';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-/**
- * Custom fixtures for Electron E2E testing.
- */
 type ElectronFixtures = {
-  /** The Electron application instance */
   electronApp: ElectronApplication;
-  /** The main renderer window (not DevTools) */
+
   window: Page;
 };
 
-/**
- * Extended Playwright test with Electron fixtures.
- * Each test gets a fresh app instance to ensure isolation.
- */
 export const test = base.extend<ElectronFixtures>({
-  // eslint-disable-next-line no-empty-pattern
   electronApp: async ({}, use) => {
     const mainPath = resolve(__dirname, '../../dist-electron/main/index.js');
 
@@ -35,7 +26,7 @@ export const test = base.extend<ElectronFixtures>({
         mainPath,
         '--e2e-skip-auth',
         '--e2e-mock-tasks',
-        // Disable sandbox in Docker (required for containerized Electron)
+
         ...(process.env.DOCKER_ENV === '1' ? ['--no-sandbox', '--disable-gpu'] : []),
       ],
       env: {
@@ -49,19 +40,15 @@ export const test = base.extend<ElectronFixtures>({
 
     await use(app);
 
-    // Close app and wait for single-instance lock release
     await app.close();
     await new Promise((resolve) => setTimeout(resolve, TEST_TIMEOUTS.APP_RESTART));
   },
 
   window: async ({ electronApp }, use) => {
-    // Get the first window - DevTools is disabled in E2E mode
     const window = await electronApp.firstWindow();
 
-    // Wait for page to be fully loaded
     await window.waitForLoadState('load');
 
-    // Wait for React hydration by checking for a core UI element
     await window.waitForSelector('[data-testid="task-input-textarea"]', {
       state: 'visible',
       timeout: TEST_TIMEOUTS.NAVIGATION,

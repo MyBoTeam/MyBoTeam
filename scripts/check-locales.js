@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-/**
- * Locale alignment checker.
- * Validates that all locale files have the same keys as the reference (en) locale.
- * Exits with code 1 if any mismatches are found.
- */
+   
+                            
+                                                                                   
+                                                 
+   
 
 const { readFileSync, readdirSync } = require('node:fs');
 const { join } = require('node:path');
@@ -11,10 +11,10 @@ const { join } = require('node:path');
 const LOCALES_DIR = join(__dirname, '..', 'apps', 'web', 'locales');
 const REFERENCE_LOCALE = 'en';
 
-/**
- * Recursively collect all dot-notation key paths from an object.
- * e.g. { a: { b: 1 } } → ['a.b']
- */
+   
+                                                                 
+                                 
+   
 function collectKeys(obj, prefix = '') {
   const keys = [];
   for (const [k, v] of Object.entries(obj)) {
@@ -32,7 +32,7 @@ function loadJson(filePath) {
   return JSON.parse(readFileSync(filePath, 'utf-8'));
 }
 
-// Discover locales and namespaces
+                                  
 const allLocales = readdirSync(LOCALES_DIR, { withFileTypes: true })
   .filter((d) => d.isDirectory())
   .map((d) => d.name);

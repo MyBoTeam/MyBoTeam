@@ -1,8 +1,3 @@
-/**
- * Screenshot utilities for AI-powered visual testing.
- * Captures screenshots with metadata for automated evaluation.
- */
-
 import * as fs from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,10 +5,6 @@ import type { Page } from '@playwright/test';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-// ============================================================================
-// Types
-// ============================================================================
 
 export interface ScreenshotMetadata {
   testName: string;
@@ -30,20 +21,6 @@ export interface CaptureResult {
   error?: string;
 }
 
-// ============================================================================
-// Screenshot Capture
-// ============================================================================
-
-/**
- * Capture a screenshot with metadata for AI evaluation.
- * Includes error handling to prevent test failures from screenshot issues.
- *
- * @param page - Playwright page to capture
- * @param testName - Name of the test (used in filename)
- * @param stateName - Description of the UI state (used in filename)
- * @param evaluationCriteria - List of criteria for AI evaluation
- * @returns Capture result with success status and path
- */
 export async function captureForAI(
   page: Page,
   testName: string,
@@ -58,17 +35,14 @@ export async function captureForAI(
   const screenshotPath = join(screenshotDir, filename);
 
   try {
-    // Ensure directory exists
     await fs.mkdir(screenshotDir, { recursive: true });
 
-    // Capture screenshot with animations disabled for consistency
     await page.screenshot({
       path: screenshotPath,
       fullPage: true,
       animations: 'disabled',
     });
 
-    // Save metadata alongside screenshot
     const viewport = page.viewportSize() || { width: 1280, height: 720 };
     const metadata: ScreenshotMetadata = {
       testName,
@@ -88,14 +62,6 @@ export async function captureForAI(
   }
 }
 
-// ============================================================================
-// Utilities
-// ============================================================================
-
-/**
- * Sanitize a string for use in filenames.
- * Removes or replaces characters that are problematic in file paths.
- */
 function sanitizeFilename(input: string): string {
   return input
     .toLowerCase()

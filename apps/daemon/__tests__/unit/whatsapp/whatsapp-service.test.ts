@@ -1,11 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WhatsAppDaemonService } from '../../../src/whatsapp-service.js';
 
-// ---------------------------------------------------------------------------
-// Mocks
-// ---------------------------------------------------------------------------
-
-// Mock the WhatsApp module — we don't want real Baileys connections in tests
 vi.mock('../../../src/whatsapp/index.js', async () => {
   const { EventEmitter } = await import('events');
 
@@ -46,7 +41,6 @@ vi.mock('../../../src/whatsapp/index.js', async () => {
       this.removeAllListeners();
     }
 
-    // Test helpers
     _simulateQr(qr: string) {
       this._qrCode = qr;
       this._qrIssuedAt = Date.now();
@@ -99,7 +93,7 @@ function createMockStorage() {
 }
 
 function createMockTaskService() {
-  const { EventEmitter } = require('events') as typeof import('events'); // eslint-disable-line @typescript-eslint/no-require-imports
+  const { EventEmitter } = require('events') as typeof import('events');
   const emitter = new EventEmitter();
   return Object.assign(emitter, {
     startTask: vi.fn(),
@@ -117,10 +111,6 @@ function createMockPermissionService() {
   };
 }
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
-
 describe('WhatsAppDaemonService', () => {
   let storage: ReturnType<typeof createMockStorage>;
   let taskService: ReturnType<typeof createMockTaskService>;
@@ -132,14 +122,13 @@ describe('WhatsAppDaemonService', () => {
     storage = createMockStorage();
     taskService = createMockTaskService();
     permissionService = createMockPermissionService();
-    /* eslint-disable @typescript-eslint/no-explicit-any */
+
     service = new WhatsAppDaemonService(
       storage as any,
       '/tmp/test-data',
       taskService as any,
       permissionService as any,
     );
-    /* eslint-enable @typescript-eslint/no-explicit-any */
   });
 
   describe('getConfig()', () => {
@@ -167,7 +156,6 @@ describe('WhatsAppDaemonService', () => {
     });
 
     it('should return enabled:true when service is alive even without stored config (P1 fix)', async () => {
-      // Connect without any stored config (first-time flow)
       await service.connect();
 
       const config = service.getConfig();
@@ -178,10 +166,8 @@ describe('WhatsAppDaemonService', () => {
     it('should include QR recovery data when in qr_ready state', async () => {
       await service.connect();
 
-      // After connect(), the mock service status is 'connecting' — no QR yet.
-      // Test the contract: getConfig should not include QR fields until qr_ready.
       const config = service.getConfig();
-      // After connect(), status is 'connecting' — no QR yet
+
       expect(config!.status).toBe('connecting');
       expect(config!.qrCode).toBeUndefined();
     });
@@ -213,7 +199,6 @@ describe('WhatsAppDaemonService', () => {
   describe('autoConnectIfEnabled()', () => {
     it('should not auto-connect when no stored config', () => {
       service.autoConnectIfEnabled();
-      // No error thrown, connect not called
     });
 
     it('should not auto-connect when disabled', () => {
@@ -224,7 +209,6 @@ describe('WhatsAppDaemonService', () => {
       });
 
       service.autoConnectIfEnabled();
-      // Should not call connect
     });
 
     it('should auto-connect when enabled and previously connected', () => {
@@ -238,9 +222,7 @@ describe('WhatsAppDaemonService', () => {
         },
       });
 
-      // autoConnectIfEnabled calls connect() which is async, but doesn't await
       service.autoConnectIfEnabled();
-      // The fact that it doesn't throw is the assertion
     });
   });
 
@@ -258,7 +240,6 @@ describe('WhatsAppDaemonService', () => {
       await service.connect();
       await service.disconnect();
 
-      // Config should have been cleared (whatsapp set to undefined)
       expect(storage.setMessagingConfig).toHaveBeenCalledWith(
         expect.objectContaining({
           integrations: expect.objectContaining({
@@ -276,8 +257,6 @@ describe('WhatsAppDaemonService', () => {
 
       await service.connect();
 
-      // The mock service emits events on connect — but QR is simulated
-      // We verify the forwarding wiring exists
       expect(service.listenerCount('qr')).toBe(1);
     });
 
@@ -287,7 +266,6 @@ describe('WhatsAppDaemonService', () => {
 
       await service.connect();
 
-      // Mock connect emits 'connecting' status
       expect(statusHandler).toHaveBeenCalledWith('connecting');
     });
   });

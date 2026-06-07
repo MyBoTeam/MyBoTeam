@@ -11,9 +11,7 @@ export function locateSqlJsFile(file: string): string {
   try {
     const moduleDir = dirname(fileURLToPath(import.meta.url));
     candidates.push(join(moduleDir, '..', '..', 'node_modules', 'sql.js', 'dist', file));
-  } catch {
-    // import.meta.url unavailable (CJS bundle) — skip
-  }
+  } catch {}
 
   if (typeof __dirname !== 'undefined') {
     candidates.push(join(__dirname, '..', 'node_modules', 'sql.js', 'dist', file));

@@ -12,7 +12,6 @@ import { loginSlackMcp, logoutSlackMcp } from '../../../opencode/slack-auth';
 import type { IpcHandler } from '../../types';
 
 export function registerAuthHandlers(handle: IpcHandler): void {
-  // Milestone 3 sub-chunk 3c: OpenAI base URL get/set route through daemon.
   handle('settings:openai-base-url:get', async (_event: IpcMainInvokeEvent) => {
     return getDaemonClient().call('settings.getOpenAiBaseUrl');
   });
@@ -34,21 +33,6 @@ export function registerAuthHandlers(handle: IpcHandler): void {
     });
   });
 
-  // Phase 4a of the SDK cutover port: OpenAI OAuth moved into the daemon
-  // via a 4-method RPC protocol. Desktop's role is reduced to:
-  //   - opening the authorize URL in the user's browser
-  //     (Electron-only `shell.openExternal`)
-  //   - proxying status / login RPCs from the renderer
-  //
-  // Renderer-facing IPC contracts kept unchanged:
-  //   opencode:auth:openai:status → { connected, expires? }
-  //   opencode:auth:openai:login  → { ok, openedUrl? }
-  //
-  // `plan` returned by `auth.openai.awaitCompletion` is consumed internally
-  // by the Settings UI's model-dropdown logic via a subsequent status / model
-  // fetch; it is intentionally NOT surfaced here to preserve the existing
-  // renderer contract (plan lives on the agent-core type surface but is
-  // only exposed where its consumers are).
   handle('opencode:auth:openai:status', async (_event: IpcMainInvokeEvent) => {
     const client = await ensureDaemonRunning();
     return (await client.call('auth.openai.status')) as { connected: boolean; expires?: number };
@@ -60,16 +44,9 @@ export function registerAuthHandlers(handle: IpcHandler): void {
       sessionId: string;
       authorizeUrl: string;
     };
-    // Electron-only step: open the authorize URL in the user's default browser.
-    // Keeping this on the desktop side is deliberate per plan decision #6 —
-    // the daemon does not have access to Electron's `shell` API.
+
     await shell.openExternal(authorizeUrl);
-    // The daemon-side `awaitCompletion` blocks for up to 2 minutes while the
-    // user finishes the browser OAuth flow. The default `DaemonClient.call`
-    // timeout is 30s, so we MUST override here — otherwise the IPC handler
-    // throws `RPC timeout: auth.openai.awaitCompletion (30000ms)` even when
-    // the daemon-side flow eventually succeeds. Use slightly more than the
-    // daemon's internal deadline so the daemon's own timeout error wins.
+
     const AWAIT_COMPLETION_RPC_TIMEOUT_MS = 2 * 60_000 + 5_000;
     const completion = (await client.call(
       'auth.openai.awaitCompletion',
@@ -82,8 +59,7 @@ export function registerAuthHandlers(handle: IpcHandler): void {
     if (!completion.ok) {
       throw new Error(completion.error ?? 'OpenAI authentication failed.');
     }
-    // Preserve the existing { ok, openedUrl? } contract expected by
-    // apps/desktop/src/preload/index.ts and apps/web/src/client/lib/myboteam.ts.
+
     return { ok: true, openedUrl: authorizeUrl };
   });
 

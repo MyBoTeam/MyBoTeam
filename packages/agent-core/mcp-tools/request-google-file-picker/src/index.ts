@@ -1,19 +1,5 @@
 #!/usr/bin/env node
-/**
- * request-google-file-picker MCP server.
- *
- * Supports multi-account via GWS_ACCOUNTS_MANIFEST env var (manifest JSON
- * produced by AccountManager.writeAccountsManifest). The tool accepts an
- * optional `account` parameter (label or email) to search Drive files for
- * a specific account. When only one account is connected it is used automatically.
- *
- * Behaviour:
- * 1. If a `query` is provided, search for already-accessible Drive files in the
- *    resolved account. If exactly one match is found, return metadata directly
- *    (no picker needed). If multiple matches are found, pause for picker with query.
- * 2. If no query or no matches, emit GOOGLE_FILE_PICKER_MARKER to signal the
- *    desktop app to pause the task and open the Google Picker UI.
- */
+
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
@@ -26,8 +12,6 @@ import {
   sanitizeMarkerValue,
   searchDriveFiles,
 } from './picker-types.js';
-
-// ── MCP server ────────────────────────────────────────────────────────────────
 
 const server = new McpServer(
   { name: 'request-google-file-picker', version: '1.0.0' },
@@ -80,7 +64,6 @@ server.registerTool(
     const accountEntry = resolved.entry;
     const accessToken = readAccessToken(accountEntry);
 
-    // If a query is provided and we have a token, try to find already-accessible files first
     if (query?.trim() && accessToken) {
       try {
         const files = await searchDriveFiles(query.trim(), accessToken);
@@ -100,7 +83,6 @@ server.registerTool(
         }
 
         if (files.length > 1) {
-          // Multiple matches — trigger the picker pause so user can select
           return {
             content: [
               {
@@ -118,12 +100,9 @@ server.registerTool(
             ],
           };
         }
-      } catch {
-        // Fall through to picker on any error
-      }
+      } catch {}
     }
 
-    // No query, no matches, or error — show the picker
     const lines = [
       GOOGLE_FILE_PICKER_MARKER,
       `Message: ${sanitizeMarkerValue(message ?? 'I need access to files in your Google Drive. Click Select Files to choose which files to share.')}`,

@@ -78,9 +78,7 @@ export function extractAndCacheReasoningContent(responseText: string): void {
           toolCalls = message.tool_calls as unknown[];
         }
       }
-    } catch {
-      // intentionally empty
-    }
+    } catch {}
   }
 
   if (!fullReasoningContent) {
@@ -95,9 +93,7 @@ export function extractAndCacheReasoningContent(responseText: string): void {
           toolCalls = (message.tool_calls as unknown[]) || [];
         }
       }
-    } catch {
-      // intentionally empty
-    }
+    } catch {}
   }
 
   if (fullReasoningContent && (fullContent || toolCalls.length > 0)) {

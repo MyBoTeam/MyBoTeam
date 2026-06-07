@@ -1,14 +1,14 @@
-/**
- * ensure-daemon-built.cjs
- *
- * Ensures apps/daemon/dist/index.js exists before desktop dev starts.
- * The daemon connector (daemon-connector.ts) requires the built artifact
- * to spawn the daemon process.
- *
- * Only builds if the output is missing or stale relative to source.
- * The daemon bundle includes @myboteam/agent-core code, so agent-core
- * source changes must also invalidate this output.
- */
+   
+                          
+  
+                                                                      
+                                                                         
+                               
+  
+                                                                    
+                                                                      
+                                                   
+   
 
 const fs = require('fs');
 const path = require('path');
@@ -51,7 +51,7 @@ function getNewestMtimeMs(dirPath) {
             newest = mtimeMs;
           }
         } catch {
-          // skip
+                 
         }
       }
     }

@@ -1,25 +1,7 @@
-/**
- * @vitest-environment jsdom
- *
- * Unit tests for LightdashConnectorCard (T023)
- *
- * Validates:
- * - Empty URL disables Save button and does not call lightdashSetServerUrl
- * - HTTP URLs accepted
- * - HTTPS URLs accepted
- * - URL field pre-populated from lightdashGetServerUrl() after mount
- * - noInstance status shown when no URL stored
- * - URL persists in input after disconnect (field still populated when authState.connected flips)
- */
-
 import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import settingsEn from '../../../../locales/en/settings.json';
-
-// ---------------------------------------------------------------------------
-// Mocks
-// ---------------------------------------------------------------------------
 
 const mockGetServerUrl = vi.fn();
 const mockSetServerUrl = vi.fn();
@@ -99,7 +81,6 @@ describe('LightdashConnectorCard', () => {
         expect(screen.getByPlaceholderText(/lightdash/i)).toBeInTheDocument();
       });
 
-      // Click Save without entering a URL (button disabled when input is empty — check it stays disabled)
       const saveBtn = screen.getByRole('button', { name: /save/i });
       expect(saveBtn).toBeDisabled();
       expect(mockSetServerUrl).not.toHaveBeenCalled();
@@ -148,7 +129,6 @@ describe('LightdashConnectorCard', () => {
 
       render(<LightdashConnectorCard {...baseProps} />);
 
-      // The URL is stored — card hides the input and shows the saved URL instead
       await waitFor(() => {
         expect(screen.getByText('https://analytics.mycompany.com/api/v1/mcp')).toBeInTheDocument();
       });
@@ -176,10 +156,8 @@ describe('LightdashConnectorCard', () => {
         expect(screen.getByText(savedUrl)).toBeInTheDocument();
       });
 
-      // Simulate disconnect
       rerender(<LightdashConnectorCard {...baseProps} authState={disconnected} />);
 
-      // URL should still be displayed (not cleared)
       expect(screen.getByText(savedUrl)).toBeInTheDocument();
     });
   });

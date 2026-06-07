@@ -3,13 +3,6 @@ import { expect, test } from '../fixtures';
 import { HomePage, SettingsPage } from '../pages';
 import { captureForAI } from '../utils';
 
-/**
- * Tests for the task launch guard functionality.
- *
- * The task launch guard prevents users from:
- * 1. Starting a task without a ready provider (connected + model selected)
- * 2. Closing the settings dialog without configuring a provider
- */
 test.describe('Task Launch Guard', () => {
   test('should display provider grid when opening settings', async ({ window }) => {
     const settingsPage = new SettingsPage(window);
@@ -17,10 +10,8 @@ test.describe('Task Launch Guard', () => {
     await window.waitForLoadState('domcontentloaded');
     await settingsPage.navigateToSettings();
 
-    // Verify provider grid is visible
     await expect(settingsPage.providerGrid).toBeVisible({ timeout: TEST_TIMEOUTS.NAVIGATION });
 
-    // Verify at least some provider cards are visible
     await expect(settingsPage.getProviderCard('anthropic')).toBeVisible({
       timeout: TEST_TIMEOUTS.NAVIGATION,
     });
@@ -41,14 +32,11 @@ test.describe('Task Launch Guard', () => {
     await window.waitForLoadState('domcontentloaded');
     await settingsPage.navigateToSettings();
 
-    // Select Anthropic provider
     await settingsPage.selectProvider('anthropic');
 
-    // Verify the settings panel for the provider is visible
     const settingsPanel = window.getByTestId('provider-settings-panel');
     await expect(settingsPanel).toBeVisible({ timeout: TEST_TIMEOUTS.NAVIGATION });
 
-    // Verify API key input is shown
     await expect(settingsPage.apiKeyInput).toBeVisible({ timeout: TEST_TIMEOUTS.NAVIGATION });
 
     await captureForAI(window, 'task-launch-guard', 'provider-settings-panel', [
@@ -64,7 +52,6 @@ test.describe('Task Launch Guard', () => {
     await window.waitForLoadState('domcontentloaded');
     await settingsPage.navigateToSettings();
 
-    // Verify Done button is visible
     await expect(settingsPage.doneButton).toBeVisible({ timeout: TEST_TIMEOUTS.NAVIGATION });
 
     await captureForAI(window, 'task-launch-guard', 'done-button-visible', [
@@ -79,15 +66,12 @@ test.describe('Task Launch Guard', () => {
     await window.waitForLoadState('domcontentloaded');
     await settingsPage.navigateToSettings();
 
-    // Try to close with Done button
     await settingsPage.doneButton.click();
 
-    // Check if warning or dialog close occurred
     const closeAnywayVisible = await settingsPage.closeAnywayButton.isVisible().catch(() => false);
     const dialogClosed = !(await settingsPage.settingsDialog.isVisible().catch(() => true));
 
     if (closeAnywayVisible) {
-      // Warning appeared - verify Close Anyway button
       await expect(settingsPage.closeAnywayButton).toBeVisible();
 
       await captureForAI(window, 'task-launch-guard', 'close-warning-visible', [
@@ -96,7 +80,6 @@ test.describe('Task Launch Guard', () => {
         'User is warned about missing provider',
       ]);
     } else if (dialogClosed) {
-      // Dialog closed - a provider must be ready (E2E mode may pre-configure one)
       await captureForAI(window, 'task-launch-guard', 'dialog-closed-with-provider', [
         'Dialog closed successfully',
         'A provider was ready (E2E mode pre-configured)',
@@ -111,16 +94,13 @@ test.describe('Task Launch Guard', () => {
     await window.waitForLoadState('domcontentloaded');
     await settingsPage.navigateToSettings();
 
-    // Try to close with Escape
     await window.keyboard.press('Escape');
 
-    // If warning appears, click Close Anyway
     const closeAnywayVisible = await settingsPage.closeAnywayButton.isVisible().catch(() => false);
 
     if (closeAnywayVisible) {
       await settingsPage.closeAnywayButton.click();
 
-      // Verify dialog closed
       await expect(settingsPage.settingsDialog).not.toBeVisible({
         timeout: TEST_TIMEOUTS.NAVIGATION,
       });
@@ -131,7 +111,6 @@ test.describe('Task Launch Guard', () => {
         'User can proceed without provider',
       ]);
     } else {
-      // Dialog closed directly - provider was ready
       await expect(settingsPage.providerGrid).not.toBeVisible({
         timeout: TEST_TIMEOUTS.NAVIGATION,
       });
@@ -144,10 +123,8 @@ test.describe('Task Launch Guard', () => {
     await window.waitForLoadState('domcontentloaded');
     await settingsPage.navigateToSettings();
 
-    // Click Show All to see all providers
     await settingsPage.toggleShowAll();
 
-    // Verify all provider cards are visible
     const providerIds = [
       'openai',
       'anthropic',
@@ -184,18 +161,14 @@ test.describe('Task Launch Guard', () => {
     await window.waitForLoadState('domcontentloaded');
     await settingsPage.navigateToSettings();
 
-    // First show all providers
     await settingsPage.toggleShowAll();
 
-    // Search for specific provider
     await settingsPage.searchProvider('ollama');
 
-    // Ollama should be visible
     await expect(settingsPage.getProviderCard('ollama')).toBeVisible({
       timeout: TEST_TIMEOUTS.NAVIGATION,
     });
 
-    // Other providers should not be visible
     await expect(settingsPage.getProviderCard('anthropic')).not.toBeVisible();
     await expect(settingsPage.getProviderCard('openai')).not.toBeVisible();
 
@@ -212,25 +185,20 @@ test.describe('Task Launch Guard', () => {
 
     await window.waitForLoadState('domcontentloaded');
 
-    // Open and close settings
     await settingsPage.navigateToSettings();
     await window.keyboard.press('Escape');
 
-    // Handle close warning if it appears
     const closeAnywayVisible = await settingsPage.closeAnywayButton.isVisible().catch(() => false);
     if (closeAnywayVisible) {
       await settingsPage.closeAnywayButton.click();
     }
 
-    // Wait for dialog to close
     await expect(settingsPage.settingsDialog).not.toBeVisible({
       timeout: TEST_TIMEOUTS.NAVIGATION,
     });
 
-    // Enter a task
     await homePage.enterTask(TEST_SCENARIOS.SUCCESS.keyword);
 
-    // Submit button should be enabled
     await expect(homePage.submitButton).toBeEnabled();
 
     await captureForAI(window, 'task-launch-guard', 'ready-to-submit-task', [
@@ -246,8 +214,6 @@ test.describe('Task Launch Guard', () => {
     await window.waitForLoadState('domcontentloaded');
     await settingsPage.navigateToSettings();
 
-    // Check if any provider has a connected badge
-    // In E2E mode with skip auth, a provider might be pre-configured
     const providers = ['anthropic', 'openai', 'openrouter', 'google', 'xai', 'moonshot'];
 
     let foundConnected = false;
@@ -266,7 +232,6 @@ test.describe('Task Launch Guard', () => {
     }
 
     if (!foundConnected) {
-      // No connected badge - this is expected in fresh state
       await captureForAI(window, 'task-launch-guard', 'no-connected-badge', [
         'No provider has connected badge',
         'User needs to configure a provider',

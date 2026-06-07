@@ -4,7 +4,7 @@ import { transcribeAudio, validateElevenLabsApiKey } from '../../services/speech
 import { getApiKey } from '../../store/secureStorage';
 import { handle } from './utils';
 
-const MAX_AUDIO_SIZE = 25 * 1024 * 1024; // 25 MB
+const MAX_AUDIO_SIZE = 25 * 1024 * 1024;
 
 export function registerSpeechHandlers(): void {
   handle('speech:is-configured', async (_event: IpcMainInvokeEvent) => {
