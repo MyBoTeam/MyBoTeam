@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ConnectionStatus } from '@/components/settings/shared/ConnectionStatus';
+import { ConnectionStatus } from '@/pages/settings/providers/components/shared/ConnectionStatus';
 
 describe('ConnectionStatus', () => {
   it('returns null for disconnected status', () => {

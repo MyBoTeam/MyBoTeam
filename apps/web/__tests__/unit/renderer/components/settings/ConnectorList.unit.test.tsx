@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ConnectorList } from '@/components/settings/connectors/ConnectorList';
+import { ConnectorList } from '@/pages/settings/connectors/components/ConnectorList';
 
 describe('ConnectorList', () => {
   const defaultProps = {

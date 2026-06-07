@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ConnectorAddForm } from '@/components/settings/connectors/ConnectorAddForm';
+import { ConnectorAddForm } from '@/pages/settings/connectors/components/ConnectorAddForm';
 
 describe('ConnectorAddForm', () => {
   const defaultProps = {

@@ -1,6 +1,6 @@
 import type { Task } from '@myboteam/agent-core/common';
 import { describe, expect, it } from 'vitest';
-import { extractDomains, FAVORITABLE_STATUSES, STATUS_COLORS } from '@/lib/task-utils';
+import { extractDomains, FAVORITABLE_STATUSES, STATUS_COLORS } from '@/utils/task-utils';
 
 function makeTask(overrides: Partial<Task> = {}): Task {
   return {

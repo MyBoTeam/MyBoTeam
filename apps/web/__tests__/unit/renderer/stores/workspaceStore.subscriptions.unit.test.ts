@@ -10,7 +10,7 @@ vi.mock('undici', () => ({
 
 const mockLogEvent = vi.fn();
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => ({
     listWorkspaces: vi.fn(),
     getActiveWorkspaceId: vi.fn(),

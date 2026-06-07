@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { BedrockApiKeyTab } from '@/components/settings/providers/BedrockApiKeyTab';
+import { BedrockApiKeyTab } from '@/pages/settings/providers/components/providers/BedrockApiKeyTab';
 
 describe('BedrockApiKeyTab', () => {
   const defaultProps = {

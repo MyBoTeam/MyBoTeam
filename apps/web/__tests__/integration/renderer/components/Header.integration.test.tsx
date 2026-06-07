@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
-import Header from '@/components/layout/Header';
+import Header from '@/layouts/main/components/Header';
 
-vi.mock('@/lib/myboteam', () => {
+vi.mock('@/config/myboteam', () => {
   const mockMyBoTeam = {
     getTheme: vi.fn().mockResolvedValue('system'),
     setTheme: vi.fn().mockResolvedValue(undefined),

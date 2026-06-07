@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { PermissionDialog } from '@/components/execution/PermissionDialog';
+import { PermissionDialog } from '@/pages/conversation/components/PermissionDialog';
 
 import { createFilePermission, createToolPermission } from './permissionDialogTestHelpers';
 

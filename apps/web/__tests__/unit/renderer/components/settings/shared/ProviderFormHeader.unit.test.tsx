@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { ProviderFormHeader } from '@/components/settings/shared/ProviderFormHeader';
+import { ProviderFormHeader } from '@/pages/settings/providers/components/shared/ProviderFormHeader';
 
 describe('ProviderFormHeader', () => {
   it('renders provider name in settings title', () => {

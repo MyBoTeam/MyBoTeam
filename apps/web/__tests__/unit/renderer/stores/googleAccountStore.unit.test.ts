@@ -1,7 +1,7 @@
 import type { GoogleAccount } from '@myboteam/agent-core/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/config/logger', () => ({
   createLogger: () => ({
     log: vi.fn(),
     error: vi.fn(),

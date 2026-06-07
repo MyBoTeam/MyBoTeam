@@ -4,7 +4,7 @@ import {
   LANGUAGE_STORAGE_KEY,
   NAMESPACES,
   SUPPORTED_LANGUAGES,
-} from '@/i18n';
+} from '@/config/i18n';
 
 describe('i18n constants', () => {
   it('has supported languages', () => {

@@ -13,7 +13,7 @@ const mockGetActiveWorkspaceId = vi.fn();
 const mockUpdateWorkspace = vi.fn();
 const mockLogEvent = vi.fn();
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => ({
     listWorkspaces: mockListWorkspaces,
     getActiveWorkspaceId: mockGetActiveWorkspaceId,

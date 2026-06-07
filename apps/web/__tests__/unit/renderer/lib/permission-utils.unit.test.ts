@@ -3,7 +3,7 @@ import {
   getDisplayFilePaths,
   getOperationBadgeClasses,
   isDeleteOperation,
-} from '@/components/execution/permission-utils';
+} from '@/pages/conversation/components/permission-utils';
 
 describe('getOperationBadgeClasses', () => {
   it('returns red for delete', () => {

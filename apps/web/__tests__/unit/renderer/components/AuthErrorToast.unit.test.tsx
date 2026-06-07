@@ -38,7 +38,7 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
 }));
 
-import { AuthErrorToast } from '../../../../src/client/components/AuthErrorToast';
+import { AuthErrorToast } from '@/components/common/AuthErrorToast';
 
 describe('AuthErrorToast', () => {
   it('should not render when error is null', () => {

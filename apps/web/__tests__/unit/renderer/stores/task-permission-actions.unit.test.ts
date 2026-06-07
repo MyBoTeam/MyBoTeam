@@ -14,7 +14,7 @@ import type { TaskState } from '@/stores/taskStore';
 
 const mockRespondToPermission = vi.fn();
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => ({
     logEvent: vi.fn(),
     respondToPermission: mockRespondToPermission,

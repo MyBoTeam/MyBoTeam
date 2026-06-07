@@ -12,7 +12,7 @@ const mockCancelTask = vi.fn();
 const mockInterruptTask = vi.fn();
 const mockLogEvent = vi.fn();
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => ({
     cancelTask: mockCancelTask,
     interruptTask: mockInterruptTask,

@@ -6,7 +6,7 @@ import {
   MAX_FILE_SIZE,
   MAX_FILES,
   processFileAttachments,
-} from '@/lib/fileUtils';
+} from '@/utils/fileUtils';
 
 describe('fileUtils', () => {
   describe('getFileType()', () => {

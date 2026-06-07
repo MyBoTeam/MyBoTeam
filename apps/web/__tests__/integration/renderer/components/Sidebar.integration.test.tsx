@@ -45,7 +45,7 @@ const mockMyBoTeam = {
   onThemeColorChange: vi.fn().mockReturnValue(() => {}),
 };
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => mockMyBoTeam,
   useMyBoTeam: () => mockMyBoTeam,
 }));
@@ -81,7 +81,7 @@ vi.mock('framer-motion', () => {
   };
 });
 
-import Sidebar from '@/components/layout/Sidebar';
+import Sidebar from '@/layouts/main/components/Sidebar';
 
 import { useSidebarStore } from '@/stores/sidebarStore';
 

@@ -11,7 +11,7 @@ vi.mock('undici', () => ({
 const mockCancelTask = vi.fn();
 const mockLogEvent = vi.fn();
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => ({
     cancelTask: mockCancelTask,
     logEvent: mockLogEvent,

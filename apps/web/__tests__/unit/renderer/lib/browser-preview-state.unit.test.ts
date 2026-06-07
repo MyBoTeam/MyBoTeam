@@ -3,7 +3,7 @@ import {
   initialPreviewState,
   isViewStatus,
   previewReducer,
-} from '@/components/execution/browserPreviewState';
+} from '@/pages/conversation/components/browserPreviewState';
 
 describe('isViewStatus', () => {
   it('returns true for valid statuses', () => {

@@ -9,13 +9,13 @@ import {
 
 const mockGetEnabledSkills = vi.fn().mockResolvedValue(mockSkillsWithHidden);
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => ({
     getEnabledSkills: mockGetEnabledSkills,
   }),
 }));
 
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/config/logger', () => ({
   createLogger: () => ({ error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() }),
 }));
 

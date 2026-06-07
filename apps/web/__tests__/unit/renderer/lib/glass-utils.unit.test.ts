@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getGlassCSSVars, getGlassStyles } from '@/lib/glass-utils';
+import { getGlassCSSVars, getGlassStyles } from '@/utils/glass-utils';
 
 describe('glass-utils', () => {
   describe('getGlassStyles()', () => {

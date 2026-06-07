@@ -24,7 +24,7 @@ describe('getMyBoTeam - Bedrock helpers', () => {
   });
 
   it('validateBedrockCredentials serializes and calls underlying API', async () => {
-    const { getMyBoTeam } = await import('@/lib/myboteam');
+    const { getMyBoTeam } = await import('@/config/myboteam');
     const result = await getMyBoTeam().validateBedrockCredentials({
       accessKeyId: 'ak',
       secretAccessKey: 'sk',
@@ -37,7 +37,7 @@ describe('getMyBoTeam - Bedrock helpers', () => {
   });
 
   it('saveBedrockCredentials serializes and calls underlying API', async () => {
-    const { getMyBoTeam } = await import('@/lib/myboteam');
+    const { getMyBoTeam } = await import('@/config/myboteam');
     const result = await getMyBoTeam().saveBedrockCredentials({
       accessKeyId: 'ak',
       secretAccessKey: 'sk',
@@ -47,13 +47,13 @@ describe('getMyBoTeam - Bedrock helpers', () => {
   });
 
   it('getBedrockCredentials calls underlying API', async () => {
-    const { getMyBoTeam } = await import('@/lib/myboteam');
+    const { getMyBoTeam } = await import('@/config/myboteam');
     const result = await getMyBoTeam().getBedrockCredentials();
     expect(result).toEqual({ accessKey: 'ak' });
   });
 
   it('fetchBedrockModels calls underlying API', async () => {
-    const { getMyBoTeam } = await import('@/lib/myboteam');
+    const { getMyBoTeam } = await import('@/config/myboteam');
     const result = getMyBoTeam().fetchBedrockModels('creds');
     expect(mockApi.fetchBedrockModels).toHaveBeenCalledWith('creds');
     expect(result).toEqual(['model1']);

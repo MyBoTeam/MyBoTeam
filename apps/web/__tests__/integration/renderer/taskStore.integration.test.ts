@@ -83,7 +83,7 @@ const mockMyBoTeam = {
   onThemeColorChange: vi.fn().mockReturnValue(() => {}),
 };
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => mockMyBoTeam,
   useMyBoTeam: () => mockMyBoTeam,
 }));
