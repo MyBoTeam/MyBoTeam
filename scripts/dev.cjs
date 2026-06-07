@@ -66,7 +66,6 @@ function shutdown(reason) {
   killChildProcess(electron, { force: true });
   killChildProcess(web, { force: true });
   clearPort(5173);
-  killExistingDaemon(2000);
 
   process.exit(resolveExitCode(reason));
 }
