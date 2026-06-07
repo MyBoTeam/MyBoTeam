@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ApiKeyInput } from '@/components/settings/shared/ApiKeyInput';
+import { ApiKeyInput } from '@/pages/settings/providers/components/shared/ApiKeyInput';
 
 describe('ApiKeyInput', () => {
   it('renders default label', () => {

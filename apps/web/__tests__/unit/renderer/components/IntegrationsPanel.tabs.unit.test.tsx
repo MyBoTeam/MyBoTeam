@@ -35,7 +35,7 @@ const mockMyBoTeam = {
   getGoogleAccounts: vi.fn().mockResolvedValue([]),
 };
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => mockMyBoTeam,
 }));
 
@@ -55,15 +55,15 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-vi.mock('@/components/settings/integrations/WhatsAppCard', () => ({
+vi.mock('@/pages/settings/integrations/components/WhatsAppCard', () => ({
   WhatsAppCard: () => <div data-testid="whatsapp-card-mock" />,
 }));
 
-vi.mock('@/components/settings/google-accounts/GoogleAccountsSection', () => ({
+vi.mock('@/pages/settings/google-accounts/components/GoogleAccountsSection', () => ({
   GoogleAccountsSection: () => <div data-testid="google-accounts-section-mock" />,
 }));
 
-import { IntegrationsPanel } from '@/components/settings/integrations';
+import { IntegrationsPanel } from '@/pages/settings/integrations/components/IntegrationsPanel';
 
 describe('IntegrationsPanel — 3-tab layout', () => {
   beforeEach(() => {

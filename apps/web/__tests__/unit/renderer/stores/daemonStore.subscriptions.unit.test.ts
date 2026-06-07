@@ -8,7 +8,7 @@ vi.mock('undici', () => ({
   getGlobalDispatcher: vi.fn(),
 }));
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => ({}),
 }));
 

@@ -1,5 +1,5 @@
 import type { ProviderType } from '@myboteam/agent-core/common';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 interface ProviderIconProps {
   provider: ProviderType | string | null;

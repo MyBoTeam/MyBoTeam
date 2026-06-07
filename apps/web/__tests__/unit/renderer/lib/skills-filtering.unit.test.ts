@@ -4,7 +4,7 @@ import {
   getFilterCounts,
   getFilteredSkills,
   getVisibleSkills,
-} from '@/components/settings/skills/skillsFiltering';
+} from '@/pages/settings/skills/components/skillsFiltering';
 
 function makeSkill(overrides: Partial<Skill>): Skill {
   return {

@@ -8,7 +8,7 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-import { SidebarFallback } from '@/components/layout/SidebarFallback';
+import { SidebarFallback } from '@/layouts/main/components/SidebarFallback';
 
 describe('SidebarFallback', () => {
   it('renders loading message', () => {

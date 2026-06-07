@@ -7,9 +7,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import type { GlassCustomization } from '@/lib/glass-utils';
-import { type HoverEffect, hoverEffects } from '@/lib/hover-effects';
-import { cn } from '@/lib/utils';
+import type { GlassCustomization } from '@/utils/glass-utils';
+import { type HoverEffect, hoverEffects } from '@/utils/hover-effects';
+import { cn } from '@/utils/utils';
 
 export interface CardProps extends Omit<React.ComponentProps<typeof BaseCard>, 'variant'> {
   variant?: 'glass' | 'frosted' | 'fluted' | 'crystal';

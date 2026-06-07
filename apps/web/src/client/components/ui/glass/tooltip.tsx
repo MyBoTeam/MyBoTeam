@@ -5,7 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 export interface TooltipContentProps
   extends Omit<React.ComponentProps<typeof BaseTooltipContent>, 'variant'> {

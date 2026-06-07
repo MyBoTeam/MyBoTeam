@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useProviderSettings } from '@/components/settings/hooks/useProviderSettings';
-import { getMyBoTeam } from '@/lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
+import { useProviderSettings } from '@/pages/settings/providers/hooks/useProviderSettings';
 
 export function useSettings() {
   const [debugMode, setDebugModeState] = useState(false);

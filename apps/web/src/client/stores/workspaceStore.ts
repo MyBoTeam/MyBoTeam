@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { createLogger } from '../lib/logger';
+import { createLogger } from '@/utils/logger';
 
 const logger = createLogger('WorkspaceStore');
 
@@ -8,7 +8,7 @@ import type {
   WorkspaceCreateInput,
   WorkspaceUpdateInput,
 } from '@myboteam/agent-core/common';
-import { getMyBoTeam } from '../lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 
 interface WorkspaceState {
   workspaces: Workspace[];

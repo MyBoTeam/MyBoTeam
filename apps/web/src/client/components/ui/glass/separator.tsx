@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Separator as BaseSeparator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 export interface SeparatorProps
   extends Omit<React.ComponentProps<typeof BaseSeparator>, 'variant'> {

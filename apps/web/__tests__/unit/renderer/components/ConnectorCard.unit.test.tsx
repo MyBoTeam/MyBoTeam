@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ConnectorCard } from '@/components/settings/connectors/ConnectorCard';
+import { ConnectorCard } from '@/pages/settings/connectors/components/ConnectorCard';
 
 describe('ConnectorCard', () => {
   const baseConnector = {

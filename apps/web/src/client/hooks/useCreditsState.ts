@@ -1,7 +1,7 @@
 import type { CreditUsage } from '@myboteam/agent-core/common';
 import { isProviderReady, type ProviderId } from '@myboteam/agent-core/common';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getMyBoTeam } from '../lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 
 export type { CreditUsage };
 

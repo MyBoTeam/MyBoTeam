@@ -6,7 +6,7 @@ import settingsEn from '../../../../locales/en/settings.json';
 const mockGetServerUrl = vi.fn();
 const mockSetServerUrl = vi.fn();
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => ({
     lightdashGetServerUrl: mockGetServerUrl,
     lightdashSetServerUrl: mockSetServerUrl,
@@ -28,7 +28,7 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-import { LightdashConnectorCard } from '@/components/settings/connectors/LightdashConnectorCard';
+import { LightdashConnectorCard } from '@/pages/settings/connectors/components/LightdashConnectorCard';
 
 const disconnected = { connected: false, pendingAuthorization: false };
 const connected = { connected: true, pendingAuthorization: false };

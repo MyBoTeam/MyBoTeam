@@ -1,8 +1,8 @@
 import { ArrowUpLeft } from '@phosphor-icons/react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { IntegrationIcon } from '@/components/landing/IntegrationIcons';
-import { springs } from '@/lib/animations';
+import { springs } from '@/utils/animations';
+import { IntegrationIcon } from './components/IntegrationIcons';
 
 interface UseCaseExample {
   key: string;

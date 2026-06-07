@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/theme', () => ({
+vi.mock('@/config/theme', () => ({
   applyTheme: vi.fn(),
   initTheme: vi.fn(),
   cleanupTheme: vi.fn(),
@@ -14,7 +14,7 @@ const mockGetThemeColor = vi.fn(() => Promise.resolve('neutral'));
 const mockSetThemeColor = vi.fn(() => Promise.resolve());
 const mockOnThemeColorChange = vi.fn(() => () => {});
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => ({
     getTheme: mockGetTheme,
     setTheme: mockSetTheme,

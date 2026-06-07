@@ -64,7 +64,7 @@ const mockMyBoTeam = {
   onThemeColorChange: vi.fn().mockReturnValue(() => {}),
 };
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => mockMyBoTeam,
   useMyBoTeam: () => mockMyBoTeam,
   isRunningInElectron: () => true,
@@ -147,7 +147,7 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-vi.mock('@/lib/animations', () => ({
+vi.mock('@/config/animations', () => ({
   springs: {
     bouncy: { type: 'spring', stiffness: 300 },
     gentle: { type: 'spring', stiffness: 200 },
@@ -180,7 +180,7 @@ vi.mock('@/stores/taskStore', () => ({
   useTaskStore: () => mockStoreState,
 }));
 
-vi.mock('@/components/layout/Sidebar', () => ({
+vi.mock('@/layouts/main/components/Sidebar', () => ({
   default: () => <div data-testid="sidebar">Sidebar</div>,
 }));
 

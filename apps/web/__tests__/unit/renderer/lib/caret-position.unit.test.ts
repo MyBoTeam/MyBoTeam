@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getCaretPosition } from '@/components/landing/caretPosition';
+import { getCaretPosition } from '@/pages/home/components/caretPosition';
 
 describe('getCaretPosition', () => {
   it('returns top and left coordinates', () => {

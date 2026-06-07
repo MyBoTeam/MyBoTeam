@@ -5,7 +5,7 @@ import {
   type TaskConfig,
   type TaskStatus,
 } from '@myboteam/agent-core/common';
-import { getMyBoTeam } from '../lib/myboteam';
+import { getMyBoTeam } from '@/config/myboteam';
 import { createTaskLifecycleActions } from './task-lifecycle-actions';
 import { createTaskPermissionActions } from './task-permission-actions';
 import { hasTaskStateToken } from './task-state-helpers';

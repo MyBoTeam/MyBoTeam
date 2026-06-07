@@ -3,7 +3,7 @@ import {
   getOAuthStatusKey,
   oauthStatusDotClass,
   oauthStatusTextClass,
-} from '@/components/settings/connectors/oauth-status';
+} from '@/pages/settings/connectors/components/oauth-status';
 
 describe('oauthStatus constants', () => {
   it('defines text classes for all statuses', () => {

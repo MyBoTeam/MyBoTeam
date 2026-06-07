@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createLogger, logger } from '@/lib/logger';
+import { createLogger, logger } from '@/utils/logger';
 
 describe('logger', () => {
   it('exports a default app logger', () => {

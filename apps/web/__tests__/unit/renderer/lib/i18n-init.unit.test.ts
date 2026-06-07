@@ -21,11 +21,11 @@ vi.mock('react-i18next', () => ({
   initReactI18next: {},
 }));
 
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/config/logger', () => ({
   createLogger: () => ({ info: vi.fn(), warn: vi.fn() }),
 }));
 
-import { changeLanguage, initI18n } from '@/i18n';
+import { changeLanguage, initI18n } from '@/config/i18n';
 
 describe('initI18n', () => {
   beforeEach(() => {

@@ -5,8 +5,8 @@ import {
   TabsContent,
   TabsTrigger,
 } from '@/components/ui/tabs';
-import { type HoverEffect, hoverEffects } from '@/lib/hover-effects';
-import { cn } from '@/lib/utils';
+import { type HoverEffect, hoverEffects } from '@/utils/hover-effects';
+import { cn } from '@/utils/utils';
 
 export interface TabsListProps extends Omit<React.ComponentProps<typeof BaseTabsList>, 'variant'> {
   variant?: 'glass' | 'frosted' | 'fluted' | 'crystal';

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ToolSupportBadge } from '@/components/settings/shared/ToolSupportBadge';
+import { ToolSupportBadge } from '@/pages/settings/providers/components/shared/ToolSupportBadge';
 
 describe('ToolSupportBadge', () => {
   const t = vi.fn((key: string) => {

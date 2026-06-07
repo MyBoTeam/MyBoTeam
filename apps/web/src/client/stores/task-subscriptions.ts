@@ -1,5 +1,5 @@
 import { STARTUP_STAGES, type TaskUpdateEvent, type TodoItem } from '@myboteam/agent-core/common';
-import { createLogger } from '../lib/logger';
+import { createLogger } from '@/utils/logger';
 import { hasTrackedTask } from './task-state-helpers';
 
 const logger = createLogger('TaskStore');

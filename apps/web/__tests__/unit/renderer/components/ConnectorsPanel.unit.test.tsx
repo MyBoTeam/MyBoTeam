@@ -41,7 +41,7 @@ const mockMyBoTeam = {
   datadogSetServerUrl: vi.fn().mockResolvedValue(undefined),
 };
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => mockMyBoTeam,
 }));
 
@@ -61,11 +61,11 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-vi.mock('@/components/settings/integrations/WhatsAppCard', () => ({
+vi.mock('@/pages/settings/integrations/components/WhatsAppCard', () => ({
   WhatsAppCard: () => <div data-testid="whatsapp-card-mock" />,
 }));
 
-import { IntegrationsPanel } from '@/components/settings/integrations';
+import { IntegrationsPanel } from '@/pages/settings/integrations/components/IntegrationsPanel';
 
 describe('ConnectorsPanel (via IntegrationsPanel)', () => {
   beforeEach(() => {

@@ -1,7 +1,7 @@
 import type { FileAttachmentInfo } from '@myboteam/agent-core';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MAX_FILE_SIZE, MAX_FILES, processFileAttachments } from '@/lib/fileUtils';
+import { MAX_FILE_SIZE, MAX_FILES, processFileAttachments } from '@/utils/fileUtils';
 
 interface UseTaskInputDragDropOptions {
   attachments: FileAttachmentInfo[];

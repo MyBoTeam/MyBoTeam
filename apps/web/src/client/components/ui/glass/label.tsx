@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Label as BaseLabel } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 export interface LabelProps extends React.ComponentProps<typeof BaseLabel> {
   required?: boolean;

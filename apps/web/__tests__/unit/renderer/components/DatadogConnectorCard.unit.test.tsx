@@ -6,7 +6,7 @@ import settingsEn from '../../../../locales/en/settings.json';
 const mockGetServerUrl = vi.fn();
 const mockSetServerUrl = vi.fn();
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => ({
     datadogGetServerUrl: mockGetServerUrl,
     datadogSetServerUrl: mockSetServerUrl,
@@ -28,8 +28,8 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-import { DatadogConnectorCard } from '@/components/settings/connectors/DatadogConnectorCard';
-import { DATADOG_REGIONS } from '@/components/settings/connectors/datadog/regions';
+import { DatadogConnectorCard } from '@/pages/settings/connectors/components/DatadogConnectorCard';
+import { DATADOG_REGIONS } from '@/pages/settings/connectors/components/datadog/regions';
 
 const disconnected = { connected: false, pendingAuthorization: false };
 const connected = { connected: true, pendingAuthorization: false };

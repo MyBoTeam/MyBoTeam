@@ -3,7 +3,7 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import type * as React from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 import type { DropdownMenuItemProps, DropdownMenuLabelProps } from './dropdown-menu.types';
 
 function DropdownMenu({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {

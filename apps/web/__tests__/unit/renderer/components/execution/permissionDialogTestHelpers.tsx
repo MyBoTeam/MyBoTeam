@@ -34,7 +34,7 @@ vi.mock('@/components/ui/button', () => ({
   ),
 }));
 
-vi.mock('@/lib/animations', () => ({
+vi.mock('@/config/animations', () => ({
   springs: { gentle: { type: 'spring', stiffness: 300, damping: 30 } },
 }));
 

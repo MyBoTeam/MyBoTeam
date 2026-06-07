@@ -24,27 +24,27 @@ describe('getMyBoTeam - HuggingFace helpers', () => {
   });
 
   it('listHuggingFaceModels calls underlying API', async () => {
-    const { getMyBoTeam } = await import('@/lib/myboteam');
+    const { getMyBoTeam } = await import('@/config/myboteam');
     const result = await getMyBoTeam().listHuggingFaceModels();
     expect(mockApi.listHuggingFaceModels).toHaveBeenCalled();
     expect(result).toEqual(['model1']);
   });
 
   it('downloadHuggingFaceModel calls underlying API', async () => {
-    const { getMyBoTeam } = await import('@/lib/myboteam');
+    const { getMyBoTeam } = await import('@/config/myboteam');
     await getMyBoTeam().downloadHuggingFaceModel('model-id');
     expect(mockApi.downloadHuggingFaceModel).toHaveBeenCalledWith('model-id');
   });
 
   it('startHuggingFaceServer calls underlying API', async () => {
-    const { getMyBoTeam } = await import('@/lib/myboteam');
+    const { getMyBoTeam } = await import('@/config/myboteam');
     const result = await getMyBoTeam().startHuggingFaceServer('model-id');
     expect(mockApi.startHuggingFaceServer).toHaveBeenCalledWith('model-id');
     expect(result).toEqual({ port: 8080 });
   });
 
   it('onHuggingFaceDownloadProgress subscribes', async () => {
-    const { getMyBoTeam } = await import('@/lib/myboteam');
+    const { getMyBoTeam } = await import('@/config/myboteam');
     const cb = () => {};
     const result = getMyBoTeam().onHuggingFaceDownloadProgress(cb);
     expect(mockApi.onHuggingFaceDownloadProgress).toHaveBeenCalledWith(cb);

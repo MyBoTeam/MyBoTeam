@@ -5,7 +5,7 @@ const mockMyboteamAiGetUsage = vi.fn();
 const mockGetProviderSettings = vi.fn();
 const mockOnMyboteamAiUsageUpdate = vi.fn();
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => ({
     myboteamAiGetUsage: mockMyboteamAiGetUsage,
     getProviderSettings: mockGetProviderSettings,

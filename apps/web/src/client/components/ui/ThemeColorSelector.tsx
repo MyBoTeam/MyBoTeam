@@ -1,8 +1,8 @@
 import { Check } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { useTheme } from '@/hooks/useTheme';
-import type { ThemeColor } from '@/lib/theme-color';
-import { cn } from '@/lib/utils';
+import type { ThemeColor } from '@/utils/theme-color';
+import { cn } from '@/utils/utils';
 
 const colorOptions: { value: ThemeColor; label: string; bg: string }[] = [
   { value: 'mint', label: 'Mint', bg: '#53D3B1' },

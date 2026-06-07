@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/theme', () => ({
+vi.mock('@/config/theme', () => ({
   applyTheme: vi.fn(),
   initTheme: vi.fn(),
   cleanupTheme: vi.fn(),
@@ -9,7 +9,7 @@ vi.mock('@/lib/theme', () => ({
 
 const mockGetThemeFails = vi.fn(() => Promise.reject(new Error('not available')));
 
-vi.mock('@/lib/myboteam', () => ({
+vi.mock('@/config/myboteam', () => ({
   getMyBoTeam: () => ({
     getTheme: mockGetThemeFails,
     setTheme: vi.fn(),
