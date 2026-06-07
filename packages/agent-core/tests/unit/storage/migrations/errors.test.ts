@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-  CorruptDatabaseError,
-  FutureSchemaError,
-} from '../../../../src/storage/migrations/errors.js';
+import { CorruptDatabaseError } from '../../../../src/storage/migrations/corrupt-database-error.js';
+import { FutureSchemaError } from '../../../../src/storage/migrations/errors.js';
 
 describe('FutureSchemaError', () => {
   it('should set the correct error name', () => {

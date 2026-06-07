@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
-import loadingSymbol from '/assets/loading-symbol.svg';
 import { springs } from '../lib/animations';
 import {
   ActionChip,
@@ -12,11 +11,7 @@ import {
   type BrowserAction,
   getActionKey,
 } from './BrowserScriptCardHelpers';
-
-// Spinning MyBoTeam icon component
-const SpinningIcon = ({ className }: { className?: string }) => (
-  <img src={loadingSymbol} alt="" className={cn('animate-spin-ccw', className)} />
-);
+import { SpinningIcon } from './SpinningIcon';
 
 interface BrowserScriptCardProps {
   actions: BrowserAction[];

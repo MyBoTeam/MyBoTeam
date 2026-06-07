@@ -6,13 +6,13 @@ import { MYBOTEAM_AGENT_NAME } from '../../opencode/config-generator.js';
 import type { OnBeforeStartContext, OnBeforeStartResult } from '../../types/task-manager.js';
 import { serializeError } from '../../utils/error.js';
 import type { AdapterState } from './adapter-state.js';
-import { OpenCodeRuntimeUnavailableError } from './adapter-types.js';
 import {
   buildModelParam,
   deriveTitle,
   generateTaskId,
   buildWorkspaceInstructionRuntimeBlock as runtimeBlock,
 } from './adapter-utils.js';
+import { OpenCodeRuntimeUnavailableError } from './open-code-runtime-unavailable-error.js';
 
 export async function prepareEnvAndClient(state: AdapterState, config: TaskConfig): Promise<void> {
   if (state.isDisposed) {

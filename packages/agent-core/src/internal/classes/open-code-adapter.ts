@@ -32,7 +32,6 @@ import {
   type AdapterOptions,
   type OpenCodeAdapterEvents,
   OpenCodeCliNotFoundError,
-  OpenCodeRuntimeUnavailableError,
 } from './adapter-types.js';
 import { createLogWatcher } from './OpenCodeLogWatcher.js';
 import type {
@@ -40,12 +39,8 @@ import type {
   TaskInactivityWatchdogTimeoutContext,
 } from './TaskInactivityWatchdog.js';
 
-export {
-  type AdapterOptions,
-  type OpenCodeAdapterEvents,
-  OpenCodeCliNotFoundError,
-  OpenCodeRuntimeUnavailableError,
-};
+export { OpenCodeRuntimeUnavailableError } from './open-code-runtime-unavailable-error.js';
+export { type AdapterOptions, type OpenCodeAdapterEvents, OpenCodeCliNotFoundError };
 
 export const WINDOWS_CTRL_C_EXIT_CODE = -1073741510;
 
