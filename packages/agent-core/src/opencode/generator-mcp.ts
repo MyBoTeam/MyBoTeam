@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { MCP_TOOL_TIMEOUT_MS } from '../common/constants.js';
 import { OPENCODE_SLACK_MCP_CLIENT_ID, OPENCODE_SLACK_MCP_SERVER_URL } from './auth-slack-mcp.js';
 import type { BrowserConfig, McpServerConfig } from './generator-mcp-tools.js';
@@ -11,6 +13,7 @@ export interface BuildMcpServersOptions {
   nodeExe: string;
 
   whatsappApiPort?: number;
+  whatsappMcpPath?: string;
   browserConfig: BrowserConfig;
 
   authToken?: string;
@@ -29,6 +32,7 @@ export function buildMcpServers(options: BuildMcpServersOptions): Record<string,
     mcpToolsPath,
     nodeExe,
     whatsappApiPort,
+    whatsappMcpPath,
     browserConfig,
     authToken,
     connectors,
@@ -67,16 +71,32 @@ export function buildMcpServers(options: BuildMcpServersOptions): Record<string,
   };
 
   if (whatsappApiPort) {
-    mcpServers.whatsapp = {
-      type: 'local',
-      command: resolveMcpCommand(mcpToolsPath, 'whatsapp', 'dist/index.mjs', nodeExe),
-      enabled: true,
-      environment: {
-        MYBOTEAM_WHATSAPP_API_PORT: String(whatsappApiPort),
-        ...authEnv,
-      },
-      timeout: 30000,
-    };
+    if (whatsappMcpPath) {
+      const distPath = path.join(whatsappMcpPath, 'dist', 'index.js');
+      if (fs.existsSync(distPath)) {
+        mcpServers.whatsapp = {
+          type: 'local',
+          command: [nodeExe, distPath],
+          enabled: true,
+          environment: {
+            MYBOTEAM_WHATSAPP_API_PORT: String(whatsappApiPort),
+            ...authEnv,
+          },
+          timeout: 30000,
+        };
+      }
+    } else {
+      mcpServers.whatsapp = {
+        type: 'local',
+        command: resolveMcpCommand(mcpToolsPath, 'whatsapp', 'dist/index.mjs', nodeExe),
+        enabled: true,
+        environment: {
+          MYBOTEAM_WHATSAPP_API_PORT: String(whatsappApiPort),
+          ...authEnv,
+        },
+        timeout: 30000,
+      };
+    }
   }
 
   if (browserConfig.mode !== 'none') {

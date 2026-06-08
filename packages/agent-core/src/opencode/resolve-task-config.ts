@@ -21,6 +21,7 @@ export interface ResolveTaskConfigOptions {
   getApiKey: (provider: string) => string | null;
   azureFoundryToken?: string;
   whatsappApiPort?: number;
+  whatsappMcpPath?: string;
   authToken?: string;
   skills?: Skill[];
   workspaceId?: string;
@@ -46,6 +47,7 @@ export async function resolveTaskConfig(
     getApiKey,
     azureFoundryToken,
     whatsappApiPort,
+    whatsappMcpPath,
     authToken,
     skills,
     workspaceId,
@@ -118,6 +120,7 @@ export async function resolveTaskConfig(
       providerConfigs,
       enabledProviders,
       whatsappApiPort,
+      whatsappMcpPath,
       authToken,
       model: modelOverride?.model,
       smallModel: modelOverride?.smallModel,

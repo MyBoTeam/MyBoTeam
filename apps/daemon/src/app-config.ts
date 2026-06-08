@@ -9,6 +9,7 @@ export const DRAIN_TIMEOUT_MS = 30_000;
 export interface DaemonPaths {
   userDataPath: string;
   mcpToolsPath: string;
+  mcpServersPath?: string;
   socketPath: string;
   bundledSkillsPath: string;
   pidPath: string;
@@ -85,9 +86,14 @@ export function resolveDaemonPaths(args: DaemonArgs): DaemonPaths {
       ? path.join(args.appPath, 'bundled-skills')
       : path.resolve(__dirname, '..', '..', '..', 'bundled-skills');
 
+  const mcpServersPath = args.isPackaged
+    ? path.join(args.resourcesPath, 'mcp-servers', 'whatsapp')
+    : path.resolve(__dirname, '..', '..', '..', 'packages', 'mcp-servers', 'whatsapp');
+
   return {
     userDataPath,
     mcpToolsPath,
+    mcpServersPath,
     socketPath,
     bundledSkillsPath,
     pidPath,

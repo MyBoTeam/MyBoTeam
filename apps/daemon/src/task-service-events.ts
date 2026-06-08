@@ -38,6 +38,7 @@ export interface TaskServiceOptions {
   isPackaged?: boolean;
   resourcesPath?: string;
   appPath?: string;
+  mcpServersPath?: string;
 
   rpcConnectivityProbe?: { hasConnectedClients(): boolean };
 }

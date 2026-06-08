@@ -17,6 +17,7 @@ export interface ConfigGeneratorOptions {
   azureFoundryToken?: string;
 
   whatsappApiPort?: number;
+  whatsappMcpPath?: string;
 
   authToken?: string;
   userDataPath: string;

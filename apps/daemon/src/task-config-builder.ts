@@ -21,6 +21,7 @@ export interface TaskConfigBuilderOptions {
   isPackaged: boolean;
   resourcesPath: string;
   appPath: string;
+  mcpServersPath?: string;
 }
 
 export function getBundledNodeBinPath(opts: TaskConfigBuilderOptions): string | undefined {
@@ -79,6 +80,7 @@ export async function onBeforeStart(
     bundledNodeBinPath: getBundledNodeBinPath(opts),
     getApiKey: (provider) => storage.getApiKey(provider),
     whatsappApiPort,
+    whatsappMcpPath: opts.mcpServersPath,
     authToken: process.env.MYBOTEAM_DAEMON_AUTH_TOKEN,
     skills,
     workspaceId: ctx.workspaceId,

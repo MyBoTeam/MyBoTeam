@@ -77,6 +77,7 @@ function createServices(
     isPackaged,
     resourcesPath: paths.resourcesPath,
     appPath: paths.appPath,
+    mcpServersPath: paths.mcpServersPath,
     rpcConnectivityProbe: { hasConnectedClients: () => rpc.hasConnectedClients() },
   });
   const healthService = new HealthService();
