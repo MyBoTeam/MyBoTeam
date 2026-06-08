@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-export interface DownloadProgress {
+interface DownloadProgress {
   modelId: string;
   status: 'downloading' | 'complete' | 'error';
   progress: number;
@@ -9,7 +9,7 @@ export interface DownloadProgress {
   error?: string;
 }
 
-export type ProgressCallback = (progress: DownloadProgress) => void;
+type ProgressCallback = (progress: DownloadProgress) => void;
 
 const activeDownloads = new Map<string, { abort: AbortController }>();
 
@@ -63,21 +63,6 @@ export async function downloadModel(
     onProgress?.({ modelId, status: 'error', progress: 0, error: message });
     return { success: false, error: message };
   } finally {
-    activeDownloads.delete(modelId);
-  }
-}
-
-/**
- * Cancel an active download.
- *
- * Note: Transformers.js does not currently support aborting in-progress downloads.
- * This function marks the download as cancelled but the underlying network request
- * will continue until completion. The downloaded files will remain in the cache.
- */
-export function cancelDownload(modelId: string): void {
-  const download = activeDownloads.get(modelId);
-  if (download) {
-    download.abort.abort();
     activeDownloads.delete(modelId);
   }
 }

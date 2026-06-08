@@ -18,7 +18,6 @@ export {
   trackToggleDebugMode,
 } from './event-trackers-feature-settings';
 export {
-  trackContextSizeChanged,
   trackHelpLinkClicked,
   trackSaveVoiceApiKey,
 } from './event-trackers-feature-settings-advanced';

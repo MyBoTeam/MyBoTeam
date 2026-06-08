@@ -10,7 +10,7 @@ import {
 } from './analytics-service-utils';
 
 export type { EventParams } from './analytics-service-ga4';
-export { flushAnalytics, setOnlineStatus, trackGa4Event } from './analytics-service-ga4';
+export { flushAnalytics } from './analytics-service-ga4';
 export {
   getAnalyticsSessionId,
   getClientId,

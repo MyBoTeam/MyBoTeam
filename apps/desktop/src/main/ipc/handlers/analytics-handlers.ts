@@ -25,7 +25,7 @@ import {
   trackTaskLauncherAction,
   trackThreadExported,
   trackToggleDebugMode,
-} from '../../analytics';
+} from '../../analytics/events';
 import { isAnalyticsEnabled } from '../../config/build-config';
 import { registerAnalyticsLifecycleHandlers } from './analytics-lifecycle-handlers';
 import { createHa } from './analytics-utils';

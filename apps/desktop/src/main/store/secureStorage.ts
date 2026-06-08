@@ -1,4 +1,3 @@
-export type { ApiKeyProvider } from './secureStorage-api-keys';
 export {
   deleteApiKey,
   getAllApiKeys,

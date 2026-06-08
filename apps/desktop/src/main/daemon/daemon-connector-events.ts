@@ -12,9 +12,9 @@ import {
 } from './daemon-connector';
 import { spawnDaemon } from './daemon-connector-transport';
 
-export const RECONNECT_INITIAL_MS = 200;
-export const RECONNECT_MAX_MS = 5000;
-export const RECONNECT_MAX_ATTEMPTS = 10;
+const RECONNECT_INITIAL_MS = 200;
+const RECONNECT_MAX_MS = 5000;
+const RECONNECT_MAX_ATTEMPTS = 10;
 
 let reconnecting = false;
 let reconnectSuppressed = false;

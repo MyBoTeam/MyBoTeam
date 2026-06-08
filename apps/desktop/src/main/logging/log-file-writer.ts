@@ -2,8 +2,6 @@ import path from 'node:path';
 import { createLogWriter, type LogWriterAPI } from '@myboteam/agent-core/desktop-main';
 import { app } from 'electron';
 
-export type { LogEntry, LogLevel, LogSource } from '@myboteam/agent-core/desktop-main';
-
 let instance: LogWriterAPI | null = null;
 
 export function getLogFileWriter(): LogWriterAPI {

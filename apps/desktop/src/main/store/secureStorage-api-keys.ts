@@ -1,7 +1,4 @@
-import type { ApiKeyProvider } from '@myboteam/agent-core/desktop-main';
 import { getDaemonClient } from '../daemon/daemon-lifecycle';
-
-export type { ApiKeyProvider };
 
 export async function storeApiKey(provider: string, apiKey: string): Promise<void> {
   await getDaemonClient().call('secrets.storeApiKey', { provider, apiKey });

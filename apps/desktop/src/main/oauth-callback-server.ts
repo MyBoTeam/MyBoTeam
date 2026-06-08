@@ -1,6 +1,6 @@
 import http from 'node:http';
 
-export interface OAuthCallbackResult {
+interface OAuthCallbackResult {
   code: string;
   state: string;
   redirectUri: string;

@@ -12,7 +12,7 @@ import {
   trackTaskStart,
   trackToolUsed,
   trackUserInteraction,
-} from '../../analytics';
+} from '../../analytics/events';
 import type { TaskErrorCategory } from '../../analytics/types';
 import { isAnalyticsEnabled } from '../../config/build-config';
 import { createHa, getSelectedModelContext } from './analytics-utils';

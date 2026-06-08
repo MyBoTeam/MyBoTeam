@@ -33,7 +33,3 @@ authStoreMap.set(
 export function getConnectorAuthStore(id: OAuthProviderId): ConnectorAuthStore | undefined {
   return authStoreMap.get(id);
 }
-
-export function getAllConnectorAuthStores(): ReadonlyMap<OAuthProviderId, ConnectorAuthStore> {
-  return authStoreMap;
-}

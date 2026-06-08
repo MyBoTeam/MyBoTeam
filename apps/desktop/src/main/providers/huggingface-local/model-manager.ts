@@ -3,8 +3,7 @@ import path from 'node:path';
 import type { HuggingFaceLocalModelInfo } from '@myboteam/agent-core/common';
 import { app } from 'electron';
 
-export type { DownloadProgress, ProgressCallback } from './model-downloader';
-export { cancelDownload, downloadModel } from './model-downloader';
+export { downloadModel } from './model-downloader';
 
 export const SUGGESTED_MODELS: HuggingFaceLocalModelInfo[] = [
   {

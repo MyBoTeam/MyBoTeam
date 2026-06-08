@@ -3,7 +3,7 @@ import { app } from 'electron';
 import Store from 'electron-store';
 import type { AnalyticsConfigSchema } from './analytics-service-utils-ga';
 
-export let _analyticsStore: Store<AnalyticsConfigSchema> | null = null;
+let _analyticsStore: Store<AnalyticsConfigSchema> | null = null;
 
 export function getAnalyticsStore(): Store<AnalyticsConfigSchema> {
   if (!_analyticsStore) {

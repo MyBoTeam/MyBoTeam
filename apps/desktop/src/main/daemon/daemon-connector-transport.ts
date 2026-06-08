@@ -51,7 +51,7 @@ export function tailDaemonLog(): void {
   });
 }
 
-export function stopTailingDaemonLog(): void {
+function stopTailingDaemonLog(): void {
   if (logWatcher) {
     logWatcher.close();
     logWatcher = null;
@@ -111,7 +111,7 @@ export function spawnDaemon(dataDir: string): void {
   }
 }
 
-export function getDaemonLogPath(dataDir: string): string {
+function getDaemonLogPath(dataDir: string): string {
   const logsDir = path.join(dataDir, 'logs');
   fs.mkdirSync(logsDir, { recursive: true });
 

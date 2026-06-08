@@ -27,7 +27,7 @@ const CRASH_WINDOW_MS = 60_000;
 const MAX_CRASH_EVENTS = 5;
 let crashTimestamps: number[] = [];
 
-export function _resetCrashRateLimit(): void {
+function _resetCrashRateLimit(): void {
   crashTimestamps = [];
 }
 

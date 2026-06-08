@@ -9,7 +9,7 @@ export interface AnalyticsConfigSchema {
   firstTaskCompleted: boolean;
 }
 
-export function getGaMeasurementId(): string {
+function getGaMeasurementId(): string {
   return getBuildConfig().gaMeasurementId;
 }
 

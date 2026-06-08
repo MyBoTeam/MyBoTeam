@@ -1,6 +1,6 @@
 import type { OAuthClientRegistration, OAuthMetadata } from '@myboteam/agent-core/desktop-main';
 
-export const OAUTH_FLOW_TTL_MS = 10 * 60 * 1000;
+const OAUTH_FLOW_TTL_MS = 10 * 60 * 1000;
 
 export const pendingOAuthFlows = new Map<
   string,

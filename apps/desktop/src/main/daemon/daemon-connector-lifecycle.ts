@@ -23,7 +23,7 @@ export class DaemonRestartError extends Error {
   }
 }
 
-export async function tryConnect(dataDir: string): Promise<DaemonClient | null> {
+async function tryConnect(dataDir: string): Promise<DaemonClient | null> {
   let transport: Awaited<ReturnType<typeof createSocketTransport>> | null = null;
   let client: DaemonClient | null = null;
   try {
@@ -70,10 +70,7 @@ export async function tryConnectBuildChecked(dataDir: string): Promise<DaemonCli
   }
 }
 
-export async function waitForDaemonExit(
-  dataDir: string,
-  timeoutMs: number = 30_000,
-): Promise<void> {
+async function waitForDaemonExit(dataDir: string, timeoutMs: number = 30_000): Promise<void> {
   const pidPath = getPidFilePath(dataDir);
   const deadline = Date.now() + timeoutMs;
 
