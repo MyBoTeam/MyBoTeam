@@ -44,10 +44,6 @@ export function removeConnectedProvider(providerId: ProviderId): void {
     if (meta.active_provider_id === providerId) {
       db.run('UPDATE provider_meta SET active_provider_id = NULL WHERE id = 1');
     }
-
-    if (providerId === 'myboteam-ai') {
-      db.run('DELETE FROM myboteam_ai_credits WHERE id = 1');
-    }
   });
   flushDatabase();
 }

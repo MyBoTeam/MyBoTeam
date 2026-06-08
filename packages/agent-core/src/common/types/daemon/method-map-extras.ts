@@ -6,7 +6,6 @@ import type {
 } from '../../../types/storage.js';
 import type { CloudBrowserConfig } from '../cloud-browser.js';
 import type { ConnectorStatus, McpConnector, OAuthTokens, StoredAuthEntry } from '../connector.js';
-import type { CreditUsage } from '../gateway.js';
 import type { GoogleAccount, GoogleAccountToken } from '../google-account.js';
 import type { MessagingConfig } from '../messaging.js';
 import type {
@@ -88,8 +87,6 @@ export interface DaemonMethodMapExtras {
   };
   'provider.setDebugMode': { params: { enabled: boolean }; result: undefined };
   'provider.getDebugMode': { params: undefined; result: boolean };
-  'provider.getMyboteamAiCredits': { params: undefined; result: CreditUsage | null };
-  'provider.saveMyboteamAiCredits': { params: { usage: CreditUsage }; result: undefined };
   'provider.getHuggingFaceLocalConfig': {
     params: undefined;
     result: HuggingFaceLocalConfig | null;

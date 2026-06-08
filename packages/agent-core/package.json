@@ -42,11 +42,6 @@
       "types": "./dist/desktop-main.d.ts",
       "import": "./dist/desktop-main.js",
       "default": "./dist/desktop-main.js"
-    },
-    "./runtime-types": {
-      "types": "./dist/myboteam-runtime-types.d.ts",
-      "import": "./dist/myboteam-runtime-types.js",
-      "default": "./dist/myboteam-runtime-types.js"
     }
   },
   "files": [

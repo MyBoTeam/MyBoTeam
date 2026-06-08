@@ -32,8 +32,7 @@ export type ProviderType =
   | 'groq'
   | 'venice'
   | 'nim'
-  | 'copilot'
-  | 'myboteam-ai';
+  | 'copilot';
 
 export interface ModelsEndpointConfig {
   url: string;

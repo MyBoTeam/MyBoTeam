@@ -44,12 +44,10 @@ import {
   getActiveProviderModel,
   getConnectedProvider,
   getConnectedProviderIds,
-  getMyboteamAiCredits,
   getProviderDebugMode,
   getProviderSettings,
   hasReadyProvider,
   removeConnectedProvider,
-  saveMyboteamAiCredits,
   setActiveProvider,
   setConnectedProvider,
   setProviderDebugMode,
@@ -155,8 +153,6 @@ export function createProviderSettingsMethods(): Pick<
   | 'getActiveProviderModel'
   | 'hasReadyProvider'
   | 'getConnectedProviderIds'
-  | 'getMyboteamAiCredits'
-  | 'saveMyboteamAiCredits'
 > {
   return {
     getProviderSettings: () => getProviderSettings(),
@@ -172,7 +168,5 @@ export function createProviderSettingsMethods(): Pick<
     getActiveProviderModel: () => getActiveProviderModel(),
     hasReadyProvider: () => hasReadyProvider(),
     getConnectedProviderIds: () => getConnectedProviderIds(),
-    getMyboteamAiCredits: () => getMyboteamAiCredits(),
-    saveMyboteamAiCredits: (usage) => saveMyboteamAiCredits(usage),
   };
 }

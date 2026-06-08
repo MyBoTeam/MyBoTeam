@@ -6,7 +6,6 @@ export { CustomProviderForm } from './CustomProviderForm';
 export { HuggingFaceProviderForm } from './HuggingFaceProviderForm';
 export { LiteLLMProviderForm } from './LiteLLMProviderForm';
 export { LMStudioProviderForm } from './LMStudioProviderForm';
-export { MyboteamAiProviderForm } from './MyboteamAiProviderForm';
 export { NimProviderForm } from './NimProviderForm';
 export { OllamaProviderForm } from './OllamaProviderForm';
 export { OpenRouterProviderForm } from './OpenRouterProviderForm';

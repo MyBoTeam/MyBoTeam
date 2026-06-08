@@ -20,7 +20,6 @@ import {
   buildOpenAICompatibleConfigs,
 } from './config-providers-compat.js';
 import { buildLMStudioConfig, buildOllamaConfig } from './config-providers-local.js';
-import { buildMyboteamAiConfig } from './config-providers-myboteam.js';
 import {
   buildLiteLLMConfig,
   buildMinimaxConfig,
@@ -28,7 +27,6 @@ import {
   buildOpenRouterConfig,
 } from './config-providers-standard.js';
 import { buildAzureFoundryConfig, buildVertexConfig } from './config-providers-vertex-azure.js';
-import type { MyboteamRuntime, StorageDeps } from './myboteam-runtime.js';
 
 export interface ConfigPaths {
   mcpToolsPath: string;
@@ -48,16 +46,12 @@ export interface BuildProviderConfigsOptions {
   azureFoundryToken?: string;
 
   providerSettings?: ProviderSettings;
-
-  myboteamRuntime?: MyboteamRuntime;
-
-  myboteamStorageDeps?: StorageDeps;
 }
 
 export async function buildProviderConfigs(
   options: BuildProviderConfigsOptions,
 ): Promise<ProviderConfigResult> {
-  const { getApiKey, azureFoundryToken, myboteamRuntime, myboteamStorageDeps } = options;
+  const { getApiKey, azureFoundryToken } = options;
   const providerSettings = options.providerSettings ?? getProviderSettings();
   const connectedIds = getConnectedProviderIds();
   const activeModel = getActiveProviderModel();
@@ -66,8 +60,6 @@ export async function buildProviderConfigs(
     getApiKey,
     azureFoundryToken,
     activeModel,
-    myboteamRuntime,
-    myboteamStorageDeps,
   };
 
   const baseProviders = [
@@ -86,9 +78,7 @@ export async function buildProviderConfigs(
   ];
   let enabledProviders = baseProviders;
   if (connectedIds.length > 0) {
-    const mappedProviders = connectedIds
-      .filter((id) => id !== 'myboteam-ai')
-      .map((id) => PROVIDER_ID_TO_OPENCODE[id]);
+    const mappedProviders = connectedIds.map((id) => PROVIDER_ID_TO_OPENCODE[id]);
     enabledProviders = [...new Set([...baseProviders, ...mappedProviders])];
   } else {
     const ollamaConfig = getOllamaConfig();
@@ -114,7 +104,6 @@ export async function buildProviderConfigs(
     buildCustomConfig(ctx),
     buildOpenAICompatibleConfigs(ctx),
     buildCopilotConfig(ctx),
-    buildMyboteamAiConfig(ctx),
   ]);
 
   const providerConfigs: ProviderConfig[] = [];

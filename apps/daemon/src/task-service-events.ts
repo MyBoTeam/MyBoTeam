@@ -1,10 +1,4 @@
-import type {
-  FileAttachmentInfo,
-  MyboteamRuntime,
-  TaskMessage,
-  TaskSource,
-  TaskStatus,
-} from '@myboteam/agent-core';
+import type { FileAttachmentInfo, TaskMessage, TaskSource, TaskStatus } from '@myboteam/agent-core';
 
 export interface TaskServiceEvents {
   progress: [data: { taskId: string; stage: string; message?: string }];
@@ -44,9 +38,6 @@ export interface TaskServiceOptions {
   isPackaged?: boolean;
   resourcesPath?: string;
   appPath?: string;
-  myboteamRuntime?: MyboteamRuntime;
 
   rpcConnectivityProbe?: { hasConnectedClients(): boolean };
-
-  setProxyTaskId?: (taskId: string | undefined) => void;
 }

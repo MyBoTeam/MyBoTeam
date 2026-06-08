@@ -5,7 +5,6 @@ import { getFormattedKnowledgeNotes } from '../storage/repositories/knowledgeNot
 import type { StorageAPI } from '../types/storage.js';
 import { buildProviderConfigs } from './config-builder.js';
 import type { ConfigGeneratorOptions } from './config-generator.js';
-import type { MyboteamRuntime, StorageDeps } from './myboteam-runtime.js';
 import {
   injectOpenAiStoreFlag,
   resolveCloudBrowser,
@@ -26,8 +25,6 @@ export interface ResolveTaskConfigOptions {
   skills?: Skill[];
   workspaceId?: string;
   configFileName?: string;
-  myboteamRuntime?: MyboteamRuntime;
-  myboteamStorageDeps?: StorageDeps;
   database?: Database;
   log?: LogFn;
 }
@@ -53,8 +50,6 @@ export async function resolveTaskConfig(
     skills,
     workspaceId,
     configFileName,
-    myboteamRuntime,
-    myboteamStorageDeps,
     database,
   } = options;
 
@@ -63,8 +58,6 @@ export async function resolveTaskConfig(
   const { providerConfigs, enabledProviders, modelOverride } = await buildProviderConfigs({
     getApiKey,
     azureFoundryToken,
-    myboteamRuntime,
-    myboteamStorageDeps,
   });
 
   injectOpenAiStoreFlag(providerConfigs, getApiKey);

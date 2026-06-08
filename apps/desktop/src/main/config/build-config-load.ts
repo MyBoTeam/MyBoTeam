@@ -10,7 +10,6 @@ const buildConfigSchema = z.object({
   gaApiSecret: z.string().default(''),
   gaMeasurementId: z.string().default(''),
   sentryDsn: z.string().default(''),
-  myboteamGatewayUrl: z.string().default(''),
   buildId: z.string().default(''),
   myboteamUpdaterUrl: z.string().default(''),
 });
@@ -49,7 +48,6 @@ export function loadBuildConfig(): BuildConfig {
     gaApiSecret: firstNonEmpty(raw.GA_API_SECRET, process.env.GA_API_SECRET),
     gaMeasurementId: firstNonEmpty(raw.GA_MEASUREMENT_ID, process.env.GA_MEASUREMENT_ID),
     sentryDsn: firstNonEmpty(raw.SENTRY_DSN, process.env.SENTRY_DSN),
-    myboteamGatewayUrl: firstNonEmpty(raw.MYBOTEAM_GATEWAY_URL, process.env.MYBOTEAM_GATEWAY_URL),
     buildId: firstNonEmpty(raw.MYBOTEAM_BUILD_ID, process.env.MYBOTEAM_BUILD_ID),
     myboteamUpdaterUrl: firstNonEmpty(
       raw.MYBOTEAM_UPDATER_URL,
@@ -73,7 +71,6 @@ export function loadBuildConfig(): BuildConfig {
     cachedConfig.mixpanelToken ||
     cachedConfig.gaApiSecret ||
     cachedConfig.sentryDsn ||
-    cachedConfig.myboteamGatewayUrl ||
     cachedConfig.myboteamUpdaterUrl
   ) {
     console.log('[BuildConfig] Loaded build config from process.env (dev / custom fallback)');

@@ -53,7 +53,6 @@ export class TaskService extends EventEmitter {
       isPackaged: options.isPackaged ?? false,
       resourcesPath: options.resourcesPath ?? '',
       appPath: options.appPath ?? '',
-      myboteamRuntime: options.myboteamRuntime,
     };
     this.rpcConnectivityProbe = options.rpcConnectivityProbe ?? { hasConnectedClients: () => true };
     this.on('complete', (data: { taskId: string }) => {
@@ -77,7 +76,6 @@ export class TaskService extends EventEmitter {
       isPackaged: this.opts.isPackaged,
       resourcesPath: this.opts.resourcesPath,
       appPath: this.opts.appPath,
-      myboteamRuntime: this.opts.myboteamRuntime,
     });
     this.taskManager = createTaskManager({
       adapterOptions: {
@@ -98,7 +96,6 @@ export class TaskService extends EventEmitter {
           return this.serverManager.waitForServerUrl(taskId);
         },
         getModelDisplayName,
-        setProxyTaskId: options.setProxyTaskId,
       },
       defaultWorkingDirectory: homedir(),
       maxConcurrentTasks: 10,

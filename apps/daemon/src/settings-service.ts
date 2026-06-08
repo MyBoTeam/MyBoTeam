@@ -2,7 +2,6 @@ import { EventEmitter } from 'node:events';
 import type {
   AzureFoundryConfig,
   ConnectedProvider,
-  CreditUsage,
   HuggingFaceLocalConfig,
   LanguagePreference,
   LiteLLMConfig,
@@ -119,13 +118,6 @@ export class SettingsService extends EventEmitter {
   }
   getProviderDebugMode(): boolean {
     return this.storage.getProviderDebugMode();
-  }
-  getMyboteamAiCredits(): CreditUsage | null {
-    return this.storage.getMyboteamAiCredits();
-  }
-  saveMyboteamAiCredits(usage: CreditUsage): void {
-    this.storage.saveMyboteamAiCredits(usage);
-    this.emit('settings.changed', { key: 'providerSettings' });
   }
   getHuggingFaceLocalConfig(): HuggingFaceLocalConfig | null {
     return this.storage.getHuggingFaceLocalConfig();

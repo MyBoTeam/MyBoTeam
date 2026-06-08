@@ -20,12 +20,9 @@ import type { MyBoTeamAnalytics } from './myboteam-analytics';
 import type {
   AppInfo,
   AppSettingsData,
-  BuildCapabilitiesData,
   CopilotLoginResultData,
   CopilotOAuthStatusData,
   DaemonPingResult,
-  MyboteamAiStatusData,
-  MyboteamAiUsageData,
   OpenAiOauthStatusData,
   OpenCodeCliCheckResult,
   ProviderUnion,
@@ -153,13 +150,6 @@ export interface MyBoTeamAPISettings {
   deleteSchedule(scheduleId: string): Promise<void>;
   setScheduleEnabled(scheduleId: string, enabled: boolean): Promise<void>;
   isAutoStartEnabled(): Promise<boolean>;
-  myboteamAiConnect(): Promise<MyboteamAiUsageData>;
-  myboteamAiEnsureReady(): Promise<{ deviceFingerprint: string }>;
-  myboteamAiDisconnect(): Promise<void>;
-  myboteamAiGetUsage(): Promise<MyboteamAiUsageData>;
-  myboteamAiGetStatus(): Promise<MyboteamAiStatusData>;
-  onMyboteamAiUsageUpdate(callback: (usage: MyboteamAiUsageData) => void): () => void;
-  getBuildCapabilities(): Promise<BuildCapabilitiesData>;
   isMaximized(): Promise<boolean>;
   isFullScreen(): Promise<boolean>;
   onMaximizedChanged(callback: (maximized: boolean) => void): () => void;

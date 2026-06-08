@@ -174,11 +174,4 @@ export const PROVIDER_META: Record<ProviderId, ProviderMeta> = {
     logoKey: 'github-copilot',
     helpUrl: 'https://github.com/settings/copilot',
   },
-  'myboteam-ai': {
-    id: 'myboteam-ai',
-    name: 'MyBoTeam AI',
-    category: 'myboteam',
-    label: 'Free Tier',
-    logoKey: 'myboteam',
-  },
 };

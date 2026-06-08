@@ -122,10 +122,6 @@ export function registerNotificationHandlers(
     forward('browser:frame', data);
   });
 
-  client.onNotification('myboteam-ai.usage-update', (data) => {
-    forward('myboteam-ai:usage-updated', data);
-  });
-
   client.onNotification('whatsapp.qr', (data) => {
     forward('integrations:whatsapp:qr', (data as { qr: string }).qr);
   });

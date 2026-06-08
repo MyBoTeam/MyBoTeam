@@ -1,4 +1,4 @@
-import { DaemonRpcServer, type MyboteamRuntime, WHATSAPP_API_PORT } from '@myboteam/agent-core';
+import { DaemonRpcServer, WHATSAPP_API_PORT } from '@myboteam/agent-core';
 import type { DaemonPaths } from './app-config.js';
 import { ConnectorService } from './connector-service.js';
 import { type RouteServices, registerRpcMethods } from './daemon-routes.js';
@@ -21,8 +21,6 @@ export interface BootConfig {
   paths: DaemonPaths;
   isPackaged: boolean;
   authToken: string;
-  myboteamRuntime: MyboteamRuntime;
-  setProxyTaskId: ((taskId: string | undefined) => void) | undefined;
 }
 
 export interface BootResult {
@@ -70,8 +68,6 @@ function createServices(
   storageService: StorageService,
   paths: DaemonPaths,
   isPackaged: boolean,
-  myboteamRuntime: MyboteamRuntime,
-  setProxyTaskId: ((taskId: string | undefined) => void) | undefined,
   authToken: string,
   rpc: DaemonRpcServer,
 ) {
@@ -81,9 +77,7 @@ function createServices(
     isPackaged,
     resourcesPath: paths.resourcesPath,
     appPath: paths.appPath,
-    myboteamRuntime,
     rpcConnectivityProbe: { hasConnectedClients: () => rpc.hasConnectedClients() },
-    setProxyTaskId,
   });
   const healthService = new HealthService();
   const schedulerService = new SchedulerService(storage, (prompt, workspaceId) => {
@@ -98,7 +92,6 @@ function createServices(
     isPackaged,
     resourcesPath: paths.resourcesPath,
     appPath: paths.appPath,
-    myboteamRuntime,
   });
   const secretsService = new SecretsService(storage);
   const settingsService = new SettingsService(storage);
@@ -145,13 +138,11 @@ function registerRoutes(
   rpc: DaemonRpcServer,
   services: ReturnType<typeof createServices>,
   storageService: StorageService,
-  myboteamRuntime: MyboteamRuntime,
 ): void {
   const routeServices = {
     rpc,
     ...services,
     storageService,
-    myboteamRuntime,
   } as unknown as RouteServices;
   registerRpcMethods(routeServices);
   registerTaskEventForwarding(routeServices);
@@ -177,25 +168,16 @@ async function startServices(
 }
 
 export async function bootDaemon(config: BootConfig): Promise<BootResult> {
-  const { paths, isPackaged, authToken, myboteamRuntime, setProxyTaskId } = config;
+  const { paths, isPackaged, authToken } = config;
   const { storageService, storage } = await initializeStorage(paths);
   const rpc = createRpcServer(paths);
-  const services = createServices(
-    storage,
-    storageService,
-    paths,
-    isPackaged,
-    myboteamRuntime,
-    setProxyTaskId,
-    authToken,
-    rpc,
-  );
+  const services = createServices(storage, storageService, paths, isPackaged, authToken, rpc);
   await initializeServices(
     services.workspaceService,
     services.skillsService,
     services.googleAccountService,
   );
-  registerRoutes(rpc, services, storageService, myboteamRuntime);
+  registerRoutes(rpc, services, storageService);
   await startServices(
     rpc,
     services.whatsappSendApi,
