@@ -58,13 +58,6 @@ interface DaemonMethodMapCore {
   'daemon.shutdown': { params: undefined; result: undefined };
   'health.check': { params: undefined; result: HealthCheckResult };
 
-  'myboteam-ai.connect': {
-    params: undefined;
-    result: { deviceFingerprint: string; usage: import('../gateway.js').CreditUsage | null };
-  };
-  'myboteam-ai.get-usage': { params: undefined; result: import('../gateway.js').CreditUsage };
-  'myboteam-ai.disconnect': { params: undefined; result: undefined };
-
   'auth.openai.startLogin': {
     params: undefined;
     result: { sessionId: string; authorizeUrl: string };

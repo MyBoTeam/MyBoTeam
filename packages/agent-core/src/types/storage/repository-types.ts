@@ -1,7 +1,6 @@
 import type { CloudBrowserConfig } from '../../common/types/cloud-browser.js';
 import type { ConnectorStatus, McpConnector, OAuthTokens } from '../../common/types/connector.js';
 import type { ScheduledTask } from '../../common/types/daemon.js';
-import type { CreditUsage } from '../../common/types/gateway.js';
 import type { MessagingConfig } from '../../common/types/messaging.js';
 import type {
   AzureFoundryConfig,
@@ -109,8 +108,6 @@ export interface ProviderSettingsAPI {
   } | null;
   hasReadyProvider(): boolean;
   getConnectedProviderIds(): ProviderId[];
-  getMyboteamAiCredits(): CreditUsage | null;
-  saveMyboteamAiCredits(usage: CreditUsage): void;
 }
 
 export interface SecureStorageAPI {
