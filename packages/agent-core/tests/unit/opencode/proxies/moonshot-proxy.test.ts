@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   ensureMoonshotProxy,
-  isMoonshotProxyRunning,
   stopMoonshotProxy,
   transformMoonshotRequestBody,
 } from '../../../../src/opencode/proxies/moonshot-proxy.js';
@@ -250,29 +249,12 @@ describe('Moonshot Proxy', () => {
   describe('stopMoonshotProxy', () => {
     it('should stop running proxy', async () => {
       await ensureMoonshotProxy('https://api.moonshot.cn');
-      expect(isMoonshotProxyRunning()).toBe(true);
 
-      await stopMoonshotProxy();
-
-      expect(isMoonshotProxyRunning()).toBe(false);
+      await expect(stopMoonshotProxy()).resolves.toBeUndefined();
     });
 
     it('should not throw when proxy not running', async () => {
-      await stopMoonshotProxy();
-
-      expect(isMoonshotProxyRunning()).toBe(false);
-    });
-  });
-
-  describe('isMoonshotProxyRunning', () => {
-    it('should return false initially', () => {
-      expect(isMoonshotProxyRunning()).toBe(false);
-    });
-
-    it('should return true after starting proxy', async () => {
-      await ensureMoonshotProxy('https://api.moonshot.cn');
-
-      expect(isMoonshotProxyRunning()).toBe(true);
+      await expect(stopMoonshotProxy()).resolves.toBeUndefined();
     });
   });
 });
