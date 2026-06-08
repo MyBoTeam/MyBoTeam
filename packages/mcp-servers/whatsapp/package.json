@@ -1,0 +1,19 @@
+{
+  "name": "@myboteam/whatsapp-mcp",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "check": "biome check --write . && tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.2",
+    "vitest": "^4.0.17",
+    "@types/node": "^25.9.1"
+  }
+}
