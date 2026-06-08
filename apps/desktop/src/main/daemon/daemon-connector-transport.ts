@@ -2,7 +2,7 @@ import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { app } from 'electron';
-import { getBuildConfig, getBuildId } from '../config/build-config';
+import { getBuildId } from '../config/build-config';
 import { getNodePath } from '../utils/bundled-node';
 import { getDaemonEntryPath, getDataDir, log } from './daemon-connector';
 
@@ -83,10 +83,6 @@ export function spawnDaemon(dataDir: string): void {
   };
   delete daemonEnv.ELECTRON_RUN_AS_NODE;
 
-  const bc = getBuildConfig();
-  if (bc.myboteamGatewayUrl) {
-    daemonEnv.MYBOTEAM_GATEWAY_URL = bc.myboteamGatewayUrl;
-  }
   if (app.isPackaged) {
     daemonEnv.MYBOTEAM_IS_PACKAGED = '1';
     daemonEnv.MYBOTEAM_RESOURCES_PATH = process.resourcesPath;

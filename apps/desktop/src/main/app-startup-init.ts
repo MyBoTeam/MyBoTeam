@@ -3,7 +3,7 @@ import { app, nativeImage, nativeTheme } from 'electron';
 import { initAnalytics, initDeviceFingerprint } from './analytics/analytics-service';
 import { trackAppLaunched } from './analytics/events';
 import { initMixpanel } from './analytics/mixpanel-service';
-import { getBuildConfig, isAnalyticsEnabled, isFreeMode } from './config/build-config';
+import { getBuildConfig, isAnalyticsEnabled } from './config/build-config';
 import { getDaemonClient } from './daemon-bootstrap';
 import { getLogCollector } from './logging';
 import { startHuggingFaceServer } from './providers/huggingface-local';
@@ -93,19 +93,6 @@ export async function initPostBootstrap(): Promise<void> {
         });
     }
 
-    try {
-      if (!isFreeMode()) {
-        const connected = snap.providers.connectedProviders['myboteam-ai'];
-        if (connected) {
-          const client = getDaemonClient();
-          await client.call('provider.removeConnected', { providerId: 'myboteam-ai' });
-          if (snap.providers.activeProviderId === 'myboteam-ai') {
-            await client.call('provider.setActive', { providerId: null });
-          }
-          logMain('INFO', '[Main] Removed stale myboteam-ai provider (free mode not available)');
-        }
-      }
-    } catch {}
   } catch (err) {
     logMain('WARN', '[Main] Post-bootstrap settings snapshot read failed', {
       err: String(err),
