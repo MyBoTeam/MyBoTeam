@@ -1,6 +1,5 @@
 import type {
   FileAttachmentInfo,
-  MyboteamRuntime,
   TaskMessage,
   TaskSource,
   TaskStatus,
@@ -44,9 +43,6 @@ export interface TaskServiceOptions {
   isPackaged?: boolean;
   resourcesPath?: string;
   appPath?: string;
-  myboteamRuntime?: MyboteamRuntime;
 
   rpcConnectivityProbe?: { hasConnectedClients(): boolean };
-
-  setProxyTaskId?: (taskId: string | undefined) => void;
 }

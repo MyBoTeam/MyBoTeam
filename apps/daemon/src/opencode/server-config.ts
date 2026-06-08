@@ -1,4 +1,4 @@
-import type { MyboteamRuntime, StorageAPI } from '@myboteam/agent-core';
+import type { StorageAPI } from '@myboteam/agent-core';
 import type { TaskConfigBuilderOptions } from '../task-config-builder.js';
 
 export const READY_TIMEOUT_MS = 15_000;
@@ -12,5 +12,4 @@ export interface TrackedOpencodeServerHandle {
 
 export interface ServerManagerDeps extends TaskConfigBuilderOptions {
   storage: StorageAPI;
-  myboteamRuntime?: MyboteamRuntime;
 }
