@@ -1,7 +1,9 @@
 export interface BaileysSocket {
   ev: BaileysEventEmitter;
   user?: { id?: string; lid?: string };
-  sendMessage(jid: string, content: { text: string }): Promise<unknown>;
+  sendMessage(jid: string, content: Record<string, unknown>): Promise<unknown>;
+  sendPresenceUpdate(action: string, jid: string): Promise<void>;
+  readMessages(keys: Array<{ remoteJid: string; id: string; fromMe: boolean }>): Promise<void>;
   end(error: Error): void;
   logout(): Promise<void>;
 }
