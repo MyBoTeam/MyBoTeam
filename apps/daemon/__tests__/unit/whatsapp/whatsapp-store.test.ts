@@ -113,6 +113,17 @@ describe('WhatsAppStore', () => {
       expect(chats[0].name).toBe('Updated Name');
     });
 
+    it('should update chat conversationTimestamp on chats.update', () => {
+      const { emitter, emit } = createMockEmitter();
+      const store = createStore();
+      store.bind(emitter);
+
+      emit('chats.upsert', [{ id: JID_1, name: 'A', conversationTimestamp: 100 }]);
+      emit('chats.update', [{ id: JID_1, conversationTimestamp: 200 }]);
+
+      expect(store.chats.all()[0].conversationTimestamp).toBe(200);
+    });
+
     it('should not add new chat on chats.update if not already present', () => {
       const { emitter, emit } = createMockEmitter();
       const store = createStore();
@@ -317,6 +328,88 @@ describe('WhatsAppStore', () => {
       emit('messages.delete', { jid: JID_1, all: true });
 
       expect(store.messages[JID_1]?.all()).toBeUndefined();
+    });
+
+    it('should skip messages.upsert without remoteJid', () => {
+      const { emitter, emit } = createMockEmitter();
+      const store = createStore();
+      store.bind(emitter);
+
+      emit('messages.upsert', {
+        messages: [
+          {
+            key: { fromMe: false, id: 'no-jid' },
+            message: { conversation: 'No JID' },
+            messageTimestamp: 1000,
+          },
+        ],
+      });
+
+      expect(store.messages[JID_1]?.all()).toBeUndefined();
+    });
+
+    it('should skip messages.upsert without message id', () => {
+      const { emitter, emit } = createMockEmitter();
+      const store = createStore();
+      store.bind(emitter);
+
+      emit('messages.upsert', {
+        messages: [
+          {
+            key: { remoteJid: JID_1, fromMe: false },
+            message: { conversation: 'No ID' },
+            messageTimestamp: 1000,
+          },
+        ],
+      });
+
+      expect(store.messages[JID_1]?.all()).toBeUndefined();
+    });
+
+    it('should skip messages.update for unknown jid', () => {
+      const { emitter, emit } = createMockEmitter();
+      const store = createStore();
+      store.bind(emitter);
+
+      emit('messages.update', [
+        {
+          key: { remoteJid: JID_1, id: 'msg-1' },
+          update: { messageTimestamp: 2000 },
+        },
+      ]);
+
+      expect(store.messages[JID_1]?.all()).toBeUndefined();
+    });
+
+    it('should not delete messages on messages.delete with all=false', () => {
+      const { emitter, emit } = createMockEmitter();
+      const store = createStore();
+      store.bind(emitter);
+
+      emit('messaging-history.set', {
+        chats: [],
+        messages: [
+          {
+            key: { remoteJid: JID_1, fromMe: false, id: 'msg-1' },
+            message: { conversation: 'Hello' },
+            messageTimestamp: 1000,
+          },
+        ],
+      });
+
+      emit('messages.delete', { jid: JID_1, all: false });
+
+      expect(store.messages[JID_1]!.all()).toHaveLength(1);
+    });
+
+    it('should skip chats.upsert with empty id', () => {
+      const { emitter, emit } = createMockEmitter();
+      const store = createStore();
+      store.bind(emitter);
+
+      emit('chats.upsert', [{ id: '', name: 'No ID' }]);
+
+      expect(store.chats.all()).toHaveLength(0);
     });
 
     it('should remove messages for deleted chat on chats.delete', () => {
