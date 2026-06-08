@@ -12,11 +12,6 @@ import {
 } from './server-utils.js';
 
 export type { BrowserServerConfig } from './server-utils.js';
-export {
-  installPlaywrightChromium,
-  isDevBrowserServerReady,
-  waitForDevBrowserServer,
-} from './server-utils.js';
 
 import {
   DEV_BROWSER_WAIT_MS_DEFAULT,
@@ -29,9 +24,7 @@ export { shutdownDevBrowserServer } from './server-config.js';
 
 const log = createConsoleLogger({ prefix: 'Browser' });
 
-export async function startDevBrowserServer(
-  config: BrowserServerConfig,
-): Promise<ServerStartResult> {
+async function startDevBrowserServer(config: BrowserServerConfig): Promise<ServerStartResult> {
   const serverScript = path.join(config.mcpToolsPath, 'dev-browser', 'server.mjs');
   const serverCwd = path.join(config.mcpToolsPath, 'dev-browser');
   if (!fs.existsSync(serverScript)) {

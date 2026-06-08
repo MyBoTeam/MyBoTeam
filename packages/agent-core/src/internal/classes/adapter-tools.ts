@@ -62,7 +62,7 @@ export function handleToolPart(
   }
 }
 
-export function detectBrowserFrames(state: AdapterState, output: string): void {
+function detectBrowserFrames(state: AdapterState, output: string): void {
   if (!output) return;
   const lines = output.split('\n');
   for (const line of lines) {

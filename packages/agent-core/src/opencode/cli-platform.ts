@@ -11,7 +11,7 @@ const LINUX_OPENCODE_ARM64_MUSL_PACKAGE = 'opencode-linux-arm64-musl';
 
 let cachedWindowsPackageNames: string[] | null = null;
 
-export function detectWindowsAvx2Support(): boolean {
+function detectWindowsAvx2Support(): boolean {
   const checkCommand =
     '(Add-Type -MemberDefinition "[DllImport(""kernel32.dll"")] public static extern bool IsProcessorFeaturePresent(int ProcessorFeature);" -Name Kernel32 -Namespace Win32 -PassThru)::IsProcessorFeaturePresent(40)';
 

@@ -1,6 +1,6 @@
 import { isHiddenToolName } from './tool-classification.js';
 
-export const TOOL_DISPLAY_NAMES: Record<string, string | null> = {
+const TOOL_DISPLAY_NAMES: Record<string, string | null> = {
   browser_evaluate: 'Evaluating page',
   browser_snapshot: 'Taking screenshot',
   browser_canvas_type: 'Typing text',

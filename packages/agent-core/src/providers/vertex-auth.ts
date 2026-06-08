@@ -13,7 +13,7 @@ export interface ServiceAccountKey {
   token_uri?: string;
 }
 
-export async function getServiceAccountAccessToken(key: ServiceAccountKey): Promise<string> {
+async function getServiceAccountAccessToken(key: ServiceAccountKey): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const header = { alg: 'RS256', typ: 'JWT' };
   const payload = {
@@ -53,7 +53,7 @@ export async function getServiceAccountAccessToken(key: ServiceAccountKey): Prom
   return data.access_token;
 }
 
-export async function getAdcAccessToken(): Promise<string> {
+async function getAdcAccessToken(): Promise<string> {
   try {
     const token = await new Promise<string>((resolve, reject) => {
       execFile(

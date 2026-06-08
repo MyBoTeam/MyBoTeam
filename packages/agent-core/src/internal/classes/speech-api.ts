@@ -4,7 +4,7 @@ import { handleTranscribeErrorResponse } from './speech-api-utils.js';
 
 const log = createConsoleLogger({ prefix: 'SpeechAPI' });
 
-export const ELEVENLABS_API_TIMEOUT_MS = 30000;
+const ELEVENLABS_API_TIMEOUT_MS = 30000;
 export const DEFAULT_ELEVENLABS_STT_MODEL_ID = 'scribe_v2';
 
 export interface TranscriptionResult {

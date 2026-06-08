@@ -39,10 +39,7 @@ import type {
   TaskInactivityWatchdogTimeoutContext,
 } from './TaskInactivityWatchdog.js';
 
-export { OpenCodeRuntimeUnavailableError } from './open-code-runtime-unavailable-error.js';
 export { type AdapterOptions, type OpenCodeAdapterEvents, OpenCodeCliNotFoundError };
-
-export const WINDOWS_CTRL_C_EXIT_CODE = -1073741510;
 
 export class OpenCodeAdapter extends EventEmitter<OpenCodeAdapterEvents> {
   private state: AdapterState;

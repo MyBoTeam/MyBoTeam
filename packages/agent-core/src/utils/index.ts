@@ -15,7 +15,7 @@ export { safeParseJson, safeParseJsonWithFallback } from './json.js';
 export { LogCollector } from './log-collector.js';
 export { LogFileWriter } from './log-file-writer.js';
 export type { ConsoleLoggerOptions, LogEntry, Logger, LogLevel } from './logging.js';
-export { createBufferedLogger, createConsoleLogger, createNoOpLogger } from './logging.js';
+export { createConsoleLogger } from './logging.js';
 export {
   createDefaultPlatformConfig,
   getDefaultTempPath,

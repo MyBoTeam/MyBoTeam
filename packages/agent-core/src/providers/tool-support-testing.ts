@@ -23,9 +23,7 @@ interface ChatCompletionResponse {
   }>;
 }
 
-export async function testModelToolSupport(
-  options: ToolSupportTestOptions,
-): Promise<ToolSupportStatus> {
+async function testModelToolSupport(options: ToolSupportTestOptions): Promise<ToolSupportStatus> {
   const { baseUrl, modelId, providerName, timeoutMs = 10000 } = options;
 
   const testPayload = {

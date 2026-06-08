@@ -22,9 +22,3 @@ export function saveMyboteamAiCredits(usage: CreditUsage): void {
   ]);
   flushDatabase();
 }
-
-export function clearMyboteamAiCredits(): void {
-  const db = getDatabase();
-  db.run('DELETE FROM myboteam_ai_credits WHERE id = 1');
-  flushDatabase();
-}

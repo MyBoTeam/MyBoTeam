@@ -51,7 +51,7 @@ export function getNodeExecutable(bundledNodeBinPath?: string): string {
   );
 }
 
-export function resolvePlaywrightCliPath(mcpToolsPath: string): string {
+function resolvePlaywrightCliPath(mcpToolsPath: string): string {
   const candidates = [
     path.join(mcpToolsPath, 'dev-browser', 'node_modules', 'playwright', 'cli.js'),
     path.join(mcpToolsPath, 'node_modules', 'playwright', 'cli.js'),

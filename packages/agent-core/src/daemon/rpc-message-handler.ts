@@ -10,14 +10,14 @@ export interface RpcClient {
   buffer: string;
 }
 
-export function sendResult(client: RpcClient, id: string | number, result: unknown): void {
+function sendResult(client: RpcClient, id: string | number, result: unknown): void {
   const response: JsonRpcResponse = { jsonrpc: '2.0', id, result };
   if (!client.socket.destroyed) {
     client.socket.write(`${JSON.stringify(response)}\n`);
   }
 }
 
-export function sendError(
+function sendError(
   client: RpcClient,
   id: string | number,
   error: { code: number; message: string },

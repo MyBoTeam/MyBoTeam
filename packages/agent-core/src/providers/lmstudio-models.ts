@@ -34,7 +34,7 @@ export interface LMStudioFetchModelsOptions {
   timeoutMs?: number;
 }
 
-export function formatModelDisplayName(modelId: string): string {
+function formatModelDisplayName(modelId: string): string {
   return modelId.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
