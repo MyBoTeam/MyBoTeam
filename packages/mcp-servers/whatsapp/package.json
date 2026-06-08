@@ -1,7 +1,10 @@
 {
   "name": "@myboteam/whatsapp-mcp",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
