@@ -6,15 +6,15 @@ export function createStore(): {
   messages: Record<string, { all(): BaileysMessage[] }>;
 } {
   const chatsMap = new Map<string, BaileysChat>();
-  const messagesMap = new Map<string, BaileysMessage[]>();
+  const messagesMap = new Map<string, Map<string, BaileysMessage>>();
 
-  function ensureMessageList(jid: string): BaileysMessage[] {
-    let list = messagesMap.get(jid);
-    if (!list) {
-      list = [];
-      messagesMap.set(jid, list);
+  function ensureMessageMap(jid: string): Map<string, BaileysMessage> {
+    let map = messagesMap.get(jid);
+    if (!map) {
+      map = new Map();
+      messagesMap.set(jid, map);
     }
-    return list;
+    return map;
   }
 
   function toChat(raw: Record<string, unknown>): BaileysChat {
@@ -31,6 +31,11 @@ export function createStore(): {
       message: raw.message as BaileysMessage['message'],
       messageTimestamp: raw.messageTimestamp,
     };
+  }
+
+  function msgId(msg: BaileysMessage): string | null {
+    const key = msg.key as { id?: string | null } | null;
+    return key?.id ?? null;
   }
 
   return {
@@ -56,7 +61,11 @@ export function createStore(): {
             const key = msg.key as Record<string, unknown> | null;
             const jid = (key?.remoteJid as string) ?? '';
             if (!jid) continue;
-            ensureMessageList(jid).push(toMessage(msg));
+            const stored = toMessage(msg);
+            const id = msgId(stored);
+            if (id) {
+              ensureMessageMap(jid).set(id, stored);
+            }
           }
         }
       });
@@ -96,11 +105,15 @@ export function createStore(): {
 
       ev.on('messages.upsert', (data: unknown) => {
         const { messages } = data as { messages: Record<string, unknown>[] };
-        for (const msg of messages) {
-          const key = msg.key as Record<string, unknown> | null;
+        for (const raw of messages) {
+          const key = raw.key as Record<string, unknown> | null;
           const jid = (key?.remoteJid as string) ?? '';
           if (!jid) continue;
-          ensureMessageList(jid).push(toMessage(msg));
+          const stored = toMessage(raw);
+          const id = msgId(stored);
+          if (id) {
+            ensureMessageMap(jid).set(id, stored);
+          }
         }
       });
 
@@ -109,16 +122,13 @@ export function createStore(): {
         for (const { key, update } of updates) {
           const jid = (key.remoteJid as string) ?? '';
           if (!jid) continue;
-          const msgId = key.id as string | undefined;
-          if (!msgId) continue;
-          const msgs = messagesMap.get(jid);
-          if (!msgs) continue;
-          const idx = msgs.findIndex((m) => {
-            const mk = m.key as { id?: string | null } | null;
-            return mk?.id === msgId;
-          });
-          if (idx !== -1 && update) {
-            Object.assign(msgs[idx], update);
+          const msgIdKey = key.id as string | undefined;
+          if (!msgIdKey) continue;
+          const map = messagesMap.get(jid);
+          if (!map) continue;
+          const existing = map.get(msgIdKey);
+          if (existing && update) {
+            Object.assign(existing, update);
           }
         }
       });
@@ -126,21 +136,18 @@ export function createStore(): {
       ev.on('messages.delete', (data: unknown) => {
         const deleted = data as
           | { keys: Array<{ remoteJid?: string | null; id?: string | null }> }
-          | { jid: string; all: boolean };
+          | { jid: string | null; all: boolean };
         if ('keys' in deleted) {
           for (const key of deleted.keys) {
             const jid = key?.remoteJid ?? '';
             if (!jid) continue;
-            const msgId = key?.id;
-            if (!msgId) continue;
-            const msgs = messagesMap.get(jid);
-            if (!msgs) continue;
-            const idx = msgs.findIndex((m) => {
-              const mk = m.key as { id?: string | null } | null;
-              return mk?.id === msgId;
-            });
-            if (idx !== -1) msgs.splice(idx, 1);
+            const msgIdKey = key?.id;
+            if (!msgIdKey) continue;
+            const map = messagesMap.get(jid);
+            if (map) map.delete(msgIdKey);
           }
+        } else if ('all' in deleted && deleted.all && deleted.jid) {
+          messagesMap.delete(deleted.jid);
         }
       });
     },
@@ -152,7 +159,8 @@ export function createStore(): {
     messages: new Proxy({} as Record<string, { all(): BaileysMessage[] }>, {
       get(_target, prop: string) {
         if (typeof prop === 'string' && messagesMap.has(prop)) {
-          return { all: () => messagesMap.get(prop) ?? [] };
+          const map = messagesMap.get(prop)!;
+          return { all: () => Array.from(map.values()) };
         }
         return undefined;
       },
