@@ -92,7 +92,6 @@ export async function initPostBootstrap(): Promise<void> {
           });
         });
     }
-
   } catch (err) {
     logMain('WARN', '[Main] Post-bootstrap settings snapshot read failed', {
       err: String(err),

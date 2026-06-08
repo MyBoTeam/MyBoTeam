@@ -22,18 +22,9 @@ export type ProviderId =
   | 'venice'
   | 'nim'
   | 'custom'
-  | 'copilot'
-  | 'myboteam-ai';
+  | 'copilot';
 
-export type ProviderCategory =
-  | 'classic'
-  | 'aws'
-  | 'gcp'
-  | 'azure'
-  | 'local'
-  | 'proxy'
-  | 'hybrid'
-  | 'myboteam';
+export type ProviderCategory = 'classic' | 'aws' | 'gcp' | 'azure' | 'local' | 'proxy' | 'hybrid';
 
 export interface ProviderMeta {
   id: ProviderId;
@@ -61,7 +52,6 @@ export const DEFAULT_MODELS: Partial<Record<ProviderId, string>> = {
   venice: 'venice/llama-3.3-70b',
   nim: 'nim/meta/llama-3.1-70b-instruct',
   copilot: 'copilot/gpt-4o',
-  'myboteam-ai': 'myboteam-ai/myboteam-free',
 };
 
 export function getDefaultModelForProvider(providerId: ProviderId): string | null {
@@ -93,7 +83,6 @@ export const PROVIDER_ID_TO_OPENCODE: Record<ProviderId, string> = {
   nim: 'nim',
   custom: 'custom',
   copilot: 'github-copilot',
-  'myboteam-ai': 'myboteam-ai',
 };
 
 export { PROVIDER_META } from './provider-meta.js';

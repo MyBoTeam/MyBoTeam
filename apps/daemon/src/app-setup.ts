@@ -171,14 +171,7 @@ export async function bootDaemon(config: BootConfig): Promise<BootResult> {
   const { paths, isPackaged, authToken } = config;
   const { storageService, storage } = await initializeStorage(paths);
   const rpc = createRpcServer(paths);
-  const services = createServices(
-    storage,
-    storageService,
-    paths,
-    isPackaged,
-    authToken,
-    rpc,
-  );
+  const services = createServices(storage, storageService, paths, isPackaged, authToken, rpc);
   await initializeServices(
     services.workspaceService,
     services.skillsService,

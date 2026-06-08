@@ -54,7 +54,6 @@ export {
 } from './common/types/provider.js';
 export type {
   ConnectedProvider,
-  MyboteamAiCredentials,
   ProviderId,
   ZaiRegion,
 } from './common/types/providerSettings.js';

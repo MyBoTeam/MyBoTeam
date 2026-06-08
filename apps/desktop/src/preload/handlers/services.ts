@@ -101,7 +101,6 @@ export const serviceHandlers = {
     ipcRenderer.invoke('scheduler:set-enabled', scheduleId, enabled),
   isAutoStartEnabled: (): Promise<boolean> => ipcRenderer.invoke('daemon:is-auto-start-enabled'),
 
-
   onCloseRequested: (callback: () => void): (() => void) => {
     const listener = () => callback();
     ipcRenderer.on('app:close-requested', listener);

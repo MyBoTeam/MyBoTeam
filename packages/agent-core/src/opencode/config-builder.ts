@@ -78,9 +78,7 @@ export async function buildProviderConfigs(
   ];
   let enabledProviders = baseProviders;
   if (connectedIds.length > 0) {
-    const mappedProviders = connectedIds
-      .filter((id) => id !== 'myboteam-ai')
-      .map((id) => PROVIDER_ID_TO_OPENCODE[id]);
+    const mappedProviders = connectedIds.map((id) => PROVIDER_ID_TO_OPENCODE[id]);
     enabledProviders = [...new Set([...baseProviders, ...mappedProviders])];
   } else {
     const ollamaConfig = getOllamaConfig();

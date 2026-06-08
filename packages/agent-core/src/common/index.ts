@@ -106,7 +106,6 @@ export type {
   HuggingFaceLocalCredentials,
   LiteLLMCredentials,
   LMStudioCredentials,
-  MyboteamAiCredentials,
   NimCredentials,
   OAuthCredentials,
   OllamaCredentials,

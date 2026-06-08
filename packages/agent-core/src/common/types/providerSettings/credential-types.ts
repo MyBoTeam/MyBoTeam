@@ -90,11 +90,6 @@ export interface CopilotOAuthCredentials {
   type: 'copilot-oauth';
 }
 
-export interface MyboteamAiCredentials {
-  type: 'myboteam-ai';
-  deviceFingerprint: string;
-}
-
 export type ProviderCredentials =
   | ApiKeyCredentials
   | BedrockProviderCredentials
@@ -108,7 +103,6 @@ export type ProviderCredentials =
   | OAuthCredentials
   | HuggingFaceLocalCredentials
   | CopilotOAuthCredentials
-  | MyboteamAiCredentials
   | CustomCredentials
   | NimCredentials;
 

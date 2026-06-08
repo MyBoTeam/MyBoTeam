@@ -1,9 +1,4 @@
-import type {
-  FileAttachmentInfo,
-  TaskMessage,
-  TaskSource,
-  TaskStatus,
-} from '@myboteam/agent-core';
+import type { FileAttachmentInfo, TaskMessage, TaskSource, TaskStatus } from '@myboteam/agent-core';
 
 export interface TaskServiceEvents {
   progress: [data: { taskId: string; stage: string; message?: string }];

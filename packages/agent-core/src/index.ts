@@ -156,7 +156,6 @@ export type {
   CustomCredentials,
   LiteLLMCredentials,
   LMStudioCredentials,
-  MyboteamAiCredentials,
   NimCredentials,
   OAuthCredentials,
   OllamaCredentials,
