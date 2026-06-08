@@ -2,7 +2,6 @@ import crypto from 'node:crypto';
 import { acquirePidLock, installCrashHandlers, type PidLockHandle } from '@myboteam/agent-core';
 import {
   DRAIN_TIMEOUT_MS,
-  loadOptionalRuntime,
   logStartupBanner,
   parseDaemonArgs,
   resolveDaemonPaths,
@@ -24,7 +23,6 @@ async function main(): Promise<void> {
   }
 
   const paths = resolveDaemonPaths(args);
-  const { myboteamRuntime, setProxyTaskId } = await loadOptionalRuntime();
   const authToken = crypto.randomUUID();
 
   pidLock = acquirePidLock(paths.pidPath);
@@ -34,8 +32,6 @@ async function main(): Promise<void> {
     paths,
     isPackaged: args.isPackaged,
     authToken,
-    myboteamRuntime,
-    setProxyTaskId,
   };
   const services: BootResult = await bootDaemon(bootConfig);
   log.info(`[Daemon] Listening on ${paths.socketPath}`);

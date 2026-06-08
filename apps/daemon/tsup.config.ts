@@ -11,8 +11,6 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
 
-  external: ['@myboteam/llm-gateway-client'],
-
   noExternal: [
     '@myboteam/agent-core',
     '@opencode-ai/sdk',
