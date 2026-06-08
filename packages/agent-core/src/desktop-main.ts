@@ -19,7 +19,6 @@ export type {
   WorkspaceDeleteResult,
   WorkspaceSetActiveResult,
 } from './common/types/daemon.js';
-export type { CreditUsage } from './common/types/gateway.js';
 export type {
   GoogleAccount,
   GoogleAccountStatus,
@@ -45,7 +44,6 @@ export {
 } from './common/types/provider.js';
 export type {
   ConnectedProvider,
-  MyboteamAiCredentials,
   ProviderId,
   ZaiRegion,
 } from './common/types/providerSettings.js';

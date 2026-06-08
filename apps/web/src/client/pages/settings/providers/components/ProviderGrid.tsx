@@ -1,13 +1,11 @@
 import type { ProviderId, ProviderSettings } from '@myboteam/agent-core/common';
 import { PROVIDER_META } from '@myboteam/agent-core/common';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getMyBoTeam } from '@/config/myboteam';
 import { ProviderCard } from './ProviderCard';
 
 const PROVIDER_ORDER: ProviderId[] = [
-  'myboteam-ai',
   'openai',
   'anthropic',
   'google',
@@ -50,29 +48,9 @@ export function ProviderGrid({
 }: ProviderGridProps) {
   const { t } = useTranslation('settings');
   const [search, setSearch] = useState('');
-  const [hasFreeMode, setHasFreeMode] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    getMyBoTeam()
-      .getBuildCapabilities()
-      .then((caps) => {
-        if (!cancelled) setHasFreeMode(caps.hasFreeMode);
-      })
-      .catch(() => {
-        if (!cancelled) setHasFreeMode(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const filteredProviders = useMemo(() => {
-    let providers = PROVIDER_ORDER;
-
-    if (hasFreeMode === false) {
-      providers = providers.filter((id) => id !== 'myboteam-ai');
-    }
+    const providers = PROVIDER_ORDER;
 
     if (!search.trim()) return providers;
     const query = search.toLowerCase();
@@ -80,7 +58,7 @@ export function ProviderGrid({
       const meta = PROVIDER_META[id];
       return meta.name.toLowerCase().includes(query);
     });
-  }, [search, hasFreeMode]);
+  }, [search]);
 
   return (
     <div className="rounded-xl border border-border bg-card/70 p-4" data-testid="provider-grid">

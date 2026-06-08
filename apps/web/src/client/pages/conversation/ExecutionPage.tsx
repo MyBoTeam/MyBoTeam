@@ -5,14 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { DefaultFallback, ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { ModelIndicator } from '@/components/ui/ModelIndicator';
-import { useCreditsState } from '@/hooks/useCreditsState';
 import { BrowserInstallModal } from './BrowserInstallModal';
 import { ConversationCompleteFooter } from './ConversationCompleteFooter';
 import { ConversationHeader } from './ConversationHeader';
 import { ConversationView } from './ConversationView';
-import { CreditExhaustedChatBanner } from './components/CreditExhaustedChatBanner';
 import { DebugPanel } from './components/DebugPanel';
-import { isMyBoTeamCreditExhaustedError } from './conversation-utils';
 import { FollowUpInput } from './FollowUpInput';
 import { useExecutionPage } from './hooks/useExecutionPage';
 import { QueuedEmptyState, QueuedWithMessages } from './QueuedState';
@@ -20,7 +17,6 @@ import { QueuedEmptyState, QueuedWithMessages } from './QueuedState';
 export default function ExecutionPage() {
   const s = useExecutionPage();
   const { t } = useTranslation('execution');
-  const creditsState = useCreditsState();
   const { t: tCommon } = useTranslation('common');
 
   if (s.error) {
@@ -151,19 +147,6 @@ export default function ExecutionPage() {
             }}
             onOpenModelSettings={s.handleOpenModelSettings}
             onOpenSpeechSettings={s.handleOpenSpeechSettings}
-          />
-        )}
-
-        {(creditsState.isCreditsBlocked ||
-          (s.currentTask?.status === 'failed' &&
-            isMyBoTeamCreditExhaustedError(s.currentTask?.result?.error))) && (
-          <CreditExhaustedChatBanner
-            variant="exhausted"
-            resetDate={creditsState.usage?.resetsAt ?? ''}
-            onConnectProvider={() => {
-              s.setSettingsInitialTab('providers');
-              s.setShowSettingsDialog(true);
-            }}
           />
         )}
 

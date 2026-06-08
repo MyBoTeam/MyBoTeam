@@ -77,7 +77,6 @@ export const PROVIDER_PREFIXES = [
   'groq/',
   'venice/',
   'custom/',
-  'myboteam-ai/',
 ];
 
 export function getModelDisplayName(modelId: string): string {

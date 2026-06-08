@@ -10,7 +10,6 @@ import {
   HuggingFaceProviderForm,
   LiteLLMProviderForm,
   LMStudioProviderForm,
-  MyboteamAiProviderForm,
   NimProviderForm,
   OllamaProviderForm,
   OpenRouterProviderForm,
@@ -57,19 +56,6 @@ export function ProviderFormSelector({
       <NimProviderForm
         connectedProvider={connectedProvider}
         onConnect={onConnect}
-        onDisconnect={onDisconnect}
-        onModelChange={onModelChange}
-        showModelError={showModelError}
-      />
-    );
-  }
-
-  if (providerId === 'myboteam-ai') {
-    return (
-      <MyboteamAiProviderForm
-        connectedProvider={connectedProvider}
-        onConnect={onConnect}
-        onUpdateProvider={onUpdateProvider}
         onDisconnect={onDisconnect}
         onModelChange={onModelChange}
         showModelError={showModelError}

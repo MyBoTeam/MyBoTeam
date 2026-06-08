@@ -1,9 +1,5 @@
 import { getBuildConfig } from './build-config-load';
 
-export function isFreeMode(): boolean {
-  return !!getBuildConfig().myboteamGatewayUrl;
-}
-
 export function isAutoUpdaterEnabled(): boolean {
   return !!getBuildConfig().myboteamUpdaterUrl;
 }

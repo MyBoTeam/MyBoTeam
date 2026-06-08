@@ -147,6 +147,33 @@ jobs:
       - name: Run type check
         run: pnpm typecheck
 
+  # Verify dev bootstrap paths (ensure-agent-core-built, ensure-daemon-built, check-deps)
+  dev-bootstrap-check:
+    name: Dev Bootstrap Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24.15.0'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Verify dev bootstrap paths
+        run: pnpm predev:check
+
   # E2E tests (runs in Docker with Xvfb)
   e2e-tests:
     name: E2E Tests (Docker)

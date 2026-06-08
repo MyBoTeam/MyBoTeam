@@ -13,7 +13,6 @@ import litellmLogo from '/assets/ai-logos/litellm.svg';
 import lmstudioLogo from '/assets/ai-logos/lmstudio.png';
 import minimaxLogo from '/assets/ai-logos/minimax.svg';
 import moonshotLogo from '/assets/ai-logos/moonshot.svg';
-import myboteamLogo from '/assets/ai-logos/myboteam.svg';
 import nebiusLogo from '/assets/ai-logos/nebius.svg';
 import nimLogo from '/assets/ai-logos/nim.svg';
 import ollamaLogo from '/assets/ai-logos/ollama.svg';
@@ -50,7 +49,6 @@ export const PROVIDER_LOGOS: Record<ProviderId, string> = {
   nim: nimLogo,
   custom: customLogo,
   copilot: copilotLogo,
-  'myboteam-ai': myboteamLogo,
 };
 
 export const DARK_INVERT_PROVIDERS = new Set<ProviderId>([

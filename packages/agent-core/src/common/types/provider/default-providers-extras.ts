@@ -134,21 +134,4 @@ export const DEFAULT_PROVIDERS_EXTRAS: ProviderConfig[] = [
     defaultModelId: 'copilot/gpt-4o',
     models: [],
   },
-  {
-    id: 'myboteam-ai',
-    name: 'MyBoTeam AI',
-    requiresApiKey: false,
-    defaultModelId: 'myboteam-ai/myboteam-free',
-    models: [
-      {
-        id: 'myboteam-free',
-        displayName: 'MyBoTeam',
-        provider: 'myboteam-ai',
-        fullId: 'myboteam-ai/myboteam-free',
-        contextWindow: 128_000,
-        maxOutputTokens: 32_000,
-        supportsVision: true,
-      },
-    ],
-  },
 ];

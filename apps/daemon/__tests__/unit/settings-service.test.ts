@@ -47,8 +47,6 @@ function makeStorageStub(): StorageAPI {
     updateProviderModel: vi.fn(),
     setProviderDebugMode: vi.fn(),
     getProviderDebugMode: vi.fn(() => false),
-    getMyboteamAiCredits: vi.fn(() => null),
-    saveMyboteamAiCredits: vi.fn(),
   } as unknown as StorageAPI;
 }
 
@@ -168,10 +166,8 @@ describe('SettingsService', () => {
     service.removeConnectedProvider('anthropic' as never);
     service.updateProviderModel('anthropic' as never, 'claude-opus-4.7');
     service.setProviderDebugMode(true);
-    service.saveMyboteamAiCredits({} as never);
-
     expect(changes.every((c) => c.key === 'providerSettings')).toBe(true);
-    expect(changes).toHaveLength(6);
+    expect(changes).toHaveLength(5);
   });
 
   it('setHuggingFaceLocalConfig emits with the config in the payload', () => {
@@ -189,7 +185,6 @@ describe('SettingsService', () => {
 
     service.getProviderSettings();
     service.getProviderDebugMode();
-    service.getMyboteamAiCredits();
     service.getHuggingFaceLocalConfig();
     service.getAll();
 

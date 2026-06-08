@@ -1,8 +1,4 @@
 export {
-  getMyboteamAiCredits,
-  saveMyboteamAiCredits,
-} from './myboteam-ai-credits.js';
-export {
   getActiveProviderModel,
   getConnectedProvider,
   getConnectedProviderIds,

@@ -17,7 +17,6 @@ const MANAGED_ENV_KEYS = [
   'GA_API_SECRET',
   'GA_MEASUREMENT_ID',
   'SENTRY_DSN',
-  'MYBOTEAM_GATEWAY_URL',
   'MYBOTEAM_BUILD_ID',
   'MYBOTEAM_UPDATER_URL',
   'APP_ROOT',
@@ -77,7 +76,6 @@ describe('loadBuildConfig() — build.env and process.env resolution', () => {
       expect(cfg.sentryDsn).toBe('');
       expect(cfg.gaApiSecret).toBe('');
       expect(cfg.gaMeasurementId).toBe('');
-      expect(cfg.myboteamGatewayUrl).toBe('');
       expect(cfg.buildEnvVersion).toBe('');
       expect(cfg.buildId).toBe('');
     });
@@ -86,12 +84,6 @@ describe('loadBuildConfig() — build.env and process.env resolution', () => {
       await loadFresh();
       const { isAnalyticsEnabled } = await import('@main/config/build-config');
       expect(isAnalyticsEnabled()).toBe(false);
-    });
-
-    it('isFreeMode() returns false', async () => {
-      await loadFresh();
-      const { isFreeMode } = await import('@main/config/build-config');
-      expect(isFreeMode()).toBe(false);
     });
   });
 
@@ -113,14 +105,6 @@ describe('loadBuildConfig() — build.env and process.env resolution', () => {
       expect(cfg.gaApiSecret).toBe('env-ga-secret');
       expect(cfg.gaMeasurementId).toBe('G-ENV123');
       expect(cfg.sentryDsn).toBe('https://env.sentry.io/dsn');
-    });
-
-    it('reads gateway URL from process.env (enables Free mode in dev)', async () => {
-      process.env.MYBOTEAM_GATEWAY_URL = 'https://dev.gateway.example.com';
-      const cfg = await loadFresh();
-      expect(cfg.myboteamGatewayUrl).toBe('https://dev.gateway.example.com');
-      const { isFreeMode } = await import('@main/config/build-config');
-      expect(isFreeMode()).toBe(true);
     });
 
     it('isAnalyticsEnabled() returns true when any analytics var is set via env', async () => {
@@ -147,7 +131,6 @@ describe('loadBuildConfig() — build.env and process.env resolution', () => {
       expect(cfg.buildEnvVersion).toBe('1');
       expect(cfg.mixpanelToken).toBe('ci-mixpanel');
       expect(cfg.sentryDsn).toBe('https://ci.sentry.io/dsn');
-      expect(cfg.myboteamGatewayUrl).toBe('https://gateway.myboteam.app');
     });
   });
 

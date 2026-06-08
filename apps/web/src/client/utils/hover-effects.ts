@@ -18,4 +18,4 @@ export const hoverEffects = cva('transition-all duration-300', {
   },
 });
 
-type HoverEffect = 'none' | 'glow' | 'shimmer' | 'ripple' | 'lift' | 'scale';
+export type HoverEffect = 'none' | 'glow' | 'shimmer' | 'ripple' | 'lift' | 'scale';

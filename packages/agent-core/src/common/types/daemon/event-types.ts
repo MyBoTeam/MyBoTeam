@@ -104,7 +104,6 @@ export interface DaemonNotificationMap {
   'todo.update': { taskId: string; todos: import('../todo.js').TodoItem[] };
   'auth.error': { taskId: string; providerId: string; message: string };
   'browser.frame': { taskId: string; [key: string]: unknown };
-  'myboteam-ai.usage-update': import('../gateway.js').CreditUsage;
   'whatsapp.qr': { qr: string };
   'whatsapp.status': { status: import('../messaging.js').MessagingConnectionStatus };
   'settings.changed': SettingsChangePayload;

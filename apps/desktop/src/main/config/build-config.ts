@@ -2,7 +2,6 @@ export {
   getAppTier,
   isAnalyticsEnabled,
   isAutoUpdaterEnabled,
-  isFreeMode,
 } from './build-config-checks';
 
 export { getBuildConfig, loadBuildConfig } from './build-config-load';

@@ -117,15 +117,6 @@ export type SpeechTranscriptionResult =
       result: { text: string; confidence?: number; duration: number; timestamp: number };
     }
   | { success: false; error: { code: string; message: string } };
-export type MyboteamAiUsageData = {
-  deviceFingerprint?: string;
-  spentCredits: number;
-  remainingCredits: number;
-  totalCredits: number;
-  resetsAt: string;
-};
-export type MyboteamAiStatusData = { connected: boolean };
-export type BuildCapabilitiesData = { hasFreeMode: boolean; hasAnalytics: boolean };
 export type ScreenshotResult = {
   success: boolean;
   data?: string;

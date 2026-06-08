@@ -7,7 +7,6 @@ import {
   getBundledNodePaths,
   getEnabledSkills,
   getOpenCodeAuthJsonPath,
-  type MyboteamRuntime,
   type OnBeforeStartContext,
   resolveTaskConfig,
   type StorageAPI,
@@ -22,7 +21,6 @@ export interface TaskConfigBuilderOptions {
   isPackaged: boolean;
   resourcesPath: string;
   appPath: string;
-  myboteamRuntime?: MyboteamRuntime;
 }
 
 export function getBundledNodeBinPath(opts: TaskConfigBuilderOptions): string | undefined {
@@ -85,12 +83,6 @@ export async function onBeforeStart(
     skills,
     workspaceId: ctx.workspaceId,
     configFileName: buildConfigFileName(ctx.taskId),
-    myboteamRuntime: opts.myboteamRuntime,
-    myboteamStorageDeps: {
-      readKey: (key) => storage.get(key),
-      writeKey: (key, value) => storage.set(key, value),
-      readGaClientId: () => null,
-    },
     database,
   });
 

@@ -10,6 +10,7 @@ import { zhCNResources } from './locales/zh-CN';
 const logger = createLogger('i18n');
 
 export const SUPPORTED_LANGUAGES = ['en', 'zh-CN', 'ru', 'fr'] as const;
+type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 export const NAMESPACES = [
   'common',
   'home',

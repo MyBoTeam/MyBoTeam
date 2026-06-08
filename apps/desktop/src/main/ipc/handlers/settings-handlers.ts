@@ -147,9 +147,9 @@ export function registerSettingsHandlers(): void {
   registerWhatsAppHandlers(handle);
 
   handle('app:get-build-capabilities', async () => {
-    const { isFreeMode, isAnalyticsEnabled } = await import('../../config/build-config');
+    const { isAnalyticsEnabled } = await import('../../config/build-config');
     return {
-      hasFreeMode: isFreeMode(),
+      hasFreeMode: false,
       hasAnalytics: isAnalyticsEnabled(),
     };
   });
