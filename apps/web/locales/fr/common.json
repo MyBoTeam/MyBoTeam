@@ -96,5 +96,11 @@
     "lightMode": "Mode clair",
     "darkMode": "Mode sombre",
     "systemMode": "Système"
+  },
+  "callback": {
+    "successTitle": "Authentification réussie",
+    "successMessage": "Vous pouvez fermer cet onglet",
+    "errorTitle": "Authentification échouée",
+    "errorMessage": "Code ou paramètre d'état manquant"
   }
 }

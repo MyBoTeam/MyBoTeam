@@ -96,5 +96,11 @@
     "lightMode": "Light mode",
     "darkMode": "Dark mode",
     "systemMode": "System"
+  },
+  "callback": {
+    "successTitle": "Authentication successful",
+    "successMessage": "You can close this tab",
+    "errorTitle": "Authentication failed",
+    "errorMessage": "Missing code or state parameter"
   }
 }

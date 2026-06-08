@@ -16,6 +16,7 @@ import {
   setSlackMcpTokens,
 } from '@myboteam/agent-core/desktop-main';
 import { shell } from 'electron';
+import { getDaemonClient } from '../../daemon-bootstrap';
 import { createOAuthCallbackServer, type OAuthCallbackServer } from '../../oauth-callback-server';
 import { AuthLoginError } from '../auth-login-error';
 
@@ -123,6 +124,14 @@ class SlackMcpOAuthFlow {
         port: OPENCODE_SLACK_MCP_CALLBACK_PORT,
         callbackPath: OPENCODE_SLACK_MCP_CALLBACK_PATH,
         timeoutMs: 5 * 60_000,
+        settingsProvider: async () => {
+          const snap = await getDaemonClient().call('settings.getAll');
+          return {
+            theme: snap.app.theme === 'dark' ? 'dark' : 'light',
+            themeColor: snap.app.themeColor ?? 'neutral',
+            language: snap.app.language ?? 'en',
+          };
+        },
       });
 
       if (callbackServer.redirectUri !== getSlackMcpCallbackUrl()) {

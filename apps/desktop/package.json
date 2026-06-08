@@ -197,6 +197,20 @@
       {
         "from": "build.env",
         "to": "build.env"
+      },
+      {
+        "from": "../web/locales",
+        "to": "locales",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "assets",
+        "to": "assets",
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "asar": true,

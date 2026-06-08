@@ -1,5 +1,5 @@
 import { createOAuthCallbackServer, type OAuthCallbackServer } from '@main/oauth-callback-server';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 describe('createOAuthCallbackServer', () => {
   let server: OAuthCallbackServer | undefined;
@@ -98,5 +98,92 @@ describe('createOAuthCallbackServer', () => {
     expect(html).toContain('user cancelled');
 
     await expect(resultPromise).rejects.toThrow('user cancelled');
+  });
+
+  it('should return themed HTML with robot image on successful callback', async () => {
+    const settingsProvider = vi.fn().mockResolvedValue({
+      theme: 'light',
+      themeColor: 'mint',
+      language: 'en',
+    });
+    const s = await createOAuthCallbackServer({ settingsProvider });
+
+    const url = new URL(s.redirectUri);
+    url.searchParams.set('code', 'authcode123');
+    url.searchParams.set('state', 'state456');
+
+    const res = await fetch(url.toString());
+    expect(res.status).toBe(200);
+    const html = await res.text();
+    expect(html).toContain('/robot.png');
+    expect(html).toContain('Authentication successful');
+    expect(html).toContain('light');
+    expect(html).toContain('theme-mint');
+    expect(html).toContain('setTimeout'); // auto-close script present
+
+    await s.waitForCallback();
+    expect(settingsProvider).toHaveBeenCalledTimes(1);
+    s.shutdown();
+  });
+
+  it('should use default locale when settingsProvider returns unknown language', async () => {
+    const settingsProvider = vi.fn().mockResolvedValue({
+      theme: 'dark',
+      themeColor: 'neutral',
+      language: 'xx',
+    });
+    const s = await createOAuthCallbackServer({ settingsProvider });
+
+    const url = new URL(s.redirectUri);
+    url.searchParams.set('code', 'authcode123');
+    url.searchParams.set('state', 'state456');
+
+    const res = await fetch(url.toString());
+    const html = await res.text();
+    expect(html).toContain('Authentication successful'); // English default fallback
+
+    await s.waitForCallback();
+    s.shutdown();
+  });
+
+  it('should render error in red for error pages', async () => {
+    const s = await createOAuthCallbackServer();
+    s.waitForCallback().catch(() => {});
+
+    const url = new URL(s.redirectUri);
+    url.searchParams.set('error', 'access_denied');
+
+    const res = await fetch(url.toString());
+    const html = await res.text();
+    expect(html).toContain('#ef4444'); // red color for errors
+    expect(html).not.toContain('7000'); // no auto-close on error
+    s.shutdown();
+  });
+
+  it('should use default theme when settingsProvider throws', async () => {
+    const settingsProvider = vi.fn().mockRejectedValue(new Error('Daemon unreachable'));
+    const s = await createOAuthCallbackServer({ settingsProvider });
+
+    const url = new URL(s.redirectUri);
+    url.searchParams.set('code', 'authcode123');
+    url.searchParams.set('state', 'state456');
+
+    const res = await fetch(url.toString());
+    const html = await res.text();
+    expect(html).toContain('light'); // default fallback theme
+    expect(html).toContain('Authentication successful');
+
+    await s.waitForCallback();
+    s.shutdown();
+  });
+
+  it('should serve robot.png from the callback server', async () => {
+    const s = await createOAuthCallbackServer();
+    s.waitForCallback().catch(() => {});
+    const baseUrl = s.redirectUri.replace('/callback', '');
+    const res = await fetch(`${baseUrl}/robot.png`);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toBe('image/png');
+    s.shutdown();
   });
 });

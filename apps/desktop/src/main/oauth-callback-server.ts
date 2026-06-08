@@ -1,4 +1,11 @@
+import fs from 'node:fs';
 import http from 'node:http';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { buildHtml, type CallbackSettings, readLocaleStrings } from './oauth-callback-html';
+
+export type { CallbackSettings } from './oauth-callback-html';
 
 interface OAuthCallbackResult {
   code: string;
@@ -17,25 +24,12 @@ export interface OAuthCallbackServerOptions {
   port?: number;
   callbackPath?: string;
   timeoutMs?: number;
+  settingsProvider?: () => Promise<CallbackSettings>;
 }
 
 const CALLBACK_TIMEOUT_MS = 60_000;
 
-const SUCCESS_HTML = `<!DOCTYPE html>
-<html><head><title>Authentication Successful</title></head>
-<body style="font-family:system-ui,sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0">
-<div style="text-align:center"><h1>Authentication successful</h1><p>You can close this tab.</p></div>
-</body></html>`;
-
-const ERROR_HTML = `<!DOCTYPE html>
-<html><head><title>Authentication Failed</title></head>
-<body style="font-family:system-ui,sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0">
-<div style="text-align:center"><h1>Authentication failed</h1><p>Missing code or state parameter.</p></div>
-</body></html>`;
-
-function renderErrorHtml(message: string): string {
-  return ERROR_HTML.replace('Missing code or state parameter.', message);
-}
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 function closeServer(server: http.Server): void {
   server.closeAllConnections();
@@ -58,23 +52,74 @@ export async function createOAuthCallbackServer(
     rejectCallback = reject;
   });
 
-  const server = http.createServer((req, res) => {
-    if (!req.url?.startsWith(callbackPath)) {
+  const server = http.createServer(async (req, res) => {
+    if (!req.url) {
+      res.writeHead(400);
+      res.end();
+      return;
+    }
+
+    if (req.url === '/robot.png') {
+      const candidates: string[] = [path.resolve(__dirname, '../../assets/robot-callback.png')];
+      if (process.resourcesPath) {
+        candidates.push(path.join(process.resourcesPath, 'assets', 'robot-callback.png'));
+      }
+      let image: Buffer | null = null;
+      for (const c of candidates) {
+        try {
+          image = fs.readFileSync(c);
+          break;
+        } catch {
+          // try next candidate
+        }
+      }
+      if (image) {
+        res.writeHead(200, {
+          'Content-Type': 'image/png',
+          'Cache-Control': 'public, max-age=31536000',
+        });
+        res.end(image);
+      } else {
+        res.writeHead(404);
+        res.end();
+      }
+      return;
+    }
+
+    if (!req.url.startsWith(callbackPath)) {
       res.writeHead(404);
       res.end();
       return;
     }
 
-    const url = new URL(req.url, `http://${host}`);
-    const code = url.searchParams.get('code');
-    const state = url.searchParams.get('state');
-    const error = url.searchParams.get('error');
-    const errorDescription = url.searchParams.get('error_description');
+    const parsedUrl = new URL(req.url, `http://${host}`);
+    const code = parsedUrl.searchParams.get('code');
+    const state = parsedUrl.searchParams.get('state');
+    const error = parsedUrl.searchParams.get('error');
+    const errorDescription = parsedUrl.searchParams.get('error_description');
+
+    let settings: CallbackSettings = { theme: 'light', themeColor: 'neutral', language: 'en' };
+    if (options.settingsProvider) {
+      try {
+        settings = await options.settingsProvider();
+      } catch {
+        // use defaults on failure
+      }
+    }
+
+    const isDark = settings.theme === 'dark';
 
     if (error) {
       const message = errorDescription ?? error;
+      const html = buildHtml({
+        title: readLocaleStrings(settings.language).errorTitle,
+        message,
+        isError: true,
+        isDark,
+        themeColor: settings.themeColor,
+      });
       res.writeHead(400, { 'Content-Type': 'text/html' });
-      res.end(renderErrorHtml(message), () => {
+      res.end(html, () => {
         if (!settled) {
           settled = true;
           clearTimeout(timeout);
@@ -86,13 +131,35 @@ export async function createOAuthCallbackServer(
     }
 
     if (!code || !state) {
+      const html = buildHtml({
+        title: readLocaleStrings(settings.language).errorTitle,
+        message: readLocaleStrings(settings.language).errorMessage,
+        isError: true,
+        isDark,
+        themeColor: settings.themeColor,
+      });
       res.writeHead(400, { 'Content-Type': 'text/html' });
-      res.end(ERROR_HTML);
+      res.end(html, () => {
+        if (!settled) {
+          settled = true;
+          clearTimeout(timeout);
+          closeServer(server);
+          rejectCallback(new Error('Missing code or state parameter'));
+        }
+      });
       return;
     }
 
+    const html = buildHtml({
+      title: readLocaleStrings(settings.language).successTitle,
+      message: readLocaleStrings(settings.language).successMessage,
+      isError: false,
+      isDark,
+      themeColor: settings.themeColor,
+      autoClose: true,
+    });
     res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.end(SUCCESS_HTML, () => {
+    res.end(html, () => {
       if (!settled) {
         settled = true;
         clearTimeout(timeout);
