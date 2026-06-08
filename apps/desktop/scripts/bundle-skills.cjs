@@ -44,7 +44,6 @@ const SKILLS_FULLY_BUNDLED = [
   'complete-task',
   'request-connector-auth',
   'start-task',
-  'whatsapp',
   'request-google-file-picker',
 ];
 
@@ -64,11 +63,6 @@ const bundles = [
   },
   {
     name: 'start-task',
-    entry: 'src/index.ts',
-    outfile: 'dist/index.mjs',
-  },
-  {
-    name: 'whatsapp',
     entry: 'src/index.ts',
     outfile: 'dist/index.mjs',
   },
