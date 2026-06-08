@@ -9,6 +9,7 @@ import {
   wireStatusListeners,
   wireTaskBridge,
 } from './whatsapp/index.js';
+import type { SendMessageOptions } from './whatsapp/send.js';
 import type { ChatSummary, MessageSummary } from './whatsapp/WhatsAppService.js';
 import type { WhatsAppDaemonConfig } from './whatsapp-service-utils.js';
 
@@ -67,18 +68,12 @@ export class WhatsAppDaemonService extends EventEmitter {
   }
 
   async disconnect(): Promise<void> {
-    if (this.service) {
-      await this.service.disconnect();
-    }
+    if (this.service) await this.service.disconnect();
     this.disposeInternal();
-
     const config = this.storage.getMessagingConfig();
     if (config?.integrations?.whatsapp) {
       this.storage.setMessagingConfig({
-        integrations: {
-          ...(config.integrations ?? {}),
-          whatsapp: undefined,
-        },
+        integrations: { ...(config.integrations ?? {}), whatsapp: undefined },
       });
     }
   }
@@ -114,25 +109,66 @@ export class WhatsAppDaemonService extends EventEmitter {
     return result;
   }
 
-  async sendMessage(recipientId: string, text: string): Promise<void> {
-    if (!this.service) {
-      throw new Error('WhatsApp is not connected');
-    }
-    await this.service.sendMessage(recipientId, text);
+  async sendMessage(
+    recipientId: string,
+    text: string,
+    options?: SendMessageOptions,
+  ): Promise<string> {
+    if (!this.service) throw new Error('WhatsApp is not connected');
+    return this.service.sendMessage(recipientId, text, options);
   }
-
   readChats(limit: number): ChatSummary[] {
-    if (!this.service) {
-      return [];
-    }
+    if (!this.service) return [];
     return this.service.getChats(limit);
   }
-
   readMessages(jid: string, limit: number): MessageSummary[] {
-    if (!this.service) {
-      return [];
-    }
+    if (!this.service) return [];
     return this.service.getMessages(jid, limit);
+  }
+  async sendReaction(
+    chatJid: string,
+    messageId: string,
+    emoji: string,
+    fromMe?: boolean,
+    participant?: string,
+  ): Promise<void> {
+    if (!this.service) throw new Error('WhatsApp is not connected');
+    return this.service.sendReaction(chatJid, messageId, emoji, fromMe, participant);
+  }
+  async sendPoll(
+    recipient: string,
+    question: string,
+    options: string[],
+    maxSelections?: number,
+  ): Promise<string> {
+    if (!this.service) throw new Error('WhatsApp is not connected');
+    return this.service.sendPoll(recipient, question, options, maxSelections);
+  }
+  async sendTyping(
+    recipient: string,
+    action?: 'composing' | 'paused' | 'recording',
+  ): Promise<void> {
+    if (!this.service) throw new Error('WhatsApp is not connected');
+    return this.service.sendTyping(recipient, action);
+  }
+  async markRead(chatJid: string, messageIds: string[]): Promise<void> {
+    if (!this.service) throw new Error('WhatsApp is not connected');
+    return this.service.markRead(chatJid, messageIds);
+  }
+  async downloadMedia(
+    chatJid: string,
+    messageId: string,
+  ): Promise<{ filePath: string; mimeType: string } | null> {
+    if (!this.service) return null;
+    return this.service.downloadMedia(chatJid, messageId);
+  }
+  readGroups(limit: number): Array<{ jid: string; name?: string; participants: number }> {
+    if (!this.service) return [];
+    return this.service.getGroups(limit);
+  }
+  readGroupInfo(groupJid: string): { jid: string; name?: string } | null {
+    if (!this.service) return null;
+    return this.service.getGroupInfo(groupJid);
   }
 
   markDisconnected(): void {
@@ -140,18 +176,13 @@ export class WhatsAppDaemonService extends EventEmitter {
   }
 
   setEnabled(enabled: boolean): void {
-    if (this.bridge) {
-      this.bridge.setEnabled(enabled);
-    }
+    this.bridge?.setEnabled(enabled);
     const config = this.storage.getMessagingConfig();
     if (config?.integrations?.whatsapp) {
       this.storage.setMessagingConfig({
         integrations: {
           ...(config.integrations ?? {}),
-          whatsapp: {
-            ...(config.integrations.whatsapp ?? {}),
-            enabled,
-          },
+          whatsapp: { ...(config.integrations.whatsapp ?? {}), enabled },
         },
       });
     }
@@ -160,17 +191,10 @@ export class WhatsAppDaemonService extends EventEmitter {
   autoConnectIfEnabled(): void {
     const config = this.storage.getMessagingConfig();
     const waConfig = config?.integrations?.whatsapp;
-    if (!waConfig?.enabled) {
-      return;
-    }
-    const wasConnected = waConfig.connectionStatus === 'connected' || waConfig.lastConnectedAt;
-    if (!wasConnected) {
-      return;
-    }
+    if (!waConfig?.enabled) return;
+    if (!(waConfig.connectionStatus === 'connected' || waConfig.lastConnectedAt)) return;
     log.info('[WhatsApp] Auto-connecting (previously enabled)...');
-    this.connect().catch((err) => {
-      log.error('[WhatsApp] Auto-connect failed:', err);
-    });
+    this.connect().catch((err) => log.error('[WhatsApp] Auto-connect failed:', err));
   }
 
   dispose(): void {
@@ -179,13 +203,9 @@ export class WhatsAppDaemonService extends EventEmitter {
   }
 
   private disposeInternal(): void {
-    if (this.bridge) {
-      this.bridge.dispose();
-      this.bridge = null;
-    }
-    if (this.service) {
-      this.service.dispose();
-      this.service = null;
-    }
+    this.bridge?.dispose();
+    this.bridge = null;
+    this.service?.dispose();
+    this.service = null;
   }
 }
