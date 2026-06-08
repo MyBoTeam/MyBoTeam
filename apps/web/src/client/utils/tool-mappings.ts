@@ -33,7 +33,7 @@ export const THINKING_PHRASES = [
   'MyBoTeaming...',
 ];
 
-export const TOOL_PROGRESS_MAP: Record<string, { label: string; icon: typeof FileText }> = {
+const TOOL_PROGRESS_MAP: Record<string, { label: string; icon: typeof FileText }> = {
   invalid: { label: 'Retrying...', icon: WarningCircle },
   Read: { label: 'Reading files', icon: FileText },
   Glob: { label: 'Finding files', icon: MagnifyingGlass },
@@ -75,7 +75,7 @@ export const TOOL_PROGRESS_MAP: Record<string, { label: string; icon: typeof Fil
   start_task: { label: 'Starting Task', icon: Play },
 };
 
-export function getBaseToolName(toolName: string): string {
+function getBaseToolName(toolName: string): string {
   let idx = 0;
   while ((idx = toolName.indexOf('_', idx)) !== -1) {
     const candidate = toolName.substring(idx + 1);

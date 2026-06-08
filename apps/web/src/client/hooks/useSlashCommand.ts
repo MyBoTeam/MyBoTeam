@@ -9,7 +9,7 @@ import type {
 } from './useSlashCommandFilter';
 import { filterSkills, findSlashContext, INITIAL_SLASH_STATE } from './useSlashCommandFilter';
 
-export type { SlashCommandState, UseSlashCommandOptions, UseSlashCommandReturn };
+export type { UseSlashCommandOptions, UseSlashCommandReturn };
 
 const logger = createLogger('useSlashCommand');
 

@@ -9,9 +9,3 @@ export type DropdownMenuItemProps = React.ComponentProps<typeof DropdownMenuPrim
 export type DropdownMenuLabelProps = React.ComponentProps<typeof DropdownMenuPrimitive.Label> & {
   inset?: boolean;
 };
-
-export type DropdownMenuSubTriggerProps = React.ComponentProps<
-  typeof DropdownMenuPrimitive.SubTrigger
-> & {
-  inset?: boolean;
-};

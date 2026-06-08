@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 
 import './FloatingRobot.css';
 
-export type FloatingRobotParts = {
+type FloatingRobotParts = {
   shadow: string;
   leftArm: string;
   rightArm: string;
@@ -17,7 +17,7 @@ export type FloatingRobotProps = {
   ariaLabel?: string;
 };
 
-export const defaultFloatingRobotParts = {
+const defaultFloatingRobotParts = {
   shadow: 'Shaddow2.png',
   leftArm: 'RightHand2.png',
   rightArm: 'LeftHand2.png',

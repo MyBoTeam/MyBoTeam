@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { getMyBoTeam } from '@/config/myboteam';
 import type { OllamaModel } from './ollama-types';
 
-export type { OllamaModel } from './ollama-types';
-
 interface UseOllamaProviderConnectOptions {
   connectedProvider?: ConnectedProvider;
   onConnect: (provider: ConnectedProvider) => void;

@@ -141,7 +141,7 @@ export type BugReportResult = {
   reason?: string;
 };
 
-export interface MyBoTeamShell {
+interface MyBoTeamShell {
   version: string;
   platform: string;
   isElectron: true;

@@ -11,7 +11,6 @@ import { MicrophoneIcon } from './speechInputHelpers';
 const modifierKey = getModifierKeyLabel();
 
 export type { SpeechInputButtonProps } from './speech-input-button-types';
-export { MicrophoneIcon } from './speechInputHelpers';
 
 function getStatusIcon(
   isTranscribing: boolean,

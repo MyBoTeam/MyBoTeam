@@ -20,9 +20,6 @@ export const NAMESPACES = [
   'sidebar',
 ] as const;
 
-export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
-export type Namespace = (typeof NAMESPACES)[number];
-
 export const LANGUAGE_STORAGE_KEY = 'openwork-language';
 
 let isInitialized = false;
@@ -162,5 +159,3 @@ function resolveAutoLanguage(): SupportedLanguage {
   }
   return 'en';
 }
-
-export default i18n;

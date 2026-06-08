@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getCreditStatusColor } from '@/hooks/useCreditsState';
 import { PROVIDER_LOGOS } from '@/utils/provider-logos';
 
-export const MYBOTEAM_CONFIG = DEFAULT_PROVIDERS.find((p) => p.id === 'myboteam-ai');
+const MYBOTEAM_CONFIG = DEFAULT_PROVIDERS.find((p) => p.id === 'myboteam-ai');
 if (!MYBOTEAM_CONFIG || MYBOTEAM_CONFIG.models.length === 0) {
   throw new Error('MyBoTeam provider configuration is missing required models');
 }

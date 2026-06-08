@@ -92,5 +92,3 @@ export function SettingsDialog({
     </Dialog>
   );
 }
-
-export default SettingsDialog;

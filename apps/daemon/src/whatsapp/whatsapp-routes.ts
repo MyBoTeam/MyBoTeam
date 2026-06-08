@@ -3,7 +3,7 @@ import type { Route } from '../http-server-factory.js';
 import { log } from '../logger.js';
 import type { WhatsAppDaemonService } from '../whatsapp-service.js';
 
-export const WHATSAPP_CONNECTION_LOSS_PATTERNS = [
+const WHATSAPP_CONNECTION_LOSS_PATTERNS = [
   'connection closed',
   'connection lost',
   'connection terminated',
@@ -13,7 +13,7 @@ export const WHATSAPP_CONNECTION_LOSS_PATTERNS = [
   'stream errored',
 ] as const;
 
-export function normalizeRecipient(recipient: string): string {
+function normalizeRecipient(recipient: string): string {
   if (recipient.includes('@')) {
     return recipient;
   }

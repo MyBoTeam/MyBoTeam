@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { SpeechRecognitionError } from './speech-types';
 
 export interface UseSpeechRecorderOptions {
   maxDuration?: number;
@@ -179,5 +178,3 @@ export function useSpeechRecorder(options: UseSpeechRecorderOptions): UseSpeechR
     cancelCapture,
   };
 }
-
-export { SpeechRecognitionError };

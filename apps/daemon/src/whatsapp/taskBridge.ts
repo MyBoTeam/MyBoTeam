@@ -18,7 +18,7 @@ import {
 } from './taskBridge-types.js';
 
 export type { InboundMessage, MessageTransport } from './taskBridge-types.js';
-export { isLidUser, MAX_MESSAGE_LENGTH } from './taskBridge-types.js';
+export { MAX_MESSAGE_LENGTH } from './taskBridge-types.js';
 
 export class TaskBridge {
   private rateLimitState: RateLimitState = createRateLimitState();

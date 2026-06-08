@@ -47,7 +47,7 @@ function parseCronField(field: string, min: number, max: number): number[] | nul
   return values.length > 0 ? [...new Set(values)].sort((a, b) => a - b) : null;
 }
 
-export function _matchesCron(cron: string, date: Date): boolean {
+function _matchesCron(cron: string, date: Date): boolean {
   const fields = cron.trim().split(/\s+/);
   if (fields.length !== 5) {
     return false;

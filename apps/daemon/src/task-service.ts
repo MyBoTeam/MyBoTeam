@@ -21,7 +21,6 @@ import {
 import type {
   ResumeSessionParams,
   StartTaskParams,
-  TaskServiceEvents,
   TaskServiceOptions,
 } from './task-service-events.js';
 import { buildStartTaskConfig, executeTask, runPostTaskSetup } from './task-service-execution.js';
@@ -36,7 +35,7 @@ import {
   sendResponseViaManager,
 } from './task-service-utils.js';
 
-export type { ResumeSessionParams, StartTaskParams, TaskServiceEvents, TaskServiceOptions };
+export type { ResumeSessionParams, StartTaskParams, TaskServiceOptions };
 
 export class TaskService extends EventEmitter {
   private taskManager: ReturnType<typeof createTaskManager>;

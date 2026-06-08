@@ -149,5 +149,3 @@ export function ConversationListItem({ task }: ConversationListItemProps) {
     </div>
   );
 }
-
-export default ConversationListItem;

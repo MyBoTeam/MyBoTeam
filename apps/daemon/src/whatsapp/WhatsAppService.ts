@@ -16,7 +16,7 @@ import {
   toTimestamp,
 } from './whatsapp-types.js';
 
-export type { ChatSummary, MessageSummary, WhatsAppServiceEvents } from './whatsapp-types.js';
+export type { ChatSummary, MessageSummary } from './whatsapp-types.js';
 
 export class WhatsAppService extends EventEmitter implements ChannelAdapter {
   readonly channelType: MessagingProviderId = 'whatsapp';

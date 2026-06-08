@@ -107,7 +107,6 @@ function DropdownMenuSubContent({
 }
 
 export {
-  DropdownMenuCheckboxItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSub,

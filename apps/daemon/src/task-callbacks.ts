@@ -14,7 +14,7 @@ import {
   type TodoItem,
 } from '@myboteam/agent-core';
 
-export interface RpcConnectivityProbe {
+interface RpcConnectivityProbe {
   hasConnectedClients(): boolean;
 }
 

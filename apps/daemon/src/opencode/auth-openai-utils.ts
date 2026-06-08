@@ -2,7 +2,7 @@ import type { OpenAiOauthPlan } from '@myboteam/agent-core';
 
 export const OPENAI_PROVIDER_ID = 'openai';
 export const OPENAI_AUTH_TIMEOUT_MS = 2 * 60_000;
-export const PREFERRED_OAUTH_LABEL = 'ChatGPT Pro/Plus';
+const PREFERRED_OAUTH_LABEL = 'ChatGPT Pro/Plus';
 
 export class OAuthLoginError extends Error {
   constructor(message: string, options?: { cause?: unknown }) {

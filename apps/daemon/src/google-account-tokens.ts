@@ -28,7 +28,7 @@ export function cancelRefreshTimer(accountId: string, timers: Map<string, NodeJS
   }
 }
 
-export function persistToken(
+function persistToken(
   storage: StorageAPI,
   db: Database,
   accountId: string,

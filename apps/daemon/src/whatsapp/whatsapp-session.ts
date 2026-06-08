@@ -4,7 +4,7 @@ import { cleanupAuthState } from './authCleanup.js';
 import type { BaileysSocket } from './baileys-types.js';
 import { type ReconnectState, scheduleReconnect } from './reconnection.js';
 
-export interface WhatsAppServiceEvents {
+interface WhatsAppServiceEvents {
   qr: (qrString: string) => void;
   status: (status: MessagingConnectionStatus) => void;
   message: (msg: {
