@@ -11,7 +11,7 @@ export interface InboundMessage {
 export interface MessageTransport {
   on(event: 'message', listener: (msg: InboundMessage) => void): this;
   off(event: 'message', listener: (msg: InboundMessage) => void): this;
-  sendMessage(recipientId: string, text: string): Promise<void>;
+  sendMessage(recipientId: string, text: string): Promise<string>;
 }
 
 export const RATE_LIMIT_WINDOW_MS = 60_000;

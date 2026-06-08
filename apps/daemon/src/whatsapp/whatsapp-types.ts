@@ -4,10 +4,12 @@ export interface ChatSummary {
   lastMessageAt?: number;
 }
 export interface MessageSummary {
+  messageId: string;
   senderJid: string;
   fromMe: boolean;
   text: string;
   timestamp: number;
+  mediaType?: 'image' | 'video' | 'audio' | 'document';
 }
 
 export function toTimestamp(val: unknown): number | undefined {

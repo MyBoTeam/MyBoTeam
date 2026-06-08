@@ -161,6 +161,16 @@
       }
     },
     {
+      "includes": ["packages/mcp-servers/whatsapp/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["packages/agent-core/src/index.ts"],
       "linter": {
         "rules": {

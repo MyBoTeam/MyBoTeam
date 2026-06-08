@@ -1,6 +1,6 @@
 import fs from 'node:fs';
-import path from 'node:path';
 import os from 'node:os';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { BaileysEventEmitter } from '../../../src/whatsapp/baileys-types.js';
 import { createStore } from '../../../src/whatsapp/whatsapp-store.js';
@@ -446,9 +446,7 @@ describe('WhatsAppStore', () => {
         store.bind(emitter);
 
         emit('messaging-history.set', {
-          chats: [
-            { id: JID_1, name: 'Contact A', conversationTimestamp: 1000 },
-          ],
+          chats: [{ id: JID_1, name: 'Contact A', conversationTimestamp: 1000 }],
           messages: [
             {
               key: { remoteJid: JID_1, fromMe: false, id: 'msg-1' },
@@ -471,7 +469,11 @@ describe('WhatsAppStore', () => {
         const key = msgs[0].key as { id?: string | null } | null;
         expect(key?.id).toBe('msg-1');
       } finally {
-        try { fs.unlinkSync(storePath); } catch { /* cleanup */ }
+        try {
+          fs.unlinkSync(storePath);
+        } catch {
+          /* cleanup */
+        }
       }
     });
 
@@ -488,7 +490,11 @@ describe('WhatsAppStore', () => {
         const store = createStore(storePath);
         expect(store.chats.all()).toEqual([]);
       } finally {
-        try { fs.unlinkSync(storePath); } catch { /* cleanup */ }
+        try {
+          fs.unlinkSync(storePath);
+        } catch {
+          /* cleanup */
+        }
       }
     });
   });

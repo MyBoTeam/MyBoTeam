@@ -2,10 +2,23 @@ import type http from 'node:http';
 import { createHttpServer } from '../http-server-factory.js';
 import { RateLimiter } from '../rate-limiter.js';
 import type { WhatsAppDaemonService } from '../whatsapp-service.js';
-import { buildChatsRoute, buildMessagesRoute, buildSendRoute } from './whatsapp-routes.js';
+import {
+  buildChatsRoute,
+  buildGroupInfoRoute,
+  buildGroupsRoute,
+  buildLogoutRoute,
+  buildMarkReadRoute,
+  buildMediaRoute,
+  buildMessagesRoute,
+  buildSendPollRoute,
+  buildSendReactionRoute,
+  buildSendRoute,
+  buildSendTypingRoute,
+  buildStatusRoute,
+} from './whatsapp-api-routes.js';
 
 const RATE_LIMIT_WINDOW_MS = 60_000;
-const RATE_LIMIT_MAX_REQUESTS = 60;
+const RATE_LIMIT_MAX_REQUESTS = 120;
 
 export class WhatsAppSendApi {
   private whatsappService: WhatsAppDaemonService;
@@ -26,9 +39,18 @@ export class WhatsAppSendApi {
       serviceName: 'WhatsAppSendApi',
       port: fixedPort,
       routes: [
+        buildSendRoute(this.whatsappService),
+        buildSendReactionRoute(this.whatsappService),
+        buildSendPollRoute(this.whatsappService),
+        buildSendTypingRoute(this.whatsappService),
         buildChatsRoute(this.whatsappService),
         buildMessagesRoute(this.whatsappService),
-        buildSendRoute(this.whatsappService),
+        buildGroupsRoute(this.whatsappService),
+        buildGroupInfoRoute(this.whatsappService),
+        buildMediaRoute(this.whatsappService),
+        buildMarkReadRoute(this.whatsappService),
+        buildStatusRoute(this.whatsappService),
+        buildLogoutRoute(this.whatsappService),
       ],
     });
 
