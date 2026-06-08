@@ -22,8 +22,8 @@ vi.mock('@/layouts/main/components/Header', () => ({
   default: () => <header data-testid="mock-header" />,
 }));
 
-// Mock TaskHistory to avoid deep nesting in page-level tests
-vi.mock('@/pages/conversations/components/TaskHistory', () => ({
+// Mock ConversationList to avoid deep nesting in page-level tests
+vi.mock('@/pages/conversations/components/ConversationList', () => ({
   default: ({ showTitle }: { showTitle?: boolean }) => (
     <div data-testid="task-history" data-show-title={String(showTitle ?? true)} />
   ),
@@ -41,7 +41,7 @@ function createMockTask(id: string, prompt = 'Test task', status: TaskStatus = '
 }
 
 // Import page component after mocks
-import HistoryPage from '@/pages/History';
+import HistoryPage from '@/pages/conversations/HistoryPage';
 
 describe('HistoryPage Integration', () => {
   beforeEach(() => {

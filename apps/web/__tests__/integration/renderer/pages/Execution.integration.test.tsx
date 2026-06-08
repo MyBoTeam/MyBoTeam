@@ -218,7 +218,7 @@ vi.mock('@/components/ui/streaming-text', () => ({
 vi.mock('/assets/myboteam-icon.png', () => ({ default: 'myboteam-icon.png' }));
 
 // Import after mocks
-import ExecutionPage from '@/pages/Execution';
+import ExecutionPage from '@/pages/conversation/ExecutionPage';
 
 // Wrapper component for routing tests
 function renderWithRouter(taskId: string = 'task-123') {
