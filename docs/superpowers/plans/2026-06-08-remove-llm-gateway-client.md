@@ -120,7 +120,7 @@ git add -A && git commit -m "feat(web): remove myboteam-ai provider UI files"
 Remove `MyboteamAiUsageData`, `MyboteamAiStatusData`, `BuildCapabilitiesData` types.
 
 In `apps/web/src/client/config/myboteam-types.ts`, remove these interfaces:
-```
+```typescript
 export interface MyboteamAiUsageData {
   connected: boolean;
   usage: CreditUsage | null;
@@ -470,7 +470,7 @@ git add -A && git commit -m "feat(agent-core): remove myboteam config builder in
 - [ ] **Step 1: Edit method-map.ts**
 
 Remove the `myboteam-ai` method entries:
-```
+```typescript
 'myboteam-ai.connect': ...
 'myboteam-ai.get-usage': ...
 'myboteam-ai.disconnect': ...
@@ -580,7 +580,7 @@ Remove `myboteamGatewayUrl: ''` from mock config objects.
 
 - [ ] **Step 5: Edit task-service-parity.test.ts**
 
-Update mocks to not reference `buildProviderConfigs` if it was removed, or update the mock to exclude myboteam-ai provider.
+Update mocks to exclude myboteam-ai provider from `buildProviderConfigs` results.
 
 - [ ] **Step 6: Run all tests**
 

@@ -149,6 +149,7 @@ export function registerSettingsHandlers(): void {
   handle('app:get-build-capabilities', async () => {
     const { isAnalyticsEnabled } = await import('../../config/build-config');
     return {
+      hasFreeMode: false,
       hasAnalytics: isAnalyticsEnabled(),
     };
   });
