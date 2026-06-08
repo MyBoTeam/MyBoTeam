@@ -89,8 +89,6 @@ export type {
 } from './common/types/daemon.js';
 
 export { JSON_RPC_ERRORS } from './common/types/daemon.js';
-export type { CreditUsage } from './common/types/gateway.js';
-
 export type {
   GoogleAccount,
   GoogleAccountStatus,
@@ -329,13 +327,7 @@ export {
   normalizeSelectedModelForSdk,
   resolveLlamaCppRuntimeModelName,
 } from './opencode/model-runtime-mapping.js';
-export type {
-  MyboteamConnectResult,
-  MyboteamRuntime,
-  StorageDeps,
-} from './opencode/myboteam-runtime.js';
 
-export { noopRuntime } from './opencode/myboteam-runtime.js';
 export { getAzureEntraToken } from './opencode/proxies/index.js';
 export type {
   ResolvedTaskConfig,

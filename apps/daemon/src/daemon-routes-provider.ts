@@ -73,20 +73,6 @@ export function registerProviderRoutes(services: RouteServices): void {
     safeHandler(() => Promise.resolve(settingsService.getProviderDebugMode())),
   );
   rpc.registerMethod(
-    'provider.getMyboteamAiCredits',
-    safeHandler(() => Promise.resolve(settingsService.getMyboteamAiCredits())),
-  );
-  rpc.registerMethod(
-    'provider.saveMyboteamAiCredits',
-    safeHandler((params) => {
-      const v = validate(z.object({ usage: z.unknown() }), params);
-      settingsService.saveMyboteamAiCredits(
-        v.usage as Parameters<typeof settingsService.saveMyboteamAiCredits>[0],
-      );
-      return Promise.resolve();
-    }),
-  );
-  rpc.registerMethod(
     'provider.getHuggingFaceLocalConfig',
     safeHandler(() => Promise.resolve(settingsService.getHuggingFaceLocalConfig())),
   );

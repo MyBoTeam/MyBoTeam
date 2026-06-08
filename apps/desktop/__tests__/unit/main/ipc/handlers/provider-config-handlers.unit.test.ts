@@ -5,7 +5,6 @@ const mockRegisterAzure = vi.hoisted(() => vi.fn());
 const mockRegisterLiteLLM = vi.hoisted(() => vi.fn());
 const mockRegisterLMStudio = vi.hoisted(() => vi.fn());
 const mockRegisterNim = vi.hoisted(() => vi.fn());
-const mockRegisterMyboteamAi = vi.hoisted(() => vi.fn());
 const mockRegisterSettings = vi.hoisted(() => vi.fn());
 
 vi.mock('@main/ipc/handlers/provider-config-handlers/ollama-handlers', () => ({
@@ -28,10 +27,6 @@ vi.mock('@main/ipc/handlers/provider-config-handlers/nim-handlers', () => ({
   registerNimHandlers: mockRegisterNim,
 }));
 
-vi.mock('@main/ipc/handlers/provider-config-handlers/myboteam-ai-handlers', () => ({
-  registerMyboteamAiHandlers: mockRegisterMyboteamAi,
-}));
-
 vi.mock('@main/ipc/handlers/provider-config-handlers/provider-settings-handlers', () => ({
   registerProviderSettingsHandlers: mockRegisterSettings,
 }));
@@ -50,7 +45,6 @@ describe('provider-config-handlers', () => {
     expect(mockRegisterLiteLLM).toHaveBeenCalled();
     expect(mockRegisterLMStudio).toHaveBeenCalled();
     expect(mockRegisterNim).toHaveBeenCalled();
-    expect(mockRegisterMyboteamAi).toHaveBeenCalled();
     expect(mockRegisterSettings).toHaveBeenCalled();
   });
 });

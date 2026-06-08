@@ -28,7 +28,6 @@ export type {
   WorkspaceDeleteResult,
   WorkspaceSetActiveResult,
 } from './common/types/daemon.js';
-export type { CreditUsage } from './common/types/gateway.js';
 export type {
   GoogleAccount,
   GoogleAccountStatus,

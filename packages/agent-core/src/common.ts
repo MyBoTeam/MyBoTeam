@@ -31,7 +31,6 @@ export type {
   StoredAuthEntry,
 } from './common/types/connector.js';
 export type { ScheduledTask } from './common/types/daemon.js';
-export type { CreditUsage } from './common/types/gateway.js';
 export type {
   GoogleAccount,
   GoogleAccountStatus,

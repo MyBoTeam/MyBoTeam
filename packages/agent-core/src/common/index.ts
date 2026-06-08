@@ -41,7 +41,6 @@ export {
   OAuthProviderId,
 } from './types/connector.js';
 
-export type { CreditUsage } from './types/gateway.js';
 export type { LogEntry, LogLevel, LogSource } from './types/logging.js';
 
 export type {
