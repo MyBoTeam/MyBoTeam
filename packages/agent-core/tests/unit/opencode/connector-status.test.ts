@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   type BuiltInConnectorStatus,
   formatBuiltInConnectorStatusSection,
-} from '../../../src/opencode/completion/context-providers/connector-status.js';
+} from '../../../src/opencode/completion/connector-status.js';
 
 const ALL_EIGHT: BuiltInConnectorStatus[] = [
   { displayName: 'Slack', connected: true },

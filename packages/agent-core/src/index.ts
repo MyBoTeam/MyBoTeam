@@ -2,12 +2,6 @@ export type { BrowserServerConfig } from './browser/server.js';
 
 export { ensureDevBrowserServer, shutdownDevBrowserServer } from './browser/server.js';
 export {
-  getModelDisplayName,
-  MODEL_DISPLAY_NAMES,
-  PROVIDER_PREFIXES,
-} from './common/constants/model-display.js';
-
-export {
   CONNECTOR_AUTH_REQUIRED_MARKER,
   DEV_BROWSER_CDP_PORT,
   DEV_BROWSER_PORT,
@@ -18,15 +12,11 @@ export {
   PERMISSION_REQUEST_TIMEOUT_MS,
   WHATSAPP_API_PORT,
 } from './common/constants.js';
-
 export {
-  authOpenAiAwaitCompletionSchema,
-  permissionResponseSchema,
-  resumeSessionSchema,
-  taskConfigSchema,
-  validate,
-} from './common/schemas/validation.js';
-
+  getModelDisplayName,
+  MODEL_DISPLAY_NAMES,
+  PROVIDER_PREFIXES,
+} from './common/model-display.js';
 export type {
   ApiKeyConfig,
   BedrockAccessKeyCredentials,
@@ -37,7 +27,6 @@ export type {
   VertexCredentials,
   VertexServiceAccountCredentials,
 } from './common/types/auth.js';
-
 export type {
   BrowserFramePayload,
   BrowserNavigatePayload,
@@ -51,7 +40,6 @@ export type {
   OAuthTokens,
   StoredAuthEntry,
 } from './common/types/connector.js';
-
 export {
   getOAuthProviderDisplayName,
   isOAuthProviderId,
@@ -87,10 +75,8 @@ export type {
   WorkspaceDeleteResult,
   WorkspaceSetActiveResult,
 } from './common/types/daemon.js';
-
 export { JSON_RPC_ERRORS } from './common/types/daemon.js';
 export type { CreditUsage } from './common/types/gateway.js';
-
 export type {
   GoogleAccount,
   GoogleAccountStatus,
@@ -98,7 +84,6 @@ export type {
   GwsAccountsContext,
 } from './common/types/google-account.js';
 export type { LogEntry, LogLevel, LogSource } from './common/types/logging.js';
-
 export type {
   OpenCodeErrorMessage,
   OpenCodeMessage,
@@ -110,7 +95,6 @@ export type {
   OpenCodeToolResultMessage,
   OpenCodeToolUseMessage,
 } from './common/types/opencode.js';
-
 export type {
   FileOperation,
   PermissionOption,
@@ -122,7 +106,6 @@ export {
   FILE_PERMISSION_REQUEST_PREFIX,
   QUESTION_REQUEST_PREFIX,
 } from './common/types/permission.js';
-
 export type {
   ApiKeyProvider,
   AzureFoundryConfig,
@@ -185,7 +168,6 @@ export {
   PROVIDER_ID_TO_OPENCODE,
   PROVIDER_META,
 } from './common/types/providerSettings.js';
-
 export type {
   SandboxConfig,
   SandboxMode,
@@ -195,9 +177,7 @@ export type {
   SpawnArgs,
 } from './common/types/sandbox.js';
 export { DEFAULT_SANDBOX_CONFIG } from './common/types/sandbox.js';
-
 export type { Skill, SkillFrontmatter, SkillSource } from './common/types/skills.js';
-
 export type {
   FileAttachmentInfo,
   Task,
@@ -211,9 +191,7 @@ export type {
   TaskUpdateEvent,
 } from './common/types/task.js';
 export { STARTUP_STAGES } from './common/types/task.js';
-
 export type { TodoItem } from './common/types/todo.js';
-
 export type {
   KnowledgeNote,
   KnowledgeNoteCreateInput,
@@ -223,7 +201,6 @@ export type {
   WorkspaceCreateInput,
   WorkspaceUpdateInput,
 } from './common/types/workspace.js';
-
 export {
   createFilePermissionRequestId,
   createMessageId,
@@ -235,6 +212,13 @@ export {
 export { detectLogSource, LOG_SOURCE_PATTERNS } from './common/utils/log-source-detector.js';
 export { mergeTaskMessage, upsertTaskMessages } from './common/utils/task-message-merge.js';
 export { isWaitingForUser } from './common/utils/waiting-detection.js';
+export {
+  authOpenAiAwaitCompletionSchema,
+  permissionResponseSchema,
+  resumeSessionSchema,
+  taskConfigSchema,
+  validate,
+} from './common/validation.js';
 
 export {
   buildAuthorizationUrl,

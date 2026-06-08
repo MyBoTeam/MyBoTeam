@@ -3,7 +3,7 @@ import {
   getModelDisplayName,
   MODEL_DISPLAY_NAMES,
   PROVIDER_PREFIXES,
-} from '../../../../src/common/constants/model-display.js';
+} from '../../../../src/common/model-display.js';
 
 describe('getModelDisplayName', () => {
   it('returns "AI" for empty string', () => {
