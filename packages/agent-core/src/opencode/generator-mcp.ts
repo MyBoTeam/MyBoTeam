@@ -84,6 +84,10 @@ export function buildMcpServers(options: BuildMcpServersOptions): Record<string,
           },
           timeout: 30000,
         };
+      } else {
+        console.warn(
+          `[WhatsApp MCP] dist/index.js not found at ${distPath}. WhatsApp tools will not be available. Run pnpm -F @myboteam/whatsapp-mcp build.`,
+        );
       }
     } else {
       mcpServers.whatsapp = {
