@@ -47,8 +47,7 @@ export async function handleTranscribeErrorResponse(
   try {
     errorData = JSON.parse(errorText);
   } catch {}
-  const log = { error: (m: string, d?: Record<string, unknown>) => console.error(m, d) };
-  log.error('[ElevenLabs] API error:', {
+  console.error('[ElevenLabs] API error:', {
     status: response.status,
     statusText: response.statusText,
     errorText: errorText.substring(0, 500),

@@ -14,10 +14,10 @@ import {
   handlePermissionAsked,
   handleQuestionAsked,
 } from './adapter-permissions.js';
-import { markTaskComplete } from './adapter-session.js';
+import { markTaskComplete } from './adapter-session-lifecycle.js';
 import type { AdapterState } from './adapter-state.js';
 import { handleToolPart } from './adapter-tools.js';
-import { partToOpenCodeMessage as toMessage } from './adapter-utils.js';
+import { partToOpenCodeMessage as toMessage } from './message-utils.js';
 
 export function handleSdkEvent(state: AdapterState, event: OpenCodeSdkEvent): void {
   state.watchdogActivityCounter += 1;

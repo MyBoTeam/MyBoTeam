@@ -6,14 +6,14 @@ import { CONNECTOR_AUTH_REQUIRED_MARKER } from '../../common/constants.js';
 import { getOAuthProviderDisplayName, isOAuthProviderId } from '../../common/types/connector.js';
 import type { PermissionRequest } from '../../common/types/permission.js';
 import type { AdapterState } from './adapter-state.js';
+import { parseConnectorAuthPayload } from './auth-utils.js';
 import {
   buildPermissionToolInput,
   formatPermissionToolName,
   generateRequestId,
   inferFileOperation,
   inferFilePath,
-  parseConnectorAuthPayload,
-} from './adapter-utils.js';
+} from './permission-utils.js';
 
 export function handlePermissionAsked(
   state: AdapterState,

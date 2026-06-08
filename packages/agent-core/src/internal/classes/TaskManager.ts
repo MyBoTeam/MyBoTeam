@@ -2,22 +2,24 @@ import type { PermissionResponse } from '../../common/types/permission.js';
 import type { Task, TaskConfig } from '../../common/types/task.js';
 import { createConsoleLogger } from '../../utils/logging.js';
 import { type OpenCodeAdapter, OpenCodeCliNotFoundError } from './open-code-adapter.js';
-import { executeTask, queueTask } from './task-manager-execution.js';
 import {
   cancelAllTasks as lifecycleCancelAllTasks,
   cancelQueuedTask as lifecycleCancelQueuedTask,
   cancelTask as lifecycleCancelTask,
+  interruptTask as lifecycleInterruptTask,
+} from './task-cancel.js';
+import {
   cleanupTask as lifecycleCleanupTask,
   dispose as lifecycleDispose,
-  interruptTask as lifecycleInterruptTask,
-  processQueue as lifecycleProcessQueue,
-} from './task-manager-lifecycle.js';
+} from './task-cleanup.js';
+import { executeTask, queueTask } from './task-manager-execution.js';
 import type {
   ManagedTask,
   QueuedTask,
   TaskCallbacks,
   TaskManagerOptions,
 } from './task-manager-types.js';
+import { processQueue as lifecycleProcessQueue } from './task-queue.js';
 
 const log = createConsoleLogger({ prefix: 'TaskManager' });
 const DEFAULT_MAX_CONCURRENT_TASKS = 10;

@@ -29,8 +29,7 @@ export async function runEventSubscription(
       try {
         onSdkEvent(event);
       } catch (err) {
-        const log = { warn: (m: string, d?: unknown) => console.warn(m, d) };
-        log.warn('event handler threw', { error: serializeError(err) });
+        console.warn('event handler threw', { error: serializeError(err) });
       }
     }
   } catch (err) {
@@ -60,8 +59,7 @@ export async function abortSession(
         { throwOnError: false },
       );
     } catch (err) {
-      const log = { debug: (m: string, d?: unknown) => console.debug(m, d) };
-      log.debug?.(`session.abort (${reason}) threw`, { error: serializeError(err) });
+      console.debug(`session.abort (${reason}) threw`, { error: serializeError(err) });
     }
   }
 }

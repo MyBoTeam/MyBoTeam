@@ -20,13 +20,15 @@ import { handlePermissionAsked as execHandlePermissionAsked } from './adapter-pe
 import { resolveSandboxConfig, resolveSandboxProvider } from './adapter-sandbox.js';
 import {
   abortSession,
-  handleWatchdogHardTimeout as execHandleWatchdogHardTimeout,
-  sampleWatchdogState as execSampleWatchdogState,
-  startWatchdog as execStartWatchdog,
   teardown as execTeardown,
   markTaskComplete,
   runEventSubscription,
-} from './adapter-session.js';
+} from './adapter-session-lifecycle.js';
+import {
+  handleWatchdogHardTimeout as execHandleWatchdogHardTimeout,
+  sampleWatchdogState as execSampleWatchdogState,
+  startWatchdog as execStartWatchdog,
+} from './adapter-session-watchdog.js';
 import { AdapterState } from './adapter-state.js';
 import {
   type AdapterOptions,
