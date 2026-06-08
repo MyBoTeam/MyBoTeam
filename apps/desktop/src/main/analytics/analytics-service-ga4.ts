@@ -46,7 +46,7 @@ interface GA4Payload {
 }
 
 const eventQueue: GA4Event[] = [];
-let isOnline: boolean = true;
+const isOnline: boolean = true;
 
 let _buildCommonTrackingFields: (() => Record<string, unknown>) | null = null;
 
@@ -110,20 +110,6 @@ async function sendToGA4(events: GA4Event[]): Promise<boolean> {
   }
 }
 
-async function flushEventQueue(): Promise<void> {
-  if (eventQueue.length === 0) return;
-
-  const events = [...eventQueue];
-  eventQueue.length = 0;
-
-  const success = await sendToGA4(events);
-  if (!success) {
-    eventQueue.push(...events);
-  } else {
-    console.log(`[Analytics] Flushed ${events.length} queued events`);
-  }
-}
-
 export async function trackGa4Event(eventName: string, params: EventParams = {}): Promise<void> {
   try {
     if (!isGA4Configured()) return;
@@ -154,15 +140,6 @@ export async function trackGa4Event(eventName: string, params: EventParams = {})
     }
   } catch (error) {
     console.error(`[Analytics] Failed to track event "${eventName}":`, error);
-  }
-}
-
-export function setOnlineStatus(online: boolean): void {
-  const wasOffline = !isOnline;
-  isOnline = online;
-
-  if (online && wasOffline) {
-    flushEventQueue();
   }
 }
 

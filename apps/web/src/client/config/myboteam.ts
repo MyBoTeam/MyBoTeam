@@ -1,14 +1,6 @@
 import type { ApiKeyConfig, BedrockCredentials, VertexCredentials } from '@myboteam/agent-core';
 import type { GoogleAccount, GoogleAccountStatus } from '@myboteam/agent-core/common';
 
-export type { MyBoTeamAPIAccounts } from './myboteam-accounts';
-export type { MyBoTeamAnalytics } from './myboteam-analytics';
-export type { MyBoTeamAPIConnectors } from './myboteam-connectors';
-export type { MyBoTeamAPIProviders } from './myboteam-providers';
-export type { MyBoTeamAPISettings } from './myboteam-settings';
-export type { MyBoTeamAPITasks } from './myboteam-tasks';
-export type { AppInfo } from './myboteam-types';
-
 import type { MyBoTeamAPIAccounts } from './myboteam-accounts';
 import type { MyBoTeamAPIConnectors } from './myboteam-connectors';
 import type { MyBoTeamAPIProviders } from './myboteam-providers';

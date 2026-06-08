@@ -50,7 +50,7 @@ export function ProviderGrid({
   const [search, setSearch] = useState('');
 
   const filteredProviders = useMemo(() => {
-    let providers = PROVIDER_ORDER;
+    const providers = PROVIDER_ORDER;
 
     if (!search.trim()) return providers;
     const query = search.toLowerCase();

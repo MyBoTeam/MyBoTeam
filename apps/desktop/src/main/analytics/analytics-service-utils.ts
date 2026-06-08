@@ -1,8 +1,6 @@
-export type { AnalyticsConfigSchema } from './analytics-service-utils-ga';
 export {
   getEndpoint,
   getGaApiSecret,
-  getGaMeasurementId,
   isDebugMode,
   isGA4Configured,
 } from './analytics-service-utils-ga';
@@ -14,8 +12,6 @@ export {
   initSessionState,
   numericSessionId,
   sessionId,
-  sessionStartTime,
-  sessionTaskCount,
 } from './analytics-service-utils-session';
 export {
   getDeviceFingerprint,

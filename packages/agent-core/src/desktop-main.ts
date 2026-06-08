@@ -1,22 +1,13 @@
 export { shutdownDevBrowserServer } from './browser/server.js';
 
 export { DEV_BROWSER_CDP_PORT, DEV_BROWSER_PORT } from './common/constants.js';
-
-export {
-  permissionResponseSchema,
-  resumeSessionSchema,
-  taskConfigSchema,
-  validate,
-} from './common/schemas/validation.js';
 export type { BedrockCredentials, VertexCredentials } from './common/types/auth.js';
-
 export type {
   McpConnector,
   OAuthClientRegistration,
   OAuthMetadata,
   StoredAuthEntry,
 } from './common/types/connector.js';
-
 export type {
   GwsAccountAddInput,
   GwsAccountStatusChangedPayload,
@@ -33,7 +24,6 @@ export type {
   GoogleAccountStatus,
   GoogleAccountToken,
 } from './common/types/google-account.js';
-
 export type { LogEntry, LogLevel, LogSource } from './common/types/logging.js';
 export type {
   ApiKeyProvider,
@@ -68,8 +58,13 @@ export type {
   WorkspaceCreateInput,
   WorkspaceUpdateInput,
 } from './common/types/workspace.js';
-
 export { createMessageId, createTaskId } from './common/utils/id.js';
+export {
+  permissionResponseSchema,
+  resumeSessionSchema,
+  taskConfigSchema,
+  validate,
+} from './common/validation.js';
 
 export * from './desktop-main-ipc.js';
 export { createLogWriter } from './factories/log-writer.js';

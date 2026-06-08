@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   ensureAzureFoundryProxy,
-  isAzureFoundryProxyRunning,
   stopAzureFoundryProxy,
   transformRequestBody,
 } from '../../../../src/opencode/proxies/azure-foundry-proxy.js';
@@ -190,29 +189,12 @@ describe('Azure Foundry Proxy', () => {
   describe('stopAzureFoundryProxy', () => {
     it('should stop running proxy', async () => {
       await ensureAzureFoundryProxy('https://api.azure.com/openai');
-      expect(isAzureFoundryProxyRunning()).toBe(true);
 
-      await stopAzureFoundryProxy();
-
-      expect(isAzureFoundryProxyRunning()).toBe(false);
+      await expect(stopAzureFoundryProxy()).resolves.toBeUndefined();
     });
 
     it('should not throw when proxy not running', async () => {
-      await stopAzureFoundryProxy();
-
-      expect(isAzureFoundryProxyRunning()).toBe(false);
-    });
-  });
-
-  describe('isAzureFoundryProxyRunning', () => {
-    it('should return false initially', () => {
-      expect(isAzureFoundryProxyRunning()).toBe(false);
-    });
-
-    it('should return true after starting proxy', async () => {
-      await ensureAzureFoundryProxy('https://api.azure.com/openai');
-
-      expect(isAzureFoundryProxyRunning()).toBe(true);
+      await expect(stopAzureFoundryProxy()).resolves.toBeUndefined();
     });
   });
 });

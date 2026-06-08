@@ -13,7 +13,7 @@ import {
 } from './daemon-bootstrap-config';
 import { getLogCollector } from './logging';
 
-export { getDaemonClient, getDaemonMode, shutdownDaemon } from './daemon/daemon-lifecycle';
+export { getDaemonClient, shutdownDaemon } from './daemon/daemon-lifecycle';
 
 function log(level: 'INFO' | 'WARN' | 'ERROR', msg: string): void {
   try {

@@ -1,6 +1,6 @@
 import { BrowserWindow } from 'electron';
 
-export type PreviewStatus = 'starting' | 'streaming' | 'loading' | 'ready' | 'stopped' | 'error';
+type PreviewStatus = 'starting' | 'streaming' | 'loading' | 'ready' | 'stopped' | 'error';
 
 export function sendToRenderer(channel: string, payload: unknown): void {
   for (const win of BrowserWindow.getAllWindows()) {

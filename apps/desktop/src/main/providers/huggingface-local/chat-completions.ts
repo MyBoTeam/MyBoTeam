@@ -10,8 +10,6 @@ import {
   state,
 } from './server-state';
 
-export { validateSamplingParams };
-
 export async function handleChatCompletion(
   req: ChatCompletionRequest,
   res: http.ServerResponse,

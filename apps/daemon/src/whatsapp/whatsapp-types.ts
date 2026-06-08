@@ -1,5 +1,3 @@
-export type { WhatsAppServiceEvents } from './whatsapp-session.js';
-
 export interface ChatSummary {
   jid: string;
   name?: string;

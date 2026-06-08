@@ -59,6 +59,6 @@ export const DARK_INVERT_PROVIDERS = new Set<ProviderId>([
   'together',
 ]);
 
-export function getProviderLogo(providerId: ProviderId): string | undefined {
+function getProviderLogo(providerId: ProviderId): string | undefined {
   return PROVIDER_LOGOS[providerId];
 }

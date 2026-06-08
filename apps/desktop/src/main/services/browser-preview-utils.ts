@@ -1,6 +1,5 @@
 export {
   autoStartScreencast,
-  COMMAND_TIMEOUT_MS,
   DEFAULT_VIEWPORT,
   DEV_BROWSER_HOST,
   resolveBrowserWsEndpoint,
@@ -10,6 +9,5 @@ export {
   emitFrameCapture,
   emitNavigationEvent,
   emitStatusUpdate,
-  type PreviewStatus,
   sendToRenderer,
 } from './browser-preview-utils-ipc';

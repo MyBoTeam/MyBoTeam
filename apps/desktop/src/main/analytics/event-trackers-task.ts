@@ -75,43 +75,6 @@ export function trackTaskComplete(
   }
 }
 
-export function trackTaskCancel(
-  context: TaskContext,
-  durationMs: number,
-  totalSteps: number,
-  model?: string,
-  totalTokens?: {
-    input: number;
-    output: number;
-    reasoning: number;
-    cache_read: number;
-    cache_write: number;
-  },
-  totalCost?: number,
-  provider?: string,
-): void {
-  try {
-    trackEvent('task_cancel', {
-      event_category: 'task_lifecycle',
-      task_id: context.taskId,
-      opencode_session_id: context.sessionId,
-      task_type: context.taskType,
-      duration_ms: durationMs,
-      total_steps: totalSteps,
-      model,
-      provider,
-      tokens_input: totalTokens?.input,
-      tokens_output: totalTokens?.output,
-      tokens_reasoning: totalTokens?.reasoning,
-      tokens_cache_read: totalTokens?.cache_read,
-      tokens_cache_write: totalTokens?.cache_write,
-      cost_usd: totalCost,
-    });
-  } catch (error) {
-    console.error('[Analytics] Failed to track task cancel:', error);
-  }
-}
-
 export function trackTaskError(
   context: TaskContext,
   durationMs: number,

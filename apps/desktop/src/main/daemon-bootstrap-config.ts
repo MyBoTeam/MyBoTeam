@@ -3,7 +3,7 @@ import type { BrowserWindow } from 'electron';
 import { classifyErrorCategory, trackTaskComplete, trackTaskError } from './analytics/events';
 import { getLogCollector } from './logging';
 
-export const taskContextMap = new Map<
+const taskContextMap = new Map<
   string,
   { startTime: number; sessionId: string; taskType: string }
 >();

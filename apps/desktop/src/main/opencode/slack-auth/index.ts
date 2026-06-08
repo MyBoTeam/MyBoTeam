@@ -19,7 +19,7 @@ import { shell } from 'electron';
 import { createOAuthCallbackServer, type OAuthCallbackServer } from '../../oauth-callback-server';
 import { AuthLoginError } from '../auth-login-error';
 
-export class SlackMcpOAuthFlow {
+class SlackMcpOAuthFlow {
   private activeCallbackServer: OAuthCallbackServer | null = null;
   private isDisposed = false;
 

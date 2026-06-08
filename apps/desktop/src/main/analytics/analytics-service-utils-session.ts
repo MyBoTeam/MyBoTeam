@@ -2,8 +2,8 @@ import { randomUUID } from 'node:crypto';
 
 export let sessionId: string = '';
 export let numericSessionId: number = 0;
-export let sessionStartTime: number = 0;
-export let sessionTaskCount: number = 0;
+let sessionStartTime: number = 0;
+let sessionTaskCount: number = 0;
 
 export function initSessionState(): void {
   sessionId = randomUUID();

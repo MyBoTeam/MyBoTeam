@@ -2,7 +2,7 @@ import { DEV_BROWSER_CDP_PORT, DEV_BROWSER_PORT } from '@myboteam/agent-core/des
 
 export const DEV_BROWSER_HOST = '127.0.0.1';
 export const DEFAULT_VIEWPORT = { width: 1280, height: 720 };
-export const COMMAND_TIMEOUT_MS = 10_000;
+const COMMAND_TIMEOUT_MS = 10_000;
 
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const controller = new AbortController();

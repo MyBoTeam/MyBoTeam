@@ -6,11 +6,6 @@ import type { TaskResult } from '../../common/types/task.js';
 import type { TodoItem } from '../../common/types/todo.js';
 import type { OnBeforeStartContext, OnBeforeStartResult } from '../../types/task-manager.js';
 
-export const WINDOWS_CTRL_C_EXIT_CODE = -1073741510;
-
-export const isNormalExit = (code: number | null, platform?: string): boolean =>
-  code === 0 || (platform === 'win32' && code === WINDOWS_CTRL_C_EXIT_CODE);
-
 export class OpenCodeCliNotFoundError extends Error {
   constructor() {
     super(

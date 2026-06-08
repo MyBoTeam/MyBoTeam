@@ -18,7 +18,7 @@ import type {
   ThemePreference,
 } from '@myboteam/agent-core';
 
-export type { SettingsChangePayload, SettingsSnapshot } from './settings-types.js';
+export type { SettingsChangePayload } from './settings-types.js';
 export { SETTINGS_CHANGED } from './settings-types.js';
 
 export class SettingsService extends EventEmitter {

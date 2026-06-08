@@ -136,5 +136,3 @@ export function TaskLauncher() {
     </DialogPrimitive.Root>
   );
 }
-
-export default TaskLauncher;

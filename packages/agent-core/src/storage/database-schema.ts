@@ -1,6 +1,6 @@
 import type { Database as SqlJsDatabase } from 'sql.js';
 
-export type { SqlJsDatabase as Database, SqlJsDatabase };
+export type { SqlJsDatabase as Database };
 
 export interface DatabaseOptions {
   databasePath: string;

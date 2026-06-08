@@ -6,7 +6,7 @@ export interface BaileysSocket {
   logout(): Promise<void>;
 }
 
-export interface BaileysEventEmitter {
+interface BaileysEventEmitter {
   on(event: 'creds.update', handler: () => void): void;
   on(
     event: 'connection.update',

@@ -11,7 +11,7 @@ export interface OpenCodeOauthAuthEntry {
   expires?: number;
 }
 
-export function readJsonFile(filePath: string): Record<string, unknown> | null {
+function readJsonFile(filePath: string): Record<string, unknown> | null {
   try {
     if (!fs.existsSync(filePath)) return null;
     const raw = fs.readFileSync(filePath, 'utf8');

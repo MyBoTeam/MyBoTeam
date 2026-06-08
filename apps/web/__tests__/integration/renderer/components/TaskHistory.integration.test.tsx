@@ -46,9 +46,9 @@ function createMockTask(
   };
 }
 
-import TaskHistory from '@/pages/conversations/components/TaskHistory';
+import ConversationList from '@/pages/conversations/components/ConversationList';
 
-describe('TaskHistory Integration', () => {
+describe('ConversationList Integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -70,7 +70,7 @@ describe('TaskHistory Integration', () => {
     it('should render empty state when no tasks exist', () => {
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -81,7 +81,7 @@ describe('TaskHistory Integration', () => {
     it('should render helpful message in empty state', () => {
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -92,7 +92,7 @@ describe('TaskHistory Integration', () => {
     it('should not render task list in empty state', () => {
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -105,7 +105,7 @@ describe('TaskHistory Integration', () => {
       // Arrange & Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -123,7 +123,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -139,7 +139,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory showTitle={true} />
+          <ConversationList showTitle={true} />
         </MemoryRouter>,
       );
 
@@ -154,7 +154,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory showTitle={false} />
+          <ConversationList showTitle={false} />
         </MemoryRouter>,
       );
 
@@ -169,7 +169,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -185,7 +185,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -196,7 +196,7 @@ describe('TaskHistory Integration', () => {
     it('should call loadTasks on mount', () => {
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -213,7 +213,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -229,7 +229,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -245,7 +245,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -261,7 +261,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -277,7 +277,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -293,7 +293,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -311,7 +311,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -331,7 +331,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -351,7 +351,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -368,7 +368,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -387,7 +387,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -406,7 +406,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -425,7 +425,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter initialEntries={['/']}>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -445,7 +445,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory showTitle={true} />
+          <ConversationList showTitle={true} />
         </MemoryRouter>,
       );
 
@@ -458,7 +458,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory limit={5} showTitle={true} />
+          <ConversationList limit={5} showTitle={true} />
         </MemoryRouter>,
       );
 
@@ -472,7 +472,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory showTitle={true} />
+          <ConversationList showTitle={true} />
         </MemoryRouter>,
       );
 
@@ -487,7 +487,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory showTitle={true} />
+          <ConversationList showTitle={true} />
         </MemoryRouter>,
       );
 
@@ -502,7 +502,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory showTitle={true} />
+          <ConversationList showTitle={true} />
         </MemoryRouter>,
       );
 
@@ -524,7 +524,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory limit={3} />
+          <ConversationList limit={3} />
         </MemoryRouter>,
       );
 
@@ -548,7 +548,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory limit={2} />
+          <ConversationList limit={2} />
         </MemoryRouter>,
       );
 
@@ -565,7 +565,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory limit={2} />
+          <ConversationList limit={2} />
         </MemoryRouter>,
       );
 
@@ -582,7 +582,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory limit={5} />
+          <ConversationList limit={5} />
         </MemoryRouter>,
       );
 
@@ -601,7 +601,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -623,7 +623,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -637,7 +637,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -651,7 +651,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -665,7 +665,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -680,7 +680,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -696,7 +696,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -714,7 +714,7 @@ describe('TaskHistory Integration', () => {
       // Act
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 
@@ -731,7 +731,7 @@ describe('TaskHistory Integration', () => {
 
       render(
         <MemoryRouter>
-          <TaskHistory />
+          <ConversationList />
         </MemoryRouter>,
       );
 

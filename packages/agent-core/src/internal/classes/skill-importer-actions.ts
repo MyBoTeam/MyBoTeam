@@ -8,7 +8,7 @@ import { generateId, sanitizeSkillName } from './skill-parser.js';
 
 const log = createConsoleLogger({ prefix: 'SkillsManager' });
 
-export function persistSkill(
+function persistSkill(
   frontmatter: SkillFrontmatter & { name: string },
   destPath: string,
   source: SkillSource,
@@ -75,7 +75,7 @@ export function addFromFolder(folderPath: string, userSkillsPath: string): Skill
   return persistSkill(frontmatter, destSkillMdPath, 'custom');
 }
 
-export function resolveGithubRawUrl(rawUrl: string): string {
+function resolveGithubRawUrl(rawUrl: string): string {
   let parsedUrl: URL;
   try {
     parsedUrl = new URL(rawUrl);

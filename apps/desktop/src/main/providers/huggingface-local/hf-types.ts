@@ -1,5 +1,3 @@
-import type { ChatMessage } from './server-state';
-
 export interface HfTensor {
   dims?: number[];
   slice(dim: number | null, idx: number): HfTensor;
@@ -8,6 +6,16 @@ export interface HfTensor {
 
 export interface HfTokenizerCallResult {
   input_ids: HfTensor;
+  [key: string]: unknown;
+}
+
+interface HfGenerateOptions {
+  max_new_tokens: number;
+  temperature: number;
+  top_p: number;
+  do_sample: boolean;
+  callback_function?: (output: HfTensor) => void;
+  input_ids?: unknown;
   [key: string]: unknown;
 }
 
@@ -20,15 +28,7 @@ export interface HfTokenizer {
   ): string;
 }
 
-export interface HfGenerateOptions {
-  max_new_tokens: number;
-  temperature: number;
-  top_p: number;
-  do_sample: boolean;
-  callback_function?: (output: HfTensor) => void;
-  input_ids?: unknown;
-  [key: string]: unknown;
-}
+import type { ChatMessage } from './server-state';
 
 export interface HfPreTrainedModel {
   generate(options: HfGenerateOptions): Promise<HfTensor>;

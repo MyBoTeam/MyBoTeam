@@ -1,5 +1,5 @@
 export const DEFAULT_CONFIG_FILE_NAME = 'opencode.json';
-export const BASH_PERMISSION_POLICY = {
+const BASH_PERMISSION_POLICY = {
   '*': 'allow',
   '* > *': 'ask',
   '* >> *': 'ask',

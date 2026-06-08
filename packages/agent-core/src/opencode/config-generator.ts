@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createConsoleLogger } from '../utils/logging.js';
-import { formatBuiltInConnectorStatusSection } from './completion/context-providers/connector-status.js';
+import { formatBuiltInConnectorStatusSection } from './completion/connector-status.js';
 import {
   DEFAULT_CONFIG_FILE_NAME,
   MYBOTEAM_AGENT_NAME,

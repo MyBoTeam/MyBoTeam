@@ -4,7 +4,6 @@ export {
   setSessionForSender,
 } from './task-bridge-rate-limit-actions.js';
 export {
-  GLOBAL_RATE_LIMIT_MAX,
   type InboundMessage,
   MAX_TRACKED_SENDERS,
   type MessageTransport,

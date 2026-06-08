@@ -1,9 +1,3 @@
-export type {
-  TaskCallbacks,
-  TaskManagerAPI,
-  TaskManagerOptions,
-  TaskProgressEvent,
-} from '@myboteam/agent-core/desktop-main';
 export {
   getBundledOpenCodeVersion,
   getOpenCodeCliPath,

@@ -5,7 +5,6 @@ export {
   getAzureFoundryConfig,
   getDebugMode,
   getHuggingFaceLocalConfig,
-  getLanguage,
   getLiteLLMConfig,
   getLMStudioConfig,
   getNimConfig,
@@ -17,7 +16,6 @@ export {
   setAzureFoundryConfig,
   setDebugMode,
   setHuggingFaceLocalConfig,
-  setLanguage,
   setLiteLLMConfig,
   setLMStudioConfig,
   setNimConfig,
@@ -39,14 +37,6 @@ export {
 } from './connectors.js';
 export { addFavorite, getFavorites, isFavorite, removeFavorite } from './favorites.js';
 export {
-  createKnowledgeNote,
-  deleteKnowledgeNote,
-  getKnowledgeNote,
-  getKnowledgeNotesForPrompt,
-  listKnowledgeNotes,
-  updateKnowledgeNote,
-} from './knowledgeNotes.js';
-export {
   clearProviderSettings,
   getActiveProviderId,
   getActiveProviderModel,
@@ -61,16 +51,6 @@ export {
   setProviderDebugMode,
   updateProviderModel,
 } from './providerSettings.js';
-export {
-  createScheduledTask,
-  deleteScheduledTask,
-  getAllScheduledTasks,
-  getEnabledScheduledTasks,
-  getScheduledTaskById,
-  getScheduledTasksByWorkspace,
-  setScheduledTaskEnabled,
-  updateScheduledTaskLastRun,
-} from './scheduled-tasks.js';
 export {
   clearAllSkills,
   deleteSkill,

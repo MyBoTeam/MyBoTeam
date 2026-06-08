@@ -60,11 +60,6 @@ export async function getAzureEntraToken(): Promise<
   }
 }
 
-export function clearAzureTokenCache(): void {
-  tokenCache = null;
-  log.info('[Azure Token Manager] Token cache cleared');
-}
-
 export function hasValidToken(): boolean {
   if (!tokenCache) return false;
   const now = new Date();

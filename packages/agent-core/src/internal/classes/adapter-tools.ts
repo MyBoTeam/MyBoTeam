@@ -1,7 +1,7 @@
 import type { ToolPart } from '@opencode-ai/sdk/v2';
 import type { BrowserFramePayload } from '../../common/types/browser-view.js';
 import type { AdapterState } from './adapter-state.js';
-import { partToOpenCodeMessage as toMessage } from './adapter-utils.js';
+import { partToOpenCodeMessage as toMessage } from './message-utils.js';
 
 export function handleToolPart(
   state: AdapterState,
@@ -62,7 +62,7 @@ export function handleToolPart(
   }
 }
 
-export function detectBrowserFrames(state: AdapterState, output: string): void {
+function detectBrowserFrames(state: AdapterState, output: string): void {
   if (!output) return;
   const lines = output.split('\n');
   for (const line of lines) {

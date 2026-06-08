@@ -3,79 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildFilePermissionRequest,
   buildQuestionRequest,
-  validateFilePermissionRequest,
-  validateQuestionRequest,
 } from '../../../../src/internal/classes/permission-request-builders.js';
-
-describe('validateFilePermissionRequest', () => {
-  it('returns invalid for non-object data', () => {
-    expect(validateFilePermissionRequest(null)).toEqual({
-      valid: false,
-      error: 'Invalid request data',
-    });
-    expect(validateFilePermissionRequest('string')).toEqual({
-      valid: false,
-      error: 'Invalid request data',
-    });
-    expect(validateFilePermissionRequest(123)).toEqual({
-      valid: false,
-      error: 'Invalid request data',
-    });
-  });
-
-  it('returns invalid when operation is missing', () => {
-    expect(validateFilePermissionRequest({ filePath: '/tmp/test' })).toEqual({
-      valid: false,
-      error: 'operation is required',
-    });
-  });
-
-  it('returns invalid when both filePath and filePaths are missing', () => {
-    expect(validateFilePermissionRequest({ operation: 'read' })).toEqual({
-      valid: false,
-      error: 'operation and either filePath or filePaths are required',
-    });
-  });
-
-  it('returns invalid for invalid operation type', () => {
-    expect(
-      validateFilePermissionRequest({ operation: 'invalid-op', filePath: '/tmp/test' }),
-    ).toEqual({
-      valid: false,
-      error: expect.stringContaining('Invalid operation'),
-    });
-  });
-
-  it('returns valid for valid file create request', () => {
-    const result = validateFilePermissionRequest({
-      operation: 'create',
-      filePath: '/tmp/test.txt',
-    });
-    expect(result).toEqual({ valid: true });
-  });
-
-  it('returns valid with filePaths array', () => {
-    const result = validateFilePermissionRequest({
-      operation: 'delete',
-      filePaths: ['/tmp/a', '/tmp/b'],
-    });
-    expect(result).toEqual({ valid: true });
-  });
-});
-
-describe('validateQuestionRequest', () => {
-  it('returns invalid for non-object data', () => {
-    expect(validateQuestionRequest(null)).toEqual({ valid: false, error: 'Invalid request data' });
-  });
-
-  it('returns invalid when question is missing', () => {
-    expect(validateQuestionRequest({})).toEqual({ valid: false, error: 'question is required' });
-  });
-
-  it('returns valid when question is present', () => {
-    expect(validateQuestionRequest({ question: 'Are you sure?' })).toEqual({ valid: true });
-  });
-});
 
 describe('buildFilePermissionRequest', () => {
   it('builds a file permission request', () => {

@@ -1,4 +1,4 @@
-import { getModelDisplayName } from '../common/constants/model-display.js';
+import { getModelDisplayName } from '../common/model-display.js';
 import type { ModelsEndpointConfig } from '../common/types/provider.js';
 import { fetchWithTimeout } from '../utils/fetch.js';
 import { createConsoleLogger } from '../utils/logging.js';

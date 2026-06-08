@@ -10,7 +10,6 @@ import { createSpeechError, formatErrorMessage, useSpeechConfig } from './use-sp
 import { useSpeechRecorder } from './useSpeechRecorder';
 
 export type { UseSpeechInputOptions, UseSpeechInputState } from './speech-types';
-export { SpeechRecognitionError } from './speech-types';
 
 export function useSpeechInput(options: UseSpeechInputOptions = {}): UseSpeechInputState & {
   startRecording: () => Promise<void>;

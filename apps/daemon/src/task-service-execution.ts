@@ -29,7 +29,7 @@ export interface StartTaskParams {
   outputSchema?: object;
 }
 
-export interface ResumeSessionParams {
+interface ResumeSessionParams {
   sessionId: string;
   prompt: string;
   existingTaskId?: string;

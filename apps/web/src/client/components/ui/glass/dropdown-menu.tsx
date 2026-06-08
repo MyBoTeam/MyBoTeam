@@ -3,7 +3,6 @@ import {
   DropdownMenu as BaseDropdownMenu,
   DropdownMenuContent as BaseDropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
@@ -39,7 +38,6 @@ DropdownMenuContent.displayName = 'DropdownMenuContent';
 export {
   BaseDropdownMenu as DropdownMenu,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 };

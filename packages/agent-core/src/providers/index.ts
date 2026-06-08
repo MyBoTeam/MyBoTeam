@@ -84,7 +84,6 @@ export {
 export {
   type ToolSupportTestOptions,
   testLMStudioModelToolSupport,
-  testModelToolSupport,
   testOllamaModelToolSupport,
 } from './tool-support-testing.js';
 export { type ValidationOptions, type ValidationResult, validateApiKey } from './validation.js';

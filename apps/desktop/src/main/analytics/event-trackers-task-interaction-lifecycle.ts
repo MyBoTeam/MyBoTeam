@@ -37,25 +37,6 @@ export function trackUserInteraction(
   });
 }
 
-export function trackTaskFirstResponse(
-  taskId: string,
-  durationMs: number,
-  usedPrewarm: boolean,
-  taskSessionState: 'cold' | 'warm',
-  model?: string,
-  provider?: string,
-): void {
-  trackEvent('task_first_response', {
-    event_category: 'task_lifecycle',
-    task_id: taskId,
-    duration_ms: Math.round(durationMs),
-    used_prewarm: usedPrewarm,
-    task_session_state: taskSessionState,
-    model,
-    provider,
-  });
-}
-
 export function trackTaskFeedback(
   taskId: string,
   sessionId: string,

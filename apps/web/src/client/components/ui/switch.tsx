@@ -34,7 +34,7 @@ const thumbVariants = cva(
   },
 );
 
-export interface SwitchProps
+interface SwitchProps
   extends React.ComponentPropsWithoutRef<typeof SwitchPrimitive.Root>,
     VariantProps<typeof switchVariants> {
   checked?: boolean;

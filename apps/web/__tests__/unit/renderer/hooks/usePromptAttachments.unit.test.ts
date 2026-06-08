@@ -16,7 +16,7 @@ vi.mock('react-i18next', () => ({
 }));
 
 const mockProcessFileAttachments = vi.hoisted(() => vi.fn());
-vi.mock('@/config/fileUtils', () => ({
+vi.mock('@/utils/fileUtils', () => ({
   processFileAttachments: mockProcessFileAttachments,
   MAX_FILES: 10,
 }));

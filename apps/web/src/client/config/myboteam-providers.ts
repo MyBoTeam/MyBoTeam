@@ -6,96 +6,96 @@ import type {
 } from '@myboteam/agent-core';
 import type { SimpleResult, SimpleResultWithError } from './myboteam-types';
 
-export type OllamaModel = {
+type OllamaModel = {
   id: string;
   displayName: string;
   size: number;
   toolSupport?: ToolSupportStatus;
 };
-export type OllamaTestResult = { success: boolean; models?: OllamaModel[]; error?: string };
-export type OllamaConfigData = {
+type OllamaTestResult = { success: boolean; models?: OllamaModel[]; error?: string };
+type OllamaConfigData = {
   baseUrl: string;
   enabled: boolean;
   lastValidated?: number;
   models?: OllamaModel[];
 } | null;
-export type AzureFoundryConfigData = {
+type AzureFoundryConfigData = {
   baseUrl: string;
   deploymentName: string;
   authType: 'api-key' | 'entra-id';
   enabled: boolean;
   lastValidated?: number;
 } | null;
-export type AzureFoundryTestInput = {
+type AzureFoundryTestInput = {
   endpoint: string;
   deploymentName: string;
   authType: 'api-key' | 'entra-id';
   apiKey?: string;
 };
-export type AzureFoundrySaveInput = AzureFoundryTestInput;
-export type ProviderModelFetchOptions = { baseUrl?: string; zaiRegion?: string };
-export type ProviderModelFetchResult = {
+type AzureFoundrySaveInput = AzureFoundryTestInput;
+type ProviderModelFetchOptions = { baseUrl?: string; zaiRegion?: string };
+type ProviderModelFetchResult = {
   success: boolean;
   models?: Array<{ id: string; name: string }>;
   error?: string;
 };
-export type OpenRouterModelData = {
+type OpenRouterModelData = {
   id: string;
   name: string;
   provider: string;
   contextLength: number;
 };
-export type OpenRouterModelFetchResult = {
+type OpenRouterModelFetchResult = {
   success: boolean;
   models?: OpenRouterModelData[];
   error?: string;
 };
-export type LiteLLMConfigData = {
+type LiteLLMConfigData = {
   baseUrl: string;
   enabled: boolean;
   lastValidated?: number;
   models?: OpenRouterModelData[];
 } | null;
-export type LMStudioModelData = {
+type LMStudioModelData = {
   id: string;
   name: string;
   toolSupport: ToolSupportStatus;
 };
-export type LMStudioConfigData = {
+type LMStudioConfigData = {
   baseUrl: string;
   enabled: boolean;
   lastValidated?: number;
   models?: LMStudioModelData[];
 } | null;
-export type HuggingFaceLocalConfigData = {
+type HuggingFaceLocalConfigData = {
   selectedModelId: string | null;
   serverPort: number | null;
   enabled: boolean;
 } | null;
-export type HuggingFaceModelListResult = {
+type HuggingFaceModelListResult = {
   cached: Array<{ id: string; displayName: string; sizeBytes?: number; downloaded: boolean }>;
   suggested: Array<{ id: string; displayName: string; sizeBytes?: number; downloaded: boolean }>;
 };
-export type HuggingFaceDownloadProgressData = {
+type HuggingFaceDownloadProgressData = {
   modelId: string;
   status: 'downloading' | 'complete' | 'error';
   progress: number;
   error?: string;
 };
-export type HuggingFaceServerStatusData = {
+type HuggingFaceServerStatusData = {
   running: boolean;
   port: number | null;
   loadedModel: string | null;
   isLoading: boolean;
 };
-export type NimConnectionResult = OpenRouterModelFetchResult;
-export type BedrockModelResult = {
+type NimConnectionResult = OpenRouterModelFetchResult;
+type BedrockModelResult = {
   success: boolean;
   models: Array<{ id: string; name: string; provider: string }>;
   error?: string;
 };
-export type VertexProjectResult = { success: boolean; projectId: string | null };
-export type VertexProjectListResult = {
+type VertexProjectResult = { success: boolean; projectId: string | null };
+type VertexProjectListResult = {
   success: boolean;
   projects: Array<{ projectId: string; name: string }>;
   error?: string;

@@ -7,7 +7,7 @@ import {
   type SkillsManagerAPI,
 } from '@myboteam/agent-core';
 
-export const SKILLS_CHANGED = 'skills.changed' as const;
+const SKILLS_CHANGED = 'skills.changed' as const;
 
 export interface SkillsServiceOptions {
   dataDir: string;

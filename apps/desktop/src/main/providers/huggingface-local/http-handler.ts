@@ -4,9 +4,6 @@ import { handleChatCompletion, handleStreamingCompletion } from './chat-completi
 import { readBody, setCorsHeaders, writeJsonError } from './request-helpers';
 import { type ChatCompletionRequest, state } from './server-state';
 
-export { handleChatCompletion, handleStreamingCompletion } from './chat-completions';
-export { readBody } from './request-helpers';
-
 export function createRequestHandler(): (
   req: http.IncomingMessage,
   res: http.ServerResponse,

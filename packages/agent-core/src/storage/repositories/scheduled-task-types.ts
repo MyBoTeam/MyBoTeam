@@ -26,7 +26,7 @@ export function rowToScheduledTask(row: ScheduledTaskRow): ScheduledTask {
   };
 }
 
-export function parseCronField(field: string, min: number, max: number): number[] | null {
+function parseCronField(field: string, min: number, max: number): number[] | null {
   const values: number[] = [];
 
   for (const part of field.split(',')) {

@@ -1,9 +1,6 @@
 import { getMyBoTeam } from '../config/myboteam';
 import { applyClass, resolveTheme, THEME_KEY, type ThemePreference } from './theme-core';
 
-export type { ThemeColor } from './theme-color.js';
-export { applyColorTheme, COLOR_THEME_KEY } from './theme-color.js';
-
 let mediaQuery: MediaQueryList | null = null;
 let mediaListener: ((e: MediaQueryListEvent) => void) | null = null;
 let themeChangeCleanup: (() => void) | null = null;
@@ -42,7 +39,7 @@ export function applyTheme(preference: string): void {
   }
 }
 
-export function initTheme(): void {
+function initTheme(): void {
   const myboteam = getMyBoTeam();
 
   myboteam.getTheme().then((preference) => {
@@ -56,7 +53,7 @@ export function initTheme(): void {
   }
 }
 
-export function cleanupTheme(): void {
+function cleanupTheme(): void {
   cleanupSystemListener();
   if (themeChangeCleanup) {
     themeChangeCleanup();

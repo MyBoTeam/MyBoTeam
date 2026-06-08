@@ -1,7 +1,6 @@
 export {
   trackStopAgent,
   trackTaskFeedback,
-  trackTaskFirstResponse,
   trackToolUsed,
   trackUserInteraction,
 } from './event-trackers-task-interaction-lifecycle';

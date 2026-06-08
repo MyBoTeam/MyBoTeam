@@ -197,7 +197,3 @@ export async function stopAzureFoundryProxy(): Promise<void> {
     targetBaseUrl = null;
   });
 }
-
-export function isAzureFoundryProxyRunning(): boolean {
-  return server !== null && server.listening;
-}

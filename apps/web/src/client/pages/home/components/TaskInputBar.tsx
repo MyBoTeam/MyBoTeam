@@ -11,8 +11,6 @@ import { TaskInputAttachmentList } from './TaskInputAttachmentList';
 import { TaskInputTextarea } from './TaskInputTextarea';
 import { TaskInputToolbar } from './TaskInputToolbar';
 
-export { FileTypeIcon } from './FileTypeIcon';
-
 interface TaskInputBarProps {
   value: string;
   onChange: (value: string) => void;

@@ -25,7 +25,7 @@ import {
   updateWorkspaceRecord,
 } from '@myboteam/agent-core';
 
-export { WORKSPACE_CHANGED, type WorkspaceChangePayload } from './workspace-types.js';
+export { WORKSPACE_CHANGED } from './workspace-types.js';
 
 export class WorkspaceService extends EventEmitter {
   ensureInitialized(): void {

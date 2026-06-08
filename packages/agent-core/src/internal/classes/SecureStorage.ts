@@ -192,7 +192,3 @@ export class SecureStorage {
     return key in data.values;
   }
 }
-
-export function createSecureStorage(options: SecureStorageOptions): SecureStorage {
-  return new SecureStorage(options);
-}

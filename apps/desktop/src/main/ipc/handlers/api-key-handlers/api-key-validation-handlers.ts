@@ -166,5 +166,3 @@ export function registerApiKeyValidationHandlers(): void {
 }
 
 import { getAllApiKeys } from '../../../store/secureStorage';
-
-export { getAllApiKeys };

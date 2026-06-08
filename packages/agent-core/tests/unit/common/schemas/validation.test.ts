@@ -6,7 +6,7 @@ import {
   resumeSessionSchema,
   taskConfigSchema,
   validate,
-} from '../../../../src/common/schemas/validation.js';
+} from '../../../../src/common/validation.js';
 
 describe('validation schemas', () => {
   describe('fileAttachmentSchema', () => {

@@ -1,8 +1,4 @@
-import type {
-  GoogleAccount,
-  GoogleAccountStatus,
-  GoogleAccountToken,
-} from '../common/types/google-account.js';
+import type { GoogleAccountToken } from '../common/types/google-account.js';
 import type { Database } from '../storage/database.js';
 import { flushDatabase } from '../storage/database.js';
 import type { StorageAPI } from '../types/storage.js';
@@ -13,17 +9,6 @@ export type LogFn = (
   message: string,
   data?: Record<string, unknown>,
 ) => void;
-
-interface ConnectedAccountRow {
-  google_account_id: string;
-  email: string;
-  display_name: string;
-  picture_url: string | null;
-  label: string;
-  status: GoogleAccountStatus;
-  connected_at: string;
-  last_refreshed_at: string | null;
-}
 
 export async function readOrRefreshToken(
   storage: StorageAPI,
@@ -146,17 +131,4 @@ export async function readOrRefreshToken(
     });
     return token;
   }
-}
-
-export function rowToAccount(row: ConnectedAccountRow): GoogleAccount {
-  return {
-    googleAccountId: row.google_account_id,
-    email: row.email,
-    displayName: row.display_name,
-    pictureUrl: row.picture_url,
-    label: row.label,
-    status: row.status,
-    connectedAt: row.connected_at,
-    lastRefreshedAt: row.last_refreshed_at,
-  };
 }

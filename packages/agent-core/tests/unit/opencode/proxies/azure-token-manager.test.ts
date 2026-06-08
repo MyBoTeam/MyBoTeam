@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  clearAzureTokenCache,
   getAzureEntraToken,
   getTokenExpiry,
   hasValidToken,
@@ -8,8 +7,6 @@ import {
 
 describe('Azure Token Manager', () => {
   beforeEach(() => {
-    clearAzureTokenCache();
-
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
@@ -17,15 +14,6 @@ describe('Azure Token Manager', () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.resetModules();
-  });
-
-  describe('clearAzureTokenCache', () => {
-    it('should clear the token cache', () => {
-      clearAzureTokenCache();
-
-      expect(hasValidToken()).toBe(false);
-      expect(getTokenExpiry()).toBeNull();
-    });
   });
 
   describe('hasValidToken', () => {
@@ -75,11 +63,6 @@ describe('Azure Token Manager', () => {
     });
 
     it('should not have expiry initially', () => {
-      expect(getTokenExpiry()).toBeNull();
-    });
-
-    it('should clear expiry after clearing cache', () => {
-      clearAzureTokenCache();
       expect(getTokenExpiry()).toBeNull();
     });
   });

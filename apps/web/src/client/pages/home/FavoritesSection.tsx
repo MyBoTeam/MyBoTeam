@@ -3,7 +3,6 @@ import { X } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { springs } from '@/utils/animations';
-import { FAVORITES_PREVIEW_COUNT } from './hooks/useHomePage';
 
 interface FavoritesSectionProps {
   favoritesList: StoredFavorite[];
@@ -109,5 +108,3 @@ export function FavoritesSection({
     </div>
   );
 }
-
-export { FAVORITES_PREVIEW_COUNT };

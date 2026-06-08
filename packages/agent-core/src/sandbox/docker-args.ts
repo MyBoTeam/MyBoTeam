@@ -4,7 +4,7 @@ import { createConsoleLogger } from '../utils/logging.js';
 
 const log = createConsoleLogger({ prefix: 'DockerProvider' });
 
-export const FORWARDED_ENV_KEYS = [
+const FORWARDED_ENV_KEYS = [
   'ANTHROPIC_API_KEY',
   'OPENAI_API_KEY',
   'GOOGLE_GENERATIVE_AI_API_KEY',

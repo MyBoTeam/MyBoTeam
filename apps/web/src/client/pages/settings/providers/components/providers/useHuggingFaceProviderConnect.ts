@@ -2,7 +2,7 @@ import type { ConnectedProvider, HuggingFaceLocalCredentials } from '@myboteam/a
 import { useEffect, useState } from 'react';
 import { getMyBoTeam } from '@/config/myboteam';
 
-export interface SuggestedModel {
+interface SuggestedModel {
   id: string;
   displayName: string;
   downloaded: boolean;

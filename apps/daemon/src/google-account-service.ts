@@ -20,8 +20,6 @@ import {
   tokenKey,
 } from './google-account-types.js';
 
-export { GWS_ACCOUNT_STATUS_CHANGED } from './google-account-types.js';
-
 export class GoogleAccountService extends EventEmitter {
   private readonly timers = new Map<string, NodeJS.Timeout>();
   private readonly googleClientId: string;

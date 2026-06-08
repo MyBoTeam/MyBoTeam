@@ -90,7 +90,3 @@ export async function stopMoonshotProxy(): Promise<void> {
     });
   });
 }
-
-export function isMoonshotProxyRunning(): boolean {
-  return server !== null && server.listening;
-}

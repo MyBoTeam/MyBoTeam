@@ -1,8 +1,6 @@
 import type { LogWriterAPI } from '@myboteam/agent-core/desktop-main';
 import { getLogFileWriter, shutdownLogFileWriter } from './log-file-writer';
 
-export type { LogLevel, LogSource } from '@myboteam/agent-core/desktop-main';
-
 let instance: LogWriterAPI | null = null;
 
 export function getLogCollector(): LogWriterAPI {

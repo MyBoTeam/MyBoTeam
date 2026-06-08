@@ -14,9 +14,3 @@ export const LOG_BUFFER_MAX_ENTRIES = 100;
 export const MCP_TOOL_TIMEOUT_MS = 30000;
 
 export const CONNECTOR_AUTH_REQUIRED_MARKER = '__MYBOTEAM_CONNECTOR_AUTH_REQUIRED__';
-
-export {
-  getModelDisplayName,
-  MODEL_DISPLAY_NAMES,
-  PROVIDER_PREFIXES,
-} from './constants/model-display.js';

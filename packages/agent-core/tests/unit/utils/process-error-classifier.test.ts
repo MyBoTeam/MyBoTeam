@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { classifyProcessError } from '../../../src/internal/utils/process-error-classifier.js';
+import { classifyProcessError } from '../../../src/internal/process-error-classifier.js';
 
 describe('classifyProcessError', () => {
   describe('quota / billing patterns', () => {

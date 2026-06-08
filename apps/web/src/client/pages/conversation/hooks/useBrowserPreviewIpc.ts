@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import type { ViewStatus } from '../components/StatusBadge';
 
 interface UseBrowserPreviewIpcOptions {
   taskId: string;
@@ -56,5 +55,3 @@ export function useBrowserPreviewIpc({
     };
   }, [taskId]);
 }
-
-export type { ViewStatus };

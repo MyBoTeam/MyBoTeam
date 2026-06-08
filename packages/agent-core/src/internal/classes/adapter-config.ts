@@ -5,8 +5,8 @@ import {
 } from '../../opencode/completion/index.js';
 import { MYBOTEAM_AGENT_NAME } from '../../opencode/config-generator.js';
 import { serializeError } from '../../utils/error.js';
-import { buildWorkspaceInstructionRuntimeBlock } from './adapter-utils.js';
 import { type OpenCodeLogError, OpenCodeLogWatcher } from './OpenCodeLogWatcher.js';
+import { buildWorkspaceInstructionRuntimeBlock } from './task-utils.js';
 
 export function createCompletionEnforcer(
   currentSessionId: () => string | null,
@@ -28,8 +28,7 @@ export function createCompletionEnforcer(
             parts: [{ type: 'text', text: prompt }],
           })
           .catch((err: unknown) => {
-            const log = { warn: (m: string, d?: unknown) => console.warn(m, d) };
-            log.warn('continuation prompt rejected', { error: serializeError(err) });
+            console.warn('continuation prompt rejected', { error: serializeError(err) });
           });
       }
     },
@@ -53,8 +52,7 @@ export function setupLogWatcher(
 ): void {
   logWatcher.on('error', ((error: OpenCodeLogError) => {
     if (hasCompleted() || !client()) return;
-    const log = { info: (m: string, d?: unknown) => console.info(m, d) };
-    log.info(`Log watcher detected error: ${error.errorName}`);
+    console.info(`Log watcher detected error: ${error.errorName}`);
 
     const errorMessage = OpenCodeLogWatcher.getErrorMessage(error);
 

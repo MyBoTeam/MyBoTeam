@@ -5,7 +5,7 @@ import { createConsoleLogger } from '../utils/logging.js';
 
 const log = createConsoleLogger({ prefix: 'CLIResolver' });
 
-export const OPENCODE_LAUNCHER_PACKAGE = 'opencode-ai';
+const OPENCODE_LAUNCHER_PACKAGE = 'opencode-ai';
 
 export function getCandidateAppRoots(appPath?: string): string[] {
   const roots: string[] = [];

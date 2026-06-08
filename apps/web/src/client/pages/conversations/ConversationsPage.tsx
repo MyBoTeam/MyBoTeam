@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { getMyBoTeam } from '@/config/myboteam';
-import ConversationListItem from '@/layouts/main/components/ConversationListItem';
+import { ConversationListItem } from '@/layouts/main/components/ConversationListItem';
 import { useTaskStore } from '@/stores/taskStore';
 import { staggerContainer } from '@/utils/animations';
 

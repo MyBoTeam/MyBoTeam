@@ -61,5 +61,3 @@ export function TaskLauncherItem({ task, isSelected, onClick }: TaskLauncherItem
     </button>
   );
 }
-
-export default TaskLauncherItem;
