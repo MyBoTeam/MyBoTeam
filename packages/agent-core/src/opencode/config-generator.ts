@@ -27,6 +27,7 @@ import {
   getPlatformEnvironmentInstructions,
   MYBOTEAM_SYSTEM_PROMPT_TEMPLATE,
 } from './system-prompt.js';
+import { WHATSAPP_BEHAVIOR } from './system-prompt-behaviors.js';
 
 export { MYBOTEAM_AGENT_NAME } from './config-generator-options.js';
 export type {
@@ -127,6 +128,11 @@ export function generateConfig(options: ConfigGeneratorOptions): GeneratedConfig
     gwsAccountsManifestPath,
   });
   const hasBrowser = browserConfig.mode !== 'none';
+  const hasWhatsApp = !!(
+    whatsappApiPort &&
+    whatsappMcpPath &&
+    fs.existsSync(path.join(whatsappMcpPath, 'dist', 'index.js'))
+  );
   systemPrompt = systemPrompt
     .replace('{{AGENT_ROLE}}', hasBrowser ? 'browser automation' : 'task automation')
     .replace(
@@ -135,7 +141,16 @@ export function generateConfig(options: ConfigGeneratorOptions): GeneratedConfig
         ? '- **Browser Automation**: Control web browsers, navigate sites, fill forms, click buttons\n'
         : '',
     )
+    .replace(
+      '{{WHATSAPP_CAPABILITY}}',
+      hasWhatsApp
+        ? '- **WhatsApp**: Use the built-in WhatsApp integration to send and read messages. When connected, read recent conversations and message history, and send messages directly to contacts by phone number.\n'
+        : '',
+    )
     .replace('{{BROWSER_BEHAVIOR}}', hasBrowser ? getBrowserBehaviorInstructions() : '');
+  if (hasWhatsApp) {
+    systemPrompt += WHATSAPP_BEHAVIOR;
+  }
   const providerConfig: Record<string, Omit<ProviderConfig, 'id'>> = {};
   for (const provider of providerConfigs) {
     const { id, ...rest } = provider;
@@ -181,10 +196,8 @@ export function generateConfig(options: ConfigGeneratorOptions): GeneratedConfig
   const environment: Record<string, string> = {
     OPENCODE_CONFIG: configPath,
     OPENCODE_CONFIG_DIR: configDir,
+    ...(bundledNodeBinPath ? { NODE_BIN_PATH: bundledNodeBinPath } : {}),
   };
-  if (bundledNodeBinPath) {
-    environment.NODE_BIN_PATH = bundledNodeBinPath;
-  }
   return { systemPrompt, mcpServers, environment, config, configPath };
 }
 
