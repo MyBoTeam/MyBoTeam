@@ -8,6 +8,7 @@ import {
   registerOAuthClient,
 } from '@myboteam/agent-core/desktop-main';
 import { shell } from 'electron';
+import { getDaemonClient } from '../daemon-bootstrap';
 import { createOAuthCallbackServer } from '../oauth-callback-server';
 import { getConnectorAuthStore } from './connector-auth-registry';
 import type { ConnectorOAuthResult } from './connector-token-resolver';
@@ -64,6 +65,14 @@ export async function performMcpDcrFlow(
       host: oauth.store.callback.host,
       port: oauth.store.callback.port,
       callbackPath: oauth.store.callback.path,
+      settingsProvider: async () => {
+        const snap = await getDaemonClient().call('settings.getAll');
+        return {
+          theme: snap.app.theme === 'dark' ? 'dark' : 'light',
+          themeColor: snap.app.themeColor ?? 'neutral',
+          language: snap.app.language ?? 'en',
+        };
+      },
     });
 
     let authSucceeded = false;

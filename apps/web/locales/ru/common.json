@@ -96,5 +96,11 @@
     "lightMode": "Светлый",
     "darkMode": "Тёмный",
     "systemMode": "Система"
+  },
+  "callback": {
+    "successTitle": "Аутентификация успешна",
+    "successMessage": "Вы можете закрыть эту вкладку",
+    "errorTitle": "Ошибка аутентификации",
+    "errorMessage": "Отсутствует код или параметр состояния"
   }
 }
