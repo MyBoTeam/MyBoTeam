@@ -96,5 +96,11 @@
     "lightMode": "浅色模式",
     "darkMode": "深色模式",
     "systemMode": "跟随系统"
+  },
+  "callback": {
+    "successTitle": "身份验证成功",
+    "successMessage": "您可以关闭此标签页",
+    "errorTitle": "身份验证失败",
+    "errorMessage": "缺少代码或状态参数"
   }
 }
