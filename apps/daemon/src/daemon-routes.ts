@@ -1,4 +1,4 @@
-import type { DaemonRpcServer, MyboteamRuntime } from '@myboteam/agent-core';
+import type { DaemonRpcServer } from '@myboteam/agent-core';
 import type { ConnectorService } from './connector-service.js';
 import type { GoogleAccountService } from './google-account-service.js';
 import type { HealthService } from './health.js';
@@ -20,7 +20,6 @@ export interface RouteServices {
   healthService: HealthService;
   storageService: StorageService;
   schedulerService: SchedulerService;
-  myboteamRuntime: MyboteamRuntime;
   whatsappService: WhatsAppDaemonService;
   openAiOauthManager: OpenAiOauthManager;
   secretsService: SecretsService;
