@@ -101,17 +101,6 @@ export const serviceHandlers = {
     ipcRenderer.invoke('scheduler:set-enabled', scheduleId, enabled),
   isAutoStartEnabled: (): Promise<boolean> => ipcRenderer.invoke('daemon:is-auto-start-enabled'),
 
-  myboteamAiConnect: (): Promise<unknown> => ipcRenderer.invoke('myboteam-ai:connect'),
-  myboteamAiEnsureReady: (): Promise<unknown> => ipcRenderer.invoke('myboteam-ai:ensure-ready'),
-  myboteamAiDisconnect: (): Promise<void> => ipcRenderer.invoke('myboteam-ai:disconnect'),
-  myboteamAiGetUsage: (): Promise<unknown> => ipcRenderer.invoke('myboteam-ai:get-usage'),
-  myboteamAiGetStatus: (): Promise<{ connected: boolean }> =>
-    ipcRenderer.invoke('myboteam-ai:get-status'),
-  onMyboteamAiUsageUpdate: (callback: (usage: unknown) => void) => {
-    const listener = (_: unknown, usage: unknown) => callback(usage);
-    ipcRenderer.on('myboteam-ai:usage-updated', listener);
-    return () => ipcRenderer.removeListener('myboteam-ai:usage-updated', listener);
-  },
 
   onCloseRequested: (callback: () => void): (() => void) => {
     const listener = () => callback();
