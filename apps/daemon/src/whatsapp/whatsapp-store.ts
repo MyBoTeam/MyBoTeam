@@ -1,38 +1,5 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import type { BaileysChat, BaileysEventEmitter, BaileysMessage } from './baileys-types.js';
-
-interface PersistedChat {
-  id: string;
-  name?: string | null;
-  conversationTimestamp?: number | null;
-}
-
-interface PersistedMessage {
-  key?: {
-    fromMe?: boolean | null;
-    participant?: string | null;
-    remoteJid?: string | null;
-    id?: string | null;
-  } | null;
-  message?: {
-    conversation?: string | null;
-    extendedTextMessage?: { text?: string | null } | null;
-  } | null;
-  messageTimestamp?: number | null;
-}
-
-interface PersistedData {
-  chats: PersistedChat[];
-  messages: Record<string, Record<string, PersistedMessage>>;
-}
-
-function toNumber(val: unknown): number | null | undefined {
-  if (typeof val === 'number') return val;
-  if (val != null && typeof (val as { toNumber: () => number }).toNumber === 'function')
-    return (val as { toNumber: () => number }).toNumber();
-  return val as number | null | undefined;
-}
+import { loadStore, saveStore } from './whatsapp-store-persistence.js';
 
 const SAVE_DEBOUNCE_MS = 2000;
 
@@ -45,6 +12,12 @@ export function createStore(storePath?: string): {
   const messagesMap = new Map<string, Map<string, BaileysMessage>>();
   let saveTimer: ReturnType<typeof setTimeout> | null = null;
   let serializing = false;
+
+  const loaded = storePath ? loadStore(storePath) : null;
+  if (loaded) {
+    for (const [jid, chat] of loaded.chats) chatsMap.set(jid, chat);
+    for (const [jid, msgMap] of loaded.messages) messagesMap.set(jid, msgMap);
+  }
 
   function ensureMessageMap(jid: string): Map<string, BaileysMessage> {
     let map = messagesMap.get(jid);
@@ -76,28 +49,16 @@ export function createStore(storePath?: string): {
     return key?.id ?? null;
   }
 
-  function persistChat(c: BaileysChat): PersistedChat {
-    return {
-      id: c.id,
-      name: c.name,
-      conversationTimestamp: toNumber(c.conversationTimestamp),
-    };
-  }
-
-  function persistMessage(m: BaileysMessage): PersistedMessage {
-    const k = m.key as { id?: string | null; remoteJid?: string | null; fromMe?: boolean | null; participant?: string | null } | null;
-    return {
-      key: k
-        ? {
-            fromMe: k.fromMe ?? null,
-            participant: k.participant ?? null,
-            remoteJid: k.remoteJid ?? null,
-            id: k.id ?? null,
-          }
-        : null,
-      message: m.message as PersistedMessage['message'],
-      messageTimestamp: toNumber(m.messageTimestamp),
-    };
+  function doSave(): void {
+    if (!storePath || serializing) return;
+    serializing = true;
+    try {
+      saveStore(storePath, chatsMap, messagesMap);
+    } catch {
+      // Silently handle persistence errors
+    } finally {
+      serializing = false;
+    }
   }
 
   function debouncedSave(): void {
@@ -106,72 +67,6 @@ export function createStore(storePath?: string): {
     saveTimer = setTimeout(() => doSave(), SAVE_DEBOUNCE_MS);
   }
 
-  function doSave(): void {
-    if (!storePath || serializing) return;
-    serializing = true;
-    try {
-      const data: PersistedData = {
-        chats: Array.from(chatsMap.values()).map(persistChat),
-        messages: {},
-      };
-      for (const [jid, msgMap] of messagesMap) {
-        const inner: Record<string, PersistedMessage> = {};
-        for (const [id, msg] of msgMap) {
-          inner[id] = persistMessage(msg);
-        }
-        data.messages[jid] = inner;
-      }
-      const dir = path.dirname(storePath);
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-      }
-      fs.writeFileSync(storePath, JSON.stringify(data), 'utf-8');
-    } catch (err) {
-      // Silently handle persistence errors
-    } finally {
-      serializing = false;
-    }
-  }
-
-  function loadPersisted(): void {
-    if (!storePath) return;
-    try {
-      const raw = fs.readFileSync(storePath, 'utf-8');
-      const data = JSON.parse(raw) as PersistedData;
-      if (data.chats) {
-        for (const c of data.chats) {
-          if (!c.id) continue;
-          chatsMap.set(c.id, {
-            id: c.id,
-            name: c.name,
-            conversationTimestamp: c.conversationTimestamp,
-          });
-        }
-      }
-      if (data.messages) {
-        for (const [jid, inner] of Object.entries(data.messages)) {
-          if (!jid) continue;
-          const map = new Map<string, BaileysMessage>();
-          for (const [id, m] of Object.entries(inner)) {
-            if (!id) continue;
-            map.set(id, {
-              key: m.key,
-              message: m.message,
-              messageTimestamp: m.messageTimestamp,
-            });
-          }
-          if (map.size > 0) {
-            messagesMap.set(jid, map);
-          }
-        }
-      }
-    } catch {
-      // No persisted data, start fresh
-    }
-  }
-
-  loadPersisted();
-
   return {
     bind(ev: BaileysEventEmitter): void {
       ev.on('messaging-history.set', (data: unknown) => {
@@ -179,7 +74,6 @@ export function createStore(storePath?: string): {
           chats?: Record<string, unknown>[];
           messages?: Record<string, unknown>[];
         };
-
         if (chats) {
           chatsMap.clear();
           for (const chat of chats) {
@@ -188,7 +82,6 @@ export function createStore(storePath?: string): {
             chatsMap.set(id, toChat(chat));
           }
         }
-
         if (messages) {
           messagesMap.clear();
           for (const msg of messages) {
@@ -197,12 +90,9 @@ export function createStore(storePath?: string): {
             if (!jid) continue;
             const stored = toMessage(msg);
             const id = msgId(stored);
-            if (id) {
-              ensureMessageMap(jid).set(id, stored);
-            }
+            if (id) ensureMessageMap(jid).set(id, stored);
           }
         }
-
         doSave();
       });
 
@@ -249,9 +139,7 @@ export function createStore(storePath?: string): {
           if (!jid) continue;
           const stored = toMessage(raw);
           const id = msgId(stored);
-          if (id) {
-            ensureMessageMap(jid).set(id, stored);
-          }
+          if (id) ensureMessageMap(jid).set(id, stored);
         }
         debouncedSave();
       });
@@ -266,9 +154,7 @@ export function createStore(storePath?: string): {
           const map = messagesMap.get(jid);
           if (!map) continue;
           const existing = map.get(msgIdKey);
-          if (existing && update) {
-            Object.assign(existing, update);
-          }
+          if (existing && update) Object.assign(existing, update);
         }
       });
 
