@@ -45,7 +45,7 @@ vi.mock('@/components/ui/ProviderSubMenu', () => ({
   ),
 }));
 
-vi.mock('@/pages/settings/providers/components/providers/hooks/useProviderSettings', () => ({
+vi.mock('@/pages/settings/providers/hooks/useProviderSettings', () => ({
   useProviderSettings: () => ({
     settings: mocks.state.settings,
     loading: false,
