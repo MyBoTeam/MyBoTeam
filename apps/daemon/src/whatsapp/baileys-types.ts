@@ -20,9 +20,17 @@ interface BaileysEventEmitter {
     event: 'messages.upsert',
     handler: (upsert: { type: string; messages: unknown[] }) => void,
   ): void;
+  on(event: 'messaging-history.set', handler: (data: unknown) => void): void;
+  on(event: 'chats.upsert', handler: (data: unknown) => void): void;
+  on(event: 'chats.update', handler: (data: unknown) => void): void;
+  on(event: 'chats.delete', handler: (data: unknown) => void): void;
+  on(event: 'messages.update', handler: (data: unknown) => void): void;
+  on(event: 'messages.delete', handler: (data: unknown) => void): void;
   on(event: string, handler: (...args: unknown[]) => void): void;
   removeAllListeners(event?: string): void;
 }
+
+export type { BaileysEventEmitter };
 
 export interface BaileysStore {
   bind(ev: BaileysEventEmitter): void;
@@ -32,20 +40,20 @@ export interface BaileysStore {
 
 export interface BaileysChat {
   id: string;
-  name?: string;
+  name?: string | null;
   conversationTimestamp: unknown;
 }
 
 export interface BaileysMessage {
   key?: {
-    fromMe?: boolean;
-    participant?: string;
-    remoteJid?: string;
-    id?: string;
-  };
+    fromMe?: boolean | null;
+    participant?: string | null;
+    remoteJid?: string | null;
+    id?: string | null;
+  } | null;
   message?: {
-    conversation?: string;
-    extendedTextMessage?: { text?: string };
-  };
+    conversation?: string | null;
+    extendedTextMessage?: { text?: string | null } | null;
+  } | null;
   messageTimestamp?: unknown;
 }

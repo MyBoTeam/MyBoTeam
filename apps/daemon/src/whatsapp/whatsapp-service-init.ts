@@ -4,6 +4,7 @@ import type { BaileysSocket, BaileysStore } from './baileys-types.js';
 import { normalizeMessage } from './normalizeMessage.js';
 import type { ReconnectState } from './reconnection.js';
 import { handleConnectionUpdate } from './whatsapp-session.js';
+import { createStore } from './whatsapp-store.js';
 import type { SentMessageTracker } from './whatsapp-types.js';
 
 export async function initBaileysSocket(
@@ -23,9 +24,6 @@ export async function initBaileysSocket(
     fetchLatestBaileysVersion,
     jidNormalizedUser,
   } = baileys;
-  const makeInMemoryStore = (baileys as Record<string, unknown>).makeInMemoryStore as
-    | ((opts: Record<string, unknown>) => unknown)
-    | undefined;
   const pino = (await import('pino')).default;
   let version: [number, number, number] | undefined;
   try {
@@ -49,13 +47,8 @@ export async function initBaileysSocket(
     socket.end(new Error('WhatsApp service disposed during connect'));
     throw new Error('WhatsApp service disposed');
   }
-  let store: BaileysStore | null = null;
-  if (makeInMemoryStore) {
-    store = makeInMemoryStore({}) as BaileysStore;
-    store.bind(socket.ev);
-  } else {
-    log.warn('[WhatsApp] makeInMemoryStore not available');
-  }
+  const store: BaileysStore = createStore();
+  store.bind(socket.ev);
   return { socket, store, saveCreds, DisconnectReason, jidNormalizedUser };
 }
 
