@@ -25,6 +25,7 @@ export class WhatsAppService extends EventEmitter implements ChannelAdapter {
   private status: MessagingConnectionStatus = 'disconnected';
   private reconnect: ReconnectState = createReconnectState();
   private authStatePath: string;
+  private storePath: string;
   private disposed = false;
   private manualDisconnect = false;
   private qrCode: string | null = null;
@@ -33,6 +34,7 @@ export class WhatsAppService extends EventEmitter implements ChannelAdapter {
   constructor(dataDir: string) {
     super();
     this.authStatePath = path.join(dataDir, 'whatsapp-auth');
+    this.storePath = path.join(dataDir, 'whatsapp-store.json');
   }
   getStatus(): MessagingConnectionStatus {
     return this.status;
@@ -56,6 +58,7 @@ export class WhatsAppService extends EventEmitter implements ChannelAdapter {
       const { socket, store, saveCreds, DisconnectReason, jidNormalizedUser } =
         await initBaileysSocket(
           this.authStatePath,
+          this.storePath,
           () => this.disposed,
           () => this.setStatus('disconnected'),
         );

@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import os from 'node:os';
 import { describe, expect, it } from 'vitest';
 import type { BaileysEventEmitter } from '../../../src/whatsapp/baileys-types.js';
 import { createStore } from '../../../src/whatsapp/whatsapp-store.js';
@@ -431,6 +434,62 @@ describe('WhatsAppStore', () => {
       emit('chats.delete', [JID_1]);
 
       expect(store.messages[JID_1]?.all()).toBeUndefined();
+    });
+  });
+
+  describe('persistence', () => {
+    it('should save and reload chats from disk', () => {
+      const storePath = path.join(os.tmpdir(), `whatsapp-store-test-${Date.now()}.json`);
+      try {
+        const { emitter, emit } = createMockEmitter();
+        const store = createStore(storePath);
+        store.bind(emitter);
+
+        emit('messaging-history.set', {
+          chats: [
+            { id: JID_1, name: 'Contact A', conversationTimestamp: 1000 },
+          ],
+          messages: [
+            {
+              key: { remoteJid: JID_1, fromMe: false, id: 'msg-1' },
+              message: { conversation: 'Hello' },
+              messageTimestamp: 1000,
+            },
+          ],
+        });
+
+        expect(fs.existsSync(storePath)).toBe(true);
+
+        const reloaded = createStore(storePath);
+        const chats = reloaded.chats.all();
+        expect(chats).toHaveLength(1);
+        expect(chats[0].id).toBe(JID_1);
+        expect(chats[0].name).toBe('Contact A');
+
+        const msgs = reloaded.messages[JID_1]!.all();
+        expect(msgs).toHaveLength(1);
+        const key = msgs[0].key as { id?: string | null } | null;
+        expect(key?.id).toBe('msg-1');
+      } finally {
+        try { fs.unlinkSync(storePath); } catch { /* cleanup */ }
+      }
+    });
+
+    it('should start fresh when no persisted file exists', () => {
+      const storePath = path.join(os.tmpdir(), `whatsapp-store-nonexistent-${Date.now()}.json`);
+      const store = createStore(storePath);
+      expect(store.chats.all()).toEqual([]);
+    });
+
+    it('should handle corrupted persisted file gracefully', () => {
+      const storePath = path.join(os.tmpdir(), `whatsapp-store-corrupt-${Date.now()}.json`);
+      try {
+        fs.writeFileSync(storePath, 'not valid json', 'utf-8');
+        const store = createStore(storePath);
+        expect(store.chats.all()).toEqual([]);
+      } finally {
+        try { fs.unlinkSync(storePath); } catch { /* cleanup */ }
+      }
     });
   });
 });

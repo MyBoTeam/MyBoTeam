@@ -9,6 +9,7 @@ import type { SentMessageTracker } from './whatsapp-types.js';
 
 export async function initBaileysSocket(
   authStatePath: string,
+  storePath: string | undefined,
   disposed: () => boolean,
   onDisconnected: () => void,
 ) {
@@ -47,7 +48,7 @@ export async function initBaileysSocket(
     socket.end(new Error('WhatsApp service disposed during connect'));
     throw new Error('WhatsApp service disposed');
   }
-  const store: BaileysStore = createStore();
+  const store: BaileysStore = createStore(storePath);
   store.bind(socket.ev);
   return { socket, store, saveCreds, DisconnectReason, jidNormalizedUser };
 }
