@@ -70,29 +70,12 @@ export function buildMcpServers(options: BuildMcpServersOptions): Record<string,
     },
   };
 
-  if (whatsappApiPort) {
-    if (whatsappMcpPath) {
-      const distPath = path.join(whatsappMcpPath, 'dist', 'index.js');
-      if (fs.existsSync(distPath)) {
-        mcpServers.whatsapp = {
-          type: 'local',
-          command: [nodeExe, distPath],
-          enabled: true,
-          environment: {
-            MYBOTEAM_WHATSAPP_API_PORT: String(whatsappApiPort),
-            ...authEnv,
-          },
-          timeout: 30000,
-        };
-      } else {
-        console.warn(
-          `[WhatsApp MCP] dist/index.js not found at ${distPath}. WhatsApp tools will not be available. Run pnpm -F @myboteam/whatsapp-mcp build.`,
-        );
-      }
-    } else {
+  if (whatsappApiPort && whatsappMcpPath) {
+    const distPath = path.join(whatsappMcpPath, 'dist', 'index.js');
+    if (fs.existsSync(distPath)) {
       mcpServers.whatsapp = {
         type: 'local',
-        command: resolveMcpCommand(mcpToolsPath, 'whatsapp', 'dist/index.mjs', nodeExe),
+        command: [nodeExe, distPath],
         enabled: true,
         environment: {
           MYBOTEAM_WHATSAPP_API_PORT: String(whatsappApiPort),
@@ -100,6 +83,10 @@ export function buildMcpServers(options: BuildMcpServersOptions): Record<string,
         },
         timeout: 30000,
       };
+    } else {
+      console.warn(
+        `[WhatsApp MCP] dist/index.js not found at ${distPath}. WhatsApp tools will not be available. Run pnpm -F @myboteam/whatsapp-mcp build.`,
+      );
     }
   }
 
