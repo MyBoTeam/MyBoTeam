@@ -1,0 +1,114 @@
+{
+  "version": "1.1.0",
+  "created_at": "2026-06-09T00:00:00Z",
+  "updated_at": "2026-06-09T00:00:00Z",
+  "phase": "completed",
+  "views_mode": "core",
+  "workflow": {
+    "clarify_completed": true,
+    "clarify_completed_at": "2026-06-09T00:00:00Z",
+    "adrs_approved_count": 6,
+    "implement_started": true,
+    "implement_started_at": "2026-06-09T00:00:00Z",
+    "implement_completed": true,
+    "implement_completed_at": "2026-06-09T00:00:00Z"
+  },
+  "subsystems": [
+    {
+      "id": "system",
+      "name": "System",
+      "adrs": ["ADR-001"],
+      "characteristics": ["local-first", "desktop-product", "workspace-boundaries"],
+      "dag": ["context", "functional", "information", "development", "deployment"],
+      "progress": {
+        "context": "completed",
+        "functional": "completed",
+        "information": "completed",
+        "development": "completed",
+        "deployment": "completed"
+      }
+    },
+    {
+      "id": "web",
+      "name": "Web",
+      "adrs": ["ADR-002"],
+      "characteristics": ["renderer", "typed-api-consumer"],
+      "dag": ["context", "functional", "information", "development", "deployment"],
+      "progress": {
+        "context": "completed",
+        "functional": "completed",
+        "information": "completed",
+        "development": "completed",
+        "deployment": "completed"
+      }
+    },
+    {
+      "id": "desktop",
+      "name": "Desktop",
+      "adrs": ["ADR-001", "ADR-002", "ADR-005", "ADR-006"],
+      "characteristics": ["electron-shell", "preload", "packaging", "os-bridges"],
+      "dag": ["context", "functional", "information", "development", "deployment"],
+      "progress": {
+        "context": "completed",
+        "functional": "completed",
+        "information": "completed",
+        "development": "completed",
+        "deployment": "completed"
+      }
+    },
+    {
+      "id": "daemon",
+      "name": "Daemon",
+      "adrs": ["ADR-001", "ADR-002", "ADR-003", "ADR-004", "ADR-005"],
+      "characteristics": ["background-service", "rpc", "tasks", "storage", "secrets"],
+      "dag": ["context", "functional", "information", "development", "deployment"],
+      "progress": {
+        "context": "completed",
+        "functional": "completed",
+        "information": "completed",
+        "development": "completed",
+        "deployment": "completed"
+      }
+    },
+    {
+      "id": "agent-core",
+      "name": "Agent Core",
+      "adrs": ["ADR-001", "ADR-002", "ADR-003", "ADR-004", "ADR-005", "ADR-006"],
+      "characteristics": ["shared-contracts", "storage", "providers", "opencode-config"],
+      "dag": ["context", "functional", "information", "development", "deployment"],
+      "progress": {
+        "context": "completed",
+        "functional": "completed",
+        "information": "completed",
+        "development": "completed",
+        "deployment": "completed"
+      }
+    },
+    {
+      "id": "mcp-tool-families",
+      "name": "MCP Tool Families",
+      "adrs": ["ADR-006"],
+      "characteristics": ["mcp", "connector-family-boundaries", "packaged-tools"],
+      "dag": ["context", "functional", "information", "development", "deployment"],
+      "progress": {
+        "context": "completed",
+        "functional": "completed",
+        "information": "completed",
+        "development": "completed",
+        "deployment": "completed"
+      }
+    }
+  ],
+  "perspectives": [
+    "security",
+    "performance",
+    "availability",
+    "evolution",
+    "internationalization",
+    "usability",
+    "development-resource"
+  ],
+  "conflicts_detected": [],
+  "conflicts_resolved": [],
+  "output_file": "AD.md"
+}

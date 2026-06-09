@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report
-Version change: unratified template -> 1.0.0
+Version change: 1.0.0 -> 1.1.0
 Modified principles:
 - Template placeholders -> I. Human Oversight and Accountability
 - Template placeholders -> II. Local-First Security and Privacy
@@ -23,6 +23,9 @@ Templates requiring updates:
 - reviewed: README.md
 - reviewed: AGENTS.md
 Follow-up TODOs: none
+Amendment rationale:
+- Expanded storage migration governance to require bidirectional, tested
+  migrations while preserving immutable released migration files.
 -->
 
 # MyBoTeam Constitution
@@ -96,8 +99,9 @@ The `@myboteam/agent-core` package is ESM. Internal imports in agent-core MUST
 use `.js` extensions and MUST NOT use `require()`. Web image assets MUST use ES
 module imports so packaged desktop builds resolve assets correctly.
 
-Storage migrations MUST be additive: released migration files MUST NOT be
-modified. New migrations MUST be added with the next version and verified with
+Storage migrations MUST preserve released migration history: released migration
+files MUST NOT be modified. New migrations MUST be added with the next version,
+include executable `up` and `down` paths, and verify both directions with
 agent-core tests.
 
 Runtime process spawning from Electron or daemon code MUST follow the documented
@@ -153,4 +157,4 @@ review, and pre-merge verification. If a principle cannot be satisfied, the plan
 MUST record the violation, rejected simpler alternatives, mitigation, owner, and
 approval requirement before work continues.
 
-**Version**: 1.0.0 | **Ratified**: 2026-06-09 | **Last Amended**: 2026-06-09
+**Version**: 1.1.0 | **Ratified**: 2026-06-09 | **Last Amended**: 2026-06-09

@@ -137,7 +137,7 @@ pnpm check && pnpm -F @myboteam/web test && pnpm -F @myboteam/desktop test && pn
 - **Do NOT modify released migration files** — create a new migration instead
 - **Do NOT add root-level test scripts** — tests are workspace-scoped (`-F @myboteam/web`, `-F @myboteam/desktop`, or `-F @myboteam/agent-core`)
 - **Do NOT spawn `npx`/`node`** without adding bundled Node.js bin to PATH (see [architecture.md](docs/architecture.md#spawning-npxnode-in-main-process))
-- **Do NOT create files over 200 lines** — split large files by class/function first, then by logical concern. Enforced by Biome's `noExcessiveLinesPerFile` rule.
+- **Do NOT create source files over 200 lines** — split large files by class/function first, then by logical concern. Markdown/documentation files are exempt when a single cohesive document is clearer. Enforced for source files by Biome's `noExcessiveLinesPerFile` rule.
 
 ## Architecture
 
@@ -193,9 +193,10 @@ Static assets go in `apps/web/public/assets/`.
 ### Adding a New Migration
 
 1. Create `packages/agent-core/src/storage/migrations/vXXX-description.ts` (use `.js` extension in imports)
-2. Import and add to the `migrations` array in `packages/agent-core/src/storage/migrations/index.ts`
-3. Bump `CURRENT_VERSION` (see the `CURRENT_VERSION` export in `packages/agent-core/src/storage/migrations/index.ts` for the current value)
-4. Run `pnpm -F @myboteam/agent-core test`
+2. Include executable `up` and `down` migration paths and tests for both directions
+3. Import and add to the `migrations` array in `packages/agent-core/src/storage/migrations/index.ts`
+4. Bump `CURRENT_VERSION` (see the `CURRENT_VERSION` export in `packages/agent-core/src/storage/migrations/index.ts` for the current value)
+5. Run `pnpm -F @myboteam/agent-core test`
 
 ### Changing Agent-Core Public API
 
