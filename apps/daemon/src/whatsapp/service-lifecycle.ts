@@ -3,6 +3,8 @@ import { cleanupAuthState } from './authCleanup.js';
 import type { BaileysSocket, BaileysStore } from './baileys-types.js';
 import type { ReconnectState } from './reconnection.js';
 import { clearReconnectTimer } from './reconnection.js';
+import { syncAttachListeners } from './service-sync.js';
+import { startWatchdog } from './service-watchdog.js';
 import { initBaileysSocket, wireSocketEvents } from './whatsapp-service-init.js';
 import type { SentMessageTracker } from './whatsapp-types.js';
 
@@ -83,71 +85,7 @@ export async function lifecycleConnect(
         emitMessage: (msg) => emit('message', msg),
       },
     );
-
-    const countStoreMessages = (): { chats: number; messages: number } => ({
-      chats: state.store?.chats?.all()?.length ?? 0,
-      messages: state.store?.messages
-        ? Object.values(state.store.messages).reduce(
-            (sum, msgMap) => sum + (msgMap?.all()?.length ?? 0),
-            0,
-          )
-        : 0,
-    });
-
-    const checkStoreAndEmit = () => {
-      const counts = countStoreMessages();
-      state.syncProgress = {
-        chatsProcessed: Math.max(state.syncProgress.chatsProcessed, counts.chats),
-        messagesProcessed: Math.max(state.syncProgress.messagesProcessed, counts.messages),
-      };
-      emit('syncProgress', { ...state.syncProgress, syncState: state.syncState });
-    };
-
-    const counts = countStoreMessages();
-    if (counts.chats > 0 || counts.messages > 0) {
-      state.syncState = 'complete';
-      state.syncProgress = { chatsProcessed: counts.chats, messagesProcessed: counts.messages };
-      emit('syncProgress', { ...state.syncProgress, syncState: 'complete' });
-    } else {
-      state.syncState = 'syncing';
-      state.syncProgress = { chatsProcessed: 0, messagesProcessed: 0 };
-      emit('syncProgress', { ...state.syncProgress, syncState: 'syncing' });
-    }
-
-    let syncTimeout: ReturnType<typeof setTimeout> | null = null;
-
-    const resetSyncTimeout = () => {
-      if (syncTimeout) clearTimeout(syncTimeout);
-      syncTimeout = setTimeout(() => {
-        if (state.syncState === 'syncing') {
-          state.syncState = 'complete';
-          emit('syncProgress', { ...state.syncProgress, syncState: 'complete' });
-        }
-      }, 5000);
-    };
-
-    const onHistorySet = () => {
-      checkStoreAndEmit();
-      resetSyncTimeout();
-    };
-
-    state.socket.ev.on('messaging-history.set', (raw: unknown) => {
-      const data = raw as
-        | { chats?: unknown[]; messages?: unknown[]; isLatest?: boolean }
-        | undefined;
-      if (data?.isLatest) {
-        state.syncState = 'complete';
-        if (syncTimeout) clearTimeout(syncTimeout);
-        checkStoreAndEmit();
-        return;
-      }
-      onHistorySet();
-    });
-
-    state.socket.ev.on('messages.upsert', () => {
-      onHistorySet();
-    });
-
+    syncAttachListeners(state, emit);
     startWatchdog(state, setStatus, emit);
   } catch (err) {
     setStatus('disconnected');
@@ -183,30 +121,6 @@ export async function lifecycleDisconnect(
   setStatus('disconnected');
 }
 
-export async function lifecycleReconnect(
-  state: LifecycleState,
-  setStatus: (s: MessagingConnectionStatus) => void,
-  emit: (event: string, ...args: unknown[]) => void,
-): Promise<void> {
-  state.manualDisconnect = false;
-  stopWatchdog(state);
-  if (state.socket) {
-    state.socket.ev.removeAllListeners('creds.update');
-    state.socket.ev.removeAllListeners('connection.update');
-    state.socket.ev.removeAllListeners('messages.upsert');
-    state.socket.ev.removeAllListeners('messaging-history.set');
-    state.socket.ev.removeAllListeners('messages.upsert');
-    state.socket.end(new Error('Reconnecting'));
-    state.socket = null;
-  }
-  state.qrCode = null;
-  state.qrIssuedAt = null;
-  state.syncState = 'idle';
-  state.syncProgress = { chatsProcessed: 0, messagesProcessed: 0 };
-  setStatus('disconnected');
-  await lifecycleConnect(state, setStatus, emit);
-}
-
 export function lifecycleDispose(state: LifecycleState): void {
   state.disposed = true;
   state.qrCode = null;
@@ -230,25 +144,6 @@ function disposeSocket(state: LifecycleState): void {
   state.socket.ev.removeAllListeners('messages.upsert');
   state.socket.end(new Error('Socket replaced'));
   state.socket = null;
-}
-
-function startWatchdog(
-  state: LifecycleState,
-  setStatus: (s: MessagingConnectionStatus) => void,
-  emit: (event: string, ...args: unknown[]) => void,
-): void {
-  stopWatchdog(state);
-  const TIMEOUT_MS = 120_000;
-  state.watchdogTimer = setInterval(
-    () => {
-      if (!state.socket) return;
-      if (Date.now() - state.lastTransportActivity > TIMEOUT_MS) {
-        setStatus('disconnected');
-        lifecycleConnect(state, setStatus, emit).catch(() => {});
-      }
-    },
-    Math.floor(TIMEOUT_MS / 2),
-  );
 }
 
 function stopWatchdog(state: LifecycleState): void {

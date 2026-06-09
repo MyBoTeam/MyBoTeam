@@ -20,9 +20,9 @@ import {
   lifecycleConnect,
   lifecycleDisconnect,
   lifecycleDispose,
-  lifecycleReconnect,
   requireSocket,
 } from './service-lifecycle.js';
+import { lifecycleReconnect } from './service-reconnect.js';
 import { getChats, getGroupInfo, getGroups, getMessages } from './service-store.js';
 import type { ChatSummary, MessageSummary } from './whatsapp-types.js';
 import { SentMessageTracker } from './whatsapp-types.js';
