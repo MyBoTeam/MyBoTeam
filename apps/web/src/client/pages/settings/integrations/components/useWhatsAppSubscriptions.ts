@@ -18,7 +18,6 @@ interface UseWhatsAppSubscriptionsOptions {
     ) => () => void;
   };
   qrTimerRef: React.MutableRefObject<ReturnType<typeof setInterval> | null>;
-  connectTimeoutRef: React.MutableRefObject<ReturnType<typeof setTimeout> | null>;
   setQrCode: (qr: string | null) => void;
   setQrExpiresAt: (ts: number) => void;
   setError: (err: string | null) => void;
@@ -38,7 +37,6 @@ interface UseWhatsAppSubscriptionsOptions {
 export function useWhatsAppSubscriptions({
   myboteam,
   qrTimerRef,
-  connectTimeoutRef,
   setQrCode,
   setQrExpiresAt,
   setError,
@@ -55,20 +53,12 @@ export function useWhatsAppSubscriptions({
         clearInterval(qrTimerRef.current);
         qrTimerRef.current = null;
       }
-      if (connectTimeoutRef.current) {
-        clearTimeout(connectTimeoutRef.current);
-        connectTimeoutRef.current = null;
-      }
     };
 
     const unsubQR = myboteam.onWhatsAppQR((qr: string) => {
       setQrCode(qr);
       setQrExpiresAt(Date.now() + QR_EXPIRY_SECONDS * 1000);
       setError(null);
-      if (connectTimeoutRef.current) {
-        clearTimeout(connectTimeoutRef.current);
-        connectTimeoutRef.current = null;
-      }
       setConnecting(false);
       setConfig((prev) => (prev ? { ...prev, status: 'qr_ready' } : { status: 'qr_ready' }));
     });
@@ -121,7 +111,6 @@ export function useWhatsAppSubscriptions({
     fetchConfig,
     normalizeStatus,
     qrTimerRef,
-    connectTimeoutRef,
     setQrCode,
     setQrExpiresAt,
     setError,

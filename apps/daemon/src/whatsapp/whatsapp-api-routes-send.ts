@@ -132,10 +132,16 @@ export function buildSendPollRoute(svc: WhatsAppDaemonService): Route {
         });
         return;
       }
+      if (!options.every((opt): opt is string => typeof opt === 'string' && opt.trim().length > 0))
+        return sendJson(res, {
+          success: false,
+          error: 'invalid_options',
+          message: 'All poll options must be non-empty strings.',
+        });
       if (!checkConnected(svc, res)) return;
       try {
         const jid = toWhatsAppJid(recipient.trim());
-        const messageId = await svc.sendPoll(jid, question, options as string[]);
+        const messageId = await svc.sendPoll(jid, question, options);
         sendJson(res, { success: true, messageId });
       } catch (err) {
         const errMsg = err instanceof Error ? err.message : String(err);

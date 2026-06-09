@@ -7,10 +7,13 @@ describe('callApi', () => {
 
   it('throws when MYBOTEAM_WHATSAPP_API_PORT is not set', async () => {
     const oldPort = process.env.MYBOTEAM_WHATSAPP_API_PORT;
-    delete process.env.MYBOTEAM_WHATSAPP_API_PORT;
-    const { callApi } = await import('./api-client.js');
-    await expect(callApi('/test', {})).rejects.toThrow('MYBOTEAM_WHATSAPP_API_PORT');
-    if (oldPort) process.env.MYBOTEAM_WHATSAPP_API_PORT = oldPort;
+    try {
+      delete process.env.MYBOTEAM_WHATSAPP_API_PORT;
+      const { callApi } = await import('./api-client.js');
+      await expect(callApi('/test', {})).rejects.toThrow('MYBOTEAM_WHATSAPP_API_PORT');
+    } finally {
+      if (oldPort) process.env.MYBOTEAM_WHATSAPP_API_PORT = oldPort;
+    }
   });
 
   it('calls fetch with correct URL and headers', async () => {

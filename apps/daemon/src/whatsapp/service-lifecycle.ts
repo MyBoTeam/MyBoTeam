@@ -3,7 +3,7 @@ import { cleanupAuthState } from './authCleanup.js';
 import type { BaileysSocket, BaileysStore } from './baileys-types.js';
 import type { ReconnectState } from './reconnection.js';
 import { clearReconnectTimer } from './reconnection.js';
-import { syncAttachListeners } from './service-sync.js';
+import { cleanupSyncListeners, syncAttachListeners } from './service-sync.js';
 import { startWatchdog } from './service-watchdog.js';
 import { initBaileysSocket, wireSocketEvents } from './whatsapp-service-init.js';
 import type { SentMessageTracker } from './whatsapp-types.js';
@@ -30,6 +30,11 @@ export interface LifecycleState {
     totalChats?: number;
     totalMessages?: number;
   };
+  syncListeners: {
+    onHistorySet: (raw: unknown) => void;
+    onMessagesUpsert: () => void;
+    debounceTimer: ReturnType<typeof setTimeout> | null;
+  } | null;
 }
 
 export async function lifecycleConnect(
@@ -86,7 +91,7 @@ export async function lifecycleConnect(
       },
     );
     syncAttachListeners(state, emit);
-    startWatchdog(state, setStatus, emit);
+    startWatchdog(state, setStatus);
   } catch (err) {
     setStatus('disconnected');
     throw err;
@@ -102,11 +107,10 @@ export async function lifecycleDisconnect(
   state.reconnect.attempts = 0;
   clearReconnectTimer(state.reconnect);
   stopWatchdog(state);
+  cleanupSyncListeners(state);
   if (state.socket) {
     state.socket.ev.removeAllListeners('creds.update');
     state.socket.ev.removeAllListeners('connection.update');
-    state.socket.ev.removeAllListeners('messages.upsert');
-    state.socket.ev.removeAllListeners('messaging-history.set');
     state.socket.ev.removeAllListeners('messages.upsert');
     await state.socket.logout().catch(() => {});
     state.socket.end(new Error('User requested disconnect'));
@@ -127,6 +131,7 @@ export function lifecycleDispose(state: LifecycleState): void {
   state.qrIssuedAt = null;
   state.store = null;
   stopWatchdog(state);
+  cleanupSyncListeners(state);
   clearReconnectTimer(state.reconnect);
   if (state.socket) {
     state.socket.ev.removeAllListeners('creds.update');

@@ -48,7 +48,7 @@ export async function initBaileysSocket(
     logger,
     printQRInTerminal: false,
     browser: ['MyBoTeam', 'Desktop', '1.0.0'],
-    syncFullHistory: false,
+    syncFullHistory: true,
     markOnlineOnConnect: false,
     defaultQueryTimeoutMs: 60_000,
   });

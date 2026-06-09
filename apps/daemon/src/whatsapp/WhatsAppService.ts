@@ -53,6 +53,7 @@ export class WhatsAppService extends EventEmitter implements ChannelAdapter {
       watchdogTimer: null,
       syncState: 'idle',
       syncProgress: { chatsProcessed: 0, messagesProcessed: 0 },
+      syncListeners: null,
     };
   }
 
@@ -158,6 +159,9 @@ export class WhatsAppService extends EventEmitter implements ChannelAdapter {
       (s) => this.setStatus(s),
       (e, ...a) => this.emit(e, ...a),
     );
+  }
+  async resync(): Promise<void> {
+    await this.reconnect();
   }
   dispose(): void {
     lifecycleDispose(this.l);

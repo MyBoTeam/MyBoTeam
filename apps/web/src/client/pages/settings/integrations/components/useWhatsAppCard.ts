@@ -59,7 +59,6 @@ export function useWhatsAppCard(): WhatsAppCardState & WhatsAppCardActions {
     totalMessages?: number;
   }>({ chatsProcessed: 0, messagesProcessed: 0 });
   const qrTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const connectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!confirmDisconnect) {
@@ -73,9 +72,6 @@ export function useWhatsAppCard(): WhatsAppCardState & WhatsAppCardActions {
     return () => {
       if (qrTimerRef.current) {
         clearInterval(qrTimerRef.current);
-      }
-      if (connectTimeoutRef.current) {
-        clearTimeout(connectTimeoutRef.current);
       }
     };
   }, []);
@@ -93,12 +89,6 @@ export function useWhatsAppCard(): WhatsAppCardState & WhatsAppCardActions {
 
         if (result.syncState) setSyncState(result.syncState);
         if (result.syncProgress) setSyncProgress(result.syncProgress);
-
-        if (status === 'qr_ready' && result.qrCode && result.qrIssuedAt) {
-          setQrCode(result.qrCode);
-          setQrExpiresAt(result.qrIssuedAt + 60_000);
-          setConnecting(false);
-        }
       } else {
         setConfig(null);
       }
@@ -116,7 +106,6 @@ export function useWhatsAppCard(): WhatsAppCardState & WhatsAppCardActions {
   useWhatsAppSubscriptions({
     myboteam,
     qrTimerRef,
-    connectTimeoutRef,
     setQrCode,
     setQrExpiresAt,
     setError,
@@ -141,24 +130,9 @@ export function useWhatsAppCard(): WhatsAppCardState & WhatsAppCardActions {
     setConnecting(true);
     setError(null);
     setQrCode(null);
-    if (connectTimeoutRef.current) {
-      clearTimeout(connectTimeoutRef.current);
-    }
-    connectTimeoutRef.current = setTimeout(() => {
-      setConnecting((prev) => {
-        if (prev) {
-          setError('Connection timed out. Please try again.');
-        }
-        return false;
-      });
-    }, 30_000);
     try {
       await myboteam.connectWhatsApp();
     } catch (err) {
-      if (connectTimeoutRef.current) {
-        clearTimeout(connectTimeoutRef.current);
-        connectTimeoutRef.current = null;
-      }
       setError(err instanceof Error ? err.message : 'Failed to connect');
       setConnecting(false);
     }

@@ -31,6 +31,8 @@ WORKDIR /app
 # Copy package files needed for pnpm install (cached in image layer)
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/agent-core/package.json ./packages/agent-core/
+COPY packages/mcp-servers/package.json ./packages/mcp-servers/
+COPY packages/mcp-servers/whatsapp/package.json ./packages/mcp-servers/whatsapp/
 COPY apps/web/package.json ./apps/web/
 COPY apps/desktop/package.json ./apps/desktop/
 COPY apps/daemon/package.json ./apps/daemon/

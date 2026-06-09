@@ -29,6 +29,12 @@ interface BaileysEventEmitter {
   on(event: 'messages.update', handler: (data: unknown) => void): void;
   on(event: 'messages.delete', handler: (data: unknown) => void): void;
   on(event: string, handler: (...args: unknown[]) => void): void;
+  off(
+    event: 'messages.upsert',
+    handler: (upsert: { type: string; messages: unknown[] }) => void,
+  ): void;
+  off(event: 'messaging-history.set', handler: (data: unknown) => void): void;
+  off(event: string, handler: (...args: unknown[]) => void): void;
   removeAllListeners(event?: string): void;
 }
 

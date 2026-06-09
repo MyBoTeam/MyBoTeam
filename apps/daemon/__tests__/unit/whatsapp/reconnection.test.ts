@@ -52,6 +52,10 @@ describe('reconnection', () => {
   });
 
   describe('scheduleReconnect', () => {
+    beforeEach(() => {
+      vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    });
+
     it('should NOT schedule when already scheduled', () => {
       const state = createReconnectState();
       state.scheduled = true;

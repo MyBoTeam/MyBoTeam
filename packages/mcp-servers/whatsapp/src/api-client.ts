@@ -5,14 +5,17 @@ export async function callApi(path: string, body: Record<string, unknown>): Prom
   if (!port) throw new Error('MYBOTEAM_WHATSAPP_API_PORT is not set');
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   const token = process.env.MYBOTEAM_DAEMON_AUTH_TOKEN;
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  if (token) headers.Authorization = `Bearer ${token}`;
   const response = await fetch(`http://localhost:${port}${path}`, {
     method: 'POST',
     headers,
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(30000),
   });
-  if (!response.ok) throw new Error(`WhatsApp API returned ${response.status}`);
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`WhatsApp API returned ${response.status}: ${text}`);
+  }
   return response.json() as Promise<ApiResponse>;
 }
 

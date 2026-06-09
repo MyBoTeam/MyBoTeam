@@ -29,8 +29,14 @@ export interface PersistedData {
 
 export function toNumber(val: unknown): number | null | undefined {
   if (typeof val === 'number') return val;
-  if (val != null && typeof (val as { toNumber: () => number }).toNumber === 'function')
-    return (val as { toNumber: () => number }).toNumber();
+  if (
+    val != null &&
+    typeof val === 'object' &&
+    'toNumber' in val &&
+    typeof val.toNumber === 'function'
+  ) {
+    return val.toNumber();
+  }
   return val as number | null | undefined;
 }
 

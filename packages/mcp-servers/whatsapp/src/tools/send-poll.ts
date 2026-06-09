@@ -28,6 +28,11 @@ export async function sendPollToolHandler(args: Record<string, unknown>): Promis
       content: [{ type: 'text', text: 'Error: options must be a non-empty array' }],
       isError: true,
     };
+  if (!options.every((opt): opt is string => typeof opt === 'string' && opt.trim().length > 0))
+    return {
+      content: [{ type: 'text', text: 'Error: all poll options must be non-empty strings' }],
+      isError: true,
+    };
 
   const result = await callApi('/send-poll', { recipient, question, options });
   if (!result.success)

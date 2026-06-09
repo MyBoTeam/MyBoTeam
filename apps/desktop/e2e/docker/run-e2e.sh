@@ -16,6 +16,8 @@ CACHE_INPUT=$(
       "$REPO_ROOT/pnpm-workspace.yaml" \
       "$REPO_ROOT/package.json" \
       "$REPO_ROOT/packages/agent-core/package.json" \
+      "$REPO_ROOT/packages/mcp-servers/package.json" \
+      "$REPO_ROOT/packages/mcp-servers/whatsapp/package.json" \
       "$REPO_ROOT/apps/desktop/package.json" \
       "$REPO_ROOT/apps/web/package.json" \
       "$REPO_ROOT/apps/daemon/package.json"

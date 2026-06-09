@@ -91,18 +91,14 @@ export function generateConfig(options: ConfigGeneratorOptions): GeneratedConfig
     environmentInstructions,
   ).replace(/\{\{LANGUAGE_INSTRUCTION\}\}/g, getLanguageInstruction(options.language));
 
-  if (skills.length > 0) {
-    systemPrompt += buildSkillsSection(skills);
-  }
+  if (skills.length > 0) systemPrompt += buildSkillsSection(skills);
   if (gwsAccountsManifestPath && gwsAccountsSummary && gwsAccountsSummary.length > 0) {
     systemPrompt += buildGwsSection(gwsAccountsSummary);
   }
   if (options.knowledgeInstructions) {
     systemPrompt = buildWorkspaceInstructions(options.knowledgeInstructions) + systemPrompt;
   }
-  if (options.knowledgeContext) {
-    systemPrompt += buildWorkspaceKnowledge(options.knowledgeContext);
-  }
+  if (options.knowledgeContext) systemPrompt += buildWorkspaceKnowledge(options.knowledgeContext);
   if (options.builtInConnectorStatuses && options.builtInConnectorStatuses.length > 0) {
     systemPrompt += formatBuiltInConnectorStatusSection(options.builtInConnectorStatuses);
   }
@@ -113,9 +109,8 @@ export function generateConfig(options: ConfigGeneratorOptions): GeneratedConfig
     );
   }
   const nodeExe = path.join(bundledNodeBinPath, platform === 'win32' ? 'node.exe' : 'node');
-  if (!fs.existsSync(nodeExe)) {
+  if (!fs.existsSync(nodeExe))
     throw new Error(`[OpenCode Config] Missing bundled Node.js executable: ${nodeExe}`);
-  }
   const browserConfig = options.browser ?? { mode: 'builtin' as const };
   const mcpServers = buildMcpServers({
     mcpToolsPath,
@@ -128,11 +123,14 @@ export function generateConfig(options: ConfigGeneratorOptions): GeneratedConfig
     gwsAccountsManifestPath,
   });
   const hasBrowser = browserConfig.mode !== 'none';
-  const hasWhatsApp = !!(
-    whatsappApiPort &&
-    whatsappMcpPath &&
-    fs.existsSync(path.join(whatsappMcpPath, 'dist', 'index.js'))
-  );
+  const whatsappDistExists =
+    whatsappMcpPath && fs.existsSync(path.join(whatsappMcpPath, 'dist', 'index.js'));
+  const hasWhatsApp = !!(whatsappApiPort && whatsappDistExists);
+  if (whatsappMcpPath && !whatsappDistExists) {
+    log.warn(
+      `[WhatsApp MCP] dist/index.js not found at ${whatsappMcpPath}. Run: pnpm -F @myboteam/whatsapp-mcp build`,
+    );
+  }
   systemPrompt = systemPrompt
     .replace('{{AGENT_ROLE}}', hasBrowser ? 'browser automation' : 'task automation')
     .replace(

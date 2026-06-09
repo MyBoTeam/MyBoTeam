@@ -1,7 +1,9 @@
 import { log } from '../logger.js';
 
-export const MAX_RECONNECT_ATTEMPTS = 5;
+export const MAX_RECONNECT_ATTEMPTS = 12;
 export const INITIAL_RECONNECT_DELAY_MS = 2000;
+const MAX_RECONNECT_DELAY_MS = 30_000;
+const JITTER_FACTOR = 0.25;
 
 export interface ReconnectState {
   attempts: number;
@@ -38,9 +40,15 @@ export function scheduleReconnect(
   state.attempts++;
   state.scheduled = true;
 
-  const delay = INITIAL_RECONNECT_DELAY_MS * 2 ** (state.attempts - 1);
+  const baseDelay = Math.min(
+    INITIAL_RECONNECT_DELAY_MS * 2 ** (state.attempts - 1),
+    MAX_RECONNECT_DELAY_MS,
+  );
+  const jitter = baseDelay * JITTER_FACTOR * (Math.random() * 2 - 1);
+  const delay = Math.max(INITIAL_RECONNECT_DELAY_MS, baseDelay + jitter);
+
   log.warn(
-    `[WhatsApp] Reconnecting in ${delay}ms (attempt ${state.attempts}/${MAX_RECONNECT_ATTEMPTS})`,
+    `[WhatsApp] Reconnecting in ${Math.round(delay)}ms (attempt ${state.attempts}/${MAX_RECONNECT_ATTEMPTS})`,
   );
 
   clearReconnectTimer(state);

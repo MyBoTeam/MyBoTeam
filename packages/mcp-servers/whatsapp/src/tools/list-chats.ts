@@ -14,7 +14,7 @@ export const listChatsTool = {
 };
 
 export async function listChatsToolHandler(args: Record<string, unknown>): Promise<CallToolResult> {
-  const result = await callApi('/chats', { limit: args.limit ?? undefined });
+  const result = await callApi('/chats', { limit: args.limit });
   if (!result.success)
     return { content: [{ type: 'text', text: result.error ?? 'Unknown error' }], isError: true };
 

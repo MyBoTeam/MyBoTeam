@@ -83,7 +83,6 @@ export function createStore(storePath?: string): {
           }
         }
         if (messages) {
-          messagesMap.clear();
           for (const msg of messages) {
             const key = msg.key as Record<string, unknown> | null;
             const jid = (key?.remoteJid as string) ?? '';

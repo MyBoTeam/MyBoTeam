@@ -172,7 +172,7 @@ export class WhatsAppDaemonService extends EventEmitter {
   }
   async resync(): Promise<void> {
     if (this.service) {
-      await this.service.reconnect();
+      await this.service.resync();
     } else {
       await this.connect();
     }

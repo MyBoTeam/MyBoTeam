@@ -107,7 +107,7 @@ export function WhatsAppCard() {
             </div>
           )}
 
-          {syncState === 'complete' && (
+          {(syncState === 'complete' || syncState === 'idle') && (
             <div className="mt-2">
               <div className="flex justify-between text-xs text-muted-foreground mb-1">
                 <span>Sync complete</span>
@@ -116,7 +116,7 @@ export function WhatsAppCard() {
                 </span>
               </div>
               <Button variant="outline" size="sm" onClick={handleResync} className="mt-1">
-                Reconnect
+                Resync
               </Button>
             </div>
           )}

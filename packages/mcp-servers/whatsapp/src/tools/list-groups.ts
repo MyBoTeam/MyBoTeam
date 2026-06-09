@@ -16,7 +16,7 @@ export const listGroupsTool = {
 export async function listGroupsToolHandler(
   args: Record<string, unknown>,
 ): Promise<CallToolResult> {
-  const result = await callApi('/groups', { limit: args.limit ?? undefined });
+  const result = await callApi('/groups', { limit: args.limit });
   if (!result.success)
     return { content: [{ type: 'text', text: result.error ?? 'Unknown error' }], isError: true };
 
