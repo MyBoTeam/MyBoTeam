@@ -264,3 +264,8 @@ GitHub Actions workflows in `.github/workflows/`:
 - `ci.yml` - Core tests, unit tests, integration tests, typecheck, E2E
 - `release.yml` - Desktop app build and publish to GitHub releases
 - `commitlint.yml` - Conventional commit validation
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->
