@@ -19,6 +19,10 @@ export function registerWhatsAppRoutes(services: RouteServices): void {
     safeHandler(() => Promise.resolve(whatsappService.getConfig())),
   );
   rpc.registerMethod(
+    'whatsapp.resync',
+    safeHandler(() => whatsappService.resync()),
+  );
+  rpc.registerMethod(
     'whatsapp.setEnabled',
     safeHandler((params) => {
       const validated = validate(z.object({ enabled: z.boolean() }), params);

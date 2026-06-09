@@ -12,32 +12,24 @@ import {
 import type { SendMessageOptions } from './whatsapp/send.js';
 import type { ChatSummary, MessageSummary } from './whatsapp/WhatsAppService.js';
 import type { WhatsAppDaemonConfig } from './whatsapp-service-utils.js';
-
 export class WhatsAppDaemonService extends EventEmitter {
   private storage: StorageAPI;
   private dataDir: string;
   private taskService: TaskService;
   private service: WhatsAppService | null = null;
   private bridge: TaskBridge | null = null;
-
   constructor(storage: StorageAPI, dataDir: string, taskService: TaskService) {
     super();
     this.storage = storage;
     this.dataDir = dataDir;
     this.taskService = taskService;
   }
-
   async connect(): Promise<void> {
-    if (this.service) {
-      this.disposeInternal();
-    }
-
+    if (this.service) this.disposeInternal();
     const service = new WhatsAppService(this.dataDir);
     this.service = service;
-
     const { bridge } = wireTaskBridge(service, this.taskService, this.storage);
     this.bridge = bridge;
-
     const config0 = this.storage.getMessagingConfig();
     const wa0 = config0?.integrations?.whatsapp;
     if (!wa0?.lastProcessedAt) {
@@ -52,21 +44,15 @@ export class WhatsAppDaemonService extends EventEmitter {
         },
       });
     }
-
     wireStatusListeners(service, this.storage, bridge);
-
     const config = this.storage.getMessagingConfig();
     const waConfig = config?.integrations?.whatsapp;
-    if (waConfig?.enabled !== undefined) {
-      bridge.setEnabled(waConfig.enabled);
-    }
-
+    if (waConfig?.enabled !== undefined) bridge.setEnabled(waConfig.enabled);
     service.on('qr', (qr: string) => this.emit('qr', qr));
     service.on('status', (status: MessagingConnectionStatus) => this.emit('status', status));
-
+    service.on('syncProgress', (data) => this.emit('syncProgress', data));
     await service.connect();
   }
-
   async disconnect(): Promise<void> {
     if (this.service) await this.service.disconnect();
     this.disposeInternal();
@@ -77,26 +63,27 @@ export class WhatsAppDaemonService extends EventEmitter {
       });
     }
   }
-
   getConfig(): WhatsAppDaemonConfig | null {
     const config = this.storage.getMessagingConfig();
     const waConfig = config?.integrations?.whatsapp;
     const liveStatus = this.service?.getStatus();
     const status: MessagingConnectionStatus =
       liveStatus ?? (waConfig?.connectionStatus as MessagingConnectionStatus) ?? 'disconnected';
-
-    if (!waConfig && !this.service) {
-      return null;
-    }
-
+    if (!waConfig && !this.service) return null;
+    const syncState = this.service?.getSyncState() ?? 'idle';
+    const syncProgress = this.service?.getSyncProgress() ?? {
+      chatsProcessed: 0,
+      messagesProcessed: 0,
+    };
     const result: WhatsAppDaemonConfig = {
       providerId: 'whatsapp',
       enabled: this.service ? true : (waConfig?.enabled ?? false),
       status,
       phoneNumber: waConfig?.phoneNumber as string | undefined,
       lastConnectedAt: waConfig?.lastConnectedAt as number | undefined,
+      syncState,
+      syncProgress,
     };
-
     if (status === 'qr_ready' && this.service) {
       const qrCode = this.service.getQrCode();
       const qrIssuedAt = this.service.getQrIssuedAt();
@@ -105,10 +92,8 @@ export class WhatsAppDaemonService extends EventEmitter {
         result.qrIssuedAt = qrIssuedAt;
       }
     }
-
     return result;
   }
-
   async sendMessage(
     recipientId: string,
     text: string,
@@ -170,11 +155,9 @@ export class WhatsAppDaemonService extends EventEmitter {
     if (!this.service) return null;
     return this.service.getGroupInfo(groupJid);
   }
-
   markDisconnected(): void {
     this.service?.markDisconnected();
   }
-
   setEnabled(enabled: boolean): void {
     this.bridge?.setEnabled(enabled);
     const config = this.storage.getMessagingConfig();
@@ -187,7 +170,13 @@ export class WhatsAppDaemonService extends EventEmitter {
       });
     }
   }
-
+  async resync(): Promise<void> {
+    if (this.service) {
+      await this.service.reconnect();
+    } else {
+      await this.connect();
+    }
+  }
   autoConnectIfEnabled(): void {
     const config = this.storage.getMessagingConfig();
     const waConfig = config?.integrations?.whatsapp;
@@ -196,12 +185,10 @@ export class WhatsAppDaemonService extends EventEmitter {
     log.info('[WhatsApp] Auto-connecting (previously enabled)...');
     this.connect().catch((err) => log.error('[WhatsApp] Auto-connect failed:', err));
   }
-
   dispose(): void {
     this.disposeInternal();
     this.removeAllListeners();
   }
-
   private disposeInternal(): void {
     this.bridge?.dispose();
     this.bridge = null;

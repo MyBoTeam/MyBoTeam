@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { QRCodeDisplay } from './QRCodeDisplay';
 import { useWhatsAppCard } from './useWhatsAppCard';
 
@@ -11,8 +12,11 @@ export function WhatsAppCard() {
     error,
     qrCode,
     qrExpiresAt,
+    syncState,
+    syncProgress,
     handleConnect,
     handleDisconnect,
+    handleResync,
     setQrCode,
   } = useWhatsAppCard();
 
@@ -85,6 +89,38 @@ export function WhatsAppCard() {
               Connected{config?.phoneNumber ? ` (+${config.phoneNumber})` : ''}
             </span>
           </div>
+
+          {syncState === 'syncing' && (
+            <div className="mt-2">
+              <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                <span>Syncing messages...</span>
+                <span>
+                  {syncProgress.chatsProcessed} chats, {syncProgress.messagesProcessed} messages
+                </span>
+              </div>
+              <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full transition-all animate-pulse"
+                  style={{ width: '100%' }}
+                />
+              </div>
+            </div>
+          )}
+
+          {syncState === 'complete' && (
+            <div className="mt-2">
+              <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                <span>Sync complete</span>
+                <span>
+                  {syncProgress.chatsProcessed} chats, {syncProgress.messagesProcessed} messages
+                </span>
+              </div>
+              <Button variant="outline" size="sm" onClick={handleResync} className="mt-1">
+                Reconnect
+              </Button>
+            </div>
+          )}
+
           <button
             type="button"
             onClick={handleDisconnect}

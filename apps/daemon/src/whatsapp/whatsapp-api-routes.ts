@@ -1,6 +1,7 @@
 export {
   buildMarkReadRoute,
   buildMediaRoute,
+  buildResyncRoute,
   buildSendTypingRoute,
 } from './whatsapp-api-routes-actions.js';
 export {

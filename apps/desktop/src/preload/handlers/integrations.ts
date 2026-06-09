@@ -174,4 +174,29 @@ export const integrationHandlers = {
     ipcRenderer.on('integrations:whatsapp:status', listener);
     return () => ipcRenderer.removeListener('integrations:whatsapp:status', listener);
   },
+
+  resyncWhatsApp: (): Promise<void> => ipcRenderer.invoke('integrations:whatsapp:resync'),
+
+  onWhatsAppSyncProgress: (
+    callback: (data: {
+      syncState?: 'idle' | 'syncing' | 'complete';
+      chatsProcessed?: number;
+      messagesProcessed?: number;
+      totalChats?: number;
+      totalMessages?: number;
+    }) => void,
+  ): (() => void) => {
+    const listener = (
+      _: unknown,
+      data: {
+        syncState?: 'idle' | 'syncing' | 'complete';
+        chatsProcessed?: number;
+        messagesProcessed?: number;
+        totalChats?: number;
+        totalMessages?: number;
+      },
+    ) => callback(data);
+    ipcRenderer.on('integrations:whatsapp:syncProgress', listener);
+    return () => ipcRenderer.removeListener('integrations:whatsapp:syncProgress', listener);
+  },
 };

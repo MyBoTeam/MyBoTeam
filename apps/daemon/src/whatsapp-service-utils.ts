@@ -8,4 +8,11 @@ export interface WhatsAppDaemonConfig {
   lastConnectedAt?: number;
   qrCode?: string;
   qrIssuedAt?: number;
+  syncState?: 'idle' | 'syncing' | 'complete';
+  syncProgress?: {
+    chatsProcessed: number;
+    messagesProcessed: number;
+    totalChats?: number;
+    totalMessages?: number;
+  };
 }

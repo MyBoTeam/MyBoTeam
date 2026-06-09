@@ -10,6 +10,7 @@ import {
   buildMarkReadRoute,
   buildMediaRoute,
   buildMessagesRoute,
+  buildResyncRoute,
   buildSendPollRoute,
   buildSendReactionRoute,
   buildSendRoute,
@@ -50,6 +51,7 @@ export class WhatsAppSendApi {
         buildMediaRoute(this.whatsappService),
         buildMarkReadRoute(this.whatsappService),
         buildStatusRoute(this.whatsappService),
+        buildResyncRoute(this.whatsappService),
         buildLogoutRoute(this.whatsappService),
       ],
     });

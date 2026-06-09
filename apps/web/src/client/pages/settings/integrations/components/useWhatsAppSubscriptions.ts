@@ -7,6 +7,15 @@ interface UseWhatsAppSubscriptionsOptions {
   myboteam: {
     onWhatsAppQR: (cb: (qr: string) => void) => () => void;
     onWhatsAppStatus: (cb: (status: string) => void) => () => void;
+    onWhatsAppSyncProgress: (
+      cb: (data: {
+        syncState?: 'idle' | 'syncing' | 'complete';
+        chatsProcessed?: number;
+        messagesProcessed?: number;
+        totalChats?: number;
+        totalMessages?: number;
+      }) => void,
+    ) => () => void;
   };
   qrTimerRef: React.MutableRefObject<ReturnType<typeof setInterval> | null>;
   connectTimeoutRef: React.MutableRefObject<ReturnType<typeof setTimeout> | null>;
@@ -17,6 +26,13 @@ interface UseWhatsAppSubscriptionsOptions {
   setConfig: (fn: (prev: WhatsAppCardState['config']) => WhatsAppCardState['config']) => void;
   fetchConfig: () => Promise<void>;
   normalizeStatus: (status: string) => string;
+  setSyncState: (s: 'idle' | 'syncing' | 'complete') => void;
+  setSyncProgress: (p: {
+    chatsProcessed: number;
+    messagesProcessed: number;
+    totalChats?: number;
+    totalMessages?: number;
+  }) => void;
 }
 
 export function useWhatsAppSubscriptions({
@@ -30,6 +46,8 @@ export function useWhatsAppSubscriptions({
   setConfig,
   fetchConfig,
   normalizeStatus,
+  setSyncState,
+  setSyncProgress,
 }: UseWhatsAppSubscriptionsOptions) {
   useEffect(() => {
     const clearTimers = () => {
@@ -73,9 +91,30 @@ export function useWhatsAppSubscriptions({
       }
     });
 
+    const unsubSyncProgress = myboteam.onWhatsAppSyncProgress(
+      (data: {
+        syncState?: 'idle' | 'syncing' | 'complete';
+        chatsProcessed?: number;
+        messagesProcessed?: number;
+        totalChats?: number;
+        totalMessages?: number;
+      }) => {
+        if (data.syncState) setSyncState(data.syncState);
+        if (data.chatsProcessed !== undefined) {
+          setSyncProgress({
+            chatsProcessed: data.chatsProcessed,
+            messagesProcessed: data.messagesProcessed ?? 0,
+            totalChats: data.totalChats,
+            totalMessages: data.totalMessages,
+          });
+        }
+      },
+    );
+
     return () => {
       unsubQR();
       unsubStatus();
+      unsubSyncProgress();
     };
   }, [
     myboteam,
@@ -88,5 +127,7 @@ export function useWhatsAppSubscriptions({
     setError,
     setConnecting,
     setConfig,
+    setSyncState,
+    setSyncProgress,
   ]);
 }

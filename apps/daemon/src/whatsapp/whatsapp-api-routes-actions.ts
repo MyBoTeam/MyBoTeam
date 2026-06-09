@@ -86,6 +86,21 @@ export function buildMediaRoute(svc: WhatsAppDaemonService): Route {
   };
 }
 
+export function buildResyncRoute(svc: WhatsAppDaemonService): Route {
+  return {
+    method: 'POST',
+    path: '/resync',
+    handler: async (_data, _req, res) => {
+      try {
+        await svc.resync();
+        sendJson(res, { success: true });
+      } catch (err) {
+        handleError(res, err, 'resync_failed');
+      }
+    },
+  };
+}
+
 export function buildMarkReadRoute(svc: WhatsAppDaemonService): Route {
   return {
     method: 'POST',

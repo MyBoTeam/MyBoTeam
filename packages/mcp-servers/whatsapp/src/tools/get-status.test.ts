@@ -13,9 +13,10 @@ describe('GetWhatsAppStatus', () => {
   it('returns formatted status', async () => {
     vi.mocked(callApi).mockResolvedValue({
       success: true,
-      connected: true,
-      phoneNumber: '+15551234567',
-      status: 'connected',
+      config: {
+        status: 'connected',
+        phoneNumber: '+15551234567',
+      },
     });
     const result = await getStatusToolHandler({});
     expect(result.isError).toBeFalsy();

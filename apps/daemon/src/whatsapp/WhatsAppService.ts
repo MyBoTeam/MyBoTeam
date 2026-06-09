@@ -20,6 +20,7 @@ import {
   lifecycleConnect,
   lifecycleDisconnect,
   lifecycleDispose,
+  lifecycleReconnect,
   requireSocket,
 } from './service-lifecycle.js';
 import { getChats, getGroupInfo, getGroups, getMessages } from './service-store.js';
@@ -50,6 +51,8 @@ export class WhatsAppService extends EventEmitter implements ChannelAdapter {
       storePath: path.join(dataDir, 'whatsapp-store.json'),
       lastTransportActivity: Date.now(),
       watchdogTimer: null,
+      syncState: 'idle',
+      syncProgress: { chatsProcessed: 0, messagesProcessed: 0 },
     };
   }
 
@@ -64,6 +67,17 @@ export class WhatsAppService extends EventEmitter implements ChannelAdapter {
   }
   getPhoneNumber(): string | null {
     return this.l.phoneNumber;
+  }
+  getSyncState(): 'idle' | 'syncing' | 'complete' {
+    return this.l.syncState;
+  }
+  getSyncProgress(): {
+    chatsProcessed: number;
+    messagesProcessed: number;
+    totalChats?: number;
+    totalMessages?: number;
+  } {
+    return { ...this.l.syncProgress };
   }
   markDisconnected(): void {
     this.setStatus('disconnected');
@@ -137,6 +151,13 @@ export class WhatsAppService extends EventEmitter implements ChannelAdapter {
 
   async disconnect(): Promise<void> {
     await lifecycleDisconnect(this.l, (s) => this.setStatus(s));
+  }
+  async reconnect(): Promise<void> {
+    await lifecycleReconnect(
+      this.l,
+      (s) => this.setStatus(s),
+      (e, ...a) => this.emit(e, ...a),
+    );
   }
   dispose(): void {
     lifecycleDispose(this.l);

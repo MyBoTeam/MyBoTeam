@@ -67,6 +67,16 @@ export interface MyBoTeamAPISettings {
   setWhatsAppEnabled(enabled: boolean): Promise<void>;
   onWhatsAppQR(callback: (qr: string) => void): () => void;
   onWhatsAppStatus(callback: (status: MessagingConnectionStatus) => void): () => void;
+  resyncWhatsApp(): Promise<void>;
+  onWhatsAppSyncProgress(
+    callback: (data: {
+      syncState?: 'idle' | 'syncing' | 'complete';
+      chatsProcessed?: number;
+      messagesProcessed?: number;
+      totalChats?: number;
+      totalMessages?: number;
+    }) => void,
+  ): () => void;
   getOpenAiBaseUrl(): Promise<string>;
   setOpenAiBaseUrl(baseUrl: string): Promise<void>;
   getOpenAiOauthStatus(): Promise<OpenAiOauthStatusData>;

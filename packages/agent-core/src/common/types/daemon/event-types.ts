@@ -106,6 +106,13 @@ export interface DaemonNotificationMap {
   'browser.frame': { taskId: string; [key: string]: unknown };
   'whatsapp.qr': { qr: string };
   'whatsapp.status': { status: import('../messaging.js').MessagingConnectionStatus };
+  'whatsapp.syncProgress': {
+    syncState?: 'idle' | 'syncing' | 'complete';
+    chatsProcessed?: number;
+    messagesProcessed?: number;
+    totalChats?: number;
+    totalMessages?: number;
+  };
   'settings.changed': SettingsChangePayload;
   'workspace.changed': WorkspaceChangePayload;
   'gwsAccount.statusChanged': GwsAccountStatusChangedPayload;

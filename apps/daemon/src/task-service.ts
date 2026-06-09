@@ -75,6 +75,7 @@ export class TaskService extends EventEmitter {
       isPackaged: this.opts.isPackaged,
       resourcesPath: this.opts.resourcesPath,
       appPath: this.opts.appPath,
+      mcpServersPath: this.opts.mcpServersPath,
     });
     this.taskManager = createTaskManager({
       adapterOptions: {

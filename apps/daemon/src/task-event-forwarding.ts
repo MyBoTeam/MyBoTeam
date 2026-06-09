@@ -44,4 +44,7 @@ export function registerTaskEventForwarding(services: RouteServices): void {
   whatsappService.on('status', (status: string) => {
     rpc.notify('whatsapp.status', { status });
   });
+  whatsappService.on('syncProgress', (data) => {
+    rpc.notify('whatsapp.syncProgress', data);
+  });
 }

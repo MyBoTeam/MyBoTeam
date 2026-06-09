@@ -130,6 +130,10 @@ export function registerNotificationHandlers(
     forward('integrations:whatsapp:status', (data as { status: string }).status);
   });
 
+  client.onNotification('whatsapp.syncProgress', (data) => {
+    forward('integrations:whatsapp:syncProgress', data);
+  });
+
   client.onNotification('gwsAccount.statusChanged', (data) => {
     const payload = data as { googleAccountId: string; status: string };
     const win = getWindow();

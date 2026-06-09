@@ -52,6 +52,7 @@ interface DaemonMethodMapCore {
   'whatsapp.connect': { params: undefined; result: undefined };
   'whatsapp.disconnect': { params: undefined; result: undefined };
   'whatsapp.getConfig': { params: undefined; result: WhatsAppDaemonConfig | null };
+  'whatsapp.resync': { params: undefined; result: undefined };
   'whatsapp.setEnabled': { params: { enabled: boolean }; result: undefined };
 
   'daemon.ping': { params: undefined; result: { status: 'ok'; uptime: number; buildId?: string } };

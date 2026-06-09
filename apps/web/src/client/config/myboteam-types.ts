@@ -66,6 +66,13 @@ export type WhatsAppConfigData = {
   lastConnectedAt?: number;
   qrCode?: string;
   qrIssuedAt?: number;
+  syncState?: 'idle' | 'syncing' | 'complete';
+  syncProgress?: {
+    chatsProcessed: number;
+    messagesProcessed: number;
+    totalChats?: number;
+    totalMessages?: number;
+  };
 } | null;
 export type OpenAiOauthStatusData = { connected: boolean; expires?: number };
 export type CopilotOAuthStatusData = {

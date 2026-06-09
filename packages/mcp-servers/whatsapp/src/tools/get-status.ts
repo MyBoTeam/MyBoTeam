@@ -18,11 +18,13 @@ export async function getStatusToolHandler(
   if (!result.success)
     return { content: [{ type: 'text', text: result.error ?? 'Unknown error' }], isError: true };
 
-  const phone = result.phoneNumber ?? 'unknown';
-  const status = result.status ?? 'unknown';
+  const config = result.config;
+  const status = config?.status ?? 'unknown';
+  const connected = status === 'connected';
+  const phone = config?.phoneNumber ?? 'unknown';
   return {
     content: [
-      { type: 'text', text: `Status: ${status}\nConnected: ${result.connected}\nPhone: ${phone}` },
+      { type: 'text', text: `Status: ${status}\nConnected: ${connected}\nPhone: ${phone}` },
     ],
   };
 }

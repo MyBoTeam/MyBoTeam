@@ -20,6 +20,7 @@ export async function initBaileysSocket(
   }
   const {
     default: makeWASocket,
+    makeCacheableSignalKeyStore,
     useMultiFileAuthState,
     DisconnectReason,
     fetchLatestBaileysVersion,
@@ -37,12 +38,19 @@ export async function initBaileysSocket(
     onDisconnected();
     throw new Error('WhatsApp service disposed');
   }
+  const logger = pino({ level: 'silent' });
   const socket = makeWASocket({
     version,
-    auth: state,
-    logger: pino({ level: 'silent' }),
+    auth: {
+      creds: state.creds,
+      keys: makeCacheableSignalKeyStore(state.keys, logger),
+    },
+    logger,
     printQRInTerminal: false,
     browser: ['MyBoTeam', 'Desktop', '1.0.0'],
+    syncFullHistory: false,
+    markOnlineOnConnect: false,
+    defaultQueryTimeoutMs: 60_000,
   });
   if (disposed()) {
     socket.end(new Error('WhatsApp service disposed during connect'));

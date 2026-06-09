@@ -18,6 +18,11 @@ export function registerWhatsAppHandlers(handle: IpcHandler): void {
     await client.call('whatsapp.disconnect');
   });
 
+  handle('integrations:whatsapp:resync', async (_event: IpcMainInvokeEvent) => {
+    const client = getDaemonClient();
+    await client.call('whatsapp.resync');
+  });
+
   handle(
     'integrations:whatsapp:set-enabled',
     async (_event: IpcMainInvokeEvent, enabled: boolean) => {

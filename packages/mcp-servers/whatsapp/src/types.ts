@@ -22,4 +22,12 @@ export interface ApiResponse {
   connected?: boolean;
   status?: string;
   phoneNumber?: string | null;
+  config?: {
+    providerId?: string;
+    status?: string;
+    phoneNumber?: string | null;
+    enabled?: boolean;
+    lastConnectedAt?: number;
+    qrCode?: string;
+  };
 }

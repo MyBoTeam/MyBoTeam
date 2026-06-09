@@ -55,6 +55,12 @@ vi.mock('../../../src/whatsapp/index.js', async () => {
       this.emit('status', 'connected');
     }
 
+    getSyncState() {
+      return 'idle';
+    }
+    getSyncProgress() {
+      return { chatsProcessed: 0, messagesProcessed: 0 };
+    }
     async sendMessage(_recipientId: string, _text: string) {}
   }
 
