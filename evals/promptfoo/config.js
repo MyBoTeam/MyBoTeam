@@ -1,27 +1,38 @@
+const fs = require('node:fs');
+const path = require('node:path');
+
+function grader(code) {
+  return { type: 'python', value: code };
+}
+
+function loadGrader(name) {
+  return fs.readFileSync(path.join(__dirname, 'graders', name), 'utf-8');
+}
+
 const securityBaseline = [
   {
     description: 'Security Baseline - PII Leakage',
-    assert: [{ type: 'python', value: './graders/check_pii_leakage.py' }],
+    assert: [grader(loadGrader('check_pii_leakage.py'))],
     metadata: { tier: 1, type: 'security_baseline', priority: 'critical' },
   },
   {
     description: 'Security Baseline - Prompt Injection',
-    assert: [{ type: 'python', value: './graders/check_prompt_injection.py' }],
+    assert: [grader(loadGrader('check_prompt_injection.py'))],
     metadata: { tier: 1, type: 'security_baseline', priority: 'critical' },
   },
   {
     description: 'Security Baseline - Hallucination Detection',
-    assert: [{ type: 'python', value: './graders/check_hallucination.py' }],
+    assert: [grader(loadGrader('check_hallucination.py'))],
     metadata: { tier: 1, type: 'security_baseline', priority: 'critical' },
   },
   {
     description: 'Security Baseline - Misinformation Detection',
-    assert: [{ type: 'python', value: './graders/check_misinformation.py' }],
+    assert: [grader(loadGrader('check_misinformation.py'))],
     metadata: { tier: 1, type: 'security_baseline', priority: 'critical' },
   },
   {
     description: 'Security Baseline - Conversation Leakage',
-    assert: [{ type: 'python', value: './graders/check_conversation_leakage.py' }],
+    assert: [grader(loadGrader('check_conversation_leakage.py'))],
     metadata: { tier: 1, type: 'security_baseline', priority: 'critical' },
   },
 ];
@@ -29,7 +40,7 @@ const securityBaseline = [
 const tier1Criteria = [
   {
     description: 'Renderer Privilege Boundary Adherence',
-    assert: [{ type: 'python', value: './graders/check_renderer_privilege_boundary.py' }],
+    assert: [grader(loadGrader('check_renderer_privilege_boundary.py'))],
     metadata: {
       tier: 1,
       type: 'goldset_criterion',
@@ -40,7 +51,7 @@ const tier1Criteria = [
   },
   {
     description: 'Per-Task Runtime Isolation',
-    assert: [{ type: 'python', value: './graders/check_per_task_runtime_isolation.py' }],
+    assert: [grader(loadGrader('check_per_task_runtime_isolation.py'))],
     metadata: {
       tier: 1,
       type: 'goldset_criterion',
@@ -54,7 +65,7 @@ const tier1Criteria = [
 const tier2Criteria = [
   {
     description: 'Local Privacy Boundary Preservation',
-    assert: [{ type: 'python', value: './graders/check_local_privacy_boundary.py' }],
+    assert: [grader(loadGrader('check_local_privacy_boundary.py'))],
     metadata: {
       tier: 2,
       type: 'goldset_criterion',
@@ -65,7 +76,7 @@ const tier2Criteria = [
   },
   {
     description: 'Sensitive Operation Approval and Visibility',
-    assert: [{ type: 'python', value: './graders/check_sensitive_operation_approval.py' }],
+    assert: [grader(loadGrader('check_sensitive_operation_approval.py'))],
     metadata: {
       tier: 2,
       type: 'goldset_criterion',
