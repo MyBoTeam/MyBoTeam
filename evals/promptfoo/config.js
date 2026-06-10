@@ -10,7 +10,7 @@ function loadGrader(name) {
   if (graderCode.includes('from common import')) {
     const commonCode = fs.readFileSync(path.join(__dirname, 'graders', 'common.py'), 'utf-8');
     const stripped = graderCode.replace(/^from common import .+$/m, '');
-    return commonCode + '\n' + stripped;
+    return `${commonCode}\n${stripped}`;
   }
   return graderCode;
 }
