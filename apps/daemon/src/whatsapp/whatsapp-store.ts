@@ -10,6 +10,7 @@ export interface WhatsAppStore {
   getChats(): ChatSummary[];
   getChat(jid: string): ChatSummary | undefined;
   getMessages(jid: string, limit: number): MessageSummary[];
+  getRawMessages(jid: string, limit: number): BaileysMessage[];
   clearMessages(): void;
   clearChats(): void;
   save(): void;
@@ -177,6 +178,12 @@ export function createStore(storePath?: string): WhatsAppStore {
         .map((m) => normalizeMessage(jid, m))
         .sort((a, b) => a.timestamp - b.timestamp)
         .slice(-limit);
+    },
+
+    getRawMessages(jid: string, limit: number): BaileysMessage[] {
+      const map = messagesMap.get(jid);
+      if (!map) return [];
+      return Array.from(map.values()).slice(-limit);
     },
 
     clearMessages(): void {

@@ -1,16 +1,17 @@
 import type { MessagingConnectionStatus } from '@myboteam/agent-core/common';
 import { cleanupAuthState } from './authCleanup.js';
-import type { BaileysSocket, BaileysStore } from './baileys-types.js';
+import type { BaileysSocket } from './baileys-types.js';
 import type { ReconnectState } from './reconnection.js';
 import { clearReconnectTimer } from './reconnection.js';
 import { cleanupSyncListeners, syncAttachListeners } from './service-sync.js';
 import { startWatchdog } from './service-watchdog.js';
 import { initBaileysSocket, wireSocketEvents } from './whatsapp-service-init.js';
+import type { WhatsAppStore } from './whatsapp-store.js';
 import type { SentMessageTracker } from './whatsapp-types.js';
 
 export interface LifecycleState {
   socket: BaileysSocket | null;
-  store: BaileysStore | null;
+  store: WhatsAppStore | null;
   status: MessagingConnectionStatus;
   reconnect: ReconnectState;
   disposed: boolean;
@@ -33,7 +34,7 @@ export interface LifecycleState {
   syncListeners: {
     onHistorySet: (raw: unknown) => void;
     onMessagesUpsert: () => void;
-    debounceTimer: ReturnType<typeof setTimeout> | null;
+    timeoutTimer: ReturnType<typeof setTimeout> | null;
   } | null;
 }
 

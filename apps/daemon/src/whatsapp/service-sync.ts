@@ -1,7 +1,7 @@
 import type { LifecycleState } from './service-lifecycle.js';
 import { touchTransport } from './service-lifecycle.js';
 
-const SYNC_COMPLETE_DEBOUNCE_MS = 15_000;
+const SYNC_TIMEOUT_MS = 90_000;
 
 export function syncAttachListeners(
   state: LifecycleState,
@@ -11,21 +11,12 @@ export function syncAttachListeners(
 
   cleanupSyncListeners(state);
 
-  const countStoreMessages = (): { chats: number; messages: number } => ({
-    chats: state.store?.chats?.all()?.length ?? 0,
-    messages: state.store?.messages
-      ? Object.values(state.store.messages).reduce(
-          (sum, msgMap) => sum + (msgMap?.all()?.length ?? 0),
-          0,
-        )
-      : 0,
-  });
-
   const checkStoreAndEmit = () => {
-    const counts = countStoreMessages();
+    if (!state.store) return;
+    const chats = state.store.getChats();
     state.syncProgress = {
-      chatsProcessed: Math.max(state.syncProgress.chatsProcessed, counts.chats),
-      messagesProcessed: Math.max(state.syncProgress.messagesProcessed, counts.messages),
+      chatsProcessed: chats.length,
+      messagesProcessed: 0,
     };
     emit('syncProgress', { ...state.syncProgress, syncState: state.syncState });
   };
@@ -41,40 +32,44 @@ export function syncAttachListeners(
   state.syncProgress = { chatsProcessed: 0, messagesProcessed: 0 };
   emit('syncProgress', { ...state.syncProgress, syncState: 'syncing' });
 
-  let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  let timeoutTimer: ReturnType<typeof setTimeout> | null = null;
+  let markedComplete = false;
 
-  const resetDebounce = () => {
-    if (debounceTimer) clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(markSyncComplete, SYNC_COMPLETE_DEBOUNCE_MS);
-    if (state.syncListeners) {
-      state.syncListeners.debounceTimer = debounceTimer;
-    }
-  };
-
-  const onHistorySet = (raw: unknown) => {
+  const onHistorySet = (data: unknown) => {
     touchTransport(state);
+    const { isLatest } = data as { isLatest?: boolean };
     checkStoreAndEmit();
-    resetDebounce();
+    if (isLatest && !markedComplete) {
+      markedComplete = true;
+      if (timeoutTimer) clearTimeout(timeoutTimer);
+      markSyncComplete();
+    }
   };
 
   const onMessagesUpsert = () => {
     touchTransport(state);
     checkStoreAndEmit();
-    resetDebounce();
   };
 
   state.socket.ev.on('messaging-history.set', onHistorySet);
   state.socket.ev.on('messages.upsert', onMessagesUpsert);
-  state.syncListeners = { onHistorySet, onMessagesUpsert, debounceTimer: null };
-  resetDebounce();
+
+  timeoutTimer = setTimeout(() => {
+    if (!markedComplete) {
+      markedComplete = true;
+      markSyncComplete();
+    }
+  }, SYNC_TIMEOUT_MS);
+
+  state.syncListeners = { onHistorySet, onMessagesUpsert, timeoutTimer };
 }
 
 export function cleanupSyncListeners(state: LifecycleState): void {
   if (!state.socket || !state.syncListeners) return;
   state.socket.ev.off('messaging-history.set', state.syncListeners.onHistorySet);
   state.socket.ev.off('messages.upsert', state.syncListeners.onMessagesUpsert);
-  if (state.syncListeners.debounceTimer) {
-    clearTimeout(state.syncListeners.debounceTimer);
+  if (state.syncListeners.timeoutTimer) {
+    clearTimeout(state.syncListeners.timeoutTimer);
   }
   state.syncListeners = null;
 }

@@ -1,9 +1,10 @@
 import type { MessagingConnectionStatus } from '@myboteam/agent-core/common';
 import { log } from '../logger.js';
-import type { BaileysSocket, BaileysStore } from './baileys-types.js';
+import type { BaileysSocket } from './baileys-types.js';
 import { normalizeMessage } from './normalizeMessage.js';
 import type { ReconnectState } from './reconnection.js';
 import { handleConnectionUpdate } from './whatsapp-session.js';
+import type { WhatsAppStore } from './whatsapp-store.js';
 import { createStore } from './whatsapp-store.js';
 import type { SentMessageTracker } from './whatsapp-types.js';
 
@@ -56,7 +57,7 @@ export async function initBaileysSocket(
     socket.end(new Error('WhatsApp service disposed during connect'));
     throw new Error('WhatsApp service disposed');
   }
-  const store: BaileysStore = createStore(storePath);
+  const store: WhatsAppStore = createStore(storePath);
   store.bind(socket.ev);
   return { socket, store, saveCreds, DisconnectReason, jidNormalizedUser };
 }

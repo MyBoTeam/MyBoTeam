@@ -1,15 +1,15 @@
 import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
-import type { BaileysStore } from './baileys-types.js';
+import type { WhatsAppStore } from './whatsapp-store.js';
 
 export async function downloadMedia(
-  store: BaileysStore,
+  store: WhatsAppStore,
   storePath: string,
   chatJid: string,
   messageId: string,
 ): Promise<{ filePath: string; mimeType: string } | null> {
-  const msgs = store.messages[chatJid]?.all() ?? [];
+  const msgs = store.getRawMessages(chatJid, 1000);
   const msg = msgs.find((m) => m.key?.id === messageId);
   if (!msg?.message) return null;
   const c = msg.message as Record<string, unknown>;
