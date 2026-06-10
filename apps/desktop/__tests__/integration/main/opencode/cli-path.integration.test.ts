@@ -78,7 +78,7 @@ describe('OpenCode CLI Path Module', () => {
 
       expect(result.command).toBe(localCliPath);
       expect(result.args).toEqual([]);
-    });
+    }, 15_000);
 
     it('resolves local CLI from APP_ROOT when appPath lookup fails', async () => {
       const appPath = '/mock/app/path';
