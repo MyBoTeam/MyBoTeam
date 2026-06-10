@@ -1,31 +1,21 @@
 <!--
 Sync Impact Report
-Version change: 1.0.0 -> 1.1.0
+Version change: 1.1.0 -> 1.2.0
 Modified principles:
-- Template placeholders -> I. Human Oversight and Accountability
-- Template placeholders -> II. Local-First Security and Privacy
-- Template placeholders -> III. Testable, Observable, Reproducible Workflows
-- Template placeholders -> IV. Simplicity and Surgical Change
-- Template placeholders -> V. Explicit Assumptions and Goal-Driven Delivery
-Added sections:
-- Product and Technical Constraints
+- III. Testable, Observable, Reproducible Workflows
 - Development Workflow and Quality Gates
-Removed sections:
-- Placeholder SECTION_2_NAME
-- Placeholder SECTION_3_NAME
+Added sections: none
+Removed sections: none
 Templates requiring updates:
-- updated: .specify/templates/plan-template.md
-- updated: .specify/templates/spec-template.md
-- updated: .specify/templates/tasks-template.md
+- not required: .specify/templates/plan-template.md
+- not required: .specify/templates/spec-template.md
+- not required: .specify/templates/tasks-template.md
 - not required: .specify/templates/commands/*.md (directory absent)
-- updated: .specify/presets/agentic-sdlc/commands/adlc.spec.tasks.md
-- reviewed: remaining .specify/presets/agentic-sdlc/commands/*.md
-- reviewed: README.md
+- not required: .specify/presets/agentic-sdlc/commands/adlc.spec.tasks.md
 - reviewed: AGENTS.md
 Follow-up TODOs: none
 Amendment rationale:
-- Expanded storage migration governance to require bidirectional, tested
-  migrations while preserving immutable released migration files.
+- Added a non-negotiable approval gate for any git command using --no-verify.
 -->
 
 # MyBoTeam Constitution
@@ -61,7 +51,9 @@ change was otherwise verified. Plans and tasks MUST define success criteria,
 validation commands, and user-story-level independent tests. Runtime behavior
 that affects task execution, credentials, storage, IPC, or provider calls MUST be
 observable through appropriate logs, events, or state transitions without
-exposing secrets.
+exposing secrets. Git verification bypasses are exceptional: any git command
+using `--no-verify` MUST receive explicit, special user approval for that exact
+command before it is run.
 
 Rationale: The app spans React, Electron, daemon, and agent-core boundaries.
 Reliable changes require tests, traceable workflows, and reproducible
@@ -128,6 +120,11 @@ Additional workspace tests MUST run for touched areas:
 `pnpm -F @myboteam/agent-core test` for agent-core changes. Failed or skipped
 verification MUST be reported with the reason and residual risk.
 
+Agents and contributors MUST NOT run `git commit`, `git push`, or any other git
+command with `--no-verify` unless the user has granted explicit, special approval
+for that exact bypass. Prior approval to run ordinary git commands or general
+approval to continue work is not sufficient.
+
 Reviews MUST verify that changes preserve local-first privacy, do not leak
 secrets, keep automation behavior auditable, and remain scoped to the approved
 requirement. Documentation updates MUST capture new assumptions, public API
@@ -157,4 +154,4 @@ review, and pre-merge verification. If a principle cannot be satisfied, the plan
 MUST record the violation, rejected simpler alternatives, mitigation, owner, and
 approval requirement before work continues.
 
-**Version**: 1.1.0 | **Ratified**: 2026-06-09 | **Last Amended**: 2026-06-09
+**Version**: 1.2.0 | **Ratified**: 2026-06-09 | **Last Amended**: 2026-06-10
