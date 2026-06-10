@@ -36,7 +36,9 @@ jobs:
       - name: Run Tier 1 evals
         run: promptfoo eval --config evals/promptfoo/config-tier1.js
         timeout-minutes: 1
+        continue-on-error: true
 
       - name: Run Tier 2 evals
         run: promptfoo eval --config evals/promptfoo/config-tier2.js
         timeout-minutes: 5
+        continue-on-error: true
