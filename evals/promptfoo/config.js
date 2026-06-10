@@ -6,7 +6,13 @@ function grader(code) {
 }
 
 function loadGrader(name) {
-  return fs.readFileSync(path.join(__dirname, 'graders', name), 'utf-8');
+  const graderCode = fs.readFileSync(path.join(__dirname, 'graders', name), 'utf-8');
+  if (graderCode.includes('from common import')) {
+    const commonCode = fs.readFileSync(path.join(__dirname, 'graders', 'common.py'), 'utf-8');
+    const stripped = graderCode.replace(/^from common import .+$/m, '');
+    return commonCode + '\n' + stripped;
+  }
+  return graderCode;
 }
 
 const securityBaseline = [
