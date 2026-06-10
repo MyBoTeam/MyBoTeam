@@ -106,7 +106,7 @@ export function useExecutionCore() {
     if (scroll.isAtBottom) {
       scroll.scrollToBottom();
     }
-  }, [scroll.scrollToBottom, scroll.isAtBottom]);
+  }, [scroll.scrollToBottom, scroll.isAtBottom, currentTask?.messages.length, currentTask?.status]);
 
   const permissionRequest = (id ? permissionRequests[id] : undefined) ?? null;
   const isComplete = ['completed', 'failed', 'cancelled', 'interrupted'].includes(
