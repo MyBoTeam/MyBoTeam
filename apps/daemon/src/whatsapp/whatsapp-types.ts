@@ -3,13 +3,25 @@ export interface ChatSummary {
   name?: string;
   lastMessageAt?: number;
 }
+export type MessageType =
+  | 'text'
+  | 'image'
+  | 'video'
+  | 'audio'
+  | 'document'
+  | 'sticker'
+  | 'reaction'
+  | 'location'
+  | 'contact'
+  | 'system';
+
 export interface MessageSummary {
   messageId: string;
   senderJid: string;
   fromMe: boolean;
   text: string;
   timestamp: number;
-  mediaType?: 'image' | 'video' | 'audio' | 'document';
+  messageType: MessageType;
 }
 
 export function toTimestamp(val: unknown): number | undefined {

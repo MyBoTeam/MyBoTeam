@@ -1,5 +1,24 @@
 import type { BaileysMessage, BaileysStore } from './baileys-types.js';
-import { type ChatSummary, type MessageSummary, toTimestamp } from './whatsapp-types.js';
+import {
+  type ChatSummary,
+  type MessageSummary,
+  type MessageType,
+  toTimestamp,
+} from './whatsapp-types.js';
+
+function getMessageType(msg: BaileysMessage): MessageType {
+  if (msg.message?.conversation || msg.message?.extendedTextMessage) return 'text';
+  if (msg.message?.imageMessage) return 'image';
+  if (msg.message?.videoMessage) return 'video';
+  if (msg.message?.audioMessage) return 'audio';
+  if (msg.message?.documentMessage) return 'document';
+  if (msg.message?.stickerMessage) return 'sticker';
+  if (msg.message?.reactionMessage) return 'reaction';
+  if (msg.message?.locationMessage) return 'location';
+  if (msg.message?.contactMessage) return 'contact';
+  if (msg.message?.systemMessage) return 'system';
+  return 'text';
+}
 
 export function getChats(store: BaileysStore | null, limit: number): ChatSummary[] {
   if (!store) return [];
@@ -30,6 +49,7 @@ export function getMessages(
         fromMe: Boolean(m.key?.fromMe),
         text,
         timestamp: toTimestamp(m.messageTimestamp) ?? 0,
+        messageType: getMessageType(m),
       },
     ];
   });

@@ -62,6 +62,15 @@ export interface BaileysMessage {
   message?: {
     conversation?: string | null;
     extendedTextMessage?: { text?: string | null } | null;
+    imageMessage?: { caption?: string | null; mimetype?: string } | null;
+    videoMessage?: { caption?: string | null; mimetype?: string } | null;
+    audioMessage?: { mimetype?: string; ptt?: boolean } | null;
+    documentMessage?: { mimetype?: string; fileName?: string } | null;
+    stickerMessage?: Record<string, unknown> | null;
+    reactionMessage?: { text?: string } | null;
+    locationMessage?: Record<string, unknown> | null;
+    contactMessage?: { displayName?: string } | null;
+    systemMessage?: { body?: string } | null;
   } | null;
   messageTimestamp?: unknown;
 }
