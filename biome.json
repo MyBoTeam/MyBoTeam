@@ -161,6 +161,16 @@
       }
     },
     {
+      "includes": ["**/*.md"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noExcessiveLinesPerFile": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["packages/agent-core/src/index.ts"],
       "linter": {
         "rules": {

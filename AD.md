@@ -1,652 +1,525 @@
 # Architecture Description: MyBoTeam
 
-**Version**: 1.0 | **Created**: 2026-03-26 | **Last Updated**: 2026-03-26
-**Architect**: AI (reverse-engineered from codebase) | **Status**: Draft
-**ADR Reference**: [.specify/drafts/adr.md](.specify/drafts/adr.md)
+**Version**: 1.1.0
+**Date**: 2026-06-09
+**Status**: Generated from accepted ADRs and architecture view artifacts
+**Scope**: Core architecture views for the MyBoTeam desktop product
 
----
+## 1. Purpose
 
-## 1. Introduction
+This Architecture Description captures the current brownfield architecture of
+MyBoTeam. It is generated from accepted Architecture Decision Records and the
+core architecture views under `.specify/architect/views/`.
 
-### 1.1 Purpose
+The document describes MyBoTeam as a local-first desktop product with separate
+workspace boundaries for the renderer UI, Electron shell, long-lived daemon,
+shared agent-core package, and bundled MCP tool families.
 
-MyBoTeam is an open-source AI automation assistant that lives on the user's
-desktop. It enables users to delegate complex software engineering tasks to an
-AI agent that can browse the web, write code, run commands, and manage files —
-all orchestrated through a local-first desktop application with bring-your-own
-API key support.
+## 2. Architectural Drivers
 
-### 1.2 Scope
+### 2.1 Goals
 
-**In Scope:**
+- Preserve local-first operation for user tasks, credentials, and sensitive data.
+- Keep privileged execution outside the React renderer.
+- Isolate long-running task execution in a daemon process.
+- Reuse OpenCode as the task runtime while preserving per-task isolation.
+- Ship first-party MCP tools as bundled desktop resources.
+- Keep shared TypeScript contracts authoritative across local process boundaries.
+- Preserve portable packaging by using sql.js for structured local state.
+- Keep migration history immutable and bidirectional.
 
-- Desktop application (macOS, Windows, Linux) for AI task execution
-- Multi-provider LLM integration (12+ providers including local models)
-- Task lifecycle management (create, execute, monitor, cancel)
-- Encrypted credential storage for API keys
-- MCP (Model Context Protocol) tool integration
-- Multi-workspace support with isolated task histories
-- Skills system for reusable task templates
+### 2.2 Constraints
 
-**Out of Scope:**
+- The product has no hosted MyBoTeam backend in the current architecture.
+- Credentials and sensitive task data stay local unless the user configures an
+  external provider or connector.
+- Renderer code must not access Node.js, filesystem, daemon sockets, or secrets.
+- Electron preload and daemon RPC boundaries validate untrusted payloads.
+- `@myboteam/agent-core` is ESM and uses `.js` extensions for internal imports.
+- Web image assets use ES module imports for packaged compatibility.
+- Released migration files are immutable.
+- New migrations include executable `up` and `down` paths covered by tests.
+- Required daemon, bundled Node.js, OpenCode, and MCP assets are packaging
+  invariants.
 
-- Server-side deployment or SaaS hosting
-- Mobile applications
-- User-to-user collaboration features
-- Custom model training or fine-tuning
+### 2.3 Accepted Decisions
 
-### 1.3 Definitions & Acronyms
+Accepted ADRs are promoted to `.specify/memory/adr.md`.
 
-| Term     | Definition                                                         |
-| -------- | ------------------------------------------------------------------ |
-| AD       | Architecture Description — this document                           |
-| ADR      | Architecture Decision Record — documented architectural decisions  |
-| IPC      | Inter-Process Communication — Electron main ↔ renderer bridge      |
-| MCP      | Model Context Protocol — standardized tool interface for AI agents |
-| PTY      | Pseudo-Terminal — terminal emulation for spawning CLI processes    |
-| OpenCode | External CLI agent engine spawned by MyBoTeam to execute tasks     |
+| ADR | Decision | Main Impact |
+|-----|----------|-------------|
+| ADR-001 | Local-first modular desktop architecture | Defines workspace and runtime ownership boundaries |
+| ADR-002 | Typed renderer-to-daemon boundary | Keeps privileged operations behind preload and daemon RPC |
+| ADR-003 | Detached daemon with local socket JSON-RPC | Separates long-running execution from the desktop shell |
+| ADR-004 | Per-task OpenCode server runtimes | Gives each active task its own runtime boundary |
+| ADR-005 | sql.js data plus encrypted file secrets | Separates structured state from encrypted credentials |
+| ADR-006 | Bundled first-party MCP tool families | Packages connector tools with fail-fast runtime validation |
 
----
+## 3. Architectural Views
 
-## 2. Stakeholders & Concerns
+This AD uses the core view set produced by `architect-implement`.
 
-| Stakeholder              | Role                                      | Key Concerns                                                 | Priority |
-| ------------------------ | ----------------------------------------- | ------------------------------------------------------------ | -------- |
-| End Users                | Desktop app users                         | Task execution quality, provider choice, local-first privacy | High     |
-| Contributors             | Open-source developers                    | Code clarity, dev ergonomics, test coverage                  | High     |
-| Maintainers              | Core team                                 | Build reliability, migration safety, cross-platform support  | Critical |
-| Security-Conscious Users | Users with sensitive API keys             | Credential encryption, no data exfiltration                  | High     |
-| Enterprise Users         | Teams with specific provider requirements | Bedrock/Vertex/Azure support, air-gapped local models        | Medium   |
+| View | Purpose | Source Artifacts |
+|------|---------|------------------|
+| Context | System boundary and external relationships | `*/context.md` |
+| Functional | Runtime responsibilities and component interactions | `*/functional.md` |
+| Information | Data ownership, persistence, and information flow | `*/information.md` |
+| Development | Repository structure and code ownership | `*/development.md` |
+| Deployment | Packaged/runtime topology | `*/deployment.md` |
 
----
+The generated view files are:
 
-## 3. Architectural Views (Rozanski & Woods)
+- `.specify/architect/views/system/context.md`
+- `.specify/architect/views/system/functional.md`
+- `.specify/architect/views/system/information.md`
+- `.specify/architect/views/system/development.md`
+- `.specify/architect/views/system/deployment.md`
+- `.specify/architect/views/web/context.md`
+- `.specify/architect/views/web/functional.md`
+- `.specify/architect/views/web/information.md`
+- `.specify/architect/views/web/development.md`
+- `.specify/architect/views/web/deployment.md`
+- `.specify/architect/views/desktop/context.md`
+- `.specify/architect/views/desktop/functional.md`
+- `.specify/architect/views/desktop/information.md`
+- `.specify/architect/views/desktop/development.md`
+- `.specify/architect/views/desktop/deployment.md`
+- `.specify/architect/views/daemon/context.md`
+- `.specify/architect/views/daemon/functional.md`
+- `.specify/architect/views/daemon/information.md`
+- `.specify/architect/views/daemon/development.md`
+- `.specify/architect/views/daemon/deployment.md`
+- `.specify/architect/views/agent-core/context.md`
+- `.specify/architect/views/agent-core/functional.md`
+- `.specify/architect/views/agent-core/information.md`
+- `.specify/architect/views/agent-core/development.md`
+- `.specify/architect/views/agent-core/deployment.md`
+- `.specify/architect/views/mcp-tool-families/context.md`
+- `.specify/architect/views/mcp-tool-families/functional.md`
+- `.specify/architect/views/mcp-tool-families/information.md`
+- `.specify/architect/views/mcp-tool-families/development.md`
+- `.specify/architect/views/mcp-tool-families/deployment.md`
 
 ### 3.1 Context View
 
-**Purpose**: Define system scope and external interactions
-**Source ADRs**: ADR-001, ADR-002, ADR-007
+#### 3.1.1 System Context
 
-#### 3.1.1 System Scope
-
-MyBoTeam is a **desktop application** that acts as a bridge between users and
-AI agent capabilities. It runs entirely on the user's machine — no cloud
-backend, no remote server. The system connects outward to LLM provider APIs
-and local model servers, but all orchestration, storage, and credential
-management happen locally.
-
-#### 3.1.2 External Entities
-
-| Entity              | Type              | Interaction                   | Data Exchanged                    | Protocol         |
-| ------------------- | ----------------- | ----------------------------- | --------------------------------- | ---------------- |
-| End User            | Stakeholder       | Desktop UI                    | Task prompts, settings, approvals | Electron UI      |
-| LLM Cloud Providers | External API      | API calls via OpenCode CLI    | Prompts, completions, tool calls  | HTTPS            |
-| Local Model Servers | External Service  | API calls via OpenCode CLI    | Prompts, completions              | HTTP (localhost) |
-| GitHub              | External Platform | OAuth, releases, CI/CD        | Auth tokens, build artifacts      | HTTPS            |
-| MCP Tool Servers    | External Service  | MCP protocol via OpenCode CLI | Tool invocations, results         | stdio / HTTPS    |
-| Filesystem          | OS Resource       | File read/write by agent      | Code files, documents             | OS API           |
-
-#### 3.1.3 Context Diagram
+MyBoTeam is a local-first desktop product. The system boundary includes the
+packaged web UI, Electron shell, daemon, shared agent-core package, and bundled
+MCP tool families.
 
 ```mermaid
-graph TD
-    User["End User"]
-
-    System["MyBoTeam<br/>(Desktop App)"]
-
-    CloudLLM["Cloud LLM Providers<br/>(OpenAI, Anthropic, Google,<br/>AWS Bedrock, Azure, etc.)"]
-    LocalLLM["Local Model Servers<br/>(Ollama, LM Studio, NIM)"]
-    GitHub["GitHub<br/>(OAuth, Releases)"]
-    MCPServers["MCP Tool Servers<br/>(Browser, Slack, Custom)"]
-    Filesystem["Local Filesystem"]
-
-    User -->|"Submits tasks,<br/>configures providers"| System
-    System -->|"Streams results,<br/>requests permissions"| User
-    System -->|"Sends prompts,<br/>receives completions"| CloudLLM
-    System -->|"Sends prompts,<br/>receives completions"| LocalLLM
-    System -->|"OAuth login,<br/>checks releases"| GitHub
-    System -->|"Invokes tools"| MCPServers
-    System -->|"Reads/writes files<br/>via agent"| Filesystem
-
-    classDef systemNode fill:#f47721,stroke:#333,stroke-width:3px,color:#fff
-    classDef stakeholderNode fill:#4a9eff,stroke:#333,stroke-width:1px,color:#fff
-    classDef externalNode fill:#e0e0e0,stroke:#333,stroke-width:1px
-
-    class System systemNode
-    class User stakeholderNode
-    class CloudLLM,LocalLLM,GitHub,MCPServers,Filesystem externalNode
+graph LR
+  User["End User"] --> App["MyBoTeam Desktop Product"]
+  App --> Providers["LLM Providers"]
+  App --> LocalModels["Local Model Servers"]
+  App --> OS["Operating System"]
+  App --> Releases["GitHub / Release Channels"]
 ```
 
-#### 3.1.4 External Dependencies
+#### 3.1.2 Sub-System Contexts
 
-| Dependency                   | Purpose                | Fallback Strategy                        |
-| ---------------------------- | ---------------------- | ---------------------------------------- |
-| Cloud LLM APIs               | AI task execution      | Switch to local model (Ollama/LM Studio) |
-| OpenCode CLI binary          | Agent execution engine | App cannot function without it (bundled) |
-| GitHub OAuth                 | Copilot provider auth  | Use API key-based providers instead      |
-| sql.js (WASM SQLite) | Local database         | None — required for app operation        |
+| Sub-System | Context Source | External Relationships |
+|------------|----------------|------------------------|
+| System | `.specify/architect/views/system/context.md` | User, LLM providers, local model servers, OS, release channels |
+| Web | `.specify/architect/views/web/context.md` | User, preload API, i18n resources, static assets |
+| Desktop | `.specify/architect/views/desktop/context.md` | OS, renderer, daemon, OAuth providers, release channels |
+| Daemon | `.specify/architect/views/daemon/context.md` | Desktop shell, OpenCode runtime, filesystem, provider APIs, MCP tools |
+| Agent Core | `.specify/architect/views/agent-core/context.md` | Web, desktop, daemon, OpenCode, provider APIs |
+| MCP Tool Families | `.specify/architect/views/mcp-tool-families/context.md` | OpenCode, daemon, browser runtime, Google Workspace, WhatsApp |
 
----
+> **Subsystem Details**: [System](.specify/architect/views/system/context.md) | [Web](.specify/architect/views/web/context.md) | [Desktop](.specify/architect/views/desktop/context.md) | [Daemon](.specify/architect/views/daemon/context.md) | [Agent Core](.specify/architect/views/agent-core/context.md) | [MCP Tool Families](.specify/architect/views/mcp-tool-families/context.md)
+
+#### 3.1.3 Context Rules
+
+- There is no hosted MyBoTeam backend in this architecture.
+- External model providers are user-configured dependencies.
+- Local model servers are treated as external local services.
+- OAuth and connector APIs are external integration boundaries.
+- Operating system services are accessed only through desktop or daemon code.
+- User data and secrets remain local unless explicitly routed to configured
+  providers or connectors.
 
 ### 3.2 Functional View
 
-**Purpose**: Internal components, responsibilities, and interactions
-**Source ADRs**: ADR-001, ADR-002, ADR-003, ADR-005, ADR-007
+#### 3.2.1 Product Functional Structure
 
-#### 3.2.1 Functional Elements
-
-| Element              | Responsibility                                                                            | Workspace                           | Key Files                                         |
-| -------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------- |
-| **Web UI**           | React frontend — task launcher, execution view, settings, history                         | `apps/web`                          | `stores/taskStore.ts`, `lib/myboteam.ts`          |
-| **Desktop Shell**    | Electron main process — IPC handlers, preload, tray, daemon bootstrap                     | `apps/desktop`                      | `ipc/handlers/`, `preload/index.ts`               |
-| **Agent Core**       | Business logic — storage, providers, encryption, task manager, OpenCode adapter           | `packages/agent-core`               | `factories/`, `internal/classes/`                 |
-| **Daemon** (in-dev)  | Background process — task execution, storage access, event streaming                      | `apps/daemon`                       | `task-service.ts`, `storage-service.ts`           |
-| **Provider Layer**   | LLM provider abstraction — validation, model fetching, config                             | `packages/agent-core/src/providers` | Per-provider modules                              |
-| **Storage Layer**    | SQLite database — migrations, repositories, secure storage                                | `packages/agent-core/src/storage`   | `database.ts`, `migrations/`                      |
-| **OpenCode Adapter** | Spawns `opencode serve` and drives it via `@opencode-ai/sdk`, forwarding typed SDK events | `packages/agent-core/src/internal`  | `OpenCodeAdapter.ts`, `TaskInactivityWatchdog.ts` |
-
-#### 3.2.2 Element Interactions
+The product is decomposed into five primary functional areas: Web UI, Desktop
+Shell, Daemon, Agent Core, and MCP Tool Families.
 
 ```mermaid
-graph TD
-    subgraph "Renderer Process"
-        WebUI["Web UI<br/>(React + Zustand)"]
-    end
-
-    subgraph "Preload"
-        Bridge["contextBridge<br/>(myboteam API)"]
-    end
-
-    subgraph "Main Process"
-        IPC["IPC Handlers"]
-        DaemonClient["Daemon Client"]
-    end
-
-    subgraph "Agent Core"
-        TaskMgr["Task Manager"]
-        Adapter["OpenCode Adapter"]
-        Providers["Provider Layer"]
-        Storage["Storage Layer<br/>(SQLite)"]
-        SecureStore["Secure Storage<br/>(AES-256-GCM)"]
-    end
-
-    subgraph "External"
-        OpenCode["OpenCode CLI<br/>(PTY process)"]
-    end
-
-    WebUI -->|"window.myboteam.*"| Bridge
-    Bridge -->|"ipcRenderer.invoke"| IPC
-    IPC --> DaemonClient
-    DaemonClient --> TaskMgr
-    TaskMgr --> Adapter
-    Adapter -->|"spawn PTY"| OpenCode
-    TaskMgr --> Storage
-    IPC --> Providers
-    IPC --> SecureStore
-
-    classDef uiNode fill:#4a9eff,stroke:#333,stroke-width:2px,color:#fff
-    classDef coreNode fill:#66c2a5,stroke:#333,stroke-width:2px,color:#fff
-    classDef extNode fill:#e0e0e0,stroke:#333,stroke-width:1px
-    classDef bridgeNode fill:#ffd700,stroke:#333,stroke-width:1px
-
-    class WebUI uiNode
-    class Bridge bridgeNode
-    class IPC,DaemonClient,TaskMgr,Adapter,Providers,Storage,SecureStore coreNode
-    class OpenCode extNode
+graph TB
+  Web["Web UI"] --> Desktop["Desktop Shell"]
+  Desktop --> Daemon["Daemon"]
+  Daemon --> Core["Agent Core"]
+  Daemon --> MCP["MCP Tool Families"]
+  Core --> MCP
 ```
 
-#### 3.2.3 Functional Boundaries
+#### 3.2.2 Functional Responsibilities
 
-**What this system DOES:**
+| Element | Responsibility |
+|---------|----------------|
+| Web UI | Presents tasks, settings, history, provider selection, and runtime status |
+| Desktop Shell | Owns windows, tray, preload, packaging, updater, and OS bridges |
+| Daemon | Owns task execution, storage, secrets, connectors, and background services |
+| Agent Core | Provides shared types, storage, providers, daemon transports, and factories |
+| MCP Tool Families | Provide bundled tool capabilities to OpenCode runtimes |
 
-- Execute AI agent tasks via OpenCode CLI with user-selected LLM provider
-- Manage task lifecycle (queue, execute up to 10 concurrent, cancel, history)
-- Store and encrypt API keys locally (AES-256-GCM)
-- Provide a 4-step IPC chain bridging UI to Node.js capabilities
-- Support 12+ LLM providers with per-provider validation and config
-- Manage MCP tool servers for extended agent capabilities
+> **Subsystem Details**: [System](.specify/architect/views/system/functional.md) | [Web](.specify/architect/views/web/functional.md) | [Desktop](.specify/architect/views/desktop/functional.md) | [Daemon](.specify/architect/views/daemon/functional.md) | [Agent Core](.specify/architect/views/agent-core/functional.md) | [MCP Tool Families](.specify/architect/views/mcp-tool-families/functional.md)
 
-**What this system does NOT do:**
+#### 3.2.3 Renderer to Daemon Flow
 
-- Host its own LLM inference — delegates to external providers
-- Implement agent logic — delegates to OpenCode CLI
-- Provide a web server or API for remote clients
-- Handle multi-user authentication or authorization
+```mermaid
+sequenceDiagram
+  participant User
+  participant Web as Web UI
+  participant Preload as Electron Preload
+  participant Desktop as Desktop Main
+  participant Daemon as Daemon RPC
+  participant Task as Task Service
+  User->>Web: Start or inspect task
+  Web->>Preload: Call typed window.myboteam API
+  Preload->>Desktop: IPC request
+  Desktop->>Daemon: Local JSON-RPC request
+  Daemon->>Task: Validate and execute operation
+  Task-->>Daemon: Result or event
+  Daemon-->>Desktop: RPC response or notification
+  Desktop-->>Preload: Typed payload
+  Preload-->>Web: UI-safe data
+```
 
----
+#### 3.2.4 Task Execution Flow
+
+```mermaid
+sequenceDiagram
+  participant Daemon
+  participant Core as Agent Core
+  participant Runtime as OpenCode Runtime
+  participant MCP as MCP Tools
+  participant Provider as LLM Provider
+  Daemon->>Core: Build task configuration
+  Core->>Runtime: Generate OpenCode and MCP config
+  Daemon->>Runtime: Start per-task server
+  Runtime->>MCP: Invoke tools as needed
+  Runtime->>Provider: Send configured model requests
+  Runtime-->>Daemon: Task events and messages
+  Daemon-->>Daemon: Persist state and emit notifications
+```
+
+#### 3.2.5 Functional Boundaries
+
+- Web owns renderer experience and transient UI state.
+- Desktop owns shell lifecycle and OS-level bridges.
+- Desktop does not own task execution, storage, provider settings, or connector
+  domain logic.
+- Daemon owns task execution, durable local state, secrets, provider settings,
+  connector services, token lifecycle, and task-event fan-out.
+- Agent Core is shared implementation and contract code, not a running product
+  boundary by itself.
+- MCP Tool Families own connector-specific tool behavior and do not own
+  long-term token lifecycle.
+- Each active task receives its own OpenCode server runtime.
 
 ### 3.3 Information View
 
-**Purpose**: Data storage, management, and flow
-**Source ADRs**: ADR-003, ADR-004
+#### 3.3.1 Information Ownership
 
-#### 3.3.1 Data Entities
+The daemon is the authoritative owner of durable application information through
+agent-core storage primitives. The web renderer stores transient UI state derived
+from daemon APIs and events.
 
-| Entity             | Storage                       | Owner            | Lifecycle                              | Access Pattern                                 |
-| ------------------ | ----------------------------- | ---------------- | -------------------------------------- | ---------------------------------------------- |
-| Tasks              | SQLite (`myboteam.db`)        | Storage Layer    | Create -> Execute -> Complete/Cancel   | Write-heavy during execution, read for history |
-| Task Messages      | SQLite                        | Storage Layer    | Append-only during task execution      | Write-heavy, read for replay                   |
-| API Keys           | Encrypted file (AES-256-GCM)  | Secure Storage   | Set by user, persisted across sessions | Read on task start, write on settings change   |
-| Provider Config    | SQLite                        | Storage Layer    | CRUD via settings UI                   | Read on task start                             |
-| OAuth Tokens       | `auth.json` (OpenCode format) | OpenCode Adapter | OAuth flow -> store -> refresh         | Read on provider init                          |
-| Workspace Metadata | Separate SQLite DB            | Storage Layer    | CRUD via workspace UI                  | Read-heavy                                     |
-| Favorites          | SQLite                        | Storage Layer    | User-managed bookmarks                 | Read-heavy                                     |
-| Skills             | YAML files (filesystem)       | Skills Manager   | User-created or built-in               | Read on task launch                            |
-| Todos              | SQLite                        | Storage Layer    | Created during task execution          | Read/write during execution                    |
+| Element | Owner | Persistence |
+|---------|-------|-------------|
+| Task records | Daemon | sql.js |
+| Task messages | Daemon | sql.js |
+| Task todos and summaries | Daemon | sql.js and task events |
+| Workspaces | Daemon | sql.js |
+| Provider settings | Daemon | sql.js |
+| API keys | Daemon | encrypted file storage |
+| OAuth and connector tokens | Daemon | encrypted file storage |
+| Renderer UI state | Web | transient memory |
+| OpenCode and MCP config | Agent Core / Daemon | generated runtime configuration |
+| Tool diagnostics | MCP tools / Daemon | local logs and user-visible status |
+
+> **Subsystem Details**: [System](.specify/architect/views/system/information.md) | [Web](.specify/architect/views/web/information.md) | [Desktop](.specify/architect/views/desktop/information.md) | [Daemon](.specify/architect/views/daemon/information.md) | [Agent Core](.specify/architect/views/agent-core/information.md) | [MCP Tool Families](.specify/architect/views/mcp-tool-families/information.md)
 
 #### 3.3.2 Data Flow
 
 ```mermaid
-erDiagram
-    WORKSPACE ||--o{ TASK : contains
-    TASK ||--o{ MESSAGE : has
-    TASK ||--o{ TODO : generates
-    TASK }o--|| PROVIDER_CONFIG : uses
-    PROVIDER_CONFIG ||--o| API_KEY : "encrypted ref"
-    WORKSPACE ||--o{ FAVORITE : bookmarks
-
-    WORKSPACE {
-        string id PK
-        string name
-        string path
-        boolean active
-    }
-    TASK {
-        string id PK
-        string workspace_id FK
-        string status
-        string prompt
-        datetime created
-        datetime completed
-    }
-    MESSAGE {
-        string id PK
-        string task_id FK
-        string role
-        string content
-        string type
-    }
-    PROVIDER_CONFIG {
-        string provider PK
-        string base_url
-        string model
-        json settings
-    }
-    API_KEY {
-        string provider PK
-        blob encrypted_value
-    }
+flowchart LR
+  Web["Web UI State"] --> Desktop["Preload / IPC"]
+  Desktop --> Daemon["Daemon Services"]
+  Daemon --> Storage["sql.js Database"]
+  Daemon --> Secrets["Encrypted Secret Store"]
+  Daemon --> Config["OpenCode / MCP Config"]
+  Config --> Runtime["Per-Task OpenCode Runtime"]
+  Runtime --> Events["Task Events"]
+  Events --> Daemon
 ```
 
-**Key Data Flows:**
-
-1. **Task Execution**: User prompt -> TaskManager -> OpenCodeAdapter (PTY) -> streaming messages -> SQLite storage
-2. **Credential Access**: Settings UI -> IPC -> SecureStorage (encrypt) -> filesystem; Task start -> SecureStorage (decrypt) -> OpenCode env vars
-3. **Provider Config**: Settings UI -> IPC -> SQLite; Task start -> SQLite read -> OpenCode config generation
-
-#### 3.3.3 Data Quality & Integrity
-
-- **Consistency Model**: ACID (SQLite with WAL mode)
-- **Migration Safety**: Immutable migrations (Constitution Principle V) — released migration files are never modified
-- **Backup Strategy**: User-managed — database is a single file in Electron user-data directory, easily backed up
-- **Credential Security**: AES-256-GCM encryption with machine-derived PBKDF2 key; file permissions 0o600
-
----
-
-### 3.5 Development View
-
-**Purpose**: Code organization, dependencies, build, and CI/CD
-**Source ADRs**: ADR-001, ADR-006
-
-#### 3.5.1 Code Organization
-
-```text
-myboteam/
-├── apps/
-│   ├── web/                        # @myboteam/web — Standalone React UI
-│   │   ├── src/client/
-│   │   │   ├── components/         # UI components (shadcn/ui + custom)
-│   │   │   ├── stores/             # Zustand state management
-│   │   │   ├── pages/              # Route pages
-│   │   │   ├── hooks/              # Custom React hooks
-│   │   │   ├── lib/                # Utilities + myboteam.ts IPC wrapper
-│   │   │   └── i18n/               # Internationalization
-│   │   └── __tests__/              # Unit + integration tests (Vitest, jsdom)
-│   ├── desktop/                    # @myboteam/desktop — Electron shell
-│   │   ├── src/main/
-│   │   │   ├── ipc/handlers/       # IPC handler implementations
-│   │   │   ├── daemon/             # Daemon bootstrap + entry
-│   │   │   ├── services/           # Main-process services
-│   │   │   └── providers/          # Provider-specific main-process logic
-│   │   ├── src/preload/            # contextBridge (security boundary)
-│   │   ├── e2e/                    # Playwright E2E tests (Docker)
-│   │   └── __tests__/              # Unit + integration tests (Vitest, node)
-│   └── daemon/                     # @myboteam/daemon — Background process (in-dev)
-│       └── src/                    # Task/storage/permission services
-├── packages/
-│   └── agent-core/                 # @myboteam/agent-core — Core logic (ESM)
-│       └── src/
-│           ├── factories/          # Public API (createTaskManager, etc.)
-│           ├── internal/classes/   # Implementation (TaskManager, OpenCodeAdapter, etc.)
-│           ├── storage/            # SQLite database + migrations + repositories
-│           ├── providers/          # LLM provider modules (12+)
-│           ├── daemon/             # RPC server/client infrastructure
-│           ├── common/types/       # Shared TypeScript types (single source of truth)
-│           └── utils/              # Logging, fetch, bundled-node, etc.
-├── .github/workflows/              # CI/CD (ci, release, commitlint, stale, subtree-split)
-├── scripts/                        # Dev + build scripts
-├── CLAUDE.md                       # Agent development guidance
-├── AGENTS.md                       # Agent architecture reference
-└── AD.md                           # This file
-```
-
-#### 3.5.2 Module Dependencies
+#### 3.3.3 Storage Model
 
 ```mermaid
-graph LR
-    Web["@myboteam/web<br/>(React UI)"]
-    Desktop["@myboteam/desktop<br/>(Electron Shell)"]
-    Daemon["@myboteam/daemon<br/>(Background Process)"]
-    Core["@myboteam/agent-core<br/>(Core Logic, ESM)"]
-
-    Web -->|"types only<br/>(browser-safe)"| Core
-    Desktop -->|"full API<br/>(Node.js)"| Core
-    Daemon -->|"full API<br/>(Node.js)"| Core
-    Desktop -.->|"loads build output"| Web
-
-    classDef appNode fill:#4a9eff,stroke:#333,stroke-width:2px,color:#fff
-    classDef coreNode fill:#66c2a5,stroke:#333,stroke-width:2px,color:#fff
-
-    class Web,Desktop,Daemon appNode
-    class Core coreNode
+erDiagram
+  WORKSPACE ||--o{ TASK : contains
+  TASK ||--o{ MESSAGE : has
+  TASK ||--o{ TODO : emits
+  PROVIDER ||--o{ TASK : configures
+  SECRET ||--o{ PROVIDER : secures
 ```
 
-**Dependency Rules:**
+#### 3.3.4 Information Rules
 
-- `agent-core` is the shared dependency — apps depend on it, never the reverse
-- `apps/web` imports only types and browser-safe code from agent-core (Node.js-only modules excluded via Vite externals)
-- `apps/desktop` has full access to agent-core (runs in Node.js)
-- No circular dependencies between workspaces
-- Path aliases (`@/*`, `@main/*`, `@myboteam/agent-core`) enforce clean import boundaries
+- Structured local state uses sql.js with explicit migrations.
+- Secrets use encrypted file storage and are accessed through daemon services.
+- Decrypted secrets do not enter renderer state.
+- Decrypted secrets do not appear in logs, traces, screenshots, fixtures, or
+  generated support artifacts.
+- Schema changes require a new migration version.
+- Migrations provide executable `up` and `down` paths.
+- Both migration directions are verified with agent-core tests.
+- Backup and restore of encrypted file secrets require an app-managed
+  export/import flow.
+- Cross-boundary payloads are validated before persistence or privileged action.
 
-#### 3.5.3 Build & CI/CD
+#### 3.3.5 Shared Contracts
 
-| Stage           | Tool                    | Description                                                    |
-| --------------- | ----------------------- | -------------------------------------------------------------- |
-| Package Manager | pnpm 9.15               | Workspace management, catalogs for shared deps                 |
-| Web Build       | Vite 8                  | React app -> `dist/client`                                     |
-| Desktop Build   | Vite + electron-builder | Main/preload -> `dist-electron`, packaged app                  |
-| Daemon Build    | tsup                    | Bundled CJS entry for child process                            |
-| Core Build      | tsc                     | ESM output to `dist/` with declarations                        |
-| Unit Tests      | Vitest                  | Per-workspace (jsdom for web, node for desktop/core)           |
-| E2E Tests       | Playwright              | Docker-based, serial execution (Electron requirement)          |
-| CI              | GitHub Actions          | 6 jobs: core-tests, unit, integration, typecheck, e2e, windows |
-| Release         | GitHub Actions          | Multi-platform builds (macOS arm64/x64, Linux arm64/x64)       |
-| Commit Lint     | GitHub Actions          | Conventional commit validation on PR titles                    |
-| Git Hooks       | Husky + lint-staged     | Pre-commit: ESLint + Prettier on staged files                  |
+Agent Core defines the information contracts consumed by Web, Desktop, and
+Daemon. Shared TypeScript types in `@myboteam/agent-core/common` and
+`@myboteam/agent-core/desktop-main` are the authoritative cross-process
+contracts.
 
-#### 3.5.4 Development Standards
+Breaking contract changes require synchronized updates across all affected
+workspace packages and tests in the touched areas.
 
-- **Language**: TypeScript everywhere (Constitution Principle I)
-- **Module System**: ESM in agent-core with `.js` extensions (Constitution Principle II)
-- **Style**: Prettier (100 char width, single quotes, trailing commas) + ESLint (flat config, `curly` rule)
-- **Commits**: Conventional commits (`feat(scope):`, `fix(scope):`, etc.) enforced by CI
-- **Branches**: `feat/ENG-XXX-description` or `fix/ENG-XXX-description`
-- **File Size**: New files must be < 200 lines (Constitution Principle VI)
-- **IPC Changes**: Must implement all 4 steps atomically (Constitution Principle III)
-- **Pre-Push**: `typecheck -> lint -> format -> build -> workspace tests` (mandatory)
+### 3.4 Development View
 
----
+#### 3.4.1 Repository Organization
 
-### 3.6 Deployment View
+```text
+apps/web
+  React renderer package
+apps/desktop
+  Electron shell, preload, packaging, updater, and E2E package
+apps/daemon
+  Long-lived background daemon package
+packages/agent-core
+  Shared contracts, storage, providers, daemon transports, and runtime helpers
+packages/agent-core/mcp-tools
+  First-party MCP tool families
+```
 
-**Purpose**: Runtime environment and packaging
-**Source ADRs**: ADR-001, ADR-002, ADR-003
+#### 3.4.2 Development Ownership
 
-#### 3.6.1 Runtime Environments
+| Package | Owns | Does Not Own |
+|---------|------|--------------|
+| `apps/web` | Routes, pages, renderer stores, components, i18n UI | Node.js, filesystem, daemon sockets, secrets |
+| `apps/desktop` | Electron main, preload, OS bridges, packaging, updater | Connector domain logic, task execution, storage ownership |
+| `apps/daemon` | RPC routes, services, task execution, connector services | Renderer presentation, desktop packaging UI |
+| `packages/agent-core` | Shared contracts, storage, providers, OpenCode config | Shell lifecycle, renderer components |
+| `packages/agent-core/mcp-tools` | Connector-family tool packages | Long-term token lifecycle |
 
-| Environment           | Purpose              | Infrastructure                          | Notes                                                 |
-| --------------------- | -------------------- | --------------------------------------- | ----------------------------------------------------- |
-| Production (packaged) | End-user desktop app | Electron 41 + bundled Node.js 24.15.0   | DMG/ZIP (macOS), NSIS (Windows), AppImage/deb (Linux) |
-| Development           | Local dev            | Vite dev server (:5173) + Electron      | Hot reload on web, manual restart for main process    |
-| CI/Testing            | Automated tests      | GitHub Actions (Ubuntu, macOS, Windows) | Docker for E2E tests                                  |
+> **Subsystem Details**: [System](.specify/architect/views/system/development.md) | [Web](.specify/architect/views/web/development.md) | [Desktop](.specify/architect/views/desktop/development.md) | [Daemon](.specify/architect/views/daemon/development.md) | [Agent Core](.specify/architect/views/agent-core/development.md) | [MCP Tool Families](.specify/architect/views/mcp-tool-families/development.md)
 
-#### 3.6.2 Desktop Deployment Topology
+#### 3.4.3 Development Dependencies
 
 ```mermaid
 graph TB
-    subgraph "User's Machine"
-        subgraph "Electron App (packaged)"
-            MainProcess["Main Process<br/>(Node.js 22)"]
-            PreloadScript["Preload Script<br/>(contextBridge)"]
-            RendererProcess["Renderer Process<br/>(Chromium)"]
-
-            subgraph "Bundled Resources"
-                WebBuild["Web UI Build<br/>(static HTML/JS/CSS)"]
-                OpenCodeBin["OpenCode CLI<br/>(platform binary)"]
-                MCPTools["MCP Tools<br/>(bundled)"]
-                BundledNode["Node.js 24.15.0<br/>(bundled runtime)"]
-            end
-        end
-
-        subgraph "User Data Directory"
-            SQLiteDB["myboteam.db<br/>(SQLite — all persisted state:<br/>tasks, workspaces, workspace_meta,<br/>knowledge_notes, settings, etc.)"]
-            EncryptedKeys["Encrypted API Keys<br/>(AES-256-GCM)"]
-        end
-
-        subgraph "Spawned Processes"
-            PTY["OpenCode CLI<br/>(PTY process)"]
-        end
-    end
-
-    RendererProcess -->|"IPC"| PreloadScript
-    PreloadScript -->|"IPC"| MainProcess
-    MainProcess -->|"spawn PTY"| PTY
-    MainProcess -->|"read/write"| SQLiteDB
-    MainProcess -->|"encrypt/decrypt"| EncryptedKeys
-    RendererProcess -->|"loads"| WebBuild
-    PTY -->|"uses"| OpenCodeBin
-    PTY -->|"uses"| BundledNode
-
-    classDef processNode fill:#4a9eff,stroke:#333,stroke-width:2px,color:#fff
-    classDef resourceNode fill:#66c2a5,stroke:#333,stroke-width:1px,color:#fff
-    classDef dataNode fill:#ffd700,stroke:#333,stroke-width:1px
-    classDef spawnedNode fill:#ff9999,stroke:#333,stroke-width:1px
-
-    class MainProcess,PreloadScript,RendererProcess processNode
-    class WebBuild,OpenCodeBin,MCPTools,BundledNode resourceNode
-    class SQLiteDB,EncryptedKeys dataNode
-    class PTY spawnedNode
+  Web["apps/web"] --> CoreCommon["agent-core common types"]
+  Desktop["apps/desktop"] --> CoreDesktop["agent-core desktop-main"]
+  Desktop --> WebBuild["web build output"]
+  Desktop --> DaemonBuild["daemon build output"]
+  Daemon["apps/daemon"] --> Core["agent-core"]
+  Core --> MCP["mcp-tools metadata and config"]
+  Desktop --> MCPDist["mcp-tools dist resources"]
 ```
 
-#### 3.6.3 Packaging Details
+#### 3.4.4 Development Rules
 
-| Platform      | Format         | Signing                        | Auto-Update     |
-| ------------- | -------------- | ------------------------------ | --------------- |
-| macOS (arm64) | DMG + ZIP      | Hardened runtime, entitlements | GitHub Releases |
-| macOS (x64)   | DMG + ZIP      | Hardened runtime, entitlements | GitHub Releases |
-| Linux (arm64) | AppImage + deb | N/A                            | GitHub Releases |
-| Linux (x64)   | AppImage + deb | N/A                            | GitHub Releases |
-| Windows       | NSIS installer | Per-user, one-click            | GitHub Releases |
+- TypeScript is used for application logic.
+- Agent Core remains ESM and must not use `require()`.
+- Agent Core internal imports include `.js` extensions.
+- Web image assets use ES module imports.
+- UI state uses Zustand store actions.
+- IPC handlers in desktop main match the preload API and web wrapper.
+- Shared types live in agent-core exports.
+- Code changes that cross package boundaries update all affected consumers.
+- Markdown architecture and product documents are exempt from source-file line
+  limits when a cohesive document is clearer.
+- Source files remain small and split by concern.
 
-**Native Module Handling**: `sql.js` uses a WASM-based SQLite build, eliminating the
-need for platform-specific native compilation. Unlike native modules, sql.js does not
-require Electron-rebuild or ASAR unpacking — it ships as a standard JS + WASM bundle
-compatible across all platforms.
+#### 3.4.5 Verification Expectations
 
-**Bundled Node.js**: The packaged app ships Node.js v24.15.0. When spawning OpenCode CLI,
-`bundledPaths.binDir` is prepended to `PATH` (Constitution Principle VII) to ensure the
-bundled runtime is used on machines without system Node.js.
+| Change Area | Verification |
+|-------------|--------------|
+| Any code change | `pnpm check` |
+| Web UI | `pnpm -F @myboteam/web test` |
+| Desktop main or preload | `pnpm -F @myboteam/desktop test` |
+| Agent Core | `pnpm -F @myboteam/agent-core test` |
+| Storage migrations | Agent-core migration tests covering `up` and `down` |
+| Packaging resources | Desktop packaging or smoke checks for daemon, Node.js, OpenCode, and MCP assets |
 
----
+### 3.5 Deployment View
 
-## 4. Architectural Perspectives (Cross-Cutting Concerns)
+#### 3.5.1 Product Deployment
 
-### 4.1 Security Perspective
+MyBoTeam deploys as one desktop application package containing the Electron
+shell, static web UI, daemon distribution, bundled Node.js runtime, OpenCode
+runtime, skills, and MCP tool assets.
 
-**Applies to**: All views
-**Source ADRs**: ADR-004
+```mermaid
+graph TB
+  Package["Desktop App Package"] --> Electron["Electron Shell"]
+  Package --> WebAssets["Web UI Assets"]
+  Package --> DaemonDist["Daemon Dist"]
+  Package --> Node["Bundled Node.js"]
+  Package --> OpenCode["OpenCode CLI"]
+  Package --> MCP["MCP Tool Assets"]
+  Electron --> DaemonProc["Daemon Process"]
+  DaemonProc --> Runtime["Per-Task OpenCode Runtime"]
+  Runtime --> MCP
+```
 
-#### 4.1.1 Authentication & Authorization
+#### 3.5.2 Runtime Environments
 
-- **No User Auth**: MyBoTeam is a local-first desktop app — no user accounts or login. The user who runs the app owns all data.
-- **Provider Auth**: API keys stored encrypted (AES-256-GCM). OAuth flows for GitHub Copilot and OpenAI (device code / browser redirect).
-- **Agent Permissions**: OpenCode CLI requests permission for dangerous operations (file writes, shell commands). User approves/denies via UI.
-- **IPC Security**: Electron `contextBridge` enforces a strict API boundary — renderer cannot access Node.js APIs directly (Constitution Principle III).
+| Runtime | Deployment Form |
+|---------|-----------------|
+| Web UI | Static renderer assets bundled into desktop resources |
+| Desktop Shell | Electron application process |
+| Daemon | Bundled Node.js process launched by desktop |
+| Agent Core | Shared package code bundled into desktop and daemon builds |
+| OpenCode | Bundled platform-specific CLI package |
+| MCP Tool Families | Extra resources invoked by OpenCode runtimes |
+| User Data | Local data directory for database, encrypted secrets, logs, pid/socket files |
 
-#### 4.1.2 Data Protection
+> **Subsystem Details**: [System](.specify/architect/views/system/deployment.md) | [Web](.specify/architect/views/web/deployment.md) | [Desktop](.specify/architect/views/desktop/deployment.md) | [Daemon](.specify/architect/views/daemon/deployment.md) | [Agent Core](.specify/architect/views/agent-core/deployment.md) | [MCP Tool Families](.specify/architect/views/mcp-tool-families/deployment.md)
 
-- **Encryption at Rest**: API keys and OAuth tokens encrypted with AES-256-GCM using machine-derived PBKDF2 key. File permissions 0o600.
-- **No Encryption in Transit to Backend**: No backend exists. LLM API calls use HTTPS (provider-managed TLS).
-- **Secrets Management**: Custom `SecureStorage` class — not OS Keychain (ADR-004). Trade-off: avoids macOS permission prompts but less secure than hardware-backed storage.
-- **Sensitive Data Redaction**: Logging utilities include redaction for API keys and tokens.
+#### 3.5.3 Deployment Rules
 
-#### 4.1.3 Threat Model
+- No hosted MyBoTeam backend is deployed.
+- Desktop packaging is the product distribution boundary.
+- The daemon binds only to local transports.
+- HTTP helper endpoints are localhost-only, authenticated, and validated.
+- Required first-party MCP dist entrypoints are fail-fast invariants.
+- Required bundled Node.js paths are fail-fast invariants.
+- Missing daemon dist, OpenCode, or MCP resources must fail packaging or task
+  startup rather than silently disabling required capability.
+- Packaged web assets avoid absolute image paths.
+- Daemon crash recovery is best-effort.
+- Active task recovery after daemon crash is not guaranteed.
 
-| Threat                                    | View Affected | Likelihood | Impact | Mitigation                                                  |
-| ----------------------------------------- | ------------- | ---------- | ------ | ----------------------------------------------------------- |
-| Local malware reads API keys              | Information   | Medium     | High   | AES-256-GCM encryption, 0o600 file perms                    |
-| Malicious MCP tool server                 | Functional    | Low        | High   | Permission system, user approval required                   |
-| OpenCode CLI version drift breaks parsing | Functional    | Medium     | High   | **Unmitigated** — semver range, no contract tests (ADR-002) |
-| Native module version mismatch            | Deployment    | Medium     | Medium | electron-rebuild, `pnpm install --force`                    |
-| Stale socket file from daemon crash       | Deployment    | Low        | Low    | PID lock mechanism                                          |
+## 4. Architectural Perspectives
 
----
+### 4.1 Security and Privacy
 
-### 4.2 Performance & Scalability Perspective
+- Local-first privacy is a product constraint.
+- Credentials and sensitive task data stay on the user's machine by default.
+- All process-boundary payloads are treated as untrusted.
+- Renderer code has no direct privileged access.
+- Secrets are encrypted at rest.
+- Decrypted values stay out of renderer state, logs, traces, screenshots, and
+  fixtures.
+- Local HTTP endpoints require authentication and validation.
+- MCP tools receive connector tokens only through approved daemon paths.
 
-**Applies to**: Functional, Deployment views
+### 4.2 Performance and Scalability
 
-#### 4.2.1 Performance Characteristics
+- Per-task OpenCode runtimes favor isolation and cleanup over lowest startup
+  latency.
+- sql.js favors packaging portability over native SQLite performance.
+- UI state is transient and derived from daemon events to avoid duplicating
+  durable state in the renderer.
+- Long-running work is moved out of the renderer and desktop shell.
 
-| Metric            | Characteristic                                 | Notes                                         |
-| ----------------- | ---------------------------------------------- | --------------------------------------------- |
-| Task concurrency  | Max 10 concurrent tasks                        | Configurable in TaskManager                   |
-| UI responsiveness | Vite HMR in dev, optimized React build in prod | Hash-based routing for Electron compatibility |
-| Database access   | Synchronous (sql.js)                   | WAL mode; no async overhead                   |
-| Task startup      | OpenCode CLI spawn via PTY                     | ~1-2s cold start per task                     |
-| Memory footprint  | Electron + Chromium + Node.js                  | Typical ~200-400MB per window                 |
+### 4.3 Availability and Recovery
 
-#### 4.2.2 Scalability Model
+- The daemon may remain alive after windows close when configured.
+- Desktop reconnects to a live daemon on a best-effort basis.
+- Stale sockets and pid locks are operational concerns for daemon startup.
+- Daemon crash recovery does not guarantee active task resume.
+- Packaging validation reduces missing-runtime failures in packaged builds.
 
-MyBoTeam is a **single-user desktop application** — traditional horizontal/vertical
-scaling does not apply. Scaling concerns are:
+### 4.4 Evolution
 
-- **Task Concurrency**: Queue overflow when >10 tasks running (managed by TaskManager queue)
-- **Database Growth**: SQLite file grows with task history; no automatic pruning
-- **Provider Count**: Each new provider adds ~1 module + migration; linear growth manageable
-- **Multi-Workspace**: Each workspace maintains separate task history; no cross-workspace contention
+- OpenCode is pinned by default.
+- OpenCode upgrades require explicit compatibility review.
+- Shared type changes must be synchronized across web, desktop, and daemon.
+- MCP tool families are split by connector family to preserve ownership.
+- Migration history is immutable after release.
+- New migrations are additive versioned files with tested forward and rollback
+  paths.
 
----
+### 4.5 Usability and Internationalization
 
-## 5. Global Constraints & Principles
+- Web owns user-facing routes, task status, settings, history, permission
+  prompts, and localized presentation.
+- Locale resources are packaged with web assets.
+- Renderer state should present daemon events as clear user-visible status.
+- Runtime diagnostics should be understandable without exposing secrets.
 
-### 5.1 Technical Constraints
+### 4.6 Development Resource
 
-- **Desktop-only**: Must run as packaged Electron app on macOS, Windows, Linux
-- **Local-first**: No cloud backend; all data stored on user's machine
-- **Bundled Node.js**: Packaged app ships Node.js 24.15.0; cannot rely on system Node.js
-- **Native modules**: `sql.js` uses WASM SQLite, no platform-specific compilation needed
-- **ESM in agent-core**: `"type": "module"` — all imports require `.js` extensions
-- **Browser bundle safety**: `apps/web` must not import Node.js-only modules from agent-core
+- The monorepo coordinates builds and tests through pnpm workspaces.
+- Biome enforces source-file style and line limits.
+- Markdown architecture documents may exceed source-file line limits when
+  preserving the document as one cohesive artifact is clearer.
+- Workspace-specific tests are required for touched runtime areas.
+- Architecture changes should update ADRs, view artifacts, and this AD together.
 
-### 5.2 Architectural Principles
+## 5. Architecture Decision Records Summary
 
-See [Constitution](.specify/memory/constitution.md) (v1.1.0) for the full governance
-framework. Key principles affecting architecture:
+The canonical ADR set is stored in `.specify/memory/adr.md`. It contains six
+accepted ADRs and no unaccepted draft decisions.
 
-| #   | Principle                | Architectural Impact                                             |
-| --- | ------------------------ | ---------------------------------------------------------------- |
-| I   | TypeScript-First         | Single type system across all processes                          |
-| II  | ESM Integrity            | agent-core is pure ESM; `.js` extensions mandatory               |
-| III | Complete IPC Chain       | Every IPC capability requires 4-file atomic change               |
-| V   | Immutable Migrations     | Released SQLite migrations never modified                        |
-| VI  | Simplicity & Anti-Bloat  | 200-line file limit; YAGNI                                       |
-| VII | Observability & Security | AES-256-GCM encryption; bundled Node.js PATH; structured logging |
-| X   | Surgical Changes         | Minimize blast radius of code changes                            |
+| ADR | Summary |
+|-----|---------|
+| ADR-001 | Local-first modular desktop architecture |
+| ADR-002 | Typed renderer-to-daemon boundary |
+| ADR-003 | Detached daemon with local socket JSON-RPC |
+| ADR-004 | Per-task OpenCode server runtimes |
+| ADR-005 | sql.js data plus encrypted file secrets |
+| ADR-006 | Bundled first-party MCP tool families |
 
----
+### 5.1 Traceability Matrix
 
-## 6. Constitution Alignment
+| Decision | Context | Functional | Information | Development | Deployment |
+|----------|---------|------------|-------------|-------------|------------|
+| ADR-001 | System local-first boundary | Five-part product decomposition | Daemon owns durable local data | Monorepo package boundaries | Single desktop package |
+| ADR-002 | Web and desktop boundary | Typed preload and daemon RPC flow | Shared TypeScript contracts | Synchronized API wrappers | Renderer loaded by Electron |
+| ADR-003 | Daemon local background service | Long-lived task and storage owner | Local task events and data | Daemon routes and services | Local socket/pipe daemon process |
+| ADR-004 | OpenCode task runtime boundary | One runtime per active task | Runtime messages persisted by daemon | Runtime manager code | OpenCode child processes |
+| ADR-005 | Local persistence and secrets | Daemon services own secure access | sql.js plus encrypted files | Migration files and tests | User data directory |
+| ADR-006 | Bundled tool families | MCP tools injected into runtime | Tool config and connector tokens | Nested MCP packages | Extra packaged resources |
 
-**Constitution Reference**: [.specify/memory/constitution.md](.specify/memory/constitution.md) (v1.1.0)
+## 6. Tech Stack Summary
 
-### Alignment Status
+| Area | Technology |
+|------|------------|
+| Monorepo | pnpm workspaces |
+| Web UI | React, Vite, React Router, Zustand, Tailwind CSS, shadcn/ui |
+| Desktop Shell | Electron main and preload |
+| Background Runtime | Local daemon package |
+| Shared Core | TypeScript ESM package |
+| Structured Storage | sql.js |
+| Secret Storage | Encrypted local files through daemon services |
+| Agent Runtime | OpenCode server runtime per active task |
+| MCP Tools | First-party nested packages under agent-core |
+| Testing | Vitest, Testing Library, Playwright |
+| Formatting and Linting | Biome |
 
-| Principle                      | AD Section | Alignment | Notes                                                              |
-| ------------------------------ | ---------- | --------- | ------------------------------------------------------------------ |
-| I. TypeScript-First            | 3.5.4      | Compliant | All workspaces use TypeScript; shared types in agent-core          |
-| II. ESM Integrity              | 3.5.2      | Compliant | agent-core built with tsc to ESM; `.js` extensions enforced        |
-| III. Complete IPC Chain        | 3.2.2      | Compliant | 4-step chain documented: handler -> preload -> wrapper -> consumer |
-| IV. Test Discipline            | 3.5.3      | Compliant | Workspace-scoped Vitest + Playwright E2E in Docker                 |
-| V. Immutable Migrations        | 3.3.3      | Compliant | Migration safety documented in Information View                    |
-| VI. Simplicity & Anti-Bloat    | 3.5.4      | Compliant | 200-line limit, YAGNI principle documented                         |
-| VII. Observability & Security  | 4.1.2      | Compliant | AES-256-GCM encryption; bundledPaths; structured logging           |
-| VIII. Documentation as Context | 3.5.1      | Compliant | CLAUDE.md, AGENTS.md, AD.md maintained                             |
-| IX. Think Before Coding        | N/A        | Process   | Agent/developer behavior principle — not architectural             |
-| X. Surgical Changes            | N/A        | Process   | Code review principle — not architectural                          |
+## 7. Lifecycle Notes
 
-### Overrides
+This AD was generated after the accepted ADR set was clarified and approved. The
+core view artifacts were written before this aggregation step and remain the
+source artifacts for view-level detail.
 
-None — all architectural decisions comply with constitutional principles.
+Future architecture updates should follow the same lifecycle:
 
----
-
-## 7. ADR Summary
-
-Detailed Architecture Decision Records are maintained in
-[.specify/drafts/adr.md](.specify/drafts/adr.md).
-
-**Key Decisions:**
-
-| ID      | Decision                                                     | Status     | Impact   | Confidence |
-| ------- | ------------------------------------------------------------ | ---------- | -------- | ---------- |
-| ADR-001 | Electron split architecture (thin shell + standalone web UI) | Discovered | High     | HIGH       |
-| ADR-002 | OpenCode CLI as agent engine via PTY                         | Discovered | Critical | HIGH       |
-| ADR-003 | SQLite with direct SQL, no ORM                               | Discovered | High     | HIGH       |
-| ADR-004 | Machine-derived AES-256-GCM encryption (no OS Keychain)      | Discovered | High     | HIGH       |
-| ADR-005 | Daemon process extraction (in-process -> Unix socket RPC)    | Discovered | Medium   | LOW        |
-| ADR-006 | Subtree split for agent-core publishing (possibly legacy)    | Discovered | Low      | HIGH       |
-| ADR-007 | Multi-provider LLM architecture (12+ providers)              | Discovered | High     | HIGH       |
-| ADR-008 | Native SQLite → sql.js (WASM SQLite)                 | June 2026  | Medium   | HIGH       |
-
----
-
-## Appendix
-
-### A. Glossary
-
-| Term          | Definition                                                                            |
-| ------------- | ------------------------------------------------------------------------------------- |
-| agent-core    | Shared ESM package containing core business logic, storage, and provider integrations |
-| contextBridge | Electron API that securely exposes IPC methods from preload to renderer process       |
-| daemon        | Background process being extracted from the main process (in development)             |
-| OpenCode      | External CLI tool used as the agent execution engine                                  |
-| PTY           | Pseudo-terminal used to spawn OpenCode CLI with interactive I/O                       |
-| Skills        | Reusable YAML-based task templates with frontmatter metadata                          |
-| Workspace     | Isolated environment with its own task history and configuration                      |
-
-### B. References
-
-- [CLAUDE.md](CLAUDE.md) — Agent development guidance and monorepo conventions
-- [AGENTS.md](AGENTS.md) — Agent architecture reference and common commands
-- [docs/architecture.md](docs/architecture.md) — Architecture stub (defers to CLAUDE.md)
-- [.specify/memory/constitution.md](.specify/memory/constitution.md) — Project governance (v1.1.0)
-- [.specify/drafts/adr.md](.specify/drafts/adr.md) — Architecture Decision Records
-
-### C. Tech Stack Summary
-
-**Language**: TypeScript 5.7 (strict mode)
-**Runtime**: Node.js 24+ (bundled 24.15.0)
-**Desktop**: Electron 41 + electron-builder 25
-**Frontend**: React 19, React Router 7, Zustand 5
-**UI**: Radix UI + shadcn/ui, Tailwind CSS, Framer Motion, DM Sans
-**Database**: SQLite via sql.js (synchronous, no ORM)
-**Agent Engine**: `opencode serve` subprocess driven via `@opencode-ai/sdk` (daemon-owned)
-**Encryption**: AES-256-GCM with PBKDF2 machine-derived key
-**Build**: Vite 8 (web/desktop), tsup (daemon), tsc (agent-core)
-**Package Manager**: pnpm 9.15 with workspace catalogs
-**Testing**: Vitest (unit/integration), Playwright (E2E in Docker)
-**CI/CD**: GitHub Actions (5 workflows: ci, release, commitlint, stale, subtree-split)
-**i18n**: i18next
-**Git Hooks**: Husky + lint-staged
+1. Update or add ADRs.
+2. Clarify and accept the ADR set.
+3. Generate or update per-sub-system view artifacts.
+4. Regenerate this Architecture Description from the view files.
+5. Promote accepted ADRs into `.specify/memory/adr.md`.
+6. Remove consumed draft ADR files when no draft decisions remain.
+7. Run verification for state, traceability, and formatting constraints.

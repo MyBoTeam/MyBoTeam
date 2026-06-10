@@ -1,0 +1,45 @@
+# System-specific configuration for promptfoo
+system: "promptfoo"
+binary_pass_fail: true
+
+# EDD Principle IV: Evaluation Pyramid
+tiers:
+  tier1:
+    fast_checks: true
+    security_baseline: true
+    deterministic: true
+  tier2:
+    goldset_judges: true
+    semantic_checks: true
+
+# EDD Principle IX: Test Data is Code
+test_data:
+  version_control: true
+  adversarial_required: true
+  holdout_ratio: 0.2
+
+security_baseline:
+  graders:
+    - check_pii_leakage
+    - check_prompt_injection
+    - check_hallucination
+    - check_misinformation
+    - check_conversation_leakage
+
+goldset_criteria:
+  - id: eval-001
+    grader: check_local_privacy_boundary
+    tier: 2
+    failure_type: specification_failure
+  - id: eval-002
+    grader: check_renderer_privilege_boundary
+    tier: 1
+    failure_type: specification_failure
+  - id: eval-003
+    grader: check_per_task_runtime_isolation
+    tier: 1
+    failure_type: specification_failure
+  - id: eval-004
+    grader: check_sensitive_operation_approval
+    tier: 2
+    failure_type: generalization_failure
