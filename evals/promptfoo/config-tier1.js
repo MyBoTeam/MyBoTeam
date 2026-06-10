@@ -2,6 +2,8 @@ const { securityBaseline, tier1Criteria, failureRouting } = require('./config.js
 
 module.exports = {
   description: 'EDD Tier 1 - Fast Deterministic Checks',
+  prompts: ['Test input for security evaluation'],
+  providers: ['echo'],
   tests: [...securityBaseline, ...tier1Criteria],
   outputPath: '../results/tier1_results.json',
   postprocess: failureRouting,

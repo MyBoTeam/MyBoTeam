@@ -2,6 +2,8 @@ const { tier2Criteria, failureRouting } = require('./config.js');
 
 module.exports = {
   description: 'EDD Tier 2 - Goldset Semantic Evaluation',
+  prompts: ['Test input for semantic evaluation'],
+  providers: ['echo'],
   tests: tier2Criteria,
   outputPath: '../results/tier2_results.json',
   postprocess: failureRouting,
