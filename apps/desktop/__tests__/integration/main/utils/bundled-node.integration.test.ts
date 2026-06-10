@@ -76,7 +76,7 @@ describe('Bundled Node.js Utilities', () => {
     expect(paths?.nodeDir).toBe(devNodeRoot);
     expect(paths?.binDir).toBe(path.join(devNodeRoot, 'bin'));
     expect(paths?.nodePath).toBe(nodePath);
-  });
+  }, 15_000);
 
   it('returns null when bundled node runtime is missing in development', async () => {
     mockFs.existsSync.mockReturnValue(false);

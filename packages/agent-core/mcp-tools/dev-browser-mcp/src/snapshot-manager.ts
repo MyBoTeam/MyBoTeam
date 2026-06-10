@@ -10,7 +10,7 @@ export async function getAISnapshot(page: Page, options: SnapshotOptions = {}): 
 
   if (!isInjected) {
     await page.evaluate((script: string) => {
-      eval(script);
+      globalThis.eval(script);
     }, SNAPSHOT_SCRIPT);
   }
 

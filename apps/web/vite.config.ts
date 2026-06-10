@@ -67,6 +67,19 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       external: [/^@aws-sdk\//],
+      output: {
+        manualChunks(id) {
+          if (/[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/.test(id)) {
+            return 'react-vendor';
+          }
+          if (/[\\/]node_modules[\\/](framer-motion|motion-dom|motion-utils)[\\/]/.test(id)) {
+            return 'motion-vendor';
+          }
+          if (/[\\/]node_modules[\\/](@phosphor-icons|@radix-ui|lucide-react)[\\/]/.test(id)) {
+            return 'ui-vendor';
+          }
+        },
+      },
     },
   },
 });

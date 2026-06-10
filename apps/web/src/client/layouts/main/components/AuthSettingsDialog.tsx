@@ -1,7 +1,13 @@
 import type { ProviderId } from '@myboteam/agent-core/common';
+import { lazy, Suspense } from 'react';
 import { MemoryRouter } from 'react-router';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { ProvidersPage } from '@/pages/settings/providers/ProvidersPage';
+
+const ProvidersPage = lazy(() =>
+  import('@/pages/settings/providers/ProvidersPage').then((module) => ({
+    default: module.ProvidersPage,
+  })),
+);
 
 interface AuthSettingsDialogProps {
   open: boolean;
@@ -22,7 +28,9 @@ export default function AuthSettingsDialog({
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogTitle className="sr-only">Authentication Settings</DialogTitle>
         <MemoryRouter initialEntries={[initialProvider ? `/?select=${initialProvider}` : '/']}>
-          <ProvidersPage onApiKeySaved={onApiKeySaved} />
+          <Suspense fallback={null}>
+            <ProvidersPage onApiKeySaved={onApiKeySaved} />
+          </Suspense>
         </MemoryRouter>
       </DialogContent>
     </Dialog>
