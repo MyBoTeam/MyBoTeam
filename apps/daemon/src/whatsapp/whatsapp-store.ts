@@ -1,26 +1,15 @@
 import fs from 'fs';
 import type { BaileysChat, BaileysEventEmitter, BaileysMessage } from './baileys-types.js';
-import { normalizeMessage } from './whatsapp-store-helpers.js';
+import {
+  normalizeMessage,
+  type RawStoreData,
+  type WhatsAppStore,
+} from './whatsapp-store-helpers.js';
 import type { ChatSummary, MessageSummary } from './whatsapp-types.js';
 
 const SAVE_DEBOUNCE_MS = 2000;
 
-export interface WhatsAppStore {
-  bind(ev: BaileysEventEmitter): void;
-  getChats(): ChatSummary[];
-  getChat(jid: string): ChatSummary | undefined;
-  getMessages(jid: string, limit: number): MessageSummary[];
-  getRawMessages(jid: string, limit: number): BaileysMessage[];
-  clearMessages(): void;
-  clearChats(): void;
-  save(): void;
-  load(): void;
-}
-
-interface RawStoreData {
-  chats: [string, BaileysChat][];
-  messages: [string, [string, BaileysMessage][]][];
-}
+export type { WhatsAppStore };
 
 export function createStore(storePath?: string): WhatsAppStore {
   const chatsMap = new Map<string, BaileysChat>();
@@ -68,22 +57,16 @@ export function createStore(storePath?: string): WhatsAppStore {
         const { chats, messages } = d as { chats?: BaileysChat[]; messages?: BaileysMessage[] };
         chatsMap.clear();
         messagesMap.clear();
-        chats?.forEach((c) => {
-          if (c.id) chatsMap.set(c.id, c);
-        });
+        chats?.forEach((c) => c.id && chatsMap.set(c.id, c));
         messages?.forEach((m) => {
           const jid = m.key?.remoteJid;
-          if (jid) {
-            const id = m.key?.id;
-            if (id) ensureMessageMap(jid).set(id, m);
-          }
+          const id = m.key?.id;
+          if (jid && id) ensureMessageMap(jid).set(id, m);
         });
         doSave();
       });
       ev.on('chats.upsert', (d: unknown) => {
-        (d as BaileysChat[]).forEach((c) => {
-          if (c.id) chatsMap.set(c.id, c);
-        });
+        (d as BaileysChat[]).forEach((c) => c.id && chatsMap.set(c.id, c));
         debouncedSave();
       });
       ev.on('chats.update', (d: unknown) => {
@@ -108,12 +91,8 @@ export function createStore(storePath?: string): WhatsAppStore {
         const { messages } = d as { messages: BaileysMessage[] };
         messages.forEach((m) => {
           const jid = m.key?.remoteJid;
-          if (!jid) return;
           const id = m.key?.id;
-          if (!id) return;
-          const map = ensureMessageMap(jid);
-          if (map.has(id)) return;
-          map.set(id, m);
+          if (jid && id && !ensureMessageMap(jid).has(id)) ensureMessageMap(jid).set(id, m);
         });
         debouncedSave();
       });
@@ -125,13 +104,13 @@ export function createStore(storePath?: string): WhatsAppStore {
           }[]
         ).forEach(({ key, update }) => {
           const jid = key.remoteJid;
-          if (!jid) return;
           const id = key.id;
-          if (!id) return;
-          const map = messagesMap.get(jid);
-          if (map) {
-            const e = map.get(id);
-            if (e && update) Object.assign(e, update);
+          if (jid && id) {
+            const map = messagesMap.get(jid);
+            if (map) {
+              const e = map.get(id);
+              if (e && update) Object.assign(e, update);
+            }
           }
         });
       });
@@ -140,13 +119,9 @@ export function createStore(storePath?: string): WhatsAppStore {
           | { keys?: Array<{ remoteJid?: string | null; id?: string | null }> }
           | { jid?: string | null; all?: boolean };
         if ('keys' in del)
-          del.keys?.forEach((k) => {
-            const jid = k?.remoteJid;
-            if (jid) {
-              const id = k?.id;
-              if (id) messagesMap.get(jid)?.delete(id);
-            }
-          });
+          del.keys?.forEach(
+            (k) => k?.remoteJid && k?.id && messagesMap.get(k.remoteJid)?.delete(k.id),
+          );
         else if ('jid' in del && del.all && del.jid) messagesMap.delete(del.jid);
         debouncedSave();
       });

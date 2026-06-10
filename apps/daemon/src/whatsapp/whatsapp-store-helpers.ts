@@ -1,5 +1,5 @@
-import type { BaileysMessage } from './baileys-types.js';
-import type { MessageType } from './whatsapp-types.js';
+import type { BaileysChat, BaileysEventEmitter, BaileysMessage } from './baileys-types.js';
+import type { ChatSummary, MessageSummary, MessageType } from './whatsapp-types.js';
 import { toTimestamp } from './whatsapp-types.js';
 
 export function getMessageType(msg: BaileysMessage): MessageType {
@@ -60,4 +60,21 @@ export function normalizeMessage(jid: string, msg: BaileysMessage) {
     timestamp: toTimestamp(msg.messageTimestamp) ?? 0,
     messageType: getMessageType(msg),
   };
+}
+
+export interface WhatsAppStore {
+  bind(ev: BaileysEventEmitter): void;
+  getChats(): ChatSummary[];
+  getChat(jid: string): ChatSummary | undefined;
+  getMessages(jid: string, limit: number): MessageSummary[];
+  getRawMessages(jid: string, limit: number): BaileysMessage[];
+  clearMessages(): void;
+  clearChats(): void;
+  save(): void;
+  load(): void;
+}
+
+export interface RawStoreData {
+  chats: [string, BaileysChat][];
+  messages: [string, [string, BaileysMessage][]][];
 }
