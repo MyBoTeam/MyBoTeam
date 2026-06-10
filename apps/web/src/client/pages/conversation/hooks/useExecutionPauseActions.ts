@@ -5,7 +5,7 @@ import type { useExecutionCore } from './useExecutionCore';
 type CoreState = ReturnType<typeof useExecutionCore>;
 
 export function useExecutionPauseActions(s: CoreState) {
-  const { myboteam, t } = s;
+  const { myboteam, navigate, t } = s;
 
   const resumePausedTask = useCallback(
     async (message: string): Promise<boolean> => {
@@ -14,21 +14,14 @@ export function useExecutionPauseActions(s: CoreState) {
         const settings = await myboteam.getProviderSettings();
         if (!hasAnyReadyProvider(settings)) {
           s.setPendingFollowUp(message);
-          s.setSettingsInitialTab('providers');
-          s.setShowSettingsDialog(true);
+          navigate('/settings/providers');
           return false;
         }
       }
       return await s.sendFollowUp(message, []);
     },
 
-    [
-      myboteam,
-      s.setPendingFollowUp,
-      s.setSettingsInitialTab,
-      s.setShowSettingsDialog,
-      s.sendFollowUp,
-    ],
+    [myboteam, navigate, s.setPendingFollowUp, s.sendFollowUp],
   );
 
   const handleContinue = useCallback(async () => {

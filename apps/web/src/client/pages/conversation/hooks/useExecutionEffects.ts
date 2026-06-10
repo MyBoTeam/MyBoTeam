@@ -52,8 +52,7 @@ export function useExecutionEffects(s: CoreState, myboteam: CoreState['myboteam'
         e.key === 'Escape' &&
         s.currentTask?.status === 'running' &&
         !s.isComplete &&
-        !s.permissionRequest &&
-        !s.showSettingsDialog
+        !s.permissionRequest
       ) {
         e.preventDefault();
         s.interruptTask();
@@ -61,5 +60,5 @@ export function useExecutionEffects(s: CoreState, myboteam: CoreState['myboteam'
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [s.currentTask, s.isComplete, s.permissionRequest, s.showSettingsDialog, s.interruptTask]);
+  }, [s.currentTask, s.isComplete, s.permissionRequest, s.interruptTask]);
 }

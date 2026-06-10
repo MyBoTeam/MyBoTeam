@@ -28,8 +28,7 @@ export function useExecutionActions(s: CoreState) {
       const settings = await myboteam.getProviderSettings();
       if (!hasAnyReadyProvider(settings)) {
         s.setPendingFollowUp(s.followUp);
-        s.setSettingsInitialTab('providers');
-        s.setShowSettingsDialog(true);
+        navigate('/settings/providers');
         return;
       }
     }
@@ -38,7 +37,7 @@ export function useExecutionActions(s: CoreState) {
       s.setFollowUp('');
       s.setAttachments([]);
     }
-  }, [myboteam, s]);
+  }, [myboteam, s, navigate]);
 
   useEffect(() => {
     if (!s.pendingSpeechFollowUpRef.current) {
@@ -60,26 +59,6 @@ export function useExecutionActions(s: CoreState) {
     s.pendingSpeechFollowUpRef.current,
     s.pendingSpeechFollowUpRef,
   ]);
-
-  const handleSettingsDialogClose = (open: boolean) => {
-    s.setShowSettingsDialog(open);
-    if (!open) {
-      s.setPendingFollowUp(null);
-      s.setSettingsInitialTab('providers');
-    }
-  };
-
-  const handleApiKeySaved = async () => {
-    s.setShowSettingsDialog(false);
-    if (s.pendingFollowUp) {
-      const ok = await s.sendFollowUp(s.pendingFollowUp, s.attachments);
-      if (ok) {
-        s.setFollowUp('');
-        s.setPendingFollowUp(null);
-        s.setAttachments([]);
-      }
-    }
-  };
 
   const handlePermissionResponse = async (
     allowed: boolean,
@@ -164,18 +143,14 @@ export function useExecutionActions(s: CoreState) {
   }, [myboteam, s, navigate]);
 
   const handleOpenSpeechSettings = useCallback(() => {
-    s.setSettingsInitialTab('voice');
-    s.setShowSettingsDialog(true);
-  }, [s]);
+    navigate('/settings/voice');
+  }, [navigate]);
   const handleOpenModelSettings = useCallback(() => {
-    s.setSettingsInitialTab('providers');
-    s.setShowSettingsDialog(true);
-  }, [s]);
+    navigate('/settings/providers');
+  }, [navigate]);
 
   return {
     handleFollowUp,
-    handleSettingsDialogClose,
-    handleApiKeySaved,
     handleContinue,
     handlePauseAction,
     handleTaskAction,

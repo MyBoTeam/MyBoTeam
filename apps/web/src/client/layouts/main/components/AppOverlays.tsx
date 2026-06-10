@@ -1,5 +1,6 @@
-import type { ProviderId } from '@myboteam/agent-core/common';
+import { OAuthProviderId } from '@myboteam/agent-core/common';
 import { lazy, Suspense } from 'react';
+import { useNavigate } from 'react-router';
 import { CloseConfirmDialog } from '../../../components/common/CloseConfirmDialog';
 import { DaemonConnectionToast } from '../../../components/common/DaemonConnectionToast';
 
@@ -13,40 +14,27 @@ const TaskLauncher = lazy(() =>
     default: module.TaskLauncher,
   })),
 );
-const AuthSettingsDialog = lazy(() => import('./AuthSettingsDialog'));
-
-type SettingsTab =
-  | 'providers'
-  | 'voice'
-  | 'skills'
-  | 'integrations'
-  | 'scheduler'
-  | 'general'
-  | 'about';
 
 interface AppOverlaysProps {
   authError: { providerId: string; message: string } | null;
-  authSettingsOpen: boolean;
-  authSettingsProvider: ProviderId | undefined;
   clearAuthError: () => void;
-  handleAuthReLogin: () => void;
-  handleAuthSettingsClose: (open: boolean) => void;
   isLauncherOpen: boolean;
-  setAuthSettingsOpen: (open: boolean) => void;
-  setAuthSettingsTab: (tab: SettingsTab) => void;
 }
 
-export function AppOverlays({
-  authError,
-  authSettingsOpen,
-  authSettingsProvider,
-  clearAuthError,
-  handleAuthReLogin,
-  handleAuthSettingsClose,
-  isLauncherOpen,
-  setAuthSettingsOpen,
-  setAuthSettingsTab,
-}: AppOverlaysProps) {
+export function AppOverlays({ authError, clearAuthError, isLauncherOpen }: AppOverlaysProps) {
+  const navigate = useNavigate();
+
+  const handleAuthReLogin = () => {
+    if (authError) {
+      if (authError.providerId === OAuthProviderId.Slack) {
+        navigate('/settings/integrations');
+      } else {
+        navigate('/settings/providers');
+      }
+      clearAuthError();
+    }
+  };
+
   return (
     <>
       {isLauncherOpen && (
@@ -65,28 +53,9 @@ export function AppOverlays({
         </Suspense>
       )}
 
-      <DaemonConnectionToast
-        onOpenSettings={() => {
-          setAuthSettingsTab('general');
-          setAuthSettingsOpen(true);
-        }}
-      />
+      <DaemonConnectionToast onNavigateToSettings={() => navigate('/settings/general')} />
 
       <CloseConfirmDialog />
-
-      {authSettingsOpen && (
-        <Suspense fallback={null}>
-          <AuthSettingsDialog
-            open={authSettingsOpen}
-            onOpenChange={handleAuthSettingsClose}
-            initialProvider={authSettingsProvider}
-            onApiKeySaved={() => {
-              clearAuthError();
-              setAuthSettingsOpen(false);
-            }}
-          />
-        </Suspense>
-      )}
     </>
   );
 }

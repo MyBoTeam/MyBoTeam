@@ -5,10 +5,10 @@ import { useDaemonStore } from '@/stores/daemonStore';
 import { Button } from '../ui/button';
 
 interface DaemonConnectionToastProps {
-  onOpenSettings?: () => void;
+  onNavigateToSettings?: () => void;
 }
 
-export function DaemonConnectionToast({ onOpenSettings }: DaemonConnectionToastProps) {
+export function DaemonConnectionToast({ onNavigateToSettings }: DaemonConnectionToastProps) {
   const { t } = useTranslation('errors');
   const { status, toastDismissed, dismissToast } = useDaemonStore();
 
@@ -28,7 +28,7 @@ export function DaemonConnectionToast({ onOpenSettings }: DaemonConnectionToastP
   const iconColorClass = isFailed ? 'text-destructive' : 'text-yellow-600 dark:text-yellow-400';
 
   const handleOpenSettings = () => {
-    onOpenSettings?.();
+    onNavigateToSettings?.();
     dismissToast();
   };
 
@@ -62,7 +62,7 @@ export function DaemonConnectionToast({ onOpenSettings }: DaemonConnectionToastP
                   </button>
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground">{message}</p>
-                {isFailed && onOpenSettings && (
+                {isFailed && onNavigateToSettings && (
                   <div className="mt-3">
                     <Button size="sm" onClick={handleOpenSettings}>
                       {t('daemon.openSettings')}
