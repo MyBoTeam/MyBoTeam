@@ -4,8 +4,6 @@ Shared EDD grader helpers.
 EDD Principle II: every result is strict binary pass/fail.
 """
 
-from __future__ import annotations
-
 import json
 import re
 from typing import Any
