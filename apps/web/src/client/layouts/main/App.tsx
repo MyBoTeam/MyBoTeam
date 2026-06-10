@@ -1,21 +1,30 @@
 import type { ProviderId } from '@myboteam/agent-core/common';
 import { OAuthProviderId } from '@myboteam/agent-core/common';
 import { SpinnerGapIcon, WarningIcon } from '@phosphor-icons/react';
-import { useCallback, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AuthErrorToast } from '../../components/common/AuthErrorToast';
 import { CloseConfirmDialog } from '../../components/common/CloseConfirmDialog';
 import { DaemonConnectionToast } from '../../components/common/DaemonConnectionToast';
-import { TaskLauncher } from '../../components/common/TaskLauncher';
 import { ErrorBoundary } from '../../components/ui/ErrorBoundary';
 import { getMyBoTeam, isRunningInElectron } from '../../config/myboteam';
 import { useTaskStore } from '../../stores/taskStore';
 import { logger } from '../../utils/logger';
 import { AnimatedOutletWrapper } from './App.components';
 import type { AppStatus } from './App.types';
-import AuthSettingsDialog from './components/AuthSettingsDialog';
 import Sidebar from './components/Sidebar';
 import { SidebarFallback } from './components/SidebarFallback';
+
+const AuthErrorToast = lazy(() =>
+  import('../../components/common/AuthErrorToast').then((module) => ({
+    default: module.AuthErrorToast,
+  })),
+);
+const TaskLauncher = lazy(() =>
+  import('../../components/common/TaskLauncher').then((module) => ({
+    default: module.TaskLauncher,
+  })),
+);
+const AuthSettingsDialog = lazy(() => import('./components/AuthSettingsDialog'));
 
 export function App() {
   const { t } = useTranslation('errors');
@@ -31,7 +40,7 @@ export function App() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const isTitleBarHidden = isFullScreen;
 
-  const { openLauncher, authError, clearAuthError } = useTaskStore();
+  const { openLauncher, isLauncherOpen, authError, clearAuthError } = useTaskStore();
 
   const handleAuthReLogin = useCallback(() => {
     if (authError) {
@@ -150,10 +159,22 @@ export function App() {
       <main className="flex-1 overflow-hidden">
         <AnimatedOutletWrapper />
       </main>
-      <TaskLauncher />
+      {isLauncherOpen && (
+        <Suspense fallback={null}>
+          <TaskLauncher />
+        </Suspense>
+      )}
 
       {}
-      <AuthErrorToast error={authError} onReLogin={handleAuthReLogin} onDismiss={clearAuthError} />
+      {authError && (
+        <Suspense fallback={null}>
+          <AuthErrorToast
+            error={authError}
+            onReLogin={handleAuthReLogin}
+            onDismiss={clearAuthError}
+          />
+        </Suspense>
+      )}
 
       {}
       <DaemonConnectionToast
@@ -167,15 +188,19 @@ export function App() {
       <CloseConfirmDialog />
 
       {}
-      <AuthSettingsDialog
-        open={authSettingsOpen}
-        onOpenChange={handleAuthSettingsClose}
-        initialProvider={authSettingsProvider}
-        onApiKeySaved={() => {
-          clearAuthError();
-          setAuthSettingsOpen(false);
-        }}
-      />
+      {authSettingsOpen && (
+        <Suspense fallback={null}>
+          <AuthSettingsDialog
+            open={authSettingsOpen}
+            onOpenChange={handleAuthSettingsClose}
+            initialProvider={authSettingsProvider}
+            onApiKeySaved={() => {
+              clearAuthError();
+              setAuthSettingsOpen(false);
+            }}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

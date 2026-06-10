@@ -100,8 +100,10 @@ export default defineConfig(() => ({
             },
             rollupOptions: {
               external: ['electron', ...nodeExternals],
+            },
+            rolldownOptions: {
               output: {
-                inlineDynamicImports: true,
+                codeSplitting: false,
               },
             },
           },

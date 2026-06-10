@@ -1,21 +1,67 @@
+import { type ComponentType, lazy, Suspense } from 'react';
 import { createHashRouter, Navigate } from 'react-router';
 import { RouteErrorFallback } from '../components/ui/RouteErrorFallback';
 import { App } from '../layouts/main/App';
-import SettingsLayout from '../layouts/settings/SettingsLayout';
-import ExecutionPage from '../pages/conversation/ExecutionPage';
-import ConversationsFavoritesPage from '../pages/conversations/ConversationsFavoritesPage';
-import ConversationsPage from '../pages/conversations/ConversationsPage';
-import ExamplesPage from '../pages/conversations/ExamplesPage';
-import { HomePage } from '../pages/home/Home';
-import { AboutPage } from '../pages/settings/about/AboutPage';
-import { BrowsersPage } from '../pages/settings/browsers/BrowsersPage';
-import { GeneralPage } from '../pages/settings/general/GeneralPage';
-import { IntegrationsPage } from '../pages/settings/integrations/IntegrationsPage';
-import { ProvidersPage } from '../pages/settings/providers/ProvidersPage';
-import { SchedulerPage } from '../pages/settings/scheduler/SchedulerPage';
-import { SkillsPage } from '../pages/settings/skills/SkillsPage';
-import { VoicePage } from '../pages/settings/voice/VoicePage';
-import { WorkspacesPage } from '../pages/settings/workspaces/WorkspacesPage';
+
+const HomePage = lazy(() => import('../pages/home/Home').then(namedDefault('HomePage')));
+const ConversationsPage = lazy(() =>
+  import('../pages/conversations/ConversationsPage').then((module) => ({
+    default: module.default,
+  })),
+);
+const ConversationsFavoritesPage = lazy(() =>
+  import('../pages/conversations/ConversationsFavoritesPage').then((module) => ({
+    default: module.default,
+  })),
+);
+const ExamplesPage = lazy(() =>
+  import('../pages/conversations/ExamplesPage').then((module) => ({ default: module.default })),
+);
+const ExecutionPage = lazy(() =>
+  import('../pages/conversation/ExecutionPage').then((module) => ({ default: module.default })),
+);
+const SettingsLayout = lazy(() =>
+  import('../layouts/settings/SettingsLayout').then((module) => ({ default: module.default })),
+);
+const GeneralPage = lazy(() =>
+  import('../pages/settings/general/GeneralPage').then(namedDefault('GeneralPage')),
+);
+const ProvidersPage = lazy(() =>
+  import('../pages/settings/providers/ProvidersPage').then(namedDefault('ProvidersPage')),
+);
+const AboutPage = lazy(() =>
+  import('../pages/settings/about/AboutPage').then(namedDefault('AboutPage')),
+);
+const SkillsPage = lazy(() =>
+  import('../pages/settings/skills/SkillsPage').then(namedDefault('SkillsPage')),
+);
+const BrowsersPage = lazy(() =>
+  import('../pages/settings/browsers/BrowsersPage').then(namedDefault('BrowsersPage')),
+);
+const WorkspacesPage = lazy(() =>
+  import('../pages/settings/workspaces/WorkspacesPage').then(namedDefault('WorkspacesPage')),
+);
+const IntegrationsPage = lazy(() =>
+  import('../pages/settings/integrations/IntegrationsPage').then(namedDefault('IntegrationsPage')),
+);
+const SchedulerPage = lazy(() =>
+  import('../pages/settings/scheduler/SchedulerPage').then(namedDefault('SchedulerPage')),
+);
+const VoicePage = lazy(() =>
+  import('../pages/settings/voice/VoicePage').then(namedDefault('VoicePage')),
+);
+
+function namedDefault<TModule, TName extends keyof TModule>(name: TName) {
+  return (module: TModule) => ({ default: module[name] as ComponentType });
+}
+
+function pageElement(Page: ComponentType) {
+  return (
+    <Suspense fallback={null}>
+      <Page />
+    </Suspense>
+  );
+}
 
 export const router = createHashRouter([
   {
@@ -25,21 +71,25 @@ export const router = createHashRouter([
       {
         Component: App,
         children: [
-          { index: true, Component: HomePage, errorElement: <RouteErrorFallback /> },
+          { index: true, element: pageElement(HomePage), errorElement: <RouteErrorFallback /> },
           {
             path: 'conversations',
-            Component: ConversationsPage,
+            element: pageElement(ConversationsPage),
             errorElement: <RouteErrorFallback />,
           },
           {
             path: 'conversations/favorites',
-            Component: ConversationsFavoritesPage,
+            element: pageElement(ConversationsFavoritesPage),
             errorElement: <RouteErrorFallback />,
           },
-          { path: 'examples', Component: ExamplesPage, errorElement: <RouteErrorFallback /> },
+          {
+            path: 'examples',
+            element: pageElement(ExamplesPage),
+            errorElement: <RouteErrorFallback />,
+          },
           {
             path: 'execution/:id',
-            Component: ExecutionPage,
+            element: pageElement(ExecutionPage),
             errorElement: <RouteErrorFallback />,
           },
           { path: '*', element: <Navigate to="/" replace /> },
@@ -47,23 +97,47 @@ export const router = createHashRouter([
       },
       {
         path: 'settings',
-        Component: SettingsLayout,
+        element: pageElement(SettingsLayout),
         errorElement: <RouteErrorFallback />,
         children: [
           { index: true, element: <Navigate to="general" replace /> },
-          { path: 'general', Component: GeneralPage, errorElement: <RouteErrorFallback /> },
-          { path: 'providers', Component: ProvidersPage, errorElement: <RouteErrorFallback /> },
-          { path: 'about', Component: AboutPage, errorElement: <RouteErrorFallback /> },
-          { path: 'skills', Component: SkillsPage, errorElement: <RouteErrorFallback /> },
-          { path: 'browsers', Component: BrowsersPage, errorElement: <RouteErrorFallback /> },
-          { path: 'workspaces', Component: WorkspacesPage, errorElement: <RouteErrorFallback /> },
           {
-            path: 'integrations',
-            Component: IntegrationsPage,
+            path: 'general',
+            element: pageElement(GeneralPage),
             errorElement: <RouteErrorFallback />,
           },
-          { path: 'scheduler', Component: SchedulerPage, errorElement: <RouteErrorFallback /> },
-          { path: 'voice', Component: VoicePage, errorElement: <RouteErrorFallback /> },
+          {
+            path: 'providers',
+            element: pageElement(ProvidersPage),
+            errorElement: <RouteErrorFallback />,
+          },
+          { path: 'about', element: pageElement(AboutPage), errorElement: <RouteErrorFallback /> },
+          {
+            path: 'skills',
+            element: pageElement(SkillsPage),
+            errorElement: <RouteErrorFallback />,
+          },
+          {
+            path: 'browsers',
+            element: pageElement(BrowsersPage),
+            errorElement: <RouteErrorFallback />,
+          },
+          {
+            path: 'workspaces',
+            element: pageElement(WorkspacesPage),
+            errorElement: <RouteErrorFallback />,
+          },
+          {
+            path: 'integrations',
+            element: pageElement(IntegrationsPage),
+            errorElement: <RouteErrorFallback />,
+          },
+          {
+            path: 'scheduler',
+            element: pageElement(SchedulerPage),
+            errorElement: <RouteErrorFallback />,
+          },
+          { path: 'voice', element: pageElement(VoicePage), errorElement: <RouteErrorFallback /> },
         ],
       },
     ],

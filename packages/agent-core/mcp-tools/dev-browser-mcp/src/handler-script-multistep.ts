@@ -143,7 +143,10 @@ export async function handleBrowserScript(args: unknown): Promise<CallToolResult
         }
         case 'evaluate': {
           if (!step.code) throw new Error('evaluate requires code parameter');
-          const evalResult = await page.evaluate((code: string) => eval(code), step.code);
+          const evalResult = await page.evaluate(
+            (code: string) => globalThis.eval(code),
+            step.code,
+          );
           results.push(`${stepNum}. Evaluated: ${JSON.stringify(evalResult)}`);
           break;
         }

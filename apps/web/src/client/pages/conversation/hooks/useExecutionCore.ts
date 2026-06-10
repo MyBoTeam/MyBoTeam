@@ -102,6 +102,7 @@ export function useExecutionCore() {
     loadTaskById,
   });
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: task changes intentionally trigger auto-scroll.
   useEffect(() => {
     if (scroll.isAtBottom) {
       scroll.scrollToBottom();
