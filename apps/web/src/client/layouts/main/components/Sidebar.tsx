@@ -40,7 +40,7 @@ export default function Sidebar({ isTitleBarHidden = false }: SidebarProps) {
         isCollapsed ? 'w-16' : 'w-64',
       )}
     >
-      <div className="flex items-center justify-start shrink-0 p-3">
+      <div className="flex items-center justify-start shrink-0 p-3 pl-4">
         <img src="/assets/loading-symbol.svg" alt="MyBot Team Logo" className="w-8" />
         {!isCollapsed && <span className="font-bold text-lg ml-2">MyBotTeam</span>}
       </div>

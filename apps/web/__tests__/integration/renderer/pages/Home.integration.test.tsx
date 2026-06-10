@@ -115,40 +115,6 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-// Mock SettingsDialog
-vi.mock('@/layouts/main/components/SettingsDialog', () => ({
-  SettingsDialog: ({
-    open,
-    onOpenChange,
-    onApiKeySaved,
-  }: {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    onApiKeySaved?: () => void;
-  }) =>
-    open ? (
-      <div data-testid="settings-dialog" role="dialog">
-        <button onClick={() => onOpenChange(false)}>Close</button>
-        {onApiKeySaved && <button onClick={onApiKeySaved}>Save API Key</button>}
-      </div>
-    ) : null,
-  default: ({
-    open,
-    onOpenChange,
-    onApiKeySaved,
-  }: {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    onApiKeySaved?: () => void;
-  }) =>
-    open ? (
-      <div data-testid="settings-dialog" role="dialog">
-        <button onClick={() => onOpenChange(false)}>Close</button>
-        {onApiKeySaved && <button onClick={onApiKeySaved}>Save API Key</button>}
-      </div>
-    ) : null,
-}));
-
 // Import after mocks
 import { HomePage } from '@/pages/home/Home';
 

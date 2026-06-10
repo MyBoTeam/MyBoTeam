@@ -1,7 +1,5 @@
-import type { ProviderId } from '@myboteam/agent-core/common';
-import { OAuthProviderId } from '@myboteam/agent-core/common';
 import { SpinnerGapIcon, WarningIcon } from '@phosphor-icons/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ErrorBoundary } from '../../components/ui/ErrorBoundary';
 import { getMyBoTeam, isRunningInElectron } from '../../config/myboteam';
@@ -17,42 +15,10 @@ export function App() {
   const { t } = useTranslation('errors');
   const [status, setStatus] = useState<AppStatus>('loading');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [authSettingsOpen, setAuthSettingsOpen] = useState(false);
-  const [authSettingsTab, setAuthSettingsTab] = useState<
-    'providers' | 'voice' | 'skills' | 'integrations' | 'scheduler' | 'general' | 'about'
-  >('providers');
-  const [authSettingsProvider, setAuthSettingsProvider] = useState<ProviderId | undefined>(
-    undefined,
-  );
   const [isFullScreen, setIsFullScreen] = useState(false);
   const isTitleBarHidden = isFullScreen;
 
   const { openLauncher, isLauncherOpen, authError, clearAuthError } = useTaskStore();
-
-  const handleAuthReLogin = useCallback(() => {
-    if (authError) {
-      if (authError.providerId === OAuthProviderId.Slack) {
-        setAuthSettingsProvider(undefined);
-        setAuthSettingsTab('integrations');
-      } else {
-        setAuthSettingsProvider(authError.providerId as ProviderId);
-        setAuthSettingsTab('providers');
-      }
-      setAuthSettingsOpen(true);
-    }
-  }, [authError]);
-
-  const handleAuthSettingsClose = useCallback(
-    (open: boolean) => {
-      setAuthSettingsOpen(open);
-      if (!open) {
-        setAuthSettingsTab('providers');
-        setAuthSettingsProvider(undefined);
-        clearAuthError();
-      }
-    },
-    [clearAuthError],
-  );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -147,14 +113,8 @@ export function App() {
       </main>
       <AppOverlays
         authError={authError}
-        authSettingsOpen={authSettingsOpen}
-        authSettingsProvider={authSettingsProvider}
         clearAuthError={clearAuthError}
-        handleAuthReLogin={handleAuthReLogin}
-        handleAuthSettingsClose={handleAuthSettingsClose}
         isLauncherOpen={isLauncherOpen}
-        setAuthSettingsOpen={setAuthSettingsOpen}
-        setAuthSettingsTab={setAuthSettingsTab}
       />
     </div>
   );
