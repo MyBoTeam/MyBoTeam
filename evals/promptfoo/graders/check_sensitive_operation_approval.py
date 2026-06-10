@@ -5,8 +5,6 @@ Generated from goldset criterion: eval-004.
 EDD Principle II: binary pass/fail only.
 """
 
-from __future__ import annotations
-
 import json
 import sys
 
