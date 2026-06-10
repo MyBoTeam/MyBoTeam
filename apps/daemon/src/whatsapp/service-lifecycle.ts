@@ -163,6 +163,16 @@ export function touchTransport(state: LifecycleState): void {
   state.lastTransportActivity = Date.now();
 }
 
+export function lifecycleSoftResync(
+  state: LifecycleState,
+  emit: (event: string, ...args: unknown[]) => void,
+): void {
+  if (!state.socket || !state.store) return;
+  state.syncState = 'idle';
+  cleanupSyncListeners(state);
+  syncAttachListeners(state, emit);
+}
+
 export function requireSocket(state: LifecycleState): BaileysSocket {
   if (!state.socket) throw new Error('WhatsApp is not connected');
   touchTransport(state);

@@ -20,6 +20,7 @@ import {
   lifecycleConnect,
   lifecycleDisconnect,
   lifecycleDispose,
+  lifecycleSoftResync,
   requireSocket,
 } from './service-lifecycle.js';
 import { lifecycleReconnect } from './service-reconnect.js';
@@ -161,7 +162,11 @@ export class WhatsAppService extends EventEmitter implements ChannelAdapter {
     );
   }
   async resync(): Promise<void> {
-    await this.reconnect();
+    if (!this.l.socket || !this.l.store) {
+      await this.reconnect();
+      return;
+    }
+    lifecycleSoftResync(this.l, (e, ...a) => this.emit(e, ...a));
   }
   dispose(): void {
     lifecycleDispose(this.l);
