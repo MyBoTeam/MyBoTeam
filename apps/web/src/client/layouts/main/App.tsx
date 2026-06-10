@@ -1,30 +1,17 @@
 import type { ProviderId } from '@myboteam/agent-core/common';
 import { OAuthProviderId } from '@myboteam/agent-core/common';
 import { SpinnerGapIcon, WarningIcon } from '@phosphor-icons/react';
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CloseConfirmDialog } from '../../components/common/CloseConfirmDialog';
-import { DaemonConnectionToast } from '../../components/common/DaemonConnectionToast';
 import { ErrorBoundary } from '../../components/ui/ErrorBoundary';
 import { getMyBoTeam, isRunningInElectron } from '../../config/myboteam';
 import { useTaskStore } from '../../stores/taskStore';
 import { logger } from '../../utils/logger';
 import { AnimatedOutletWrapper } from './App.components';
 import type { AppStatus } from './App.types';
+import { AppOverlays } from './components/AppOverlays';
 import Sidebar from './components/Sidebar';
 import { SidebarFallback } from './components/SidebarFallback';
-
-const AuthErrorToast = lazy(() =>
-  import('../../components/common/AuthErrorToast').then((module) => ({
-    default: module.AuthErrorToast,
-  })),
-);
-const TaskLauncher = lazy(() =>
-  import('../../components/common/TaskLauncher').then((module) => ({
-    default: module.TaskLauncher,
-  })),
-);
-const AuthSettingsDialog = lazy(() => import('./components/AuthSettingsDialog'));
 
 export function App() {
   const { t } = useTranslation('errors');
@@ -146,7 +133,6 @@ export function App() {
     );
   }
 
-  // Ready - render the app with sidebar
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Invisible drag region for window dragging (macOS hiddenInset titlebar) — hidden when fullscreen */}
@@ -159,48 +145,17 @@ export function App() {
       <main className="flex-1 overflow-hidden">
         <AnimatedOutletWrapper />
       </main>
-      {isLauncherOpen && (
-        <Suspense fallback={null}>
-          <TaskLauncher />
-        </Suspense>
-      )}
-
-      {}
-      {authError && (
-        <Suspense fallback={null}>
-          <AuthErrorToast
-            error={authError}
-            onReLogin={handleAuthReLogin}
-            onDismiss={clearAuthError}
-          />
-        </Suspense>
-      )}
-
-      {}
-      <DaemonConnectionToast
-        onOpenSettings={() => {
-          setAuthSettingsTab('general');
-          setAuthSettingsOpen(true);
-        }}
+      <AppOverlays
+        authError={authError}
+        authSettingsOpen={authSettingsOpen}
+        authSettingsProvider={authSettingsProvider}
+        clearAuthError={clearAuthError}
+        handleAuthReLogin={handleAuthReLogin}
+        handleAuthSettingsClose={handleAuthSettingsClose}
+        isLauncherOpen={isLauncherOpen}
+        setAuthSettingsOpen={setAuthSettingsOpen}
+        setAuthSettingsTab={setAuthSettingsTab}
       />
-
-      {}
-      <CloseConfirmDialog />
-
-      {}
-      {authSettingsOpen && (
-        <Suspense fallback={null}>
-          <AuthSettingsDialog
-            open={authSettingsOpen}
-            onOpenChange={handleAuthSettingsClose}
-            initialProvider={authSettingsProvider}
-            onApiKeySaved={() => {
-              clearAuthError();
-              setAuthSettingsOpen(false);
-            }}
-          />
-        </Suspense>
-      )}
     </div>
   );
 }

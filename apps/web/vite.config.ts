@@ -65,28 +65,21 @@ export default defineConfig({
   build: {
     outDir: 'dist/client',
     emptyOutDir: true,
-    rolldownOptions: {
-      output: {
-        codeSplitting: {
-          groups: [
-            {
-              name: 'react-vendor',
-              test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
-            },
-            {
-              name: 'motion-vendor',
-              test: /[\\/]node_modules[\\/](framer-motion|motion-dom|motion-utils)[\\/]/,
-            },
-            {
-              name: 'ui-vendor',
-              test: /[\\/]node_modules[\\/](@phosphor-icons|@radix-ui|lucide-react)[\\/]/,
-            },
-          ],
-        },
-      },
-    },
     rollupOptions: {
       external: [/^@aws-sdk\//],
+      output: {
+        manualChunks(id) {
+          if (/[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/.test(id)) {
+            return 'react-vendor';
+          }
+          if (/[\\/]node_modules[\\/](framer-motion|motion-dom|motion-utils)[\\/]/.test(id)) {
+            return 'motion-vendor';
+          }
+          if (/[\\/]node_modules[\\/](@phosphor-icons|@radix-ui|lucide-react)[\\/]/.test(id)) {
+            return 'ui-vendor';
+          }
+        },
+      },
     },
   },
 });
