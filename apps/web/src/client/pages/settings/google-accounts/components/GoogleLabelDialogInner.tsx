@@ -1,7 +1,5 @@
+import { Button, DialogFooter, Input } from '@myboteam/ui';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { DialogFooter } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 
 const MAX_LABEL_LENGTH = 20;
 

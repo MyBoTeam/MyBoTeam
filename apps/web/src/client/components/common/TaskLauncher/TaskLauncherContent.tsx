@@ -1,9 +1,9 @@
 import type { Task } from '@myboteam/agent-core/common';
+import { Input } from '@myboteam/ui';
 import { MagnifyingGlass, Plus, X } from '@phosphor-icons/react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Input } from '@/components/ui/input';
 import { springs } from '@/utils/animations';
 import { cn } from '@/utils/utils';
 import { TaskLauncherItem } from './TaskLauncherItem';

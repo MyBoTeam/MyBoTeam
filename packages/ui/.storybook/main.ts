@@ -1,0 +1,15 @@
+import type { StorybookConfig } from '@storybook/react-vite';
+
+const config: StorybookConfig = {
+  stories: ['../src/stories/**/*.mdx', '../src/stories/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  addons: [
+    '@chromatic-com/storybook',
+    '@storybook/addon-vitest',
+    '@storybook/addon-a11y',
+    '@storybook/addon-docs',
+    '@storybook/addon-mcp',
+  ],
+  framework: '@storybook/react-vite',
+};
+// biome-ignore lint/style/noDefaultExport: Storybook requires default export
+export default config;

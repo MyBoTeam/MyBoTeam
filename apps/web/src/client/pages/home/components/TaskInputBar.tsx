@@ -1,10 +1,11 @@
-'use client';
+import { Alert, AlertDescription } from '@myboteam/ui';
+
+('use client');
 
 import type { FileAttachmentInfo } from '@myboteam/agent-core';
 import { WarningCircle } from '@phosphor-icons/react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/utils/utils';
 import { useTaskInputBar } from '../hooks/useTaskInputBar';
 import { TaskInputAttachmentList } from './TaskInputAttachmentList';

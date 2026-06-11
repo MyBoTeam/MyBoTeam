@@ -1,16 +1,12 @@
 import type { McpConnector, Skill } from '@myboteam/agent-core/common';
+import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@myboteam/ui';
 import { FolderOpen, Paperclip } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import {
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
 import {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-} from '@/components/ui/dropdown-menu-sub';
+} from '@/components/dropdown-menu-sub';
 import { ConnectorsSubmenu } from './ConnectorsSubmenu';
 import { SkillsSubmenu } from './SkillsSubmenu';
 

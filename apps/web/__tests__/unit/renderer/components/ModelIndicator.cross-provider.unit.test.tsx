@@ -1,3 +1,4 @@
+import { ModelIndicator } from '@/components/ModelIndicator';
 import '@testing-library/jest-dom/vitest';
 import type { ProviderSettings } from '@myboteam/agent-core/common';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -11,7 +12,7 @@ const mocks = vi.hoisted(() => ({
   refetch: vi.fn().mockResolvedValue(undefined),
 }));
 
-vi.mock('@/components/ui/dropdown-menu', () => ({
+vi.mock('@myboteam/ui', () => ({
   DropdownMenu: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DropdownMenuTrigger: ({ children }: { children: React.ReactNode; asChild?: boolean }) => (
     <div data-testid="dropdown-trigger">{children}</div>
@@ -39,7 +40,7 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
   DropdownMenuSeparator: () => <hr data-testid="separator" />,
 }));
 
-vi.mock('@/components/ui/ProviderSubMenu', () => ({
+vi.mock('@/components/ProviderSubMenu', () => ({
   ProviderSubMenu: ({
     providerId,
     disabled,
@@ -70,8 +71,6 @@ vi.mock('@/pages/settings/providers/hooks/useProviderSettings', () => ({
     switchProviderModel: mocks.switchProviderModel,
   }),
 }));
-
-import { ModelIndicator } from '@/components/ui/ModelIndicator';
 
 const twoProviderSettings = () =>
   baseSettings({

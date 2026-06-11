@@ -1,7 +1,7 @@
 import type { Task, TaskStatus } from '@myboteam/agent-core/common';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { StarButton } from '@/components/ui/StarButton';
+import { StarButton } from '@/components/StarButton';
 import { FAVORITABLE_STATUSES } from '@/utils/task-utils';
 
 function getTimeAgo(

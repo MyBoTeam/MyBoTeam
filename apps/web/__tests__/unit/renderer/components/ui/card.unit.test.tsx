@@ -1,7 +1,3 @@
-import '@testing-library/jest-dom/vitest';
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
-
 import {
   Card,
   CardContent,
@@ -9,7 +5,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@myboteam/ui';
+import '@testing-library/jest-dom/vitest';
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 
 function renderComponent(ui: React.ReactElement) {
   const { container } = render(ui);

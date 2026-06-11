@@ -1,9 +1,8 @@
 import type { Skill } from '@myboteam/agent-core/common';
+import { DropdownMenuSeparator, Input } from '@myboteam/ui';
 import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import myboteamFavicon from '/assets/myboteam-favicon.png';
 
 interface SkillsSubmenuProps {

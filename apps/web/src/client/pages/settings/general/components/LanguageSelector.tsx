@@ -1,12 +1,8 @@
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@myboteam/ui';
 import { CaretDown, Globe } from '@phosphor-icons/react';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu-sub';
+import { DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/dropdown-menu-sub';
 import { changeLanguage, getLanguagePreference } from '@/config/i18n';
 import { cn } from '@/utils/utils';
 

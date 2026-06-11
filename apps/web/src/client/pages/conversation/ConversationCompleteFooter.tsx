@@ -1,9 +1,8 @@
+import { Alert, AlertDescription, Button } from '@myboteam/ui';
 import { WarningCircle } from '@phosphor-icons/react';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { StarButton } from '@/components/ui/StarButton';
+import { StarButton } from '@/components/StarButton';
 import { useTaskStore } from '@/stores/taskStore';
 import { FAVORITABLE_STATUSES } from '@/utils/task-utils';
 import { getStatusTranslationKey } from './conversationStatusUtils';

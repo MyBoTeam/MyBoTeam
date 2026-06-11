@@ -1,8 +1,6 @@
 import type { CloudBrowserProviderConfig } from '@myboteam/agent-core/common';
+import { Button, Input, Label } from '@myboteam/ui';
 import { type FormEvent, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 interface ProviderDefinition {
   id: string;

@@ -1,6 +1,6 @@
 import { type ComponentType, lazy, Suspense } from 'react';
 import { createHashRouter, Navigate } from 'react-router';
-import { RouteErrorFallback } from '../components/ui/RouteErrorFallback';
+import { RouteErrorFallback } from '../components/RouteErrorFallback';
 import { App } from '../layouts/main/App';
 
 const HomePage = lazy(() => import('../pages/home/Home').then(namedDefault('HomePage')));

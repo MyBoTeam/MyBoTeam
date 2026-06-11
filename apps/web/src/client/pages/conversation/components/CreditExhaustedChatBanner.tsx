@@ -1,8 +1,8 @@
+import { Button } from '@myboteam/ui';
 import { WarningCircle, X } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
 import { springs } from '@/utils/animations';
 
 interface CreditExhaustedChatBannerProps {

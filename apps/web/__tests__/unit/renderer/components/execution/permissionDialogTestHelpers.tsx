@@ -10,15 +10,12 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-vi.mock('@/components/ui/card', () => ({
+vi.mock('@myboteam/ui', () => ({
   Card: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => (
     <div data-slot="card" {...props}>
       {children}
     </div>
   ),
-}));
-
-vi.mock('@/components/ui/button', () => ({
   Button: ({
     children,
     onClick,

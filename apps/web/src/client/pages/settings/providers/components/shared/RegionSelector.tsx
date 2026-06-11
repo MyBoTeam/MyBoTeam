@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { SearchableSelect } from '@/components/ui/searchable-select';
+import { SearchableSelect } from '@/components/searchable-select';
 
 const AWS_REGIONS = [
   { id: 'us-east-1', name: 'us-east-1' },

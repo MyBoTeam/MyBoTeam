@@ -1,7 +1,6 @@
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@myboteam/ui';
 import { Check, Copy } from '@phosphor-icons/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/utils/utils';
 
 const COPIED_STATE_DURATION_MS = 1000;

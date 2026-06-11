@@ -1,8 +1,7 @@
+import { Label } from '@myboteam/ui';
 import '@testing-library/jest-dom/vitest';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-
-import { Label } from '@/components/ui/label';
 
 describe('Label', () => {
   it('renders', () => {

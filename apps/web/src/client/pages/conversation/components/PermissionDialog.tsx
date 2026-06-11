@@ -1,9 +1,8 @@
 import type { PermissionRequest } from '@myboteam/agent-core/common';
+import { Button, Card } from '@myboteam/ui';
 import { motion } from 'framer-motion';
 import { AlertCircle, AlertTriangle, Brain, File } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { springs } from '@/utils/animations';
 import { cn } from '@/utils/utils';
 import { PermissionDialogFile } from './PermissionDialogFile';

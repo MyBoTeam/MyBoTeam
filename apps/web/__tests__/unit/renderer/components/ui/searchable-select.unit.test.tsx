@@ -1,8 +1,7 @@
+import { SearchableSelect } from '@/components/searchable-select';
 import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-
-import { SearchableSelect } from '@/components/ui/searchable-select';
 
 const items = [
   { id: '1', name: 'Apple' },

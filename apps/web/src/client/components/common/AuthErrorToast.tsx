@@ -1,8 +1,8 @@
 import { getOAuthProviderDisplayName, OAuthProviderId } from '@myboteam/agent-core/common';
+import { Button } from '@myboteam/ui';
 import { Warning, X } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../ui/button';
 
 interface AuthErrorToastProps {
   error: { providerId: string; message: string } | null;

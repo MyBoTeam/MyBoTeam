@@ -1,12 +1,12 @@
 import type { Skill } from '@myboteam/agent-core/common';
-import { memo, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@myboteam/ui';
+import { memo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import myboteamFavicon from '/assets/myboteam-favicon.png';
 
 interface SkillCardProps {

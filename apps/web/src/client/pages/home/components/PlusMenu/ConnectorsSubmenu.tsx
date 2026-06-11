@@ -1,6 +1,6 @@
 import type { ConnectorStatus, McpConnector } from '@myboteam/agent-core/common';
+import { DropdownMenuSeparator } from '@myboteam/ui';
 import { useTranslation } from 'react-i18next';
-import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 
 interface ConnectorsSubmenuProps {
   connectors: McpConnector[];

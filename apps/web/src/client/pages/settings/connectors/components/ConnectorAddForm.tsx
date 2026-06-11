@@ -1,5 +1,5 @@
+import { Input } from '@myboteam/ui';
 import { useTranslation } from 'react-i18next';
-import { Input } from '@/components/ui/input';
 
 interface ConnectorAddFormProps {
   url: string;

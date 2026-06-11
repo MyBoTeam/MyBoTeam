@@ -1,3 +1,4 @@
+import { StarButton } from '@/components/StarButton';
 import '@testing-library/jest-dom/vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
@@ -7,8 +8,6 @@ vi.mock('react-i18next', () => ({
     t: (_key: string, fallback?: string) => fallback ?? _key,
   }),
 }));
-
-import { StarButton } from '@/components/ui/StarButton';
 
 describe('StarButton', () => {
   it('renders as a button', () => {

@@ -181,7 +181,7 @@ vi.mock('framer-motion', () => ({
 }));
 
 // Mock Radix Tooltip to render content directly (portals don't work in jsdom)
-vi.mock('@/components/ui/tooltip', () => ({
+vi.mock('@myboteam/ui', () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   TooltipTrigger: ({
     children,
@@ -201,10 +201,6 @@ vi.mock('@/components/ui/tooltip', () => ({
     </span>
   ),
   TooltipProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
-
-// Mock StreamingText component
-vi.mock('@/components/ui/streaming-text', () => ({
   StreamingText: ({
     text,
     children,

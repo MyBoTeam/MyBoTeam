@@ -1,6 +1,6 @@
 import type { Workspace } from '@myboteam/agent-core/common';
+import { Button } from '@myboteam/ui';
 import { Pencil, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { KnowledgeNotesPanel } from './KnowledgeNotesPanel';
 import { EditWorkspaceForm } from './WorkspacePanelForm';
 

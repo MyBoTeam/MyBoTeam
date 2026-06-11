@@ -1,8 +1,7 @@
+import { Skeleton } from '@myboteam/ui';
 import '@testing-library/jest-dom/vitest';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-
-import { Skeleton } from '@/components/ui/skeleton';
 
 describe('Skeleton', () => {
   it('renders with data-slot="skeleton"', () => {

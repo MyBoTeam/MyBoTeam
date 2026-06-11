@@ -1,10 +1,9 @@
+import { Button, ScrollArea } from '@myboteam/ui';
 import { ChatText } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { getMyBoTeam } from '@/config/myboteam';
 import { ConversationListItem } from '@/layouts/main/components/ConversationListItem';
 import { useTaskStore } from '@/stores/taskStore';

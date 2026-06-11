@@ -1,8 +1,9 @@
-'use client';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@myboteam/ui';
+
+('use client');
 
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/utils/utils';
 
 interface NavItemProps {

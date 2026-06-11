@@ -1,4 +1,5 @@
 import type { TaskMessage } from '@myboteam/agent-core/common';
+import { StreamingText } from '@myboteam/ui';
 import { Terminal, Wrench } from '@phosphor-icons/react';
 import { motion } from 'framer-motion';
 import { memo, useEffect, useState } from 'react';
@@ -6,7 +7,6 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { BrowserScriptCard } from '@/components/common/BrowserScriptCard';
 import { SpinningIcon } from '@/components/common/SpinningIcon';
-import { StreamingText } from '@/components/ui/streaming-text';
 import { springs } from '@/utils/animations';
 import { getToolDisplayInfo } from '@/utils/tool-mappings';
 import { cn } from '@/utils/utils';

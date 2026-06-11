@@ -1,8 +1,8 @@
 import type { McpConnector, Skill } from '@myboteam/agent-core/common';
+import { DropdownMenu, DropdownMenuTrigger } from '@myboteam/ui';
 import { Plus } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { CreateSkillModal } from '@/pages/settings/skills/components/CreateSkillModal';
 import { createLogger } from '@/utils/logger';
 import { PlusMenuItems } from './PlusMenuItems';

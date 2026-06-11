@@ -1,6 +1,6 @@
 import type { ConnectorAuthStatus } from '@myboteam/agent-core/common';
+import { Button } from '@myboteam/ui';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
 import { getOAuthStatusKey, oauthStatusDotClass, oauthStatusTextClass } from './oauth-status';
 
 interface OAuthConnectorCardProps {

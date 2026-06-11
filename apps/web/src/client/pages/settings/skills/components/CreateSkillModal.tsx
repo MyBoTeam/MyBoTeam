@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
-import { Button } from '@/components/ui/button';
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+  Input,
+} from '@myboteam/ui';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 import { getMyBoTeam } from '@/config/myboteam';
 import { useTaskStore } from '@/stores/taskStore';
 import { buildCreateSkillPrompt } from './createSkillPrompt';

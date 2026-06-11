@@ -1,5 +1,5 @@
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@myboteam/ui';
 import { useTranslation } from 'react-i18next';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { type DaemonStatus, useDaemonStore } from '@/stores/daemonStore';
 
 const DOT_STYLES: Record<DaemonStatus, string> = {

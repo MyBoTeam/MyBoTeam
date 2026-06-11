@@ -1,10 +1,9 @@
+import { Button, Card } from '@myboteam/ui';
 import { WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { SpinningIcon } from '@/components/common/SpinningIcon';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { DefaultFallback, ErrorBoundary } from '@/components/ui/ErrorBoundary';
-import { ModelIndicator } from '@/components/ui/ModelIndicator';
+import { DefaultFallback, ErrorBoundary } from '@/components/ErrorBoundary';
+import { ModelIndicator } from '@/components/ModelIndicator';
 import { BrowserInstallModal } from './BrowserInstallModal';
 import { ConversationCompleteFooter } from './ConversationCompleteFooter';
 import { ConversationHeader } from './ConversationHeader';

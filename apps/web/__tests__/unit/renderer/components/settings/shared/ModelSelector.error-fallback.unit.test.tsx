@@ -4,7 +4,7 @@ import { ModelSelector } from '@/pages/settings/providers/components/shared/Mode
 
 let lastErrorMessage: string | undefined;
 
-vi.mock('@/components/ui/searchable-select', () => ({
+vi.mock('@/components/searchable-select', () => ({
   SearchableSelect: ({ testId, errorMessage }: { testId: string; errorMessage?: string }) => {
     lastErrorMessage = errorMessage;
     return <div data-testid={testId} />;

@@ -1,7 +1,7 @@
 import type { KnowledgeNoteType } from '@myboteam/agent-core';
+import { Textarea } from '@myboteam/ui';
 import { Check, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Textarea } from '@/components/ui/textarea';
 
 const NOTE_TYPES: KnowledgeNoteType[] = ['context', 'instruction', 'reference'];
 const MAX_CONTENT_LENGTH = 500;

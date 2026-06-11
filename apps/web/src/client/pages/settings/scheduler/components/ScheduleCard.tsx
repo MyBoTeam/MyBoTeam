@@ -1,7 +1,7 @@
 import type { ScheduledTask } from '@myboteam/agent-core/common';
+import { Switch } from '@myboteam/ui';
 import { Trash } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { Switch } from '@/components/ui/switch';
 
 interface ScheduleCardProps {
   schedule: ScheduledTask;

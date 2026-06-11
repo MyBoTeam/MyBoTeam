@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SearchableSelect } from '@/components/ui/searchable-select';
+import { SearchableSelect } from '@/components/searchable-select';
 import { VERTEX_LOCATIONS } from './locations';
 import { VertexJsonDropzone } from './VertexJsonDropzone';
 

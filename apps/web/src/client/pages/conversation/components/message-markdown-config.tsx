@@ -1,5 +1,5 @@
+import { CodeBlock } from '@myboteam/ui';
 import type { Components } from 'react-markdown';
-import { CodeBlock } from '@/components/ui/CodeBlock';
 import { cn } from '@/utils/utils';
 
 export const proseClasses = cn(

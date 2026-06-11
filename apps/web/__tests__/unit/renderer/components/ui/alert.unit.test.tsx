@@ -1,8 +1,7 @@
+import { Alert, AlertDescription, AlertTitle } from '@myboteam/ui';
 import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 describe('Alert', () => {
   it('renders with role="alert"', () => {

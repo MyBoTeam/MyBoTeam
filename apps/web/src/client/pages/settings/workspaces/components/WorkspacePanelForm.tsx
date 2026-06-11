@@ -1,7 +1,8 @@
-'use client';
+import { Button } from '@myboteam/ui';
+
+('use client');
 
 import { Check } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { ColorPicker } from '../../general/components/ColorPicker';
 
 export { WORKSPACE_COLORS } from '../../general/components/ColorPicker';

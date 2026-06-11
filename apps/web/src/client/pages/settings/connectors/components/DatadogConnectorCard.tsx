@@ -1,7 +1,7 @@
 import type { ConnectorAuthStatus } from '@myboteam/agent-core/common';
+import { Button } from '@myboteam/ui';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
 import datadogIcon from '/assets/icons/integrations/datadog.svg';
 import { DATADOG_REGIONS, findDatadogRegionByMcpUrl } from './datadog/regions';
 import { useDatadogServerUrl } from './datadog/useDatadogServerUrl';

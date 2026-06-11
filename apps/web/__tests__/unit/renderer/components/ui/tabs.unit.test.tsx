@@ -1,8 +1,7 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@myboteam/ui';
 import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 describe('Tabs', () => {
   it('renders TabsList and TabsTrigger', () => {

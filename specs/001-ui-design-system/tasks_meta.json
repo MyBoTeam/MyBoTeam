@@ -1,0 +1,655 @@
+{
+  "tasks": {
+    "T001": {
+      "description": "Create package.json",
+      "files": "packages/ui/package.json",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T002": {
+      "description": "Create tsconfig.json",
+      "files": "packages/ui/tsconfig.json",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T003": {
+      "description": "Create vite.config.ts",
+      "files": "packages/ui/vite.config.ts",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T004": {
+      "description": "Create postcss.config.js",
+      "files": "packages/ui/postcss.config.js",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T005": {
+      "description": "Create directory structure",
+      "files": "packages/ui/src/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T006": {
+      "description": "shadcn init",
+      "files": "packages/ui/",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T007": {
+      "description": "Storybook init",
+      "files": "packages/ui/",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": null,
+      "comment": "Deferred to Phase 5 - Storybook integration not needed until design system is stable"
+    },
+    "T008": {
+      "description": "Relocate utils.ts to cn.ts",
+      "files": "packages/ui/src/utils/cn.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T009": {
+      "description": "Install shadcn components",
+      "files": "packages/ui/src/components/ui/",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T010": {
+      "description": "Install glass components",
+      "files": "packages/ui/src/components/glass/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T011": {
+      "description": "Create code-block.tsx",
+      "files": "packages/ui/src/components/code-block.tsx",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T012": {
+      "description": "Create streaming-text.tsx",
+      "files": "packages/ui/src/components/streaming-text.tsx",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T013": {
+      "description": "Create glass-utils.ts",
+      "files": "packages/ui/src/utils/glass-utils.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T014": {
+      "description": "Create hover-effects.ts",
+      "files": "packages/ui/src/utils/hover-effects.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T015": {
+      "description": "Create animations.ts",
+      "files": "packages/ui/src/utils/animations.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T016": {
+      "description": "Create utils barrel",
+      "files": "packages/ui/src/utils/index.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T017": {
+      "description": "Create tokens.css",
+      "files": "packages/ui/src/styles/tokens.css",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T018": {
+      "description": "Create themes.css",
+      "files": "packages/ui/src/styles/themes.css",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T019": {
+      "description": "Create glass.css",
+      "files": "packages/ui/src/styles/glass.css",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T020": {
+      "description": "Create barrel index.ts",
+      "files": "packages/ui/src/index.ts",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T021": {
+      "description": "Add workspace dep + alias",
+      "files": "apps/web/package.json,apps/web/tsconfig.client.json",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T022": {
+      "description": "Update vite.config.ts alias",
+      "files": "apps/web/vite.config.ts",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T023": {
+      "description": "Update globals.css imports",
+      "files": "apps/web/src/client/styles/globals.css",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T024": {
+      "description": "Delete old UI components",
+      "files": "apps/web/src/client/components/ui/",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T025": {
+      "description": "Recreate store-connected components",
+      "files": "apps/web/src/client/components/",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T026": {
+      "description": "Replace UI imports in consumers",
+      "files": "apps/web/src/client/**/*.tsx",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T027": {
+      "description": "Verify pnpm check passes",
+      "files": "packages/ui/,apps/web/",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T10:00:00Z",
+      "result_summary": "Completed in prior session - Phase 1-3 implementation done"
+    },
+    "T028": {
+      "description": "Create tokens/colors.ts",
+      "files": "packages/ui/src/tokens/colors.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Phase 4 - JS token modules and theme definitions created"
+    },
+    "T029": {
+      "description": "Create tokens/typography.ts",
+      "files": "packages/ui/src/tokens/typography.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Phase 4 - JS token modules and theme definitions created"
+    },
+    "T030": {
+      "description": "Create tokens/spacing.ts",
+      "files": "packages/ui/src/tokens/spacing.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Phase 4 - JS token modules and theme definitions created"
+    },
+    "T031": {
+      "description": "Create tokens/shadows.ts",
+      "files": "packages/ui/src/tokens/shadows.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Phase 4 - JS token modules and theme definitions created"
+    },
+    "T032": {
+      "description": "Create tokens/animations.ts",
+      "files": "packages/ui/src/tokens/animations.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Phase 4 - JS token modules and theme definitions created"
+    },
+    "T033": {
+      "description": "Create tokens barrel",
+      "files": "packages/ui/src/tokens/index.ts",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Phase 4 - JS token modules and theme definitions created"
+    },
+    "T034": {
+      "description": "Update barrel with tokens",
+      "files": "packages/ui/src/index.ts",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Phase 4 - JS token modules and theme definitions created"
+    },
+    "T035": {
+      "description": "Create themes/light.ts",
+      "files": "packages/ui/src/themes/light.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Phase 4 - JS token modules and theme definitions created"
+    },
+    "T036": {
+      "description": "Create themes/dark.ts",
+      "files": "packages/ui/src/themes/dark.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Phase 4 - JS token modules and theme definitions created"
+    },
+    "T037": {
+      "description": "Create themes barrel",
+      "files": "packages/ui/src/themes/index.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Phase 4 - JS token modules and theme definitions created"
+    },
+    "T038": {
+      "description": "Update storybook preview.ts",
+      "files": "packages/ui/.storybook/preview.ts",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Storybook preview.tsx configured with theme toggle"
+    },
+    "T039": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T040": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T041": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T042": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T043": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T044": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T045": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T046": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T047": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T048": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T049": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T050": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T051": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T052": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T053": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T054": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T055": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T056": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T057": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T058": {
+      "description": "Create story",
+      "files": "packages/ui/src/stories/",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Story files created for all 20 stories"
+    },
+    "T059": {
+      "description": "Add storybook scripts",
+      "files": "packages/ui/package.json",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Storybook scripts verified"
+    },
+    "T060": {
+      "description": "Build package",
+      "files": "packages/ui/dist/",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Package built with CSS copy to dist"
+    },
+    "T061": {
+      "description": "Verify web app builds",
+      "files": "apps/web/",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Web app builds successfully"
+    },
+    "T062": {
+      "description": "Verify dev server",
+      "files": "apps/web/",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Dev server build verified"
+    },
+    "T063": {
+      "description": "Add build/check/dev scripts",
+      "files": "packages/ui/package.json",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Build scripts verified"
+    },
+    "T064": {
+      "description": "Clean up stale imports",
+      "files": "apps/web/src/client/**/*.tsx",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Import path fixes applied"
+    },
+    "T065": {
+      "description": "Final verification",
+      "files": "root",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": "2026-06-11T16:00:00Z",
+      "result_summary": "Full verification pnpm check + web tests pass"
+    }
+  }
+}

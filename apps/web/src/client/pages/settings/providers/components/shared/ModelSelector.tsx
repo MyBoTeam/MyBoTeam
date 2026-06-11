@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { SearchableSelect, type SelectItem } from '@/components/ui/searchable-select';
+import { SearchableSelect, type SelectItem } from '@/components/searchable-select';
 
 interface ModelSelectorProps {
   models: SelectItem[];

@@ -1,8 +1,8 @@
 import type { FileAttachmentInfo } from '@myboteam/agent-core/common';
 import { ArrowBendDownLeft } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { ModelIndicator } from '@/components/ui/ModelIndicator';
-import { SpeechInputButton } from '@/components/ui/SpeechInputButton';
+import { ModelIndicator } from '@/components/ModelIndicator';
+import { SpeechInputButton } from '@/components/SpeechInputButton';
 import type { useSpeechInput } from '@/hooks/useSpeechInput';
 import { PlusMenu } from '@/pages/home/components/PlusMenu';
 

@@ -89,6 +89,10 @@ pnpm build:desktop                              # Build desktop app (builds web 
 pnpm check                                      # Biome check + typecheck (all workspaces)
 pnpm typecheck                                  # TypeScript type validation (all workspaces)
 
+# Testing (ui workspace — package smoke tests)
+pnpm -F @myboteam/ui test                    # Run package Vitest smoke tests (tokens + component render)
+pnpm -F @myboteam/ui test:watch              # Package tests in watch mode
+
 # Testing (web workspace — renderer/UI tests)
 pnpm -F @myboteam/web test                    # Run all web Vitest tests
 pnpm -F @myboteam/web test:unit               # Web unit tests only
@@ -277,4 +281,5 @@ GitHub Actions workflows in `.github/workflows/`:
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
+at `specs/001-ui-design-system/plan.md`
 <!-- SPECKIT END -->

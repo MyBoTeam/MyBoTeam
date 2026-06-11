@@ -1,5 +1,5 @@
+import { Button } from '@myboteam/ui';
 import { Play } from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
 
 interface MessageTaskActionProps {
   onTaskAction: () => void;

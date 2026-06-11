@@ -10,6 +10,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src/client'),
+      '@myboteam/ui': path.resolve(__dirname, '../../packages/ui/src'),
       '@myboteam/agent-core/common': path.resolve(
         __dirname,
         '../../packages/agent-core/src/common',

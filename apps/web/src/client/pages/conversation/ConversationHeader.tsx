@@ -1,7 +1,7 @@
 import type { TaskStatus } from '@myboteam/agent-core';
+import { Button } from '@myboteam/ui';
 import { ArrowLeft } from '@phosphor-icons/react';
 import { useNavigate } from 'react-router';
-import { Button } from '@/components/ui/button';
 import { StatusBadge } from './StatusBadge';
 
 export function ConversationHeader({ prompt, status }: { prompt: string; status: TaskStatus }) {

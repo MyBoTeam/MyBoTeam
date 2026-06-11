@@ -1,6 +1,6 @@
+import { StreamingText, useStreamingState } from '@myboteam/ui';
 import { act, render, renderHook, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { StreamingText, useStreamingState } from '@/components/ui/streaming-text';
 
 describe('StreamingText Integration', () => {
   describe('basic rendering', () => {

@@ -1,8 +1,7 @@
+import { DialogFooter, DialogHeader } from '@myboteam/ui';
 import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-
-import { DialogFooter, DialogHeader } from '@/components/ui/dialog';
 
 describe('DialogHeader', () => {
   it('renders with data-slot="dialog-header"', () => {

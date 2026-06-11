@@ -1,20 +1,18 @@
-import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
+  Input,
+} from '@myboteam/ui';
+import { useTranslation } from 'react-i18next';
 import { CreateSkillModal } from './CreateSkillModal';
 import { UploadErrorDialog } from './UploadErrorDialog';
 import { useAddSkill } from './useAddSkill';

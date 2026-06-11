@@ -53,7 +53,7 @@ vi.mock('@/config/myboteam', () => ({
 }));
 
 // Mock Radix Tooltip to render content directly (portals don't work in jsdom)
-vi.mock('@/components/ui/tooltip', () => ({
+vi.mock('@myboteam/ui', () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   TooltipTrigger: ({
     children,

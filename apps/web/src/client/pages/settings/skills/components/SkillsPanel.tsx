@@ -1,6 +1,6 @@
+import { Input } from '@myboteam/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Input } from '@/components/ui/input';
 import { settingsTransitions, settingsVariants } from '@/utils/animations';
 import { SkillCard } from './SkillCard';
 import { SkillsFilterBar } from './SkillsFilterBar';

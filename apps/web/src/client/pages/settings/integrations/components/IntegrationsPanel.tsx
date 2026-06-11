@@ -1,7 +1,7 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@myboteam/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { settingsTransitions, settingsVariants } from '@/utils/animations';
 import { ConnectorAddForm } from '../../connectors/components/ConnectorAddForm';
 import { ConnectorList } from '../../connectors/components/ConnectorList';

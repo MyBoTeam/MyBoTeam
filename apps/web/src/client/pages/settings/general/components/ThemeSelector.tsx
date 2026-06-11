@@ -1,13 +1,9 @@
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@myboteam/ui';
 import { CaretDown, Desktop, Moon, Sun } from '@phosphor-icons/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu-sub';
-import { ThemeColorSelector } from '@/components/ui/ThemeColorSelector';
+import { DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/dropdown-menu-sub';
+import { ThemeColorSelector } from '@/components/ThemeColorSelector';
 import { getMyBoTeam } from '@/config/myboteam';
 import { applyTheme } from '@/utils/theme';
 import { THEME_KEY } from '@/utils/theme-core';

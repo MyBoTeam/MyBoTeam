@@ -1,10 +1,10 @@
-import { useTranslation } from 'react-i18next';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@myboteam/ui';
+import { useTranslation } from 'react-i18next';
 import type { FilterType } from './useSkillsPanel';
 
 interface SkillsFilterBarProps {

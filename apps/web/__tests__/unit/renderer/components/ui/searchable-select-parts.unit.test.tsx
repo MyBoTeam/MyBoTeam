@@ -1,7 +1,3 @@
-import '@testing-library/jest-dom/vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
-
 import {
   ChevronIcon,
   SelectDropdown,
@@ -9,7 +5,10 @@ import {
   SelectLoading,
   SelectOption,
   SelectTrigger,
-} from '@/components/ui/searchable-select-parts';
+} from '@/components/searchable-select-parts';
+import '@testing-library/jest-dom/vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 
 describe('ChevronIcon', () => {
   it('renders without rotation when closed', () => {

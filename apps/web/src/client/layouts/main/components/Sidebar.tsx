@@ -1,12 +1,12 @@
-'use client';
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@myboteam/ui';
+import { ThemeColorSelector } from '@/components/ThemeColorSelector';
+
+('use client');
 
 import { ArrowLineLeft, ArrowLineRight, ChatText, Gear, List } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 import { DaemonStatusDot } from '@/components/common/DaemonStatusDot';
-import { Button } from '@/components/ui/button';
-import { ThemeColorSelector } from '@/components/ui/ThemeColorSelector';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useSidebarStore } from '@/stores/sidebarStore';
 import { cn } from '@/utils/utils';
 import { NavItem } from './NavItem';

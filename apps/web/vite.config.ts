@@ -54,6 +54,7 @@ export default defineConfig({
       ),
 
       '@myboteam/agent-core': path.resolve(__dirname, '../../packages/agent-core/src/common'),
+      '@myboteam/ui': path.resolve(__dirname, '../../packages/ui/src'),
       '@locales': path.resolve(__dirname, 'locales'),
     },
   },

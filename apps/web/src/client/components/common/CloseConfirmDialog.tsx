@@ -1,14 +1,14 @@
-import { ArrowRight, Power, Warning } from '@phosphor-icons/react';
-import { useCallback, useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@myboteam/ui';
+import { ArrowRight, Power, Warning } from '@phosphor-icons/react';
+import { useCallback, useEffect, useState } from 'react';
 import { useMyBoTeam } from '@/config/myboteam';
 
 type CloseDecision = 'keep-daemon' | 'stop-daemon';

@@ -1,5 +1,5 @@
+import { Button } from '@myboteam/ui';
 import { Plus, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { ColorPicker } from '../../general/components/ColorPicker';
 
 interface CreateWorkspaceFormProps {

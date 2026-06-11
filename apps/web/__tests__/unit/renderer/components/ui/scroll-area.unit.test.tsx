@@ -1,8 +1,7 @@
+import { ScrollArea } from '@myboteam/ui';
 import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 describe('ScrollArea', () => {
   it('renders children', () => {

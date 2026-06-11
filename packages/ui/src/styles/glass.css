@@ -1,0 +1,169 @@
+/* Glass UI utilities */
+@layer utilities {
+  .glass-bg {
+    background-image: var(--glass-bg);
+    background-color: transparent;
+    backdrop-filter: blur(var(--blur)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(180%);
+    border: 0.5px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-frosted {
+    background-image: var(--glass-frosted-bg);
+    background-color: transparent;
+    backdrop-filter: blur(var(--blur-frosted)) saturate(200%);
+    -webkit-backdrop-filter: blur(var(--blur-frosted)) saturate(200%);
+    border: 0.5px solid var(--glass-frosted-border);
+    box-shadow: var(--glass-frosted-shadow);
+  }
+
+  .glass-fluted {
+    background-image: var(--glass-fluted-pattern), var(--glass-bg);
+    background-color: transparent;
+    backdrop-filter: blur(var(--blur)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(180%);
+    border: 0.5px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-crystal {
+    position: relative;
+    background-color: var(--glass-crystal-bg);
+    backdrop-filter: blur(var(--blur-crystal));
+    -webkit-backdrop-filter: blur(var(--blur-crystal));
+    border: 1px solid var(--glass-crystal-border);
+    box-shadow: var(--glass-crystal-shadow);
+    transition: all 0.3s ease;
+    background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.15), transparent 50%);
+    background-size: 200% 200%;
+  }
+
+  .glass-crystal::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
+    opacity: 0.7;
+    pointer-events: none;
+    height: 30%;
+  }
+
+  .glass-crystal::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at 50% 120%, rgba(255, 255, 255, 0.2), transparent 70%);
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  .glass-crystal:hover {
+    box-shadow: var(--glass-crystal-shadow-hover);
+    background-position: 100% 100%;
+  }
+}
+
+/* Glass CSS variables - Light mode */
+:root {
+  --glass-bg: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.12) 25%,
+    rgba(240, 248, 255, 0.13) 50%,
+    rgba(255, 255, 255, 0.11) 75%,
+    rgba(230, 240, 255, 0.12) 100%
+  );
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04),
+    0 0 0 0.5px rgba(255, 255, 255, 0.08) inset, 0 0 12px rgba(255, 255, 255, 0.1) inset;
+  --glass-shadow-lg:
+    0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06),
+    0 0 0 0.5px rgba(255, 255, 255, 0.1) inset, 0 0 20px rgba(255, 255, 255, 0.12) inset;
+  --glass-shadow-sm:
+    0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.03),
+    0 0 0 0.5px rgba(255, 255, 255, 0.06) inset, 0 0 8px rgba(255, 255, 255, 0.08) inset;
+  --blur: 10px;
+  --blur-sm: 10px;
+  --blur-lg: 10px;
+  --glass-frosted-bg: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.22) 25%,
+    rgba(240, 248, 255, 0.23) 50%,
+    rgba(255, 255, 255, 0.21) 75%,
+    rgba(230, 240, 255, 0.22) 100%
+  );
+  --glass-frosted-border: rgba(255, 255, 255, 0.3);
+  --glass-frosted-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08),
+    0 0 0 0.5px rgba(255, 255, 255, 0.15) inset, 0 0 20px rgba(255, 255, 255, 0.18) inset;
+  --blur-frosted: 25px;
+  --glass-fluted-pattern: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.08) 0px,
+    rgba(255, 255, 255, 0.15) 4px,
+    rgba(255, 255, 255, 0.08) 8px,
+    rgba(255, 255, 255, 0.02) 10px,
+    rgba(255, 255, 255, 0.08) 12px
+  );
+  --glass-crystal-bg: rgba(255, 255, 255, 0.3);
+  --glass-crystal-border: rgba(255, 255, 255, 0.3);
+  --glass-crystal-shadow: 0 0 20px rgba(0, 0, 0, 0.2), 0 0 30px rgba(255, 255, 255, 0.1);
+  --glass-crystal-shadow-hover: 0 0 25px rgba(0, 0, 0, 0.3), 0 0 35px rgba(255, 255, 255, 0.15);
+  --blur-crystal: 2px;
+}
+
+/* Glass CSS variables - Dark mode */
+.dark {
+  --glass-bg: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.06) 25%,
+    rgba(240, 248, 255, 0.07) 50%,
+    rgba(255, 255, 255, 0.05) 75%,
+    rgba(230, 240, 255, 0.06) 100%
+  );
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.15),
+    0 0 0 0.5px rgba(255, 255, 255, 0.12) inset, 0 0 12px rgba(255, 255, 255, 0.15) inset;
+  --glass-shadow-lg:
+    0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2),
+    0 0 0 0.5px rgba(255, 255, 255, 0.15) inset, 0 0 20px rgba(255, 255, 255, 0.18) inset;
+  --glass-shadow-sm:
+    0 2px 8px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.12),
+    0 0 0 0.5px rgba(255, 255, 255, 0.1) inset, 0 0 8px rgba(255, 255, 255, 0.12) inset;
+  --blur: 10px;
+  --blur-sm: 10px;
+  --blur-lg: 10px;
+  --glass-frosted-bg: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.12) 25%,
+    rgba(240, 248, 255, 0.13) 50%,
+    rgba(255, 255, 255, 0.11) 75%,
+    rgba(230, 240, 255, 0.12) 100%
+  );
+  --glass-frosted-border: rgba(255, 255, 255, 0.25);
+  --glass-frosted-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3),
+    0 0 0 0.5px rgba(255, 255, 255, 0.2) inset, 0 0 20px rgba(255, 255, 255, 0.22) inset;
+  --blur-frosted: 25px;
+  --glass-fluted-pattern: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0px,
+    rgba(255, 255, 255, 0.12) 4px,
+    rgba(255, 255, 255, 0.05) 8px,
+    rgba(255, 255, 255, 0.01) 10px,
+    rgba(255, 255, 255, 0.05) 12px
+  );
+  --glass-crystal-bg: rgba(255, 255, 255, 0.1);
+  --glass-crystal-border: rgba(255, 255, 255, 0.3);
+  --glass-crystal-shadow: 0 0 20px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 255, 255, 0.15);
+  --glass-crystal-shadow-hover: 0 0 25px rgba(0, 0, 0, 0.5), 0 0 35px rgba(255, 255, 255, 0.2);
+  --blur-crystal: 2px;
+}

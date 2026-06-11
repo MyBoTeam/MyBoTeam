@@ -1,13 +1,13 @@
-import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@myboteam/ui';
+import { useTranslation } from 'react-i18next';
 
 interface UploadErrorDialogProps {
   open: boolean;

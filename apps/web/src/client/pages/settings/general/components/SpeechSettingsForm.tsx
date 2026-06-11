@@ -1,7 +1,7 @@
+import { Input } from '@myboteam/ui';
 import { CheckCircle, Microphone, SpinnerGap, WarningCircle } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Input } from '@/components/ui/input';
 import { getMyBoTeam } from '@/config/myboteam';
 import { getModifierKeyLabel } from '@/config/platform';
 

@@ -1,5 +1,5 @@
+import { Button } from '@myboteam/ui';
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { initGoogleAccountListener, useGoogleAccountStore } from '@/stores/googleAccountStore';
 import { GoogleAccountCard } from './GoogleAccountCard';
 import { GoogleLabelDialog } from './GoogleLabelDialog';

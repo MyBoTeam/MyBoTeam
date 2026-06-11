@@ -1,15 +1,17 @@
 import type { GoogleAccount } from '@myboteam/agent-core/common';
-import { useState } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
+  Button,
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@myboteam/ui';
+import { useState } from 'react';
 
 interface GoogleAccountCardProps {
   account: GoogleAccount;

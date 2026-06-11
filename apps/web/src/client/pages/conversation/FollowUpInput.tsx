@@ -1,7 +1,7 @@
 import type { FileAttachmentInfo, Task } from '@myboteam/agent-core';
+import { Alert, AlertDescription } from '@myboteam/ui';
 import { WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import type { useSlashCommand } from '@/hooks/useSlashCommand';
 import type { useSpeechInput } from '@/hooks/useSpeechInput';
 import { SlashCommandPopover } from '@/pages/home/components/SlashCommandPopover';

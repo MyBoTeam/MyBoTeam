@@ -1,3 +1,4 @@
+import { Button } from '@myboteam/ui';
 import {
   ArrowClockwise,
   Bug,
@@ -9,7 +10,6 @@ import {
   SpinnerGap,
   Trash,
 } from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
 import type { DebugLogEntry } from './DebugPanel';
 
 interface DebugPanelHeaderProps {

@@ -1,15 +1,16 @@
-'use client';
-
-import { Check, ChevronDown, Loader2, Settings2 } from 'lucide-react';
-import { useEffect } from 'react';
-import { Button } from '@/components/ui/button';
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@myboteam/ui';
+
+('use client');
+
+import { Check, ChevronDown, Loader2, Settings2 } from 'lucide-react';
+import { useEffect } from 'react';
 import { useWorkspaceStore } from '@/stores/workspaceStore';
 
 interface WorkspaceSelectorProps {

@@ -1,9 +1,9 @@
+import { Tooltip, TooltipContent, TooltipTrigger } from '@myboteam/ui';
 import { ArrowUp } from '@phosphor-icons/react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ModelIndicator } from '@/components/ui/ModelIndicator';
-import { SpeechInputButton } from '@/components/ui/SpeechInputButton';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { ModelIndicator } from '@/components/ModelIndicator';
+import { SpeechInputButton } from '@/components/SpeechInputButton';
 import { getMyBoTeam } from '@/config/myboteam';
 import type { useSpeechInput } from '@/hooks/useSpeechInput';
 

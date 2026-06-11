@@ -1,7 +1,7 @@
 import { SpinnerGapIcon, WarningIcon } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ErrorBoundary } from '../../components/ui/ErrorBoundary';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { getMyBoTeam, isRunningInElectron } from '../../config/myboteam';
 import { useTaskStore } from '../../stores/taskStore';
 import { logger } from '../../utils/logger';

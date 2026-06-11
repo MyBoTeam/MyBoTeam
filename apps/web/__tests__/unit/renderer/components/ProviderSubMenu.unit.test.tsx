@@ -1,3 +1,4 @@
+import { ProviderSubMenu } from '@/components/ProviderSubMenu';
 import '@testing-library/jest-dom/vitest';
 import type { ConnectedProvider } from '@myboteam/agent-core/common';
 import { fireEvent, render, screen } from '@testing-library/react';
@@ -16,7 +17,7 @@ const mockSub = vi.hoisted(() => ({
 }));
 
 // Render Radix sub-menu primitives as plain markup so we can test content
-vi.mock('@/components/ui/dropdown-menu', () => ({
+vi.mock('@myboteam/ui', () => ({
   DropdownMenuSub: mockSub.sub,
   DropdownMenuSubTrigger: mockSub.subTrigger,
   DropdownMenuSubContent: mockSub.subContent,
@@ -35,13 +36,11 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
   ),
 }));
 
-vi.mock('@/components/ui/dropdown-menu-sub', () => ({
+vi.mock('@/components/dropdown-menu-sub', () => ({
   DropdownMenuSub: mockSub.sub,
   DropdownMenuSubTrigger: mockSub.subTrigger,
   DropdownMenuSubContent: mockSub.subContent,
 }));
-
-import { ProviderSubMenu } from '@/components/ui/ProviderSubMenu';
 
 const makeProvider = (overrides: Partial<ConnectedProvider> = {}): ConnectedProvider => ({
   providerId: 'openai',

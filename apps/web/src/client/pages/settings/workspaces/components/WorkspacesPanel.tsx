@@ -1,9 +1,10 @@
-'use client';
+import { Button } from '@myboteam/ui';
+
+('use client');
 
 import type { Workspace } from '@myboteam/agent-core/common';
 import { Plus } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { useWorkspaceStore } from '@/stores/workspaceStore';
 import { CreateWorkspaceForm, WORKSPACE_COLORS } from './WorkspacePanelForm';
 import { WorkspaceRow } from './WorkspaceRow';
