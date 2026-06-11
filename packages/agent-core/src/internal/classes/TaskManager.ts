@@ -1,7 +1,8 @@
 import type { PermissionResponse } from '../../common/types/permission.js';
 import type { Task, TaskConfig } from '../../common/types/task.js';
 import { createConsoleLogger } from '../../utils/logging.js';
-import { type OpenCodeAdapter, OpenCodeCliNotFoundError } from './open-code-adapter.js';
+import type { TaskRuntimeAdapter } from './adapter-types.js';
+import { OpenCodeCliNotFoundError } from './open-code-adapter.js';
 import {
   cancelAllTasks as lifecycleCancelAllTasks,
   cancelQueuedTask as lifecycleCancelQueuedTask,
@@ -125,7 +126,7 @@ export class TaskManager {
     return managedTask?.adapter.running ?? false;
   }
 
-  getTask(taskId: string): OpenCodeAdapter | undefined {
+  getTask(taskId: string): TaskRuntimeAdapter | undefined {
     return this.activeTasks.get(taskId)?.adapter;
   }
 

@@ -9,11 +9,11 @@ import {
   queueMessage,
   toTaskMessage,
 } from '../../opencode/message-processor.js';
-import type { OpenCodeAdapter } from './open-code-adapter.js';
+import type { TaskRuntimeAdapter } from './adapter-types.js';
 import type { TaskCallbacks } from './task-manager-types.js';
 
 export function setupAdapterEvents(
-  adapter: OpenCodeAdapter,
+  adapter: TaskRuntimeAdapter,
   taskId: string,
   callbacks: TaskCallbacks,
   cleanupTask: (taskId: string) => void,

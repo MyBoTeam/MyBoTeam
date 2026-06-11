@@ -1,5 +1,7 @@
-import type { TaskConfig } from '../common/types/task.js';
+import { TASK_SOURCES, type TaskConfig } from '../common/types/task.js';
 import { sanitizeString } from './sanitize.js';
+
+const TASK_SOURCE_SET = new Set<string>(TASK_SOURCES);
 
 export function validateTaskConfig(config: TaskConfig): TaskConfig {
   const prompt = sanitizeString(config.prompt, 'prompt');
@@ -38,7 +40,7 @@ export function validateTaskConfig(config: TaskConfig): TaskConfig {
     validated.files = config.files;
   }
 
-  if (config.source === 'ui' || config.source === 'whatsapp' || config.source === 'scheduler') {
+  if (config.source && TASK_SOURCE_SET.has(config.source)) {
     validated.source = config.source;
   }
 

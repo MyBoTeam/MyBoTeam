@@ -50,6 +50,12 @@ await taskManager.startTask(
 
 The package exports seven factory functions. Each returns an interface that hides internal implementation details.
 
+## MAO-66 Current Harness Preservation
+
+During MAO-66, the OpenCode task harness remains available while Pi integration is introduced through the neutral task runtime adapter contract. Pi parity work must not remove OpenCode code paths, must not add a normal user-facing harness selector, and must not show a normal user-facing deprecation warning.
+
+The current harness may be marked deprecated only after automated checks, live credentialed parity regression, and maintainer approval are recorded in `specs/001-pi-vendor-harness/validation-evidence.md`. Physical removal belongs to a separate follow-up ticket.
+
 ### createTaskManager(options) → TaskManagerAPI
 
 Spawns and manages OpenCode CLI tasks via PTY. Supports concurrent task execution, queuing, cancellation, and lifecycle callbacks (messages, progress, permissions, completion).

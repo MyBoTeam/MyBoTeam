@@ -40,12 +40,24 @@ export interface BootResult {
   rpc: DaemonRpcServer;
 }
 
+export function applyCleanStartTaskState(
+  storage: Pick<Awaited<ReturnType<StorageService['initialize']>>, 'clearHistory'>,
+): void {
+  if (process.env.CLEAN_START !== '1') {
+    return;
+  }
+
+  log.info('[Daemon] CLEAN_START=1: clearing task history, messages, todos, and session state');
+  storage.clearHistory();
+}
+
 async function initializeStorage(paths: DaemonPaths): Promise<{
   storageService: StorageService;
   storage: Awaited<ReturnType<StorageService['initialize']>>;
 }> {
   const storageService = new StorageService();
   const storage = await storageService.initialize(paths.userDataPath);
+  applyCleanStartTaskState(storage);
   for (const task of storage.getTasks()) {
     if (task.status === 'running') {
       log.warn(`[Daemon] Crash recovery: marking stale task ${task.id} as failed`);

@@ -118,6 +118,30 @@ describe('createTaskCallbacks — onPermissionRequest dispatch', () => {
     });
   });
 
+  it("source='background', no UI connected → auto-denies", () => {
+    const f = buildFixture({ source: 'background', hasConnectedClients: false });
+
+    f.callbacks.onPermissionRequest?.(fakeRequest);
+
+    expect(f.sendPermissionResponse).toHaveBeenCalledWith('tsk_abc', {
+      taskId: 'tsk_abc',
+      requestId: 'filereq_xyz',
+      decision: 'deny',
+    });
+  });
+
+  it("source='connector', no UI connected → auto-denies", () => {
+    const f = buildFixture({ source: 'connector', hasConnectedClients: false });
+
+    f.callbacks.onPermissionRequest?.(fakeRequest);
+
+    expect(f.sendPermissionResponse).toHaveBeenCalledWith('tsk_abc', {
+      taskId: 'tsk_abc',
+      requestId: 'filereq_xyz',
+      decision: 'deny',
+    });
+  });
+
   it("source='scheduler', UI connected → emits 'permission' (user can still approve)", () => {
     const f = buildFixture({ source: 'scheduler', hasConnectedClients: true });
 

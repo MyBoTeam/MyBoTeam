@@ -1,0 +1,44 @@
+{
+  "name": "@myboteam/pi-agent-core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MyBoTeam Pi task runtime wrappers and adapters",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "check": "biome check --write . && tsc --noEmit",
+    "test": "vitest run tests/unit/",
+    "test:unit": "vitest run tests/unit/",
+    "test:integration": "vitest run tests/integration/",
+    "test:coverage": "vitest --coverage"
+  },
+  "dependencies": {
+    "@myboteam/pi-vendor": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "^4.1.0",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.0"
+  }
+}

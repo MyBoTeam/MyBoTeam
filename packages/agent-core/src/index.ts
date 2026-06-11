@@ -189,7 +189,7 @@ export type {
   TaskStatus,
   TaskUpdateEvent,
 } from './common/types/task.js';
-export { STARTUP_STAGES } from './common/types/task.js';
+export { STARTUP_STAGES, TASK_SOURCES } from './common/types/task.js';
 export type { TodoItem } from './common/types/todo.js';
 export type {
   KnowledgeNote,
@@ -218,7 +218,6 @@ export {
   taskConfigSchema,
   validate,
 } from './common/validation.js';
-
 export {
   buildAuthorizationUrl,
   discoverOAuthMetadata,
@@ -237,7 +236,6 @@ export type {
   PidLockPayload,
   SocketTransportOptions,
 } from './daemon/index.js';
-
 export {
   acquirePidLock,
   createChildProcessTransport,
@@ -254,7 +252,6 @@ export {
   logger,
   PidLockError,
 } from './daemon/index.js';
-
 export {
   createLogWriter,
   createPermissionHandler,
@@ -269,15 +266,22 @@ export type {
   GwsAccountSummary,
   PrepareGwsManifestResult,
 } from './google-accounts/index.js';
-
 export {
   GOOGLE_TOKEN_ENDPOINT,
   gwsTokenKey,
   prepareGwsManifest,
   TOKEN_REFRESH_MARGIN_MS,
 } from './google-accounts/index.js';
-
+export type {
+  AdapterOptions,
+  TaskRuntimeAdapter,
+  TaskRuntimeAdapterEvents,
+} from './internal/classes/adapter-types.js';
 export { OpenCodeCliNotFoundError } from './internal/classes/adapter-types.js';
+export {
+  createTaskRuntimeAdapter,
+  selectTaskRuntime,
+} from './internal/classes/task-runtime-adapter-factory.js';
 export type { DetectOpenAiOauthPlanOptions, OpenCodeMcpOauthStatus } from './opencode/auth.js';
 export {
   clearSlackMcpAuth,

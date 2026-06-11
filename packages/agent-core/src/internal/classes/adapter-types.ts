@@ -1,8 +1,8 @@
 import type { BrowserFramePayload } from '../../common/types/browser-view.js';
 import type { OpenCodeMessage } from '../../common/types/opencode.js';
-import type { PermissionRequest } from '../../common/types/permission.js';
+import type { PermissionRequest, PermissionResponse } from '../../common/types/permission.js';
 import type { SandboxConfig, SandboxProvider } from '../../common/types/sandbox.js';
-import type { TaskResult } from '../../common/types/task.js';
+import type { Task, TaskConfig, TaskResult } from '../../common/types/task.js';
 import type { TodoItem } from '../../common/types/todo.js';
 import type { OnBeforeStartContext, OnBeforeStartResult } from '../../types/task-manager.js';
 
@@ -64,6 +64,33 @@ export interface OpenCodeAdapterEvents {
       cost?: number;
     },
   ];
+}
+
+export type TaskRuntimeAdapterEvents = OpenCodeAdapterEvents;
+
+export type TaskRuntimeAdapterListener<EventName extends keyof TaskRuntimeAdapterEvents> = {
+  bivarianceHack(...args: TaskRuntimeAdapterEvents[EventName]): void;
+}['bivarianceHack'];
+
+export interface TaskRuntimeAdapter {
+  startTask(config: TaskConfig): Promise<Task>;
+  resumeSession?(sessionId: string, prompt: string): Promise<Task>;
+  sendResponse(response: PermissionResponse): Promise<void>;
+  cancelTask(): Promise<void>;
+  interruptTask(): Promise<void>;
+  getSessionId(): string | null;
+  getTaskId(): string | null;
+  getModelContext?(): { modelId?: string; providerId?: string };
+  readonly running: boolean;
+  dispose(): void;
+  on<EventName extends keyof TaskRuntimeAdapterEvents>(
+    event: EventName,
+    listener: TaskRuntimeAdapterListener<EventName>,
+  ): unknown;
+  off<EventName extends keyof TaskRuntimeAdapterEvents>(
+    event: EventName,
+    listener: TaskRuntimeAdapterListener<EventName>,
+  ): unknown;
 }
 
 export interface PendingRequest {

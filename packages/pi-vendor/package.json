@@ -1,0 +1,55 @@
+{
+  "name": "@myboteam/pi-vendor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Vendored upstream Pi source for MyBoTeam",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "VENDORS.md",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "check": "biome check --write . && tsc --noEmit",
+    "test": "vitest run tests/",
+    "test:unit": "vitest run tests/",
+    "test:coverage": "vitest --coverage"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.91.1",
+    "@aws-sdk/client-bedrock-runtime": "3.1048.0",
+    "@google/genai": "1.52.0",
+    "@mistralai/mistralai": "2.2.1",
+    "@smithy/node-http-handler": "4.7.3",
+    "@smithy/types": "4.9.0",
+    "http-proxy-agent": "7.0.2",
+    "https-proxy-agent": "7.0.6",
+    "ignore": "7.0.5",
+    "openai": "6.26.0",
+    "partial-json": "0.1.7",
+    "typebox": "1.1.38",
+    "yaml": "2.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "^4.1.0",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.0"
+  }
+}

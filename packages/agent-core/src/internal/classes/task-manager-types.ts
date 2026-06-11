@@ -3,12 +3,11 @@ import type { OpenCodeMessage } from '../../common/types/opencode.js';
 import type { PermissionRequest } from '../../common/types/permission.js';
 import type { TaskConfig, TaskMessage, TaskResult, TaskStatus } from '../../common/types/task.js';
 import type { TodoItem } from '../../common/types/todo.js';
-import type { AdapterOptions } from './adapter-types.js';
-import type { OpenCodeAdapter } from './open-code-adapter.js';
+import type { AdapterOptions, TaskRuntimeAdapter } from './adapter-types.js';
 
 export interface ManagedTask {
   taskId: string;
-  adapter: OpenCodeAdapter;
+  adapter: TaskRuntimeAdapter;
   callbacks: TaskCallbacks;
   cleanup: () => void;
   createdAt: Date;

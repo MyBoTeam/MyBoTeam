@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { TASK_SOURCES } from './types/task.js';
 
 export const fileAttachmentSchema = z.object({
   id: z.string(),
@@ -23,7 +24,7 @@ export const taskConfigSchema = z.object({
   modelId: z.string().optional(),
   provider: z.string().optional(),
 
-  source: z.enum(['ui', 'whatsapp', 'scheduler']).optional(),
+  source: z.enum(TASK_SOURCES).optional(),
 });
 
 export const permissionResponseSchema = z.object({

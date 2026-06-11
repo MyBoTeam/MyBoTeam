@@ -1,8 +1,9 @@
 import type { Task, TaskConfig } from '../../common/types/task.js';
 import { createConsoleLogger } from '../../utils/logging.js';
-import { type AdapterOptions, OpenCodeAdapter } from './open-code-adapter.js';
+import type { AdapterOptions } from './adapter-types.js';
 import type { ManagedTask, QueuedTask, TaskCallbacks } from './task-manager-types.js';
 import { setupAdapterEvents } from './task-manager-utils.js';
+import { createTaskRuntimeAdapter } from './task-runtime-adapter-factory.js';
 
 const log = createConsoleLogger({ prefix: 'TaskManager' });
 
@@ -52,7 +53,7 @@ export async function executeTask(
   cleanupTask: (taskId: string) => void,
   processQueue: () => void,
 ): Promise<Task> {
-  const adapter = new OpenCodeAdapter(adapterOptions, taskId);
+  const adapter = createTaskRuntimeAdapter({ adapterOptions, taskId, taskConfig: config });
 
   const cleanup = setupAdapterEvents(adapter, taskId, callbacks, cleanupTask, processQueue);
 

@@ -10,7 +10,16 @@ export type TaskStatus =
   | 'cancelled'
   | 'interrupted';
 
-export type TaskSource = 'ui' | 'whatsapp' | 'scheduler';
+export const TASK_SOURCES = [
+  'ui',
+  'whatsapp',
+  'scheduler',
+  'daemon',
+  'background',
+  'connector',
+] as const;
+
+export type TaskSource = (typeof TASK_SOURCES)[number];
 
 export interface TaskConfig {
   prompt: string;

@@ -181,6 +181,15 @@
       }
     },
     {
+      "includes": ["packages/pi-vendor/src/pi-agent-core/**", "packages/pi-vendor/src/pi-ai/**"],
+      "formatter": {
+        "enabled": false
+      },
+      "linter": {
+        "enabled": false
+      }
+    },
+    {
       "includes": ["apps/desktop/src/main/**/*.ts", "apps/desktop/src/preload/**/*.ts"],
       "linter": {
         "rules": {

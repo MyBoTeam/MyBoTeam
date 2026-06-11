@@ -65,11 +65,18 @@ export {
   taskConfigSchema,
   validate,
 } from './common/validation.js';
-
 export * from './desktop-main-ipc.js';
 export { createLogWriter } from './factories/log-writer.js';
-
 export { createSpeechService } from './factories/speech.js';
+export type {
+  AdapterOptions,
+  TaskRuntimeAdapter,
+  TaskRuntimeAdapterEvents,
+} from './internal/classes/adapter-types.js';
+export {
+  createTaskRuntimeAdapter,
+  selectTaskRuntime,
+} from './internal/classes/task-runtime-adapter-factory.js';
 export { testAzureFoundryConnection, validateAzureFoundry } from './providers/azure-foundry.js';
 export { fetchBedrockModels, validateBedrockCredentials } from './providers/bedrock.js';
 export type {
