@@ -190,5 +190,7 @@ export function createStore(storePath?: string): WhatsAppStore {
     },
   };
 
+  store.load();
+
   return store;
 }

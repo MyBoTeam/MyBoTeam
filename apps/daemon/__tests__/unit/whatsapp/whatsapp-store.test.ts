@@ -15,6 +15,11 @@ function createMockEmitter(): {
       on(event: string, handler: (data: unknown) => void) {
         handlers.set(event, handler);
       },
+      off(event: string, handler: (data: unknown) => void) {
+        if (handlers.get(event) === handler) {
+          handlers.delete(event);
+        }
+      },
       removeAllListeners() {
         handlers.clear();
       },
@@ -34,7 +39,7 @@ describe('WhatsAppStore', () => {
       const { emitter } = createMockEmitter();
       const store = createStore();
       store.bind(emitter);
-      expect(store.chats.all()).toEqual([]);
+      expect(store.getChats()).toEqual([]);
     });
 
     it('should populate from messaging-history.set', () => {
@@ -50,11 +55,11 @@ describe('WhatsAppStore', () => {
         messages: [],
       });
 
-      const chats = store.chats.all();
+      const chats = store.getChats();
       expect(chats).toHaveLength(2);
-      expect(chats[0].id).toBe(JID_1);
+      expect(chats[0].jid).toBe(JID_1);
       expect(chats[0].name).toBe('Contact A');
-      expect(chats[1].id).toBe(JID_2);
+      expect(chats[1].jid).toBe(JID_2);
       expect(chats[1].name).toBe('Contact B');
     });
 
@@ -73,9 +78,9 @@ describe('WhatsAppStore', () => {
         messages: [],
       });
 
-      const chats = store.chats.all();
+      const chats = store.getChats();
       expect(chats).toHaveLength(1);
-      expect(chats[0].id).toBe(JID_2);
+      expect(chats[0].jid).toBe(JID_2);
     });
 
     it('should add chats on chats.upsert', () => {
@@ -85,9 +90,9 @@ describe('WhatsAppStore', () => {
 
       emit('chats.upsert', [{ id: JID_1, name: 'Contact A' }]);
 
-      const chats = store.chats.all();
+      const chats = store.getChats();
       expect(chats).toHaveLength(1);
-      expect(chats[0].id).toBe(JID_1);
+      expect(chats[0].jid).toBe(JID_1);
       expect(chats[0].name).toBe('Contact A');
     });
 
@@ -99,7 +104,7 @@ describe('WhatsAppStore', () => {
       emit('chats.upsert', [{ id: JID_1, name: 'Old Name' }]);
       emit('chats.upsert', [{ id: JID_1, name: 'New Name' }]);
 
-      const chats = store.chats.all();
+      const chats = store.getChats();
       expect(chats).toHaveLength(1);
       expect(chats[0].name).toBe('New Name');
     });
@@ -112,7 +117,7 @@ describe('WhatsAppStore', () => {
       emit('chats.upsert', [{ id: JID_1, name: 'Old Name' }]);
       emit('chats.update', [{ id: JID_1, name: 'Updated Name' }]);
 
-      const chats = store.chats.all();
+      const chats = store.getChats();
       expect(chats[0].name).toBe('Updated Name');
     });
 
@@ -124,7 +129,7 @@ describe('WhatsAppStore', () => {
       emit('chats.upsert', [{ id: JID_1, name: 'A', conversationTimestamp: 100 }]);
       emit('chats.update', [{ id: JID_1, conversationTimestamp: 200 }]);
 
-      expect(store.chats.all()[0].conversationTimestamp).toBe(200);
+      expect(store.getChats()[0].lastMessageAt).toBe(200);
     });
 
     it('should not add new chat on chats.update if not already present', () => {
@@ -134,7 +139,7 @@ describe('WhatsAppStore', () => {
 
       emit('chats.update', [{ id: JID_1, name: 'Ghost Update' }]);
 
-      expect(store.chats.all()).toHaveLength(0);
+      expect(store.getChats()).toHaveLength(0);
     });
 
     it('should remove chat on chats.delete', () => {
@@ -145,7 +150,7 @@ describe('WhatsAppStore', () => {
       emit('chats.upsert', [{ id: JID_1, name: 'Contact A' }]);
       emit('chats.delete', [JID_1]);
 
-      expect(store.chats.all()).toHaveLength(0);
+      expect(store.getChats()).toHaveLength(0);
     });
   });
 
@@ -155,7 +160,7 @@ describe('WhatsAppStore', () => {
       const store = createStore();
       store.bind(emitter);
 
-      expect(store.messages[JID_1]?.all()).toBeUndefined();
+      expect(store.getMessages(JID_1, 1000)).toEqual([]);
     });
 
     it('should populate from messaging-history.set', () => {
@@ -179,7 +184,7 @@ describe('WhatsAppStore', () => {
         ],
       });
 
-      const msgs = store.messages[JID_1]!.all();
+      const msgs = store.getMessages(JID_1, 1000);
       expect(msgs).toHaveLength(2);
     });
 
@@ -204,8 +209,8 @@ describe('WhatsAppStore', () => {
         ],
       });
 
-      expect(store.messages[JID_1]!.all()).toHaveLength(1);
-      expect(store.messages[JID_2]!.all()).toHaveLength(1);
+      expect(store.getMessages(JID_1, 1000)).toHaveLength(1);
+      expect(store.getMessages(JID_2, 1000)).toHaveLength(1);
     });
 
     it('should deduplicate messages with same id on messages.upsert', () => {
@@ -222,7 +227,7 @@ describe('WhatsAppStore', () => {
       emit('messages.upsert', { messages: [msg] });
       emit('messages.upsert', { messages: [msg] });
 
-      expect(store.messages[JID_1]!.all()).toHaveLength(1);
+      expect(store.getMessages(JID_1, 1000)).toHaveLength(1);
     });
 
     it('should update existing message on messages.upsert with same id and different content', () => {
@@ -250,7 +255,7 @@ describe('WhatsAppStore', () => {
         ],
       });
 
-      expect(store.messages[JID_1]!.all()).toHaveLength(1);
+      expect(store.getMessages(JID_1, 1000)).toHaveLength(1);
     });
 
     it('should apply update on messages.update', () => {
@@ -275,8 +280,8 @@ describe('WhatsAppStore', () => {
         },
       ]);
 
-      const msgs = store.messages[JID_1]!.all();
-      expect(msgs[0].messageTimestamp).toBe(2000);
+      const msgs = store.getMessages(JID_1, 1000);
+      expect(msgs[0].timestamp).toBe(2000);
     });
 
     it('should remove message on messages.delete by key', () => {
@@ -302,9 +307,9 @@ describe('WhatsAppStore', () => {
 
       emit('messages.delete', { keys: [{ remoteJid: JID_1, id: 'msg-1' }] });
 
-      const msgs = store.messages[JID_1]!.all();
+      const msgs = store.getMessages(JID_1, 1000);
       expect(msgs).toHaveLength(1);
-      expect((msgs[0].key as { id?: string | null } | null)?.id).toBe('msg-2');
+      expect(msgs[0].messageId).toBe('msg-2');
     });
 
     it('should clear all messages for jid on messages.delete with all=true', () => {
@@ -330,7 +335,7 @@ describe('WhatsAppStore', () => {
 
       emit('messages.delete', { jid: JID_1, all: true });
 
-      expect(store.messages[JID_1]?.all()).toBeUndefined();
+      expect(store.getMessages(JID_1, 1000)).toEqual([]);
     });
 
     it('should skip messages.upsert without remoteJid', () => {
@@ -348,7 +353,7 @@ describe('WhatsAppStore', () => {
         ],
       });
 
-      expect(store.messages[JID_1]?.all()).toBeUndefined();
+      expect(store.getMessages(JID_1, 1000)).toEqual([]);
     });
 
     it('should skip messages.upsert without message id', () => {
@@ -366,7 +371,7 @@ describe('WhatsAppStore', () => {
         ],
       });
 
-      expect(store.messages[JID_1]?.all()).toBeUndefined();
+      expect(store.getMessages(JID_1, 1000)).toEqual([]);
     });
 
     it('should skip messages.update for unknown jid', () => {
@@ -381,7 +386,7 @@ describe('WhatsAppStore', () => {
         },
       ]);
 
-      expect(store.messages[JID_1]?.all()).toBeUndefined();
+      expect(store.getMessages(JID_1, 1000)).toEqual([]);
     });
 
     it('should not delete messages on messages.delete with all=false', () => {
@@ -402,7 +407,7 @@ describe('WhatsAppStore', () => {
 
       emit('messages.delete', { jid: JID_1, all: false });
 
-      expect(store.messages[JID_1]!.all()).toHaveLength(1);
+      expect(store.getMessages(JID_1, 1000)).toHaveLength(1);
     });
 
     it('should skip chats.upsert with empty id', () => {
@@ -412,7 +417,7 @@ describe('WhatsAppStore', () => {
 
       emit('chats.upsert', [{ id: '', name: 'No ID' }]);
 
-      expect(store.chats.all()).toHaveLength(0);
+      expect(store.getChats()).toHaveLength(0);
     });
 
     it('should remove messages for deleted chat on chats.delete', () => {
@@ -433,7 +438,7 @@ describe('WhatsAppStore', () => {
 
       emit('chats.delete', [JID_1]);
 
-      expect(store.messages[JID_1]?.all()).toBeUndefined();
+      expect(store.getMessages(JID_1, 1000)).toEqual([]);
     });
   });
 
@@ -459,15 +464,14 @@ describe('WhatsAppStore', () => {
         expect(fs.existsSync(storePath)).toBe(true);
 
         const reloaded = createStore(storePath);
-        const chats = reloaded.chats.all();
+        const chats = reloaded.getChats();
         expect(chats).toHaveLength(1);
-        expect(chats[0].id).toBe(JID_1);
+        expect(chats[0].jid).toBe(JID_1);
         expect(chats[0].name).toBe('Contact A');
 
-        const msgs = reloaded.messages[JID_1]!.all();
+        const msgs = reloaded.getMessages(JID_1, 1000);
         expect(msgs).toHaveLength(1);
-        const key = msgs[0].key as { id?: string | null } | null;
-        expect(key?.id).toBe('msg-1');
+        expect(msgs[0].messageId).toBe('msg-1');
       } finally {
         try {
           fs.unlinkSync(storePath);
@@ -480,7 +484,7 @@ describe('WhatsAppStore', () => {
     it('should start fresh when no persisted file exists', () => {
       const storePath = path.join(os.tmpdir(), `whatsapp-store-nonexistent-${Date.now()}.json`);
       const store = createStore(storePath);
-      expect(store.chats.all()).toEqual([]);
+      expect(store.getChats()).toEqual([]);
     });
 
     it('should handle corrupted persisted file gracefully', () => {
@@ -488,7 +492,7 @@ describe('WhatsAppStore', () => {
       try {
         fs.writeFileSync(storePath, 'not valid json', 'utf-8');
         const store = createStore(storePath);
-        expect(store.chats.all()).toEqual([]);
+        expect(store.getChats()).toEqual([]);
       } finally {
         try {
           fs.unlinkSync(storePath);

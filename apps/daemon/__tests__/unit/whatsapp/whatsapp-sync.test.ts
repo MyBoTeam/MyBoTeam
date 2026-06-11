@@ -98,10 +98,22 @@ describe('syncAttachListeners', () => {
     });
   });
 
-  it('does NOT immediately complete on isLatest=true', () => {
+  it('completes immediately on isLatest=true', () => {
     state.store = {
-      chats: { all: () => [{ id: 'c1' }, { id: 'c2' }] },
-      messages: { jid1: { all: () => [{ key: { id: 'm1' } }] } },
+      getChats: () => [
+        { jid: 'c1', name: 'c1' },
+        { jid: 'c2', name: 'c2' },
+      ],
+      getMessages: (jid: string) => [
+        {
+          messageId: 'm1',
+          senderJid: jid,
+          fromMe: false,
+          text: '',
+          timestamp: 0,
+          messageType: 'text',
+        },
+      ],
       bind: vi.fn(),
     };
 
@@ -110,38 +122,14 @@ describe('syncAttachListeners', () => {
 
     const histHandlers = mockSocket.handlers.get('messaging-history.set')!;
     histHandlers.forEach((h) => h({ chats: [], messages: [], isLatest: true }));
-
-    expect(state.syncState).toBe('syncing');
-  });
-
-  it('completes sync after debounce period with no events', () => {
-    state.store = {
-      chats: { all: () => [{ id: 'c1' }] },
-      messages: {},
-      bind: vi.fn(),
-    };
-
-    syncAttachListeners(state, emit);
-    emit.mockClear();
-
-    const histHandlers = mockSocket.handlers.get('messaging-history.set')!;
-    histHandlers.forEach((h) => h({ chats: [], messages: [], isLatest: true }));
-
-    expect(state.syncState).toBe('syncing');
-
-    vi.advanceTimersByTime(15_000);
 
     expect(state.syncState).toBe('complete');
-    expect(emit).toHaveBeenCalledWith(
-      'syncProgress',
-      expect.objectContaining({ syncState: 'complete' }),
-    );
   });
 
-  it('resets debounce timer on each sync event', () => {
+  it('completes sync after 90s timeout when isLatest is false', () => {
     state.store = {
-      chats: { all: () => [{ id: 'c1' }] },
-      messages: {},
+      getChats: () => [{ jid: 'c1', name: 'c1' }],
+      getMessages: () => [],
       bind: vi.fn(),
     };
 
@@ -151,31 +139,52 @@ describe('syncAttachListeners', () => {
     const histHandlers = mockSocket.handlers.get('messaging-history.set')!;
     histHandlers.forEach((h) => h({ chats: [], messages: [], isLatest: false }));
 
-    vi.advanceTimersByTime(10_000);
-
-    const upsertHandlers = mockSocket.handlers.get('messages.upsert')!;
-    upsertHandlers.forEach((h) => h({ type: 'notify', messages: [] }));
-
-    vi.advanceTimersByTime(10_000);
-
     expect(state.syncState).toBe('syncing');
 
-    vi.advanceTimersByTime(5_000);
+    vi.advanceTimersByTime(90_000);
 
     expect(state.syncState).toBe('complete');
+    expect(emit).toHaveBeenCalledWith(
+      'syncProgress',
+      expect.objectContaining({ syncState: 'complete' }),
+    );
   });
 
-  it('cleans up listeners and timer on completion', () => {
+  it('does not reset timeout timer on sync events', () => {
     state.store = {
-      chats: { all: () => [] },
-      messages: {},
+      getChats: () => [{ jid: 'c1', name: 'c1' }],
+      getMessages: () => [],
       bind: vi.fn(),
     };
 
     syncAttachListeners(state, emit);
     emit.mockClear();
 
-    vi.advanceTimersByTime(15_000);
+    const histHandlers = mockSocket.handlers.get('messaging-history.set')!;
+    histHandlers.forEach((h) => h({ chats: [], messages: [], isLatest: false }));
+
+    vi.advanceTimersByTime(50_000);
+    expect(state.syncState).toBe('syncing');
+
+    const upsertHandlers = mockSocket.handlers.get('messages.upsert')!;
+    upsertHandlers.forEach((h) => h({ type: 'notify', messages: [] }));
+
+    vi.advanceTimersByTime(50_000);
+
+    expect(state.syncState).toBe('complete');
+  });
+
+  it('cleans up listeners and timer on completion', () => {
+    state.store = {
+      getChats: () => [],
+      getMessages: () => [],
+      bind: vi.fn(),
+    };
+
+    syncAttachListeners(state, emit);
+    emit.mockClear();
+
+    vi.advanceTimersByTime(90_000);
 
     expect(state.syncState).toBe('complete');
     expect(state.syncListeners).toBeNull();
@@ -183,8 +192,17 @@ describe('syncAttachListeners', () => {
 
   it('updates progress but does NOT complete on isLatest=false', () => {
     state.store = {
-      chats: { all: () => [{ id: 'c1' }] },
-      messages: { jid1: { all: () => [{ key: { id: 'm1' } }] } },
+      getChats: () => [{ jid: 'c1', name: 'c1' }],
+      getMessages: (jid: string) => [
+        {
+          messageId: 'm1',
+          senderJid: jid,
+          fromMe: false,
+          text: '',
+          timestamp: 0,
+          messageType: 'text',
+        },
+      ],
       bind: vi.fn(),
     };
 
@@ -203,8 +221,8 @@ describe('syncAttachListeners', () => {
 
   it('updates progress on messages.upsert', () => {
     state.store = {
-      chats: { all: () => [] },
-      messages: {},
+      getChats: () => [],
+      getMessages: () => [],
       bind: vi.fn(),
     };
 
@@ -222,8 +240,8 @@ describe('syncAttachListeners', () => {
 
   it('does NOT use persisted store data to premature-complete sync', () => {
     state.store = {
-      chats: { all: () => [{ id: 'c1' }] },
-      messages: {},
+      getChats: () => [{ jid: 'c1', name: 'c1' }],
+      getMessages: () => [],
       bind: vi.fn(),
     };
 
