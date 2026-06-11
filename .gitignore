@@ -73,6 +73,12 @@ docs/plans/
 
 # Speckit
 .specify/
+!.specify/memory/
+!.specify/architectures/
+!.specify/product/
+.opencode/
+.agents/
+docs/superpowers/
 
 # Misc
 *.pem

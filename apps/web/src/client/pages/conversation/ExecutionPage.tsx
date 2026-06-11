@@ -142,8 +142,7 @@ export default function ExecutionPage() {
             currentTask={s.currentTask}
             hasSession={s.hasSession}
             onOpenSettings={(tab) => {
-              s.setSettingsInitialTab(tab);
-              s.setShowSettingsDialog(true);
+              s.navigate(`/settings/${tab}`);
             }}
             onOpenModelSettings={s.handleOpenModelSettings}
             onOpenSpeechSettings={s.handleOpenSpeechSettings}

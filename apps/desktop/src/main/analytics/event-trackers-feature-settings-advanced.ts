@@ -1,5 +1,4 @@
 import { trackEvent } from './analytics-service';
-import type { HardwareProperties } from './event-types';
 
 export function trackHelpLinkClicked(provider: string): void {
   trackEvent('help_link_clicked', { event_category: 'settings', provider });

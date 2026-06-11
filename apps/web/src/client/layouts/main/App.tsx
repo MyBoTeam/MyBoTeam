@@ -1,19 +1,13 @@
-import type { ProviderId } from '@myboteam/agent-core/common';
-import { OAuthProviderId } from '@myboteam/agent-core/common';
 import { SpinnerGapIcon, WarningIcon } from '@phosphor-icons/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AuthErrorToast } from '../../components/common/AuthErrorToast';
-import { CloseConfirmDialog } from '../../components/common/CloseConfirmDialog';
-import { DaemonConnectionToast } from '../../components/common/DaemonConnectionToast';
-import { TaskLauncher } from '../../components/common/TaskLauncher';
 import { ErrorBoundary } from '../../components/ui/ErrorBoundary';
 import { getMyBoTeam, isRunningInElectron } from '../../config/myboteam';
 import { useTaskStore } from '../../stores/taskStore';
 import { logger } from '../../utils/logger';
 import { AnimatedOutletWrapper } from './App.components';
 import type { AppStatus } from './App.types';
-import AuthSettingsDialog from './components/AuthSettingsDialog';
+import { AppOverlays } from './components/AppOverlays';
 import Sidebar from './components/Sidebar';
 import { SidebarFallback } from './components/SidebarFallback';
 
@@ -21,42 +15,10 @@ export function App() {
   const { t } = useTranslation('errors');
   const [status, setStatus] = useState<AppStatus>('loading');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [authSettingsOpen, setAuthSettingsOpen] = useState(false);
-  const [authSettingsTab, setAuthSettingsTab] = useState<
-    'providers' | 'voice' | 'skills' | 'integrations' | 'scheduler' | 'general' | 'about'
-  >('providers');
-  const [authSettingsProvider, setAuthSettingsProvider] = useState<ProviderId | undefined>(
-    undefined,
-  );
   const [isFullScreen, setIsFullScreen] = useState(false);
   const isTitleBarHidden = isFullScreen;
 
-  const { openLauncher, authError, clearAuthError } = useTaskStore();
-
-  const handleAuthReLogin = useCallback(() => {
-    if (authError) {
-      if (authError.providerId === OAuthProviderId.Slack) {
-        setAuthSettingsProvider(undefined);
-        setAuthSettingsTab('integrations');
-      } else {
-        setAuthSettingsProvider(authError.providerId as ProviderId);
-        setAuthSettingsTab('providers');
-      }
-      setAuthSettingsOpen(true);
-    }
-  }, [authError]);
-
-  const handleAuthSettingsClose = useCallback(
-    (open: boolean) => {
-      setAuthSettingsOpen(open);
-      if (!open) {
-        setAuthSettingsTab('providers');
-        setAuthSettingsProvider(undefined);
-        clearAuthError();
-      }
-    },
-    [clearAuthError],
-  );
+  const { openLauncher, isLauncherOpen, authError, clearAuthError } = useTaskStore();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -137,7 +99,6 @@ export function App() {
     );
   }
 
-  // Ready - render the app with sidebar
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Invisible drag region for window dragging (macOS hiddenInset titlebar) — hidden when fullscreen */}
@@ -150,31 +111,10 @@ export function App() {
       <main className="flex-1 overflow-hidden">
         <AnimatedOutletWrapper />
       </main>
-      <TaskLauncher />
-
-      {}
-      <AuthErrorToast error={authError} onReLogin={handleAuthReLogin} onDismiss={clearAuthError} />
-
-      {}
-      <DaemonConnectionToast
-        onOpenSettings={() => {
-          setAuthSettingsTab('general');
-          setAuthSettingsOpen(true);
-        }}
-      />
-
-      {}
-      <CloseConfirmDialog />
-
-      {}
-      <AuthSettingsDialog
-        open={authSettingsOpen}
-        onOpenChange={handleAuthSettingsClose}
-        initialProvider={authSettingsProvider}
-        onApiKeySaved={() => {
-          clearAuthError();
-          setAuthSettingsOpen(false);
-        }}
+      <AppOverlays
+        authError={authError}
+        clearAuthError={clearAuthError}
+        isLauncherOpen={isLauncherOpen}
       />
     </div>
   );

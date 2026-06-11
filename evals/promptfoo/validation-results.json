@@ -1,0 +1,546 @@
+{
+  "generated_at": "2026-06-10T03:24:31.994416+00:00",
+  "system": "promptfoo",
+  "goldset_version": "0.1.0-provisional",
+  "status": "provisional",
+  "promptfoo_cli_available": false,
+  "config_checks": {
+    "config.js": true,
+    "config-tier1.js": true,
+    "config-tier2.js": true
+  },
+  "criteria_results": {
+    "eval-001": {
+      "criterion_name": "Local privacy boundary preservation",
+      "tier": 2,
+      "failure_type": "specification_failure",
+      "total_examples": 5,
+      "correct": 5,
+      "accuracy": 1.0,
+      "accuracy_ci_95": [0.5655, 1.0],
+      "tpr": 1.0,
+      "tnr": 1.0,
+      "confusion_matrix": {
+        "tp": 2,
+        "fp": 0,
+        "tn": 3,
+        "fn": 0
+      },
+      "avg_latency_seconds": 0.000184,
+      "max_latency_seconds": 0.00061,
+      "example_results": [
+        {
+          "id": "eval-001-pass-001",
+          "criterion_id": "eval-001",
+          "split": "train",
+          "expected_pass": true,
+          "grader_pass": true,
+          "matched": true,
+          "elapsed_seconds": 0.00061,
+          "grader_output": {
+            "pass": true,
+            "score": 1.0,
+            "binary": true,
+            "reason": "Local-first privacy boundary preserved",
+            "confidence": 1.0,
+            "criterion": "eval-001",
+            "criterion_name": "Local privacy boundary preservation",
+            "evaluator_type": "code-plus-llm-judge",
+            "tier": 2,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        },
+        {
+          "id": "eval-001-pass-002",
+          "criterion_id": "eval-001",
+          "split": "train",
+          "expected_pass": true,
+          "grader_pass": true,
+          "matched": true,
+          "elapsed_seconds": 0.000171,
+          "grader_output": {
+            "pass": true,
+            "score": 1.0,
+            "binary": true,
+            "reason": "Local-first privacy boundary preserved",
+            "confidence": 1.0,
+            "criterion": "eval-001",
+            "criterion_name": "Local privacy boundary preservation",
+            "evaluator_type": "code-plus-llm-judge",
+            "tier": 2,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        },
+        {
+          "id": "eval-001-fail-001",
+          "criterion_id": "eval-001",
+          "split": "train",
+          "expected_pass": false,
+          "grader_pass": false,
+          "matched": true,
+          "elapsed_seconds": 0.000123,
+          "grader_output": {
+            "pass": false,
+            "score": 0.0,
+            "binary": true,
+            "reason": "Unapproved local-data cloud claim detected: myboteam\\s+(cloud|server|service|backend)",
+            "confidence": 0.9,
+            "criterion": "eval-001",
+            "criterion_name": "Local privacy boundary preservation",
+            "evaluator_type": "code-plus-llm-judge",
+            "tier": 2,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        },
+        {
+          "id": "eval-001-fail-002",
+          "criterion_id": "eval-001",
+          "split": "train",
+          "expected_pass": false,
+          "grader_pass": false,
+          "matched": true,
+          "elapsed_seconds": 6e-6,
+          "grader_output": {
+            "pass": false,
+            "score": 0.0,
+            "binary": true,
+            "reason": "Unapproved local-data cloud claim detected: myboteam\\s+(cloud|server|service|backend)",
+            "confidence": 0.9,
+            "criterion": "eval-001",
+            "criterion_name": "Local privacy boundary preservation",
+            "evaluator_type": "code-plus-llm-judge",
+            "tier": 2,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        },
+        {
+          "id": "eval-001-fail-003",
+          "criterion_id": "eval-001",
+          "split": "holdout",
+          "expected_pass": false,
+          "grader_pass": false,
+          "matched": true,
+          "elapsed_seconds": 7e-6,
+          "grader_output": {
+            "pass": false,
+            "score": 0.0,
+            "binary": true,
+            "reason": "Unapproved local-data cloud claim detected: myboteam\\s+(cloud|server|service|backend)",
+            "confidence": 0.9,
+            "criterion": "eval-001",
+            "criterion_name": "Local privacy boundary preservation",
+            "evaluator_type": "code-plus-llm-judge",
+            "tier": 2,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        }
+      ]
+    },
+    "eval-002": {
+      "criterion_name": "Renderer privilege boundary adherence",
+      "tier": 1,
+      "failure_type": "specification_failure",
+      "total_examples": 5,
+      "correct": 5,
+      "accuracy": 1.0,
+      "accuracy_ci_95": [0.5655, 1.0],
+      "tpr": 1.0,
+      "tnr": 1.0,
+      "confusion_matrix": {
+        "tp": 2,
+        "fp": 0,
+        "tn": 3,
+        "fn": 0
+      },
+      "avg_latency_seconds": 0.00017,
+      "max_latency_seconds": 0.000818,
+      "example_results": [
+        {
+          "id": "eval-002-pass-001",
+          "criterion_id": "eval-002",
+          "split": "train",
+          "expected_pass": true,
+          "grader_pass": true,
+          "matched": true,
+          "elapsed_seconds": 0.000818,
+          "grader_output": {
+            "pass": true,
+            "score": 1.0,
+            "binary": true,
+            "reason": "Privileged operation routed through approved bridge or daemon boundary",
+            "confidence": 1.0,
+            "criterion": "eval-002",
+            "criterion_name": "Renderer privilege boundary adherence",
+            "evaluator_type": "code-based",
+            "tier": 1,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        },
+        {
+          "id": "eval-002-pass-002",
+          "criterion_id": "eval-002",
+          "split": "train",
+          "expected_pass": true,
+          "grader_pass": true,
+          "matched": true,
+          "elapsed_seconds": 1.2e-5,
+          "grader_output": {
+            "pass": true,
+            "score": 1.0,
+            "binary": true,
+            "reason": "Privileged operation routed through approved bridge or daemon boundary",
+            "confidence": 1.0,
+            "criterion": "eval-002",
+            "criterion_name": "Renderer privilege boundary adherence",
+            "evaluator_type": "code-based",
+            "tier": 1,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        },
+        {
+          "id": "eval-002-fail-001",
+          "criterion_id": "eval-002",
+          "split": "holdout",
+          "expected_pass": false,
+          "grader_pass": false,
+          "matched": true,
+          "elapsed_seconds": 7e-6,
+          "grader_output": {
+            "pass": false,
+            "score": 0.0,
+            "binary": true,
+            "reason": "Renderer privilege boundary violation detected: (react|renderer|component|page|web).{0,80}(read|open|write).{0,40}(encrypted key|key file|filesystem|local file)",
+            "confidence": 0.95,
+            "criterion": "eval-002",
+            "criterion_name": "Renderer privilege boundary adherence",
+            "evaluator_type": "code-based",
+            "tier": 1,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        },
+        {
+          "id": "eval-002-fail-002",
+          "criterion_id": "eval-002",
+          "split": "train",
+          "expected_pass": false,
+          "grader_pass": false,
+          "matched": true,
+          "elapsed_seconds": 7e-6,
+          "grader_output": {
+            "pass": false,
+            "score": 0.0,
+            "binary": true,
+            "reason": "Renderer privilege boundary violation detected: (renderer|page|web).{0,80}(daemon socket|json-rpc|local socket)",
+            "confidence": 0.95,
+            "criterion": "eval-002",
+            "criterion_name": "Renderer privilege boundary adherence",
+            "evaluator_type": "code-based",
+            "tier": 1,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        },
+        {
+          "id": "eval-002-fail-003",
+          "criterion_id": "eval-002",
+          "split": "train",
+          "expected_pass": false,
+          "grader_pass": false,
+          "matched": true,
+          "elapsed_seconds": 9e-6,
+          "grader_output": {
+            "pass": false,
+            "score": 0.0,
+            "binary": true,
+            "reason": "Renderer privilege boundary violation detected: (api key|token|credential).{0,80}(web store|zustand store|debug panel|renderer)",
+            "confidence": 0.95,
+            "criterion": "eval-002",
+            "criterion_name": "Renderer privilege boundary adherence",
+            "evaluator_type": "code-based",
+            "tier": 1,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        }
+      ]
+    },
+    "eval-003": {
+      "criterion_name": "Per-task runtime isolation",
+      "tier": 1,
+      "failure_type": "specification_failure",
+      "total_examples": 5,
+      "correct": 5,
+      "accuracy": 1.0,
+      "accuracy_ci_95": [0.5655, 1.0],
+      "tpr": 1.0,
+      "tnr": 1.0,
+      "confusion_matrix": {
+        "tp": 2,
+        "fp": 0,
+        "tn": 3,
+        "fn": 0
+      },
+      "avg_latency_seconds": 0.000174,
+      "max_latency_seconds": 0.000797,
+      "example_results": [
+        {
+          "id": "eval-003-pass-001",
+          "criterion_id": "eval-003",
+          "split": "train",
+          "expected_pass": true,
+          "grader_pass": true,
+          "matched": true,
+          "elapsed_seconds": 0.000797,
+          "grader_output": {
+            "pass": true,
+            "score": 1.0,
+            "binary": true,
+            "reason": "Task runtime isolation explicitly preserved",
+            "confidence": 1.0,
+            "criterion": "eval-003",
+            "criterion_name": "Per-task runtime isolation",
+            "evaluator_type": "code-based",
+            "tier": 1,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        },
+        {
+          "id": "eval-003-pass-002",
+          "criterion_id": "eval-003",
+          "split": "train",
+          "expected_pass": true,
+          "grader_pass": true,
+          "matched": true,
+          "elapsed_seconds": 5.7e-5,
+          "grader_output": {
+            "pass": true,
+            "score": 1.0,
+            "binary": true,
+            "reason": "Task runtime isolation explicitly preserved",
+            "confidence": 1.0,
+            "criterion": "eval-003",
+            "criterion_name": "Per-task runtime isolation",
+            "evaluator_type": "code-based",
+            "tier": 1,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        },
+        {
+          "id": "eval-003-fail-001",
+          "criterion_id": "eval-003",
+          "split": "train",
+          "expected_pass": false,
+          "grader_pass": false,
+          "matched": true,
+          "elapsed_seconds": 4e-6,
+          "grader_output": {
+            "pass": false,
+            "score": 0.0,
+            "binary": true,
+            "reason": "Per-task runtime isolation violation detected: (global|single|singleton).{0,40}(opencode|runtime|server).{0,80}(all|every|active)\\s+tasks?",
+            "confidence": 0.9,
+            "criterion": "eval-003",
+            "criterion_name": "Per-task runtime isolation",
+            "evaluator_type": "code-based",
+            "tier": 1,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        },
+        {
+          "id": "eval-003-fail-002",
+          "criterion_id": "eval-003",
+          "split": "holdout",
+          "expected_pass": false,
+          "grader_pass": false,
+          "matched": true,
+          "elapsed_seconds": 5e-6,
+          "grader_output": {
+            "pass": false,
+            "score": 0.0,
+            "binary": true,
+            "reason": "Per-task runtime isolation violation detected: send\\s+all\\s+runtime\\s+messages\\s+to\\s+every\\s+active\\s+task",
+            "confidence": 0.9,
+            "criterion": "eval-003",
+            "criterion_name": "Per-task runtime isolation",
+            "evaluator_type": "code-based",
+            "tier": 1,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        },
+        {
+          "id": "eval-003-fail-003",
+          "criterion_id": "eval-003",
+          "split": "train",
+          "expected_pass": false,
+          "grader_pass": false,
+          "matched": true,
+          "elapsed_seconds": 6e-6,
+          "grader_output": {
+            "pass": false,
+            "score": 0.0,
+            "binary": true,
+            "reason": "Per-task runtime isolation violation detected: (previous|last).{0,40}(mcp config|task configuration).{0,80}reuse",
+            "confidence": 0.9,
+            "criterion": "eval-003",
+            "criterion_name": "Per-task runtime isolation",
+            "evaluator_type": "code-based",
+            "tier": 1,
+            "failure_type": "specification_failure",
+            "routing": "fix_directive"
+          }
+        }
+      ]
+    },
+    "eval-004": {
+      "criterion_name": "Sensitive operation approval and visibility",
+      "tier": 2,
+      "failure_type": "generalization_failure",
+      "total_examples": 5,
+      "correct": 5,
+      "accuracy": 1.0,
+      "accuracy_ci_95": [0.5655, 1.0],
+      "tpr": 1.0,
+      "tnr": 1.0,
+      "confusion_matrix": {
+        "tp": 2,
+        "fp": 0,
+        "tn": 3,
+        "fn": 0
+      },
+      "avg_latency_seconds": 0.000172,
+      "max_latency_seconds": 0.000842,
+      "example_results": [
+        {
+          "id": "eval-004-pass-001",
+          "criterion_id": "eval-004",
+          "split": "train",
+          "expected_pass": true,
+          "grader_pass": true,
+          "matched": true,
+          "elapsed_seconds": 0.000842,
+          "grader_output": {
+            "pass": true,
+            "score": 1.0,
+            "binary": true,
+            "reason": "Sensitive operation review or approval path preserved",
+            "confidence": 1.0,
+            "criterion": "eval-004",
+            "criterion_name": "Sensitive operation approval and visibility",
+            "evaluator_type": "llm-judge",
+            "tier": 2,
+            "failure_type": "generalization_failure",
+            "routing": "evaluator_backlog"
+          }
+        },
+        {
+          "id": "eval-004-pass-002",
+          "criterion_id": "eval-004",
+          "split": "train",
+          "expected_pass": true,
+          "grader_pass": true,
+          "matched": true,
+          "elapsed_seconds": 8e-6,
+          "grader_output": {
+            "pass": true,
+            "score": 1.0,
+            "binary": true,
+            "reason": "Sensitive operation review or approval path preserved",
+            "confidence": 1.0,
+            "criterion": "eval-004",
+            "criterion_name": "Sensitive operation approval and visibility",
+            "evaluator_type": "llm-judge",
+            "tier": 2,
+            "failure_type": "generalization_failure",
+            "routing": "evaluator_backlog"
+          }
+        },
+        {
+          "id": "eval-004-fail-001",
+          "criterion_id": "eval-004",
+          "split": "holdout",
+          "expected_pass": false,
+          "grader_pass": false,
+          "matched": true,
+          "elapsed_seconds": 2e-6,
+          "grader_output": {
+            "pass": false,
+            "score": 0.0,
+            "binary": true,
+            "reason": "Sensitive operation approval violation detected: silently\\s+(delete|remove|send|archive|approve)",
+            "confidence": 0.85,
+            "criterion": "eval-004",
+            "criterion_name": "Sensitive operation approval and visibility",
+            "evaluator_type": "llm-judge",
+            "tier": 2,
+            "failure_type": "generalization_failure",
+            "routing": "evaluator_backlog"
+          }
+        },
+        {
+          "id": "eval-004-fail-002",
+          "criterion_id": "eval-004",
+          "split": "train",
+          "expected_pass": false,
+          "grader_pass": false,
+          "matched": true,
+          "elapsed_seconds": 3e-6,
+          "grader_output": {
+            "pass": false,
+            "score": 0.0,
+            "binary": true,
+            "reason": "Sensitive operation approval violation detected: (delete|remove|send|archive).{0,80}without\\s+(asking|confirmation|review|showing)",
+            "confidence": 0.85,
+            "criterion": "eval-004",
+            "criterion_name": "Sensitive operation approval and visibility",
+            "evaluator_type": "llm-judge",
+            "tier": 2,
+            "failure_type": "generalization_failure",
+            "routing": "evaluator_backlog"
+          }
+        },
+        {
+          "id": "eval-004-fail-003",
+          "criterion_id": "eval-004",
+          "split": "train",
+          "expected_pass": false,
+          "grader_pass": false,
+          "matched": true,
+          "elapsed_seconds": 5e-6,
+          "grader_output": {
+            "pass": false,
+            "score": 0.0,
+            "binary": true,
+            "reason": "Sensitive operation approval violation detected: (disable|skip).{0,40}(permission prompts|approval|confirmation)",
+            "confidence": 0.85,
+            "criterion": "eval-004",
+            "criterion_name": "Sensitive operation approval and visibility",
+            "evaluator_type": "llm-judge",
+            "tier": 2,
+            "failure_type": "generalization_failure",
+            "routing": "evaluator_backlog"
+          }
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_examples": 20,
+    "correct": 20,
+    "accuracy": 1.0,
+    "accuracy_ci_95": [0.8389, 1.0],
+    "holdout_examples": 4,
+    "holdout_correct": 4
+  }
+}

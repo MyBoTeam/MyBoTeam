@@ -25,10 +25,6 @@ export function useExecutionCore() {
   const [currentTool, setCurrentTool] = useState<string | null>(null);
   const [currentToolInput, setCurrentToolInput] = useState<unknown>(null);
   const [repeatingTask, setRepeatingTask] = useState(false);
-  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
-  const [settingsInitialTab, setSettingsInitialTab] = useState<
-    'providers' | 'voice' | 'skills' | 'integrations'
-  >('providers');
   const [taskActionError, setTaskActionError] = useState<string | null>(null);
   const [isTaskActionRunning, setIsTaskActionRunning] = useState(false);
   const [pendingFollowUp, setPendingFollowUp] = useState<string | null>(null);
@@ -102,11 +98,12 @@ export function useExecutionCore() {
     loadTaskById,
   });
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: task changes intentionally trigger auto-scroll.
   useEffect(() => {
     if (scroll.isAtBottom) {
       scroll.scrollToBottom();
     }
-  }, [scroll.scrollToBottom, scroll.isAtBottom]);
+  }, [scroll.scrollToBottom, scroll.isAtBottom, currentTask?.messages.length, currentTask?.status]);
 
   const permissionRequest = (id ? permissionRequests[id] : undefined) ?? null;
   const isComplete = ['completed', 'failed', 'cancelled', 'interrupted'].includes(
@@ -149,10 +146,6 @@ export function useExecutionCore() {
     setCurrentToolInput,
     repeatingTask,
     setRepeatingTask,
-    showSettingsDialog,
-    setShowSettingsDialog,
-    settingsInitialTab,
-    setSettingsInitialTab,
     taskActionError,
     setTaskActionError,
     isTaskActionRunning,

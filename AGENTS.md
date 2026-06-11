@@ -129,6 +129,13 @@ pnpm -F @myboteam/agent-core test
 pnpm check && pnpm -F @myboteam/web test && pnpm -F @myboteam/desktop test && pnpm -F @myboteam/agent-core test
 ```
 
+## Git Safety
+
+Running any git command with `--no-verify` requires explicit, special user
+approval for that exact command before it is run. This is non-negotiable. General
+permission to commit, push, create a PR, continue work, or run ordinary git
+commands does not authorize bypassing hooks.
+
 ## Do NOT
 
 - **Do NOT use `require()`** in agent-core — it is ESM (`"type": "module"`)
@@ -137,7 +144,8 @@ pnpm check && pnpm -F @myboteam/web test && pnpm -F @myboteam/desktop test && pn
 - **Do NOT modify released migration files** — create a new migration instead
 - **Do NOT add root-level test scripts** — tests are workspace-scoped (`-F @myboteam/web`, `-F @myboteam/desktop`, or `-F @myboteam/agent-core`)
 - **Do NOT spawn `npx`/`node`** without adding bundled Node.js bin to PATH (see [architecture.md](docs/architecture.md#spawning-npxnode-in-main-process))
-- **Do NOT create files over 200 lines** — split large files by class/function first, then by logical concern. Enforced by Biome's `noExcessiveLinesPerFile` rule.
+- **Do NOT create source files over 200 lines** — split large files by class/function first, then by logical concern. Markdown/documentation files are exempt when a single cohesive document is clearer. Enforced for source files by Biome's `noExcessiveLinesPerFile` rule.
+- **Do NOT run `git --no-verify` or any git subcommand with `--no-verify`** without explicit, special user approval for that exact command.
 
 ## Architecture
 
@@ -193,9 +201,10 @@ Static assets go in `apps/web/public/assets/`.
 ### Adding a New Migration
 
 1. Create `packages/agent-core/src/storage/migrations/vXXX-description.ts` (use `.js` extension in imports)
-2. Import and add to the `migrations` array in `packages/agent-core/src/storage/migrations/index.ts`
-3. Bump `CURRENT_VERSION` (see the `CURRENT_VERSION` export in `packages/agent-core/src/storage/migrations/index.ts` for the current value)
-4. Run `pnpm -F @myboteam/agent-core test`
+2. Include executable `up` and `down` migration paths and tests for both directions
+3. Import and add to the `migrations` array in `packages/agent-core/src/storage/migrations/index.ts`
+4. Bump `CURRENT_VERSION` (see the `CURRENT_VERSION` export in `packages/agent-core/src/storage/migrations/index.ts` for the current value)
+5. Run `pnpm -F @myboteam/agent-core test`
 
 ### Changing Agent-Core Public API
 
@@ -264,3 +273,8 @@ GitHub Actions workflows in `.github/workflows/`:
 - `ci.yml` - Core tests, unit tests, integration tests, typecheck, E2E
 - `release.yml` - Desktop app build and publish to GitHub releases
 - `commitlint.yml` - Conventional commit validation
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->

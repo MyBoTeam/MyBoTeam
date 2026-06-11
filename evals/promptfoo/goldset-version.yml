@@ -1,0 +1,22 @@
+goldset_version: "0.1.0-provisional"
+system: "promptfoo"
+status: "provisional"
+created_from: "architecture-derived drafts"
+traces_analyzed: 0
+theoretical_saturation: false
+criteria_count: 4
+example_count: 20
+training_examples: 16
+holdout_examples: 4
+holdout_ratio: 0.2
+adversarial_examples: 12
+dataset_hash: "sha256:77e84a1c9e9b3d8c22e361d93398131f303edd380ea946fec94203c96bd23e96"
+edd_compliance:
+  binary_pass_fail: true
+  test_data_as_code: true
+  adversarial_included: true
+  holdout_preserved: true
+  trace_saturation_required_before_stable: true
+dataset_notes:
+  - "Seed dataset only; validate with at least 20 real traces before treating as stable."
+  - "Holdout examples are reserved for evaluator validation, not prompt tuning."

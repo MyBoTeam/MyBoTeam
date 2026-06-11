@@ -1,9 +1,10 @@
 import { ArrowLeft } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate } from 'react-router';
+import { CloseConfirmDialog } from '@/components/common/CloseConfirmDialog';
+import { SETTINGS_TABS } from '@/pages/settings/settings-tabs';
 import { useSidebarStore } from '@/stores/sidebarStore';
 import { cn } from '@/utils/utils';
-import { SETTINGS_TABS } from '../main/components/settings-tabs';
 
 export default function SettingsLayout() {
   const { t } = useTranslation('settings');
@@ -52,6 +53,7 @@ export default function SettingsLayout() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Outlet />
       </div>
+      <CloseConfirmDialog />
     </div>
   );
 }

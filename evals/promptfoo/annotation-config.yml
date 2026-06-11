@@ -1,0 +1,32 @@
+annotation_system: "promptfoo"
+
+risk_thresholds:
+  high_risk: 0.8
+  medium_risk: 0.6
+  low_risk: 0.4
+
+routing_rules:
+  specification_failure:
+    high_risk_criteria:
+      - eval-001
+      - eval-002
+      - eval-003
+    route_to: "security_review_queue"
+    priority: "critical"
+    sla_hours: 4
+  generalization_failure:
+    criteria:
+      - eval-004
+    route_to: "quality_review_queue"
+    priority: "normal"
+    sla_hours: 24
+  evaluation_errors:
+    route_to: "technical_review_queue"
+    priority: "high"
+    sla_hours: 8
+
+review_metadata:
+  include_full_context: true
+  include_goldset_examples: true
+  include_similar_cases: true
+  binary_review_only: true
