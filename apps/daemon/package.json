@@ -9,6 +9,7 @@
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
     "check": "biome check --write . && tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:unit": "vitest run",
     "test:integration": "exit 0",

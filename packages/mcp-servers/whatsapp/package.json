@@ -9,7 +9,8 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "vitest run",
-    "check": "biome check --write . && tsc --noEmit"
+    "check": "biome check --write . && tsc --noEmit",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"

@@ -59,6 +59,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "check": "biome check --write . && tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run tests/unit/",
     "test:unit": "vitest run tests/unit/",
     "test:integration": "vitest run tests/integration/",

@@ -33,6 +33,7 @@
     "package:linux": "pnpm package:linux:x64 && pnpm package:linux:arm64",
     "preview": "vite preview",
     "check": "biome check --write . && tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "clean": "node -e \"const fs=require('fs');['dist','dist-electron','release'].forEach(d=>fs.rmSync(d,{recursive:true,force:true}))\"",
     "download:nodejs": "node scripts/download-nodejs.cjs",
     "stage:daemon-deps": "node scripts/stage-daemon-deps.cjs",

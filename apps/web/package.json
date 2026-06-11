@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -p tsconfig.client.json --noEmit && vite build",
     "check": "biome check --write . && tsc -p tsconfig.client.json --noEmit",
+    "typecheck": "tsc -p tsconfig.client.json --noEmit",
     "preview": "vite preview",
     "test": "vitest run --config vitest.unit.config.ts",
     "test:unit": "vitest run --config vitest.unit.config.ts",
