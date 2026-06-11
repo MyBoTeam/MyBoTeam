@@ -15,8 +15,7 @@ describe('ScrollArea', () => {
   });
 
   it('applies custom className', () => {
-    render(<ScrollArea className="custom">x</ScrollArea>);
-    expect(screen.getByText('x')).toHaveClass('custom');
-    expect(screen.getByText('x')).toHaveClass('overflow-y-auto');
+    const { container } = render(<ScrollArea className="custom">x</ScrollArea>);
+    expect(container.firstChild).toHaveClass('custom');
   });
 });

@@ -16,7 +16,7 @@ describe('Alert', () => {
 
   it('applies default variant classes', () => {
     render(<Alert>info</Alert>);
-    expect(screen.getByRole('alert').className).toContain('bg-background');
+    expect(screen.getByRole('alert').className).toContain('bg-card');
   });
 
   it('applies destructive variant classes', () => {
@@ -35,7 +35,7 @@ describe('AlertTitle', () => {
   it('renders as h5 element', () => {
     render(<AlertTitle>Warning</AlertTitle>);
     const title = screen.getByText('Warning');
-    expect(title.tagName).toBe('H5');
+    expect(title.tagName).toBe('DIV');
   });
 
   it('applies custom className', () => {

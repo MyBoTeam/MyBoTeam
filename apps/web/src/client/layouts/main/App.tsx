@@ -1,3 +1,4 @@
+import { TooltipProvider } from '@myboteam/ui';
 import { SpinnerGapIcon, WarningIcon } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -100,22 +101,24 @@ export function App() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* Invisible drag region for window dragging (macOS hiddenInset titlebar) — hidden when fullscreen */}
-      {!isTitleBarHidden && (
-        <div className="drag-region fixed top-0 left-0 right-0 h-10 z-50 pointer-events-none" />
-      )}
-      <ErrorBoundary fallback={(_error, _reset) => <SidebarFallback />}>
-        <Sidebar isTitleBarHidden={isTitleBarHidden} />
-      </ErrorBoundary>
-      <main className="flex-1 overflow-hidden">
-        <AnimatedOutletWrapper />
-      </main>
-      <AppOverlays
-        authError={authError}
-        clearAuthError={clearAuthError}
-        isLauncherOpen={isLauncherOpen}
-      />
-    </div>
+    <TooltipProvider>
+      <div className="flex h-screen overflow-hidden">
+        {/* Invisible drag region for window dragging (macOS hiddenInset titlebar) — hidden when fullscreen */}
+        {!isTitleBarHidden && (
+          <div className="drag-region fixed top-0 left-0 right-0 h-10 z-50 pointer-events-none" />
+        )}
+        <ErrorBoundary fallback={(_error, _reset) => <SidebarFallback />}>
+          <Sidebar isTitleBarHidden={isTitleBarHidden} />
+        </ErrorBoundary>
+        <main className="flex-1 overflow-hidden">
+          <AnimatedOutletWrapper />
+        </main>
+        <AppOverlays
+          authError={authError}
+          clearAuthError={clearAuthError}
+          isLauncherOpen={isLauncherOpen}
+        />
+      </div>
+    </TooltipProvider>
   );
 }

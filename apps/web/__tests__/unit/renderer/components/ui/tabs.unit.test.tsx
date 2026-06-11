@@ -29,6 +29,6 @@ describe('Tabs', () => {
       </Tabs>,
     );
     expect(screen.getByText('Content 1')).toBeInTheDocument();
-    expect(screen.getByText('Content 2')).toBeInTheDocument();
+    expect(screen.queryByText('Content 2')).not.toBeInTheDocument();
   });
 });

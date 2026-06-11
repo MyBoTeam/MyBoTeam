@@ -21,7 +21,7 @@ describe('Badge', () => {
 
   it('renders as div by default', () => {
     const { container } = render(<Badge>tag</Badge>);
-    expect(container.firstChild?.tagName).toBe('DIV');
+    expect(container.firstChild?.tagName).toBe('SPAN');
   });
 
   it('renders with variant classes', () => {

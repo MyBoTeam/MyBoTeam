@@ -35,6 +35,7 @@
     "test:integration": "pnpm -r run test:integration",
     "test:e2e": "pnpm --filter @myboteam/desktop test:e2e",
     "clean": "pnpm -r clean && rm -rf node_modules",
+    "storybook": "pnpm -F @myboteam/ui package storybook",
     "prepare": "husky"
   },
   "engines": {

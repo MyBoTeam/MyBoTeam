@@ -1,6 +1,11 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+function clickTab(element: HTMLElement) {
+  fireEvent.mouseDown(element, { button: 0 });
+}
+
 import settingsEn from '../../../../locales/en/settings.json';
 
 function t(key: string): string {
@@ -117,7 +122,7 @@ describe('IntegrationsPanel — 3-tab layout', () => {
   describe('Connectors tab', () => {
     it('shows Google accounts section when Connectors tab is active', async () => {
       render(<IntegrationsPanel />);
-      fireEvent.click(screen.getByRole('tab', { name: t('integrations.tabs.connectors') }));
+      clickTab(screen.getByRole('tab', { name: t('integrations.tabs.connectors') }));
       await waitFor(() => {
         expect(screen.getByTestId('google-accounts-section-mock')).toBeVisible();
       });
@@ -125,7 +130,7 @@ describe('IntegrationsPanel — 3-tab layout', () => {
 
     it('shows Jira OAuth card when Connectors tab is active', async () => {
       render(<IntegrationsPanel />);
-      fireEvent.click(screen.getByRole('tab', { name: t('integrations.tabs.connectors') }));
+      clickTab(screen.getByRole('tab', { name: t('integrations.tabs.connectors') }));
       await waitFor(() => {
         expect(screen.getByTestId('jira-auth-card')).toBeVisible();
       });
@@ -133,7 +138,7 @@ describe('IntegrationsPanel — 3-tab layout', () => {
 
     it('shows GitHub OAuth card when Connectors tab is active', async () => {
       render(<IntegrationsPanel />);
-      fireEvent.click(screen.getByRole('tab', { name: t('integrations.tabs.connectors') }));
+      clickTab(screen.getByRole('tab', { name: t('integrations.tabs.connectors') }));
       await waitFor(() => {
         expect(screen.getByTestId('github-auth-card')).toBeVisible();
       });
@@ -143,7 +148,7 @@ describe('IntegrationsPanel — 3-tab layout', () => {
   describe('Custom tab', () => {
     it('shows the custom connector add form when Custom tab is active', async () => {
       render(<IntegrationsPanel />);
-      fireEvent.click(screen.getByRole('tab', { name: t('integrations.tabs.custom') }));
+      clickTab(screen.getByRole('tab', { name: t('integrations.tabs.custom') }));
       await waitFor(() => {
         // ConnectorAddForm renders a URL input for adding custom connectors
         expect(screen.getByPlaceholderText(t('connectors.placeholder'))).toBeVisible();
@@ -161,7 +166,7 @@ describe('IntegrationsPanel — 3-tab layout', () => {
       render(<IntegrationsPanel />);
 
       // Switch to Connectors tab and click Jira Connect
-      fireEvent.click(screen.getByRole('tab', { name: t('integrations.tabs.connectors') }));
+      clickTab(screen.getByRole('tab', { name: t('integrations.tabs.connectors') }));
       await waitFor(() => {
         expect(screen.getByTestId('jira-auth-card')).toBeInTheDocument();
       });
@@ -179,7 +184,7 @@ describe('IntegrationsPanel — 3-tab layout', () => {
 
       render(<IntegrationsPanel />);
 
-      fireEvent.click(screen.getByRole('tab', { name: t('integrations.tabs.connectors') }));
+      clickTab(screen.getByRole('tab', { name: t('integrations.tabs.connectors') }));
       await waitFor(() => screen.getByTestId('jira-auth-card-button'));
       fireEvent.click(screen.getByTestId('jira-auth-card-button'));
 
@@ -195,7 +200,7 @@ describe('IntegrationsPanel — 3-tab layout', () => {
 
       render(<IntegrationsPanel />);
 
-      fireEvent.click(screen.getByRole('tab', { name: t('integrations.tabs.connectors') }));
+      clickTab(screen.getByRole('tab', { name: t('integrations.tabs.connectors') }));
       await waitFor(() => screen.getByTestId('jira-auth-card-button'));
       fireEvent.click(screen.getByTestId('jira-auth-card-button'));
 
@@ -216,7 +221,7 @@ describe('IntegrationsPanel — 3-tab layout', () => {
       render(<IntegrationsPanel />);
 
       // Trigger error in Connectors tab
-      fireEvent.click(screen.getByRole('tab', { name: t('integrations.tabs.connectors') }));
+      clickTab(screen.getByRole('tab', { name: t('integrations.tabs.connectors') }));
       await waitFor(() => screen.getByTestId('jira-auth-card-button'));
       fireEvent.click(screen.getByTestId('jira-auth-card-button'));
 
@@ -225,7 +230,7 @@ describe('IntegrationsPanel — 3-tab layout', () => {
       });
 
       // Switch to Messaging tab — error zone should still be visible
-      fireEvent.click(screen.getByRole('tab', { name: t('integrations.tabs.messaging') }));
+      clickTab(screen.getByRole('tab', { name: t('integrations.tabs.messaging') }));
 
       expect(screen.getByTestId('tab-error-zone')).toBeInTheDocument();
     });

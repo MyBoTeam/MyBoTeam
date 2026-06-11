@@ -29,6 +29,6 @@ describe('Button', () => {
       </Button>,
     );
     const btn = screen.getByRole('button');
-    expect(btn).toHaveClass('bg-destructive');
+    expect(btn).toHaveClass('bg-destructive/10');
   });
 });

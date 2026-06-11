@@ -40,39 +40,39 @@ export function IntegrationsPanel() {
 
   return (
     <div data-testid="integrations-panel">
+      <AnimatePresence>
+        {tabError && (
+          <motion.div
+            className="mt-3 flex items-center justify-between rounded-md bg-destructive/10 px-4 py-2 text-sm text-destructive"
+            variants={settingsVariants.fadeSlide}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={settingsTransitions.enter}
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-testid="tab-error-zone"
+          >
+            <span>{tabError}</span>
+            <button
+              onClick={dismissTabError}
+              aria-label={t('integrations.errorDismiss')}
+              className="ml-3 shrink-0 text-destructive opacity-70 hover:opacity-100"
+              data-testid="tab-error-dismiss"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Tabs defaultValue="messaging">
         <TabsList>
           <TabsTrigger value="messaging">{t('integrations.tabs.messaging')}</TabsTrigger>
           <TabsTrigger value="connectors">{t('integrations.tabs.connectors')}</TabsTrigger>
           <TabsTrigger value="custom">{t('integrations.tabs.custom')}</TabsTrigger>
         </TabsList>
-
-        <AnimatePresence>
-          {tabError && (
-            <motion.div
-              className="mt-3 flex items-center justify-between rounded-md bg-destructive/10 px-4 py-2 text-sm text-destructive"
-              variants={settingsVariants.fadeSlide}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={settingsTransitions.enter}
-              role="alert"
-              aria-live="assertive"
-              aria-atomic="true"
-              data-testid="tab-error-zone"
-            >
-              <span>{tabError}</span>
-              <button
-                onClick={dismissTabError}
-                aria-label={t('integrations.errorDismiss')}
-                className="ml-3 shrink-0 text-destructive opacity-70 hover:opacity-100"
-                data-testid="tab-error-dismiss"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         <TabsContent value="messaging">
           <div className="space-y-3">
