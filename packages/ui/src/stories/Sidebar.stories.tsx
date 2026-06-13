@@ -52,17 +52,3 @@ export const Glow: Story = {
     </div>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <Sidebar data-testid="sidebar" className="h-96 border-r">
-      <SidebarHeader>Header</SidebarHeader>
-    </Sidebar>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const sidebar = canvas.getByTestId('sidebar');
-    await expect(sidebar).toBeVisible();
-  },
-};

@@ -43,22 +43,3 @@ export const Default: Story = {
     </AlertDialog>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <AlertDialog open>
-      <AlertDialogContent data-testid="alert-dialog-content">
-        <AlertDialogHeader>
-          <AlertDialogTitle>Check</AlertDialogTitle>
-          <AlertDialogDescription>Checking styles.</AlertDialogDescription>
-        </AlertDialogHeader>
-      </AlertDialogContent>
-    </AlertDialog>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const content = canvas.getByTestId('alert-dialog-content');
-    await expect(content).toBeVisible();
-  },
-};

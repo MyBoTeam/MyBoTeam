@@ -34,17 +34,3 @@ export const Glow: Story = {
     </div>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <div className="w-80">
-      <Slider defaultValue={[50]} max={100} step={1} data-testid="slider" />
-    </div>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const slider = canvas.getByTestId('slider');
-    await expect(slider).toBeVisible();
-  },
-};

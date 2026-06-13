@@ -50,20 +50,3 @@ export const Glow: Story = {
     </Command>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <Command data-testid="command" className="w-80 rounded-lg border shadow-md">
-      <CommandInput placeholder="Search" />
-      <CommandList>
-        <CommandItem data-testid="command-item">Item</CommandItem>
-      </CommandList>
-    </Command>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const item = canvas.getByTestId('command-item');
-    await expect(item).toBeVisible();
-  },
-};

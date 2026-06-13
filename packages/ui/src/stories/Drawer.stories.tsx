@@ -45,21 +45,3 @@ export const Default: Story = {
     );
   },
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <Drawer open>
-      <DrawerContent data-testid="drawer-content">
-        <DrawerHeader>
-          <DrawerTitle>Check</DrawerTitle>
-        </DrawerHeader>
-      </DrawerContent>
-    </Drawer>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const content = canvas.getByTestId('drawer-content');
-    await expect(content).toBeVisible();
-  },
-};

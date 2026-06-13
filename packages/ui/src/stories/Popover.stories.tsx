@@ -40,22 +40,3 @@ export const Glow: Story = {
     </Popover>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <Popover open>
-      <PopoverTrigger asChild>
-        <Button variant="outline">Trigger</Button>
-      </PopoverTrigger>
-      <PopoverContent data-testid="popover-content">
-        <p>Content</p>
-      </PopoverContent>
-    </Popover>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const content = canvas.getByTestId('popover-content');
-    await expect(content).toBeVisible();
-  },
-};

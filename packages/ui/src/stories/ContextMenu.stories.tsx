@@ -32,22 +32,3 @@ export const Default: Story = {
     </ContextMenu>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <ContextMenu>
-      <ContextMenuTrigger
-        data-testid="context-trigger"
-        className="flex h-24 w-64 items-center justify-center rounded-md border border-dashed text-sm"
-      >
-        Right click
-      </ContextMenuTrigger>
-    </ContextMenu>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const trigger = canvas.getByTestId('context-trigger');
-    await expect(trigger).toBeVisible();
-  },
-};

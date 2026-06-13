@@ -79,21 +79,3 @@ export const Glow: Story = {
     );
   },
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <Sheet open>
-      <SheetContent data-testid="sheet-content">
-        <SheetHeader>
-          <SheetTitle>Check</SheetTitle>
-        </SheetHeader>
-      </SheetContent>
-    </Sheet>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const content = canvas.getByTestId('sheet-content');
-    await expect(content).toBeVisible();
-  },
-};

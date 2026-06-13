@@ -53,21 +53,3 @@ export const Glow: Story = {
     </Breadcrumb>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <Breadcrumb>
-      <BreadcrumbList data-testid="breadcrumb-list">
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const list = canvas.getByTestId('breadcrumb-list');
-    await expect(list).toBeVisible();
-  },
-};

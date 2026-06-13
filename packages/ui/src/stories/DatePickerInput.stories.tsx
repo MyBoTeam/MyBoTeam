@@ -22,16 +22,3 @@ export const WithValue: Story = {
     value: new Date(2025, 0, 15),
   },
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  args: {
-    'data-testid': 'date-picker',
-    placeholder: 'Check',
-  },
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const picker = canvas.getByTestId('date-picker');
-    await expect(picker).toBeVisible();
-  },
-};

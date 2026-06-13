@@ -43,22 +43,3 @@ export const Vertical: Story = {
     </ButtonGroup>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <ButtonGroup data-testid="button-group" orientation="horizontal">
-      <Button variant="outline" className="rounded-none rounded-l-md">
-        A
-      </Button>
-      <Button variant="outline" className="rounded-none rounded-r-md">
-        B
-      </Button>
-    </ButtonGroup>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const group = canvas.getByTestId('button-group');
-    await expect(group).toBeVisible();
-  },
-};

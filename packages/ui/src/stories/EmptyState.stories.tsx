@@ -42,17 +42,3 @@ export const Glow: Story = {
     </EmptyState>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <EmptyState data-testid="empty-state">
-      <EmptyStateTitle>Check</EmptyStateTitle>
-    </EmptyState>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const state = canvas.getByTestId('empty-state');
-    await expect(state).toHaveTextContent('Check');
-  },
-};

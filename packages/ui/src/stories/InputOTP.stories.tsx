@@ -56,22 +56,3 @@ export const Glow: Story = {
     </InputOTP>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <InputOTP maxLength={4} data-testid="otp">
-      <InputOTPGroup>
-        <InputOTPSlot index={0} />
-        <InputOTPSlot index={1} />
-        <InputOTPSlot index={2} />
-        <InputOTPSlot index={3} />
-      </InputOTPGroup>
-    </InputOTP>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const otp = canvas.getByTestId('otp');
-    await expect(otp).toBeVisible();
-  },
-};

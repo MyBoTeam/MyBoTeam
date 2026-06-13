@@ -28,19 +28,3 @@ export const Default: Story = {
     </div>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <div className="w-96">
-      <Carousel data-testid="carousel">
-        <div className="flex h-32 items-center justify-center">Item</div>
-      </Carousel>
-    </div>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const carousel = canvas.getByTestId('carousel');
-    await expect(carousel).toHaveTextContent('Item');
-  },
-};

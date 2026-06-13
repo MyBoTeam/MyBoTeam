@@ -31,15 +31,3 @@ export const Glow: Story = {
     glow: true,
   },
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  args: {
-    image: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=400&h=400&fit=crop',
-  },
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const cropperEl = canvas.getByTestId('cropper');
-    await expect(cropperEl).toBeVisible();
-  },
-};

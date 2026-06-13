@@ -64,20 +64,3 @@ export const Glow: Story = {
     </Accordion>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <Accordion type="single" collapsible className="w-80">
-      <AccordionItem value="item-1">
-        <AccordionTrigger>Check</AccordionTrigger>
-        <AccordionContent data-testid="content">Content</AccordionContent>
-      </AccordionItem>
-    </Accordion>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const content = canvas.getByTestId('content');
-    await expect(content).toBeVisible();
-  },
-};

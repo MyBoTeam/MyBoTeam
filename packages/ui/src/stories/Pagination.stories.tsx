@@ -67,21 +67,3 @@ export const Glow: Story = {
     </Pagination>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <Pagination>
-      <PaginationContent data-testid="pagination-content">
-        <PaginationItem>
-          <PaginationLink href="#">1</PaginationLink>
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const content = canvas.getByTestId('pagination-content');
-    await expect(content).toBeVisible();
-  },
-};

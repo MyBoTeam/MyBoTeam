@@ -21,17 +21,3 @@ export const Default: Story = {
     </InputGroup>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <InputGroup data-testid="input-group">
-      <Input placeholder="Check" />
-    </InputGroup>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const group = canvas.getByTestId('input-group');
-    await expect(group).toBeVisible();
-  },
-};

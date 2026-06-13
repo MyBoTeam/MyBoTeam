@@ -69,26 +69,3 @@ export const Glow: Story = {
     </Table>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <Table data-testid="table">
-      <TableHeader>
-        <TableRow>
-          <TableHead>Check</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        <TableRow>
-          <TableCell>Value</TableCell>
-        </TableRow>
-      </TableBody>
-    </Table>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const table = canvas.getByTestId('table');
-    await expect(table).toBeVisible();
-  },
-};

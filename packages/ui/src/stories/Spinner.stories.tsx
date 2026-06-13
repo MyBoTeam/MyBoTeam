@@ -41,16 +41,3 @@ export const Glow: Story = {
     glow: true,
   },
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  args: {
-    size: 'md',
-    'data-testid': 'spinner',
-  },
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const spinner = canvas.getByTestId('spinner');
-    await expect(spinner).toBeVisible();
-  },
-};

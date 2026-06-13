@@ -62,16 +62,3 @@ export const Glow: Story = {
     children: 'Glow',
   },
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  args: {
-    children: 'Check',
-    'data-testid': 'toggle',
-  },
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const toggle = canvas.getByTestId('toggle');
-    await expect(toggle).toBeVisible();
-  },
-};

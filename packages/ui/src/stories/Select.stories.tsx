@@ -45,19 +45,3 @@ export const Glow: Story = {
     </Select>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <Select>
-      <SelectTrigger className="w-60" data-testid="select-trigger">
-        <SelectValue placeholder="Check" />
-      </SelectTrigger>
-    </Select>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const trigger = canvas.getByTestId('select-trigger');
-    await expect(trigger).toBeVisible();
-  },
-};

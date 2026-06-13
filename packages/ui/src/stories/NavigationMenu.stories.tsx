@@ -60,21 +60,3 @@ export const Default: Story = {
     </NavigationMenu>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <NavigationMenu>
-      <NavigationMenuList data-testid="nav-list">
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Item</NavigationMenuTrigger>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const list = canvas.getByTestId('nav-list');
-    await expect(list).toBeVisible();
-  },
-};

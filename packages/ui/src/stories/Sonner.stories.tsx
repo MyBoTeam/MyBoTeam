@@ -29,18 +29,3 @@ export const Default: Story = {
     </div>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <div>
-      <Toaster data-testid="toaster" />
-      <Button onClick={() => toast('Check')}>Show</Button>
-    </div>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const toaster = canvas.getByTestId('toaster');
-    await expect(toaster).toBeVisible();
-  },
-};

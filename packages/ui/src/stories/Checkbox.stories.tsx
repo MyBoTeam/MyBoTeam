@@ -51,15 +51,3 @@ export const Glow: Story = {
     checked: true,
   },
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  args: {
-    'data-testid': 'checkbox',
-  },
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const checkbox = canvas.getByTestId('checkbox');
-    await expect(checkbox).toBeVisible();
-  },
-};

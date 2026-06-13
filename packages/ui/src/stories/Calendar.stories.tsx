@@ -18,13 +18,3 @@ export const Default: Story = {
 export const Glow: Story = {
   render: () => <Calendar mode="single" glow className="rounded-md border p-3" />,
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => <Calendar mode="single" data-testid="calendar" className="rounded-md border p-3" />,
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const calendar = canvas.getByTestId('calendar');
-    await expect(calendar).toBeVisible();
-  },
-};

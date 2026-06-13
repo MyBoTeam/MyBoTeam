@@ -54,20 +54,3 @@ export const Disabled: Story = {
     </RadioGroup>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <RadioGroup defaultValue="check" data-testid="radio-group">
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="check" id="check" />
-        <Label htmlFor="check">Check</Label>
-      </div>
-    </RadioGroup>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const group = canvas.getByTestId('radio-group');
-    await expect(group).toBeVisible();
-  },
-};

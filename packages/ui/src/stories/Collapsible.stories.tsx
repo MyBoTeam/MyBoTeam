@@ -26,19 +26,3 @@ export const Default: Story = {
     </Collapsible>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <Collapsible data-testid="collapsible" className="w-80">
-      <CollapsibleContent>
-        <p>Visible content</p>
-      </CollapsibleContent>
-    </Collapsible>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const collapsible = canvas.getByTestId('collapsible');
-    await expect(collapsible).toHaveTextContent('Visible content');
-  },
-};

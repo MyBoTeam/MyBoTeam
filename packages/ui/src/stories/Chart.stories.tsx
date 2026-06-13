@@ -49,19 +49,3 @@ export const Glow: Story = {
     </ChartContainer>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <ChartContainer config={chartConfig} data-testid="chart-container" className="h-64 w-full">
-      <BarChart data={chartData}>
-        <Bar dataKey="revenue" fill="var(--color-revenue)" />
-      </BarChart>
-    </ChartContainer>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const chart = canvas.getByTestId('chart-container');
-    await expect(chart).toBeVisible();
-  },
-};

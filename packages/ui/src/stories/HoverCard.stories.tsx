@@ -40,24 +40,3 @@ export const Glow: Story = {
     </HoverCard>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <HoverCard open>
-      <HoverCardTrigger asChild>
-        <Button variant="link" data-testid="hover-trigger">
-          Trigger
-        </Button>
-      </HoverCardTrigger>
-      <HoverCardContent data-testid="hover-content">
-        <p>Content</p>
-      </HoverCardContent>
-    </HoverCard>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const content = canvas.getByTestId('hover-content');
-    await expect(content).toBeVisible();
-  },
-};

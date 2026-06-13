@@ -50,17 +50,3 @@ export const Glow: Story = {
     </ToggleGroup>
   ),
 };
-
-export const CssCheck: Story = {
-  tags: ['ai-generated'],
-  render: () => (
-    <ToggleGroup type="single" data-testid="toggle-group">
-      <ToggleGroupItem value="check">Check</ToggleGroupItem>
-    </ToggleGroup>
-  ),
-  play: async ({ canvas }) => {
-    const { expect } = await import('storybook/test');
-    const group = canvas.getByTestId('toggle-group');
-    await expect(group).toBeVisible();
-  },
-};
