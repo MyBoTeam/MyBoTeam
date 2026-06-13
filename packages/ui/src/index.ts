@@ -1,42 +1,28 @@
-// Standard shadcn components
-
 // Custom components
-export { CodeBlock } from './components/code-block';
-// Glass variants
-// Glass components wrap the standard primitives with glass styling.
-// Use standard context providers (Dialog, DropdownMenu, Tabs, Tooltip) with glass content components.
-export { Alert as GlassAlert } from './components/glass/alert';
+
+// Standard components
+export { Alert, AlertAction, AlertDescription, AlertTitle } from './components/alert';
 export {
-  Avatar as GlassAvatar,
-  AvatarFallback as GlassAvatarFallback,
-  AvatarImage as GlassAvatarImage,
-} from './components/glass/avatar';
-export { Badge as GlassBadge } from './components/glass/badge';
-export { Button as GlassButton } from './components/glass/button';
-export { Card as GlassCard } from './components/glass/card';
-export { DialogContent as GlassDialogContent } from './components/glass/dialog';
-export { DropdownMenuContent as GlassDropdownMenuContent } from './components/glass/dropdown-menu';
-export { Input as GlassInput } from './components/glass/input';
-export { Label as GlassLabel } from './components/glass/label';
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupCount,
+  AvatarImage,
+} from './components/avatar';
+export { Badge, badgeVariants } from './components/badge';
 export {
-  ScrollArea as GlassScrollArea,
-  ScrollBar as GlassScrollBar,
-} from './components/glass/scroll-area';
-export { Separator as GlassSeparator } from './components/glass/separator';
-export { Skeleton as GlassSkeleton } from './components/glass/skeleton';
-export { Switch as GlassSwitch } from './components/glass/switch';
-export {
-  TabsContent as GlassTabsContent,
-  TabsList as GlassTabsList,
-  TabsTrigger as GlassTabsTrigger,
-} from './components/glass/tabs';
-export { Textarea as GlassTextarea } from './components/glass/textarea';
-export { TooltipContent as GlassTooltipContent } from './components/glass/tooltip';
-export { StreamingText, useStreamingState } from './components/streaming-text';
-export { Alert, AlertAction, AlertDescription, AlertTitle } from './components/ui/alert';
-export { Avatar, AvatarFallback, AvatarImage } from './components/ui/avatar';
-export { Badge, badgeVariants } from './components/ui/badge';
-export { Button, buttonVariants } from './components/ui/button';
+  Breadcrumb,
+  BreadcrumbEllipsis,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from './components/breadcrumb';
+export { Button, buttonVariants } from './components/button';
+export { ButtonGroup } from './components/button-group';
+export { Calendar } from './components/calendar';
 export {
   Card,
   CardAction,
@@ -45,7 +31,30 @@ export {
   CardFooter,
   CardHeader,
   CardTitle,
-} from './components/ui/card';
+} from './components/card';
+export { Carousel, useCarousel } from './components/carousel';
+export {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartStyle,
+  ChartTooltip,
+  ChartTooltipContent,
+} from './components/chart';
+export { CodeBlock } from './components/code-block';
+export {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from './components/command';
+export { Cropper } from './components/cropper';
+export { DatePickerInput } from './components/date-picker-input';
 export {
   Dialog,
   DialogClose,
@@ -57,7 +66,19 @@ export {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
-} from './components/ui/dialog';
+} from './components/dialog';
+export {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerPortal,
+  DrawerTitle,
+  DrawerTrigger,
+} from './components/drawer';
 export {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -74,18 +95,57 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from './components/ui/dropdown-menu';
-export { Input } from './components/ui/input';
-export { Label } from './components/ui/label';
-export { ScrollArea, ScrollBar } from './components/ui/scroll-area';
-export { Separator } from './components/ui/separator';
-export { Skeleton } from './components/ui/skeleton';
-export { Switch } from './components/ui/switch';
-export { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
-export { Textarea } from './components/ui/textarea';
-export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './components/ui/tooltip';
+} from './components/dropdown-menu';
+export {
+  EmptyState,
+  EmptyStateDescription,
+  EmptyStateIcon,
+  EmptyStateTitle,
+} from './components/empty-state';
+export { Input } from './components/input';
+export { InputGroup } from './components/input-group';
+export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from './components/input-otp';
+export { Label } from './components/label';
+export {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from './components/pagination';
+export { ScrollArea, ScrollBar } from './components/scroll-area';
+export { Separator } from './components/separator';
+export {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarItem,
+} from './components/sidebar';
+export { Skeleton } from './components/skeleton';
+export { Toaster } from './components/sonner';
+export { Spinner } from './components/spinner';
+export { StreamingText, useStreamingState } from './components/streaming-text';
+export { Switch } from './components/switch';
+export {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from './components/table';
+export { Tabs, TabsContent, TabsList, TabsTrigger, tabsListVariants } from './components/tabs';
+export { Textarea } from './components/textarea';
+export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './components/tooltip';
+
+export type { ThemeColors, ThemeDefinition } from './themes';
 // Themes
-export { darkTheme, lightTheme } from './themes';
+export { darkTheme, lightTheme, themeDefinitions } from './themes';
 export { duration, easing, keyframes } from './tokens/animations';
 export type { ColorToken } from './tokens/colors';
 // Design Tokens

@@ -2,7 +2,7 @@ import { Check, Copy } from 'lucide-react';
 import { Highlight, themes } from 'prism-react-renderer';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '../utils/cn';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from './tooltip';
 
 const COPIED_TIMEOUT_MS = 1200;
 

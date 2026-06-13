@@ -148,6 +148,16 @@
       }
     },
     {
+      "includes": ["**/components/chart-helpers.tsx"],
+      "linter": {
+        "rules": {
+          "security": {
+            "noDangerouslySetInnerHtml": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["**/*.css"],
       "linter": {
         "rules": {
@@ -172,6 +182,16 @@
     },
     {
       "includes": ["packages/agent-core/src/index.ts"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noExcessiveLinesPerFile": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/ui/src/components/*.tsx"],
       "linter": {
         "rules": {
           "nursery": {
@@ -311,6 +331,7 @@
     {
       "includes": [
         "**/public/theme-init.js",
+        "**/public/mockServiceWorker.js",
         "**/mcp-tools/dev-browser/server.cjs",
         "**/mcp-tools/dev-browser/server.mjs",
         "**/mcp-tools/dev-browser/.browser-data/**"

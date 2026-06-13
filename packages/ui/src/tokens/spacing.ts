@@ -7,6 +7,9 @@ export const radius = {
   '2xl': '1rem',
   '3xl': '1.5rem',
   full: '9999px',
+  circle: '50%',
+  small: '2px',
+  large: '8px',
 };
 
 export const spacing = {
@@ -23,4 +26,8 @@ export const spacing = {
   16: '4rem',
   20: '5rem',
   24: '6rem',
+  small: '4px',
+  medium: '8px',
+  large: '12px',
+  'x-large': '20px',
 };

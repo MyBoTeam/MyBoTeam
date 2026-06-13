@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button as GlassButton } from '../components/glass/button';
-import { Button } from '../components/ui/button';
+import { expect } from 'storybook/test';
+import { Button } from '../components/button';
 
 const meta = {
   title: 'UI/Button',
@@ -97,5 +97,16 @@ export const Disabled: Story = {
 };
 
 export const Glass: StoryObj = {
-  render: () => <GlassButton>Glass Button</GlassButton>,
+  render: () => <Button>Glass Button</Button>,
+};
+
+export const CssCheck: Story = {
+  tags: ['ai-generated'],
+  args: {
+    children: 'Check',
+  },
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole('button', { name: /check/i });
+    await expect(getComputedStyle(button).color).toBe('rgb(255, 255, 255)');
+  },
 };

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { CodeBlock } from '../components/code-block';
-import { TooltipProvider } from '../components/ui/tooltip';
+import { TooltipProvider } from '../components/tooltip';
 
 function renderWithTooltip(element: React.ReactElement) {
   return render(<TooltipProvider>{element}</TooltipProvider>);

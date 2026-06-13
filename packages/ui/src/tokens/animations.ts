@@ -3,6 +3,9 @@ export const easing = {
   in: 'cubic-bezier(0.4, 0, 1, 1)',
   out: 'cubic-bezier(0, 0, 0.2, 1)',
   inOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  paused: 'paused',
+  slow: '3s',
+  fast: '500ms',
 };
 
 export const duration = {
@@ -14,6 +17,9 @@ export const duration = {
   500: '500ms',
   700: '700ms',
   1000: '1000ms',
+  paused: 'paused',
+  slow: '3s',
+  fast: '500ms',
 };
 
 export const keyframes = {

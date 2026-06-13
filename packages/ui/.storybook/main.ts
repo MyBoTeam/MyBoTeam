@@ -10,6 +10,7 @@ const config: StorybookConfig = {
     '@storybook/addon-mcp',
   ],
   framework: '@storybook/react-vite',
+  staticDirs: ['../public'],
 };
 // biome-ignore lint/style/noDefaultExport: Storybook requires default export
 export default config;

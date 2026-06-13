@@ -1,5 +1,10 @@
 export { duration, easing, keyframes } from './animations';
+export { type PrimaryScale, primaryScales, type ScaleStep, scaleSteps } from './colorScales';
 export { type ColorToken, colors, colorTokens } from './colors';
+export { letterSpacing } from './letterSpacing';
+export { lineHeight } from './lineHeight';
+export { mediaQuery } from './mediaQuery';
+export { opacity } from './opacity';
 export { shadows } from './shadows';
 export { radius, spacing } from './spacing';
 export { fontFamily, fontSize, fontWeight } from './typography';

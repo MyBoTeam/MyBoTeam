@@ -3,50 +3,47 @@ import {
   Alert as GlassAlert,
   AlertDescription as GlassAlertDescription,
   AlertTitle as GlassAlertTitle,
-} from '../components/glass/alert';
-import {
-  Avatar as GlassAvatar,
-  AvatarFallback as GlassAvatarFallback,
-} from '../components/glass/avatar';
-import { Badge as GlassBadge } from '../components/glass/badge';
-import { Button as GlassButton } from '../components/glass/button';
+} from '../components/alert';
+import { Avatar as GlassAvatar, AvatarFallback as GlassAvatarFallback } from '../components/avatar';
+import { Badge as GlassBadge } from '../components/badge';
+import { Button as GlassButton } from '../components/button';
 import {
   Card as GlassCard,
   CardContent as GlassCardContent,
   CardDescription as GlassCardDescription,
   CardHeader as GlassCardHeader,
   CardTitle as GlassCardTitle,
-} from '../components/glass/card';
+} from '../components/card';
 import {
   Dialog as GlassDialog,
   DialogContent as GlassDialogContent,
   DialogTrigger as GlassDialogTrigger,
-} from '../components/glass/dialog';
+} from '../components/dialog';
 import {
   DropdownMenu as GlassDropdownMenu,
   DropdownMenuContent as GlassDropdownMenuContent,
   DropdownMenuItem as GlassDropdownMenuItem,
   DropdownMenuTrigger as GlassDropdownMenuTrigger,
-} from '../components/glass/dropdown-menu';
-import { Input as GlassInput } from '../components/glass/input';
-import { Label as GlassLabel } from '../components/glass/label';
-import { ScrollArea as GlassScrollArea } from '../components/glass/scroll-area';
-import { Separator as GlassSeparator } from '../components/glass/separator';
-import { Skeleton as GlassSkeleton } from '../components/glass/skeleton';
-import { Switch as GlassSwitch } from '../components/glass/switch';
+} from '../components/dropdown-menu';
+import { Input as GlassInput } from '../components/input';
+import { Label as GlassLabel } from '../components/label';
+import { ScrollArea as GlassScrollArea } from '../components/scroll-area';
+import { Separator as GlassSeparator } from '../components/separator';
+import { Skeleton as GlassSkeleton } from '../components/skeleton';
+import { Switch as GlassSwitch } from '../components/switch';
 import {
   Tabs as GlassTabs,
   TabsContent as GlassTabsContent,
   TabsList as GlassTabsList,
   TabsTrigger as GlassTabsTrigger,
-} from '../components/glass/tabs';
-import { Textarea as GlassTextarea } from '../components/glass/textarea';
+} from '../components/tabs';
+import { Textarea as GlassTextarea } from '../components/textarea';
 import {
   Tooltip as GlassTooltip,
   TooltipContent as GlassTooltipContent,
   TooltipProvider as GlassTooltipProvider,
   TooltipTrigger as GlassTooltipTrigger,
-} from '../components/glass/tooltip';
+} from '../components/tooltip';
 
 const meta = {
   title: 'Glass/All Variants',
