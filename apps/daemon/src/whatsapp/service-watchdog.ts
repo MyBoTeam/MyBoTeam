@@ -10,8 +10,12 @@ export function startWatchdog(
 ): void {
   stopWatchdog(state);
   state.watchdogTimer = setInterval(() => {
-    if (!state.socket) return;
-    if (state.syncState === 'syncing') return;
+    if (!state.socket) {
+      return;
+    }
+    if (state.syncState === 'syncing') {
+      return;
+    }
     if (Date.now() - state.lastTransportActivity > WATCHDOG_IDLE_TIMEOUT_MS) {
       setStatus('disconnected');
     }

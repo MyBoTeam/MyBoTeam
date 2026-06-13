@@ -13,6 +13,7 @@ export async function initBaileysSocket(
   storePath: string | undefined,
   disposed: () => boolean,
   onDisconnected: () => void,
+  existingStore?: WhatsAppStore,
 ) {
   const baileys = await import('@whiskeysockets/baileys');
   if (disposed()) {
@@ -57,7 +58,7 @@ export async function initBaileysSocket(
     socket.end(new Error('WhatsApp service disposed during connect'));
     throw new Error('WhatsApp service disposed');
   }
-  const store: WhatsAppStore = createStore(storePath);
+  const store: WhatsAppStore = existingStore ?? createStore(storePath);
   store.bind(socket.ev);
   return { socket, store, saveCreds, DisconnectReason, jidNormalizedUser };
 }

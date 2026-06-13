@@ -11,7 +11,7 @@ export interface ApiResponse {
     text: string;
     timestamp: number;
   }>;
-  groups?: Array<{ jid: string; name?: string; participants: number }>;
+  groups?: Array<{ jid: string; name?: string; participants: number | null }>;
   group?: {
     jid: string;
     name?: string;

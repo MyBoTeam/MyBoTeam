@@ -138,7 +138,7 @@ export class WhatsAppService extends EventEmitter implements ChannelAdapter {
     if (!this.l.store) return null;
     return downloadMediaHelper(this.l.store, this.l.storePath, chatJid, messageId);
   }
-  getGroups(limit: number): Array<{ jid: string; name?: string; participants: number }> {
+  getGroups(limit: number): Array<{ jid: string; name?: string; participants: number | null }> {
     return getGroups(this.l.store, limit);
   }
   getGroupInfo(groupJid: string): { jid: string; name?: string } | null {

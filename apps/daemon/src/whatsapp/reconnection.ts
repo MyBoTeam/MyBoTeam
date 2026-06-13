@@ -45,7 +45,10 @@ export function scheduleReconnect(
     MAX_RECONNECT_DELAY_MS,
   );
   const jitter = baseDelay * JITTER_FACTOR * (Math.random() * 2 - 1);
-  const delay = Math.max(INITIAL_RECONNECT_DELAY_MS, baseDelay + jitter);
+  const delay = Math.min(
+    MAX_RECONNECT_DELAY_MS,
+    Math.max(INITIAL_RECONNECT_DELAY_MS, baseDelay + jitter),
+  );
 
   log.warn(
     `[WhatsApp] Reconnecting in ${Math.round(delay)}ms (attempt ${state.attempts}/${MAX_RECONNECT_ATTEMPTS})`,

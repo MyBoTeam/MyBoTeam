@@ -25,7 +25,8 @@ export async function listGroupsToolHandler(
 
   const lines = groups.map((g) => {
     const name = g.name ?? '(no name)';
-    return `Name: ${name} | JID: ${g.jid} | Participants: ${g.participants}`;
+    const pcount = g.participants ?? '?';
+    return `Name: ${name} | JID: ${g.jid} | Participants: ${pcount}`;
   });
   return { content: [{ type: 'text', text: lines.join('\n') }] };
 }

@@ -18,13 +18,13 @@ export function getMessages(
 export function getGroups(
   store: WhatsAppStore | null,
   limit: number,
-): Array<{ jid: string; name?: string; participants: number }> {
+): Array<{ jid: string; name?: string; participants: number | null }> {
   if (!store) return [];
   return store
     .getChats()
     .filter((c) => c.jid.endsWith('@g.us'))
     .slice(0, limit)
-    .map((c) => ({ jid: c.jid, name: c.name, participants: 0 }));
+    .map((c) => ({ jid: c.jid, name: c.name, participants: null }));
 }
 
 export function getGroupInfo(

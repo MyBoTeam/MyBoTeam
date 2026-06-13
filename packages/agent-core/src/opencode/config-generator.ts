@@ -92,16 +92,13 @@ export function generateConfig(options: ConfigGeneratorOptions): GeneratedConfig
   ).replace(/\{\{LANGUAGE_INSTRUCTION\}\}/g, getLanguageInstruction(options.language));
 
   if (skills.length > 0) systemPrompt += buildSkillsSection(skills);
-  if (gwsAccountsManifestPath && gwsAccountsSummary && gwsAccountsSummary.length > 0) {
+  if (gwsAccountsManifestPath && gwsAccountsSummary && gwsAccountsSummary.length > 0)
     systemPrompt += buildGwsSection(gwsAccountsSummary);
-  }
-  if (options.knowledgeInstructions) {
+  if (options.knowledgeInstructions)
     systemPrompt = buildWorkspaceInstructions(options.knowledgeInstructions) + systemPrompt;
-  }
   if (options.knowledgeContext) systemPrompt += buildWorkspaceKnowledge(options.knowledgeContext);
-  if (options.builtInConnectorStatuses && options.builtInConnectorStatuses.length > 0) {
+  if (options.builtInConnectorStatuses && options.builtInConnectorStatuses.length > 0)
     systemPrompt += formatBuiltInConnectorStatusSection(options.builtInConnectorStatuses);
-  }
   if (!bundledNodeBinPath) {
     throw new Error(
       '[OpenCode Config] Missing bundled Node.js path; cannot launch MCP tools. ' +

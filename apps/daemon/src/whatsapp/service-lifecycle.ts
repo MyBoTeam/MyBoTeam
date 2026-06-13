@@ -49,7 +49,9 @@ export async function lifecycleConnect(
   state.reconnect.attempts = 0;
   state.manualDisconnect = false;
   if (state.status === 'connecting') return;
-  setStatus('connecting');
+  if (state.status !== 'connected') {
+    setStatus('connecting');
+  }
   try {
     const { socket, store, saveCreds, DisconnectReason, jidNormalizedUser } =
       await initBaileysSocket(
@@ -57,6 +59,7 @@ export async function lifecycleConnect(
         state.storePath,
         () => state.disposed,
         () => setStatus('disconnected'),
+        state.store ?? undefined,
       );
     if (state.disposed) {
       setStatus('disconnected');

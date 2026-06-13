@@ -115,17 +115,21 @@ export function buildMarkReadRoute(svc: WhatsAppDaemonService): Route {
         });
         return;
       }
-      if (!Array.isArray(messageIds) || messageIds.length === 0) {
+      if (
+        !Array.isArray(messageIds) ||
+        messageIds.length === 0 ||
+        !messageIds.every((id: unknown) => typeof id === 'string')
+      ) {
         sendJson(res, {
           success: false,
           error: 'invalid_messageIds',
-          message: 'A non-empty array of messageIds is required.',
+          message: 'An array of non-empty string messageIds is required.',
         });
         return;
       }
       if (!checkConnected(svc, res)) return;
       try {
-        await svc.markRead(chatJid.trim(), messageIds as string[]);
+        await svc.markRead(chatJid.trim(), messageIds);
         sendJson(res, { success: true });
       } catch (err) {
         handleConnectionLoss(svc, err);

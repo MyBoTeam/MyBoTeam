@@ -147,7 +147,7 @@ export class WhatsAppDaemonService extends EventEmitter {
     if (!this.service) return null;
     return this.service.downloadMedia(chatJid, messageId);
   }
-  readGroups(limit: number): Array<{ jid: string; name?: string; participants: number }> {
+  readGroups(limit: number): Array<{ jid: string; name?: string; participants: number | null }> {
     if (!this.service) return [];
     return this.service.getGroups(limit);
   }

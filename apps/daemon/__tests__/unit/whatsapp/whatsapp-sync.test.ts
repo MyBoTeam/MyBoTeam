@@ -26,7 +26,9 @@ function createMockSocket() {
         const list = handlers.get(event);
         if (list) {
           const idx = list.indexOf(handler);
-          if (idx !== -1) list.splice(idx, 1);
+          if (idx !== -1) {
+            list.splice(idx, 1);
+          }
           if (list.length === 0) handlers.delete(event);
         }
       },

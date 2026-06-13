@@ -7,12 +7,16 @@ export function syncAttachListeners(
   state: LifecycleState,
   emit: (event: string, ...args: unknown[]) => void,
 ): void {
-  if (!state.socket) return;
+  if (!state.socket) {
+    return;
+  }
 
   cleanupSyncListeners(state);
 
   const checkStoreAndEmit = () => {
-    if (!state.store) return;
+    if (!state.store) {
+      return;
+    }
     const chats = state.store.getChats();
     state.syncProgress = {
       chatsProcessed: chats.length,
@@ -22,7 +26,9 @@ export function syncAttachListeners(
   };
 
   const markSyncComplete = () => {
-    if (state.syncState !== 'syncing') return;
+    if (state.syncState !== 'syncing') {
+      return;
+    }
     state.syncState = 'complete';
     checkStoreAndEmit();
     cleanupSyncListeners(state);
@@ -41,7 +47,9 @@ export function syncAttachListeners(
     checkStoreAndEmit();
     if (isLatest && !markedComplete) {
       markedComplete = true;
-      if (timeoutTimer) clearTimeout(timeoutTimer);
+      if (timeoutTimer) {
+        clearTimeout(timeoutTimer);
+      }
       markSyncComplete();
     }
   };
@@ -65,11 +73,16 @@ export function syncAttachListeners(
 }
 
 export function cleanupSyncListeners(state: LifecycleState): void {
-  if (!state.socket || !state.syncListeners) return;
-  state.socket.ev.off('messaging-history.set', state.syncListeners.onHistorySet);
-  state.socket.ev.off('messages.upsert', state.syncListeners.onMessagesUpsert);
-  if (state.syncListeners.timeoutTimer) {
-    clearTimeout(state.syncListeners.timeoutTimer);
+  const listeners = state.syncListeners;
+  if (!listeners) {
+    return;
+  }
+  if (listeners.timeoutTimer) {
+    clearTimeout(listeners.timeoutTimer);
+  }
+  if (state.socket) {
+    state.socket.ev.off('messaging-history.set', listeners.onHistorySet);
+    state.socket.ev.off('messages.upsert', listeners.onMessagesUpsert);
   }
   state.syncListeners = null;
 }

@@ -35,7 +35,7 @@ export class SentMessageTracker {
   private ids = new Set<string>();
   add(id: string): void {
     this.ids.add(id);
-    if (this.ids.size > 100) {
+    if (this.ids.size >= 100) {
       const first = this.ids.values().next().value;
       if (first) this.ids.delete(first);
     }

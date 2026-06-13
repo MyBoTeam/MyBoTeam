@@ -13,15 +13,16 @@ export async function downloadMedia(
   const msg = msgs.find((m) => m.key?.id === messageId);
   if (!msg?.message) return null;
   const c = msg.message as Record<string, unknown>;
-  const t = c.imageMessage
-    ? 'image'
-    : c.videoMessage
-      ? 'video'
-      : c.audioMessage
-        ? 'audio'
-        : c.documentMessage
-          ? 'document'
-          : null;
+  let t: string | null = null;
+  if (c.imageMessage) {
+    t = 'image';
+  } else if (c.videoMessage) {
+    t = 'video';
+  } else if (c.audioMessage) {
+    t = 'audio';
+  } else if (c.documentMessage) {
+    t = 'document';
+  }
   if (!t) return null;
   const mk = c[`${t}Message`] as Record<string, unknown>;
   const mime = (mk.mimetype as string) || 'application/octet-stream';

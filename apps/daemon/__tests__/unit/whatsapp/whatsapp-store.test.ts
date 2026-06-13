@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { BaileysEventEmitter } from '../../../src/whatsapp/baileys-types.js';
 import { createStore } from '../../../src/whatsapp/whatsapp-store.js';
 
@@ -9,23 +9,24 @@ function createMockEmitter(): {
   emitter: BaileysEventEmitter;
   emit: (event: string, data: unknown) => void;
 } {
-  const handlers = new Map<string, (data: unknown) => void>();
+  const handlers = new Map<string, Array<(data: unknown) => void>>();
   return {
     emitter: {
       on(event: string, handler: (data: unknown) => void) {
-        handlers.set(event, handler);
+        if (!handlers.has(event)) handlers.set(event, []);
+        handlers.get(event)!.push(handler);
       },
       off(event: string, handler: (data: unknown) => void) {
-        if (handlers.get(event) === handler) {
-          handlers.delete(event);
+        const h = handlers.get(event);
+        if (h) {
+          const idx = h.indexOf(handler);
+          if (idx >= 0) h.splice(idx, 1);
         }
       },
-      removeAllListeners() {
-        handlers.clear();
-      },
+      removeAllListeners: vi.fn(),
     } as unknown as BaileysEventEmitter,
     emit(event: string, data: unknown) {
-      handlers.get(event)?.(data);
+      handlers.get(event)?.forEach((h) => h(data));
     },
   };
 }
@@ -439,6 +440,144 @@ describe('WhatsAppStore', () => {
       emit('chats.delete', [JID_1]);
 
       expect(store.getMessages(JID_1, 1000)).toEqual([]);
+    });
+  });
+
+  describe('messaging-history.set message preservation', () => {
+    const JID_A = '972501111111@s.whatsapp.net';
+
+    it('preserves existing messages from messages.upsert across history.set', () => {
+      const { emitter, emit } = createMockEmitter();
+      const store = createStore();
+      store.bind(emitter);
+
+      const upsertMsg = {
+        key: { remoteJid: JID_A, fromMe: false, id: 'msg-upsert-1' },
+        message: { conversation: 'from upsert' },
+        messageTimestamp: 200,
+      };
+      emit('messages.upsert', { messages: [upsertMsg] });
+
+      emit('messaging-history.set', {
+        chats: [],
+        messages: [
+          {
+            key: { remoteJid: JID_A, fromMe: false, id: 'msg-hist-1' },
+            message: { conversation: 'from history' },
+            messageTimestamp: 50,
+          },
+        ],
+      });
+
+      const msgs = store.getMessages(JID_A, 10);
+      expect(msgs).toHaveLength(2);
+      const ids = msgs.map((m) => m.messageId);
+      expect(ids).toContain('msg-upsert-1');
+      expect(ids).toContain('msg-hist-1');
+    });
+
+    it('does not add duplicate messages from history.set', () => {
+      const { emitter, emit } = createMockEmitter();
+      const store = createStore();
+      store.bind(emitter);
+
+      const msg = {
+        key: { remoteJid: JID_A, fromMe: false, id: 'msg-dup' },
+        message: { conversation: 'original' },
+        messageTimestamp: 100,
+      };
+      emit('messages.upsert', { messages: [msg] });
+
+      emit('messaging-history.set', {
+        chats: [],
+        messages: [
+          {
+            key: { remoteJid: JID_A, fromMe: false, id: 'msg-dup' },
+            message: { conversation: 'from history' },
+            messageTimestamp: 100,
+          },
+        ],
+      });
+
+      const msgs = store.getMessages(JID_A, 10);
+      expect(msgs).toHaveLength(1);
+      expect(msgs[0].text).toBe('original');
+    });
+
+    it('preserves messages across multiple history.set events', () => {
+      const { emitter, emit } = createMockEmitter();
+      const store = createStore();
+      store.bind(emitter);
+
+      emit('messages.upsert', {
+        messages: [
+          {
+            key: { remoteJid: JID_A, fromMe: false, id: 'msg-live' },
+            message: { conversation: 'live message' },
+            messageTimestamp: 300,
+          },
+        ],
+      });
+
+      emit('messaging-history.set', {
+        chats: [],
+        messages: [
+          {
+            key: { remoteJid: JID_A, fromMe: false, id: 'msg-h1' },
+            message: { conversation: 'hist 1' },
+            messageTimestamp: 100,
+          },
+        ],
+      });
+
+      let msgs = store.getMessages(JID_A, 10);
+      expect(msgs).toHaveLength(2);
+
+      emit('messaging-history.set', {
+        chats: [],
+        messages: [
+          {
+            key: { remoteJid: JID_A, fromMe: false, id: 'msg-h2' },
+            message: { conversation: 'hist 2' },
+            messageTimestamp: 200,
+          },
+        ],
+      });
+
+      msgs = store.getMessages(JID_A, 10);
+      expect(msgs).toHaveLength(3);
+      const ids = msgs.map((m) => m.messageId);
+      expect(ids).toContain('msg-live');
+      expect(ids).toContain('msg-h1');
+      expect(ids).toContain('msg-h2');
+    });
+
+    it('replaces chats but preserves messages across history.set', () => {
+      const { emitter, emit } = createMockEmitter();
+      const store = createStore();
+      store.bind(emitter);
+
+      emit('messages.upsert', {
+        messages: [
+          {
+            key: { remoteJid: JID_A, fromMe: false, id: 'msg-keep' },
+            message: { conversation: 'keep me' },
+            messageTimestamp: 100,
+          },
+        ],
+      });
+
+      emit('messaging-history.set', {
+        chats: [{ id: JID_A, name: 'Contact A', conversationTimestamp: 100 }],
+        messages: [],
+      });
+
+      expect(store.getChats()).toHaveLength(1);
+      expect(store.getChats()[0].jid).toBe(JID_A);
+
+      const msgs = store.getMessages(JID_A, 10);
+      expect(msgs).toHaveLength(1);
+      expect(msgs[0].messageId).toBe('msg-keep');
     });
   });
 

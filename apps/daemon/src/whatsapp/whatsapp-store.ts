@@ -56,12 +56,16 @@ export function createStore(storePath?: string): WhatsAppStore {
       ev.on('messaging-history.set', (d: unknown) => {
         const { chats, messages } = d as { chats?: BaileysChat[]; messages?: BaileysMessage[] };
         chatsMap.clear();
-        messagesMap.clear();
         chats?.forEach((c) => c.id && chatsMap.set(c.id, c));
         messages?.forEach((m) => {
           const jid = m.key?.remoteJid;
           const id = m.key?.id;
-          if (jid && id) ensureMessageMap(jid).set(id, m);
+          if (jid && id) {
+            const map = ensureMessageMap(jid);
+            if (!map.has(id)) {
+              map.set(id, m);
+            }
+          }
         });
         doSave();
       });
@@ -71,7 +75,9 @@ export function createStore(storePath?: string): WhatsAppStore {
       });
       ev.on('chats.update', (d: unknown) => {
         (d as BaileysChat[]).forEach((u) => {
-          if (!u.id) return;
+          if (!u.id) {
+            return;
+          }
           const e = chatsMap.get(u.id);
           if (e) {
             if (u.name !== undefined) e.name = u.name;
@@ -92,7 +98,9 @@ export function createStore(storePath?: string): WhatsAppStore {
         messages.forEach((m) => {
           const jid = m.key?.remoteJid;
           const id = m.key?.id;
-          if (jid && id && !ensureMessageMap(jid).has(id)) ensureMessageMap(jid).set(id, m);
+          if (jid && id && !ensureMessageMap(jid).has(id)) {
+            ensureMessageMap(jid).set(id, m);
+          }
         });
         debouncedSave();
       });
@@ -109,7 +117,9 @@ export function createStore(storePath?: string): WhatsAppStore {
             const map = messagesMap.get(jid);
             if (map) {
               const e = map.get(id);
-              if (e && update) Object.assign(e, update);
+              if (e && update) {
+                Object.assign(e, update);
+              }
             }
           }
         });

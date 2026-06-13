@@ -44,6 +44,11 @@ export async function sendText(
   const jid = toWhatsAppJid(recipient);
   let content: Record<string, unknown> = { text };
   if (options?.mediaPath) {
+    try {
+      await fs.access(options.mediaPath);
+    } catch {
+      throw new Error(`Media file not found: ${options.mediaPath}`);
+    }
     const mediaBuffer = await fs.readFile(options.mediaPath);
     const mimeType = detectMimeType(options.mediaPath, options.mediaType);
 
