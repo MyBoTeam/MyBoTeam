@@ -24,7 +24,7 @@ export default defineConfig({
     globals: true,
     root: __dirname,
     include: ['__tests__/**/*.integration.test.{ts,tsx}'],
-    setupFiles: ['__tests__/setup.ts'],
+    setupFiles: ['__tests__/setup.integration.ts'],
     environment: 'jsdom',
     testTimeout: 10000,
     hookTimeout: 15000,

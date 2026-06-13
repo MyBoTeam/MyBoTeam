@@ -180,36 +180,6 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-// Mock Radix Tooltip to render content directly (portals don't work in jsdom)
-vi.mock('@myboteam/ui', () => ({
-  Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  TooltipTrigger: ({
-    children,
-    ...props
-  }: {
-    children: React.ReactNode;
-    asChild?: boolean;
-    [key: string]: unknown;
-  }) => (
-    <span data-slot="tooltip-trigger" {...props}>
-      {children}
-    </span>
-  ),
-  TooltipContent: ({ children }: { children: React.ReactNode }) => (
-    <span role="tooltip" data-slot="tooltip-content">
-      {children}
-    </span>
-  ),
-  TooltipProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  StreamingText: ({
-    text,
-    children,
-  }: {
-    text: string;
-    children: (text: string) => React.ReactNode;
-  }) => <>{children(text)}</>,
-}));
-
 // Mock MyBoTeam icon
 vi.mock('/assets/myboteam-icon.png', () => ({ default: 'myboteam-icon.png' }));
 

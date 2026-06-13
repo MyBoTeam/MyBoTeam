@@ -52,29 +52,6 @@ vi.mock('@/config/myboteam', () => ({
   useMyBoTeam: () => mockMyBoTeam,
 }));
 
-// Mock Radix Tooltip to render content directly (portals don't work in jsdom)
-vi.mock('@myboteam/ui', () => ({
-  Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  TooltipTrigger: ({
-    children,
-    ...props
-  }: {
-    children: React.ReactNode;
-    asChild?: boolean;
-    [key: string]: unknown;
-  }) => (
-    <span data-slot="tooltip-trigger" {...props}>
-      {children}
-    </span>
-  ),
-  TooltipContent: ({ children }: { children: React.ReactNode }) => (
-    <span role="tooltip" data-slot="tooltip-content">
-      {children}
-    </span>
-  ),
-  TooltipProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
-
 describe('TaskInputBar Integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();

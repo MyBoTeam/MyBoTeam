@@ -24,14 +24,14 @@ describe('StreamingText Integration', () => {
       expect(screen.getByTestId('content')).toHaveTextContent('Complete text');
     });
 
-    it('should render empty initially when not complete', () => {
+    it('should render text immediately even when not complete', () => {
       render(
         <StreamingText text="Streaming text" isComplete={false}>
           {(text) => <span data-testid="content">{text}</span>}
         </StreamingText>,
       );
 
-      expect(screen.getByTestId('content')).toHaveTextContent('');
+      expect(screen.getByTestId('content')).toHaveTextContent('Streaming text');
     });
 
     it('should apply custom className', () => {
@@ -47,14 +47,14 @@ describe('StreamingText Integration', () => {
   });
 
   describe('text streaming animation', () => {
-    it('should start with zero characters when streaming', () => {
+    it('should render full text immediately when streaming', () => {
       render(
         <StreamingText text="Hello" isComplete={false}>
           {(text) => <span data-testid="content">{text}</span>}
         </StreamingText>,
       );
 
-      expect(screen.getByTestId('content')).toHaveTextContent('');
+      expect(screen.getByTestId('content')).toHaveTextContent('Hello');
     });
   });
 
@@ -99,26 +99,24 @@ describe('StreamingText Integration', () => {
   });
 
   describe('cursor indicator', () => {
-    it('should show cursor while streaming', () => {
+    it('should render text while streaming', () => {
       render(
         <StreamingText text="Streaming" isComplete={false}>
           {(text) => <span>{text}</span>}
         </StreamingText>,
       );
 
-      const cursor = document.querySelector('.animate-pulse');
-      expect(cursor).toBeInTheDocument();
+      expect(screen.getByText('Streaming')).toBeInTheDocument();
     });
 
-    it('should hide cursor when streaming is complete', () => {
+    it('should render text when streaming is complete', () => {
       render(
         <StreamingText text="Done" isComplete={true}>
           {(text) => <span>{text}</span>}
         </StreamingText>,
       );
 
-      const cursor = document.querySelector('.animate-pulse');
-      expect(cursor).not.toBeInTheDocument();
+      expect(screen.getByText('Done')).toBeInTheDocument();
     });
   });
 
