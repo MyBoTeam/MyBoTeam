@@ -21,6 +21,10 @@ describe('toWhatsAppJid', () => {
   it('should throw for string with no digits', () => {
     expect(() => toWhatsAppJid('abc')).toThrow('invalid_recipient');
   });
+
+  it('should throw for jid with invalid domain', () => {
+    expect(() => toWhatsAppJid('user@invalid')).toThrow('invalid_jid');
+  });
 });
 
 describe('isGroupJid', () => {

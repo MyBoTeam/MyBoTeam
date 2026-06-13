@@ -62,6 +62,117 @@ describe('sendText', () => {
     await sendText(socket, 'group@g.us', 'Hello');
     expect(socket.sendMessage).toHaveBeenCalledWith('group@g.us', { text: 'Hello' });
   });
+
+  it('should send text with audio attachment', async () => {
+    const tmpDir = mkdtempSync(join(tmpdir(), 'send-test-'));
+    const testFile = join(tmpDir, 'test.ogg');
+    writeFileSync(testFile, Buffer.from([0x4f, 0x67, 0x67, 0x53]));
+    try {
+      const socket = createMockSocket() as any;
+      const id = await sendText(socket, '972501234567', 'Voice note', {
+        mediaPath: testFile,
+        mediaType: 'audio',
+      });
+      expect(id).toBe('msg-1');
+      expect(socket.sendMessage).toHaveBeenCalledWith(
+        '972501234567@s.whatsapp.net',
+        expect.objectContaining({ ptt: true }),
+      );
+    } finally {
+      unlinkSync(testFile);
+    }
+  });
+
+  it('should send text with video attachment and gifPlayback', async () => {
+    const tmpDir = mkdtempSync(join(tmpdir(), 'send-test-'));
+    const testFile = join(tmpDir, 'test.mp4');
+    writeFileSync(testFile, Buffer.from([0x00, 0x00, 0x00, 0x1c]));
+    try {
+      const socket = createMockSocket() as any;
+      const id = await sendText(socket, '972501234567', 'Video', {
+        mediaPath: testFile,
+        mediaType: 'video',
+        gifPlayback: true,
+      });
+      expect(id).toBe('msg-1');
+      expect(socket.sendMessage).toHaveBeenCalledWith(
+        '972501234567@s.whatsapp.net',
+        expect.objectContaining({ gifPlayback: true }),
+      );
+    } finally {
+      unlinkSync(testFile);
+    }
+  });
+
+  it('should send text with document mediaType', async () => {
+    const tmpDir = mkdtempSync(join(tmpdir(), 'send-test-'));
+    const testFile = join(tmpDir, 'test.pdf');
+    writeFileSync(testFile, Buffer.from([0x25, 0x50, 0x44, 0x46]));
+    try {
+      const socket = createMockSocket() as any;
+      const id = await sendText(socket, '972501234567', 'Doc', {
+        mediaPath: testFile,
+        mediaType: 'document',
+      });
+      expect(id).toBe('msg-1');
+      expect(socket.sendMessage).toHaveBeenCalledWith(
+        '972501234567@s.whatsapp.net',
+        expect.objectContaining({ document: expect.any(Buffer), fileName: 'test.pdf' }),
+      );
+    } finally {
+      unlinkSync(testFile);
+    }
+  });
+
+  it('should send text with document via asDocument', async () => {
+    const tmpDir = mkdtempSync(join(tmpdir(), 'send-test-'));
+    const testFile = join(tmpDir, 'test.pdf');
+    writeFileSync(testFile, Buffer.from([0x25, 0x50, 0x44, 0x46]));
+    try {
+      const socket = createMockSocket() as any;
+      const id = await sendText(socket, '972501234567', 'Doc', {
+        mediaPath: testFile,
+        mediaType: 'image',
+        asDocument: true,
+      });
+      expect(id).toBe('msg-1');
+      expect(socket.sendMessage).toHaveBeenCalledWith(
+        '972501234567@s.whatsapp.net',
+        expect.objectContaining({ document: expect.any(Buffer), fileName: 'test.pdf' }),
+      );
+    } finally {
+      unlinkSync(testFile);
+    }
+  });
+
+  it('should send text with media and no explicit mediaType (fallback to document)', async () => {
+    const tmpDir = mkdtempSync(join(tmpdir(), 'send-test-'));
+    const testFile = join(tmpDir, 'test.pdf');
+    writeFileSync(testFile, Buffer.from([0x25, 0x50, 0x44, 0x46]));
+    try {
+      const socket = createMockSocket() as any;
+      const id = await sendText(socket, '972501234567', 'Fallback', {
+        mediaPath: testFile,
+      });
+      expect(id).toBe('msg-1');
+      expect(socket.sendMessage).toHaveBeenCalledWith(
+        '972501234567@s.whatsapp.net',
+        expect.objectContaining({ document: expect.any(Buffer), fileName: 'test.pdf' }),
+      );
+    } finally {
+      unlinkSync(testFile);
+    }
+  });
+
+  it('should throw when media file does not exist', async () => {
+    const socket = createMockSocket() as any;
+    await expect(
+      sendText(socket, '972501234567', 'Text', {
+        mediaPath: '/nonexistent/file.jpg',
+        mediaType: 'image',
+      }),
+    ).rejects.toThrow('Media file not found');
+  });
 });
 
 describe('sendReaction', () => {

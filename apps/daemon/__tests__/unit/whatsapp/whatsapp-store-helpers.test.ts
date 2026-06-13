@@ -5,6 +5,7 @@ import {
   getMessageType,
   normalizeMessage,
 } from '../../../src/whatsapp/whatsapp-store-helpers.js';
+import { SentMessageTracker, toTimestamp } from '../../../src/whatsapp/whatsapp-types.js';
 
 const JID = '972501234567@s.whatsapp.net';
 const JID_GROUP = '972501234567@g.us';
@@ -195,5 +196,56 @@ describe('normalizeMessage', () => {
     const result = normalizeMessage(JID, msg);
     expect(result.text).toBe('Security code changed');
     expect(result.messageType).toBe('system');
+  });
+});
+
+describe('toTimestamp', () => {
+  it('returns number as-is', () => {
+    expect(toTimestamp(42)).toBe(42);
+  });
+
+  it('returns undefined for null', () => {
+    expect(toTimestamp(null)).toBeUndefined();
+  });
+
+  it('returns undefined for undefined', () => {
+    expect(toTimestamp(undefined)).toBeUndefined();
+  });
+
+  it('calls toNumber when available', () => {
+    const val = { toNumber: () => 99 };
+    expect(toTimestamp(val)).toBe(99);
+  });
+
+  it('returns undefined for plain object without toNumber', () => {
+    expect(toTimestamp({})).toBeUndefined();
+  });
+});
+
+describe('SentMessageTracker', () => {
+  it('tracks and reports ids', () => {
+    const tracker = new SentMessageTracker();
+    expect(tracker.has('a')).toBe(false);
+    tracker.add('a');
+    expect(tracker.has('a')).toBe(true);
+  });
+
+  it('removes ids', () => {
+    const tracker = new SentMessageTracker();
+    tracker.add('a');
+    tracker.remove('a');
+    expect(tracker.has('a')).toBe(false);
+  });
+
+  it('evicts oldest id when exceeding 100', () => {
+    const tracker = new SentMessageTracker();
+    for (let i = 0; i < 100; i++) {
+      tracker.add(`id-${i}`);
+    }
+    expect(tracker.has('id-0')).toBe(false);
+    expect(tracker.has('id-99')).toBe(true);
+    tracker.add('id-100');
+    expect(tracker.has('id-1')).toBe(false);
+    expect(tracker.has('id-100')).toBe(true);
   });
 });
