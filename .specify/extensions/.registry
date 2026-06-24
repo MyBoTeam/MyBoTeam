@@ -1,0 +1,121 @@
+{
+  "schema_version": "1.0",
+  "extensions": {
+    "git": {
+      "version": "1.7.0",
+      "source": "local",
+      "manifest_hash": "sha256:bb0996f723686a9a4c323eb8afd0035386b3c58f5608ab6f7ef749a47824802e",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "opencode": [
+          "git.feature",
+          "git.validate",
+          "git.remote",
+          "git.initialize",
+          "git.commit",
+          "git.publish",
+          "git.workspace",
+          "git.setup-ignore",
+          "git.worktree-list",
+          "git.worktree-cleanup"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-06-24T03:22:13.245823+00:00"
+    },
+    "agent-context": {
+      "version": "1.0.0",
+      "source": "local",
+      "manifest_hash": "sha256:9a1dc02d2d0139bb03860392ecacef79183be2c442feda2f9ccaa4e5907b1e47",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "opencode": [
+          "speckit.agent-context.update"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-06-24T03:22:13.429737+00:00"
+    },
+    "team-ai-directives": {
+      "version": "3.2.0",
+      "source": "local",
+      "manifest_hash": "sha256:148f8a63d64a28556a4bd968bba81db3e94c5707c85330f8b00ea43b932b8ff2",
+      "enabled": true,
+      "priority": 1,
+      "registered_commands": {
+        "opencode": [
+          "team.verify",
+          "team.discover",
+          "team.constitution",
+          "team.skills",
+          "team.repair",
+          "team.init",
+          "team.evolve"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-06-24T03:22:13.750218+00:00"
+    },
+    "levelup": {
+      "version": "1.10.0",
+      "source": "local",
+      "manifest_hash": "sha256:deeb3680ddf8a15c1bfc64cbd6532942064e20222e87114503c04dde8417b2d6",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "opencode": [
+          "levelup.init",
+          "levelup.clarify",
+          "levelup.specify",
+          "levelup.skill",
+          "levelup.implement",
+          "levelup.validate"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-06-24T03:22:13.905268+00:00"
+    },
+    "architect": {
+      "version": "2.2.0",
+      "source": "local",
+      "manifest_hash": "sha256:4677a5814a55ede5fa7e6eec1764c4d1013849e38a38769cc5e4ada881e425a4",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "opencode": [
+          "architect.init",
+          "architect.specify",
+          "architect.clarify",
+          "architect.implement",
+          "architect.analyze",
+          "architect.validate"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-06-24T03:23:05.946156+00:00"
+    },
+    "product": {
+      "version": "1.5.6",
+      "source": "local",
+      "manifest_hash": "sha256:12a06ca8e9446b16be07902a687feb55af2383dfbc1a64fe750bfba285fa1e97",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "opencode": [
+          "product.init",
+          "product.specify",
+          "product.clarify",
+          "product.implement",
+          "product.analyze",
+          "product.validate",
+          "product.roadmap",
+          "product.link"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-06-24T03:23:14.229665+00:00"
+    }
+  }
+}

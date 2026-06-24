@@ -1,0 +1,10 @@
+{
+  "ai": "opencode",
+  "branch_numbering": "sequential",
+  "context_file": "AGENTS.md",
+  "here": true,
+  "integration": "opencode",
+  "script": "sh",
+  "speckit_version": "unknown",
+  "team_ai_directives": "/Users/mavishay/Projects/MaorInnovations/team-ai-directives"
+}

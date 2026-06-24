@@ -1,0 +1,241 @@
+installed:
+- agent-context
+- architect
+- git
+- levelup
+- product
+- team-ai-directives
+settings:
+  auto_execute_hooks: true
+hooks:
+  before_constitution:
+  - extension: git
+    command: git.initialize
+    enabled: true
+    optional: false
+    prompt: Execute speckit.git.initialize?
+    description: Initialize Git repository before constitution setup
+    condition: null
+  - extension: team-ai-directives
+    command: team.constitution
+    enabled: true
+    optional: false
+    prompt: Execute adlc.team-ai-directives.constitution?
+    description: Discover and inherit team constitution principles before project
+      constitution update
+    condition: null
+  before_specify:
+  - extension: git
+    command: git.feature
+    enabled: true
+    optional: false
+    prompt: Execute speckit.git.feature?
+    description: Create feature branch before specification
+    condition: null
+  - extension: team-ai-directives
+    command: team.discover
+    enabled: true
+    optional: false
+    prompt: Execute adlc.team-ai-directives.discover?
+    description: Auto-discover personas, rules, and examples from team-ai-directives
+    condition: null
+  - extension: product
+    command: product.link
+    enabled: true
+    optional: true
+    prompt: Execute adlc.product.link?
+    description: Link feature to existing PDR (silent if no PDRs exist)
+    condition: null
+  before_clarify:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit outstanding changes before clarification?
+    description: Auto-commit before spec clarification
+    condition: null
+  - extension: product
+    command: product.link
+    enabled: true
+    optional: true
+    prompt: Execute adlc.product.link?
+    description: Load PDR context for clarification
+    condition: null
+  before_plan:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit outstanding changes before planning?
+    description: Auto-commit before implementation planning
+    condition: null
+  - extension: team-ai-directives
+    command: team.discover
+    enabled: true
+    optional: false
+    prompt: Execute adlc.team-ai-directives.discover?
+    description: Auto-discover architecture patterns and implementation guidelines
+    condition: null
+  - extension: architect
+    command: architect.validate
+    enabled: true
+    optional: true
+    prompt: Execute adlc.architect.validate?
+    description: Validate feature aligns with architecture; escalate if new architectural
+      decisions detected
+    condition: null
+  before_tasks:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit outstanding changes before task generation?
+    description: Auto-commit before task generation
+    condition: null
+  before_implement:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit outstanding changes before implementation?
+    description: Auto-commit before implementation
+    condition: null
+  - extension: team-ai-directives
+    command: team.discover
+    enabled: true
+    optional: false
+    prompt: Execute adlc.team-ai-directives.discover?
+    description: Auto-discover team context before quick task execution (no-write
+      mode)
+    condition: null
+  before_checklist:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit outstanding changes before checklist?
+    description: Auto-commit before checklist generation
+    condition: null
+  before_analyze:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit outstanding changes before analysis?
+    description: Auto-commit before analysis
+    condition: null
+  before_taskstoissues:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit outstanding changes before issue sync?
+    description: Auto-commit before tasks-to-issues conversion
+    condition: null
+  after_constitution:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit constitution changes?
+    description: Auto-commit after constitution update
+    condition: null
+  after_specify:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit specification changes?
+    description: Auto-commit after specification
+    condition: null
+  - extension: agent-context
+    command: speckit.agent-context.update
+    enabled: true
+    optional: true
+    prompt: Execute speckit.agent-context.update?
+    description: Refresh agent context after specification
+    condition: null
+  - extension: product
+    command: product.validate
+    enabled: true
+    optional: true
+    prompt: Execute adlc.product.validate?
+    description: Validate feature spec alignment with PRD (READ-ONLY)
+    condition: null
+  after_clarify:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit clarification changes?
+    description: Auto-commit after spec clarification
+    condition: null
+  - extension: product
+    command: product.validate
+    enabled: true
+    optional: true
+    prompt: Execute adlc.product.validate?
+    description: Validate clarifications against PRD
+    condition: null
+  after_plan:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit plan changes?
+    description: Auto-commit after implementation planning
+    condition: null
+  - extension: agent-context
+    command: speckit.agent-context.update
+    enabled: true
+    optional: true
+    prompt: Execute speckit.agent-context.update?
+    description: Refresh agent context after planning
+    condition: null
+  - extension: architect
+    command: architect.validate
+    enabled: true
+    optional: true
+    prompt: Execute adlc.architect.validate?
+    description: Validate plan alignment with architecture (READ-ONLY)
+    condition: null
+  after_tasks:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit task changes?
+    description: Auto-commit after task generation
+    condition: null
+  after_implement:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit implementation changes?
+    description: Auto-commit after implementation
+    condition: null
+  after_checklist:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit checklist changes?
+    description: Auto-commit after checklist generation
+    condition: null
+  after_analyze:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit analysis results?
+    description: Auto-commit after analysis
+    condition: null
+  after_taskstoissues:
+  - extension: git
+    command: git.commit
+    enabled: true
+    optional: true
+    prompt: Commit after syncing issues?
+    description: Auto-commit after tasks-to-issues conversion
+    condition: null
