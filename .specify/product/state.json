@@ -1,0 +1,49 @@
+{
+  "version": "1.2.0",
+  "created_at": "2026-06-24T00:00:00Z",
+  "updated_at": "2026-06-24T00:00:01Z",
+  "phase": "completed",
+  "sections_mode": "all",
+  "checkpoint": {
+    "enabled": true,
+    "after_section": "requirements",
+    "status": "approved"
+  },
+  "feature_areas": [
+    {
+      "id": "system",
+      "name": "System",
+      "pdrs": ["PDR-001", "PDR-002", "PDR-003", "PDR-004", "PDR-005"],
+      "characteristics": ["consumer-app", "platform", "desktop"],
+      "dag": ["overview", "problem", "market-opportunity", "goals", "metrics", "personas", "executive-summary", "requirements", "nfrs", "out-of-scope", "risks", "investment", "roadmap", "gtm", "pdr-summary"],
+      "progress": {
+        "overview": "completed",
+        "problem": "completed",
+        "market-opportunity": "completed",
+        "goals": "completed",
+        "metrics": "completed",
+        "personas": "completed",
+        "executive-summary": "completed",
+        "requirements": "completed",
+        "checkpoint_status": "approved",
+        "nfrs": "completed",
+        "out-of-scope": "completed",
+        "risks": "completed",
+        "investment": "completed",
+        "roadmap": "completed",
+        "gtm": "completed",
+        "pdr-summary": "completed"
+      }
+    }
+  ],
+  "pdr_lifecycle": {
+    "pdrs_promoted": 5,
+    "memory_pdr_written": true,
+    "memory_pdr_location": ".specify/memory/pdr.md",
+    "drafts_retained": false,
+    "drafts_reason": ""
+  },
+  "conflicts_detected": [],
+  "conflicts_resolved": [],
+  "output_file": "PRD.md"
+}
