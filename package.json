@@ -1,0 +1,10 @@
+{
+  "name": "myboteam",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r run build",
+    "dev": "pnpm -r run dev",
+    "check": "pnpm -r run check",
+    "test": "pnpm -r run test"
+  }
+}
