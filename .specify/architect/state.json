@@ -1,0 +1,90 @@
+{
+  "version": "1.1.0",
+  "created_at": "2026-06-24T12:00:00Z",
+  "updated_at": "2026-06-24T12:00:00Z",
+  "phase": "completed",
+  "views_mode": "core",
+  "workflow": {
+    "clarify_completed": true,
+    "clarify_completed_at": "2026-06-24T12:00:00Z",
+    "adrs_approved_count": 11,
+    "implement_started": true,
+    "implement_started_at": "2026-06-24T12:00:00Z"
+  },
+  "subsystems": [
+    {
+      "id": "system",
+      "name": "System",
+      "adrs": ["ADR-001", "ADR-007", "ADR-008", "ADR-011"],
+      "characteristics": ["monorepo", "layered-architecture"],
+      "dag": ["context", "functional", "information", "development", "deployment"],
+      "progress": {
+        "context": "completed",
+        "functional": "completed",
+        "information": "completed",
+        "development": "completed",
+        "deployment": "completed"
+      }
+    },
+    {
+      "id": "agent-runtime",
+      "name": "Agent Runtime",
+      "adrs": ["ADR-002", "ADR-005", "ADR-009"],
+      "characteristics": ["event-driven", "multi-process"],
+      "dag": ["context", "functional", "information", "development", "deployment"],
+      "progress": {
+        "context": "completed",
+        "functional": "completed",
+        "information": "completed",
+        "development": "completed",
+        "deployment": "completed"
+      }
+    },
+    {
+      "id": "mcp-tools",
+      "name": "MCP & Tools",
+      "adrs": ["ADR-003", "ADR-010"],
+      "characteristics": ["api-first", "process-isolated"],
+      "dag": ["context", "functional", "information", "development", "deployment"],
+      "progress": {
+        "context": "completed",
+        "functional": "completed",
+        "information": "completed",
+        "development": "completed",
+        "deployment": "completed"
+      }
+    },
+    {
+      "id": "data-layer",
+      "name": "Data Layer",
+      "adrs": ["ADR-004"],
+      "characteristics": ["data-intensive"],
+      "dag": ["context", "functional", "information", "development", "deployment"],
+      "progress": {
+        "context": "completed",
+        "functional": "completed",
+        "information": "completed",
+        "development": "completed",
+        "deployment": "completed"
+      }
+    },
+    {
+      "id": "llm-layer",
+      "name": "LLM Layer",
+      "adrs": ["ADR-006"],
+      "characteristics": ["api-first"],
+      "dag": ["context", "functional", "information", "development", "deployment"],
+      "progress": {
+        "context": "completed",
+        "functional": "completed",
+        "information": "completed",
+        "development": "completed",
+        "deployment": "completed"
+      }
+    }
+  ],
+  "perspectives": ["security", "performance"],
+  "conflicts_detected": [],
+  "conflicts_resolved": [],
+  "output_file": "AD.md"
+}
