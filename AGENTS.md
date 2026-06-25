@@ -4,6 +4,10 @@ shell commands, and other important information, read the current plan
 at `specs/002-pnpm-workspace-scaffold/plan.md`.
 <!-- SPECKIT END -->
 
+## Project Conventions
+
+- **Merging**: Always use `git merge --squash` when merging feature branches to main.
+
 ## Behavioral Guidelines for LLM Agents
 
 These guidelines reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
