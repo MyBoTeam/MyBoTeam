@@ -1,11 +1,6 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-export const ProviderTypeSchema = z.enum([
-  "anthropic",
-  "openai",
-  "ollama",
-  "custom",
-]);
+export const ProviderTypeSchema = z.enum(['anthropic', 'openai', 'ollama', 'custom']);
 
 export type ProviderType = z.infer<typeof ProviderTypeSchema>;
 

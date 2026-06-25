@@ -1,18 +1,18 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const DaemonEventTypeSchema = z.enum([
-  "agent.started",
-  "agent.stopped",
-  "agent.error",
-  "task.created",
-  "task.updated",
-  "task.completed",
-  "task.failed",
-  "mcp.started",
-  "mcp.stopped",
-  "mcp.error",
-  "system.ready",
-  "system.shutdown",
+  'agent.started',
+  'agent.stopped',
+  'agent.error',
+  'task.created',
+  'task.updated',
+  'task.completed',
+  'task.failed',
+  'mcp.started',
+  'mcp.stopped',
+  'mcp.error',
+  'system.ready',
+  'system.shutdown',
 ]);
 
 export type DaemonEventType = z.infer<typeof DaemonEventTypeSchema>;

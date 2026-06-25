@@ -1,7 +1,7 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const ResultSchema = <T extends z.ZodType>(dataSchema: T) =>
-  z.discriminatedUnion("ok", [
+  z.discriminatedUnion('ok', [
     z.object({
       ok: z.literal(true),
       value: dataSchema,
@@ -23,11 +23,12 @@ export type Result<T, E = { code: string; message: string; details?: unknown }> 
 export const ok = <T>(value: T): Result<T> => ({ ok: true, value });
 
 export const err = <E extends { code: string; message: string; details?: unknown }>(
-  error: E
+  error: E,
 ): Result<never, E> => ({ ok: false, error });
 
-export const isOk = <T>(result: Result<T>): result is { ok: true; value: T } =>
-  result.ok;
+export const isOk = <T>(result: Result<T>): result is { ok: true; value: T } => result.ok;
 
-export const isErr = <T>(result: Result<T>): result is { ok: false; error: { code: string; message: string; details?: unknown } } =>
+export const isErr = <T>(
+  result: Result<T>,
+): result is { ok: false; error: { code: string; message: string; details?: unknown } } =>
   !result.ok;

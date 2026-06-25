@@ -1,12 +1,12 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const AgentStatusSchema = z.enum([
-  "idle",
-  "running",
-  "paused",
-  "completed",
-  "failed",
-  "cancelled",
+  'idle',
+  'running',
+  'paused',
+  'completed',
+  'failed',
+  'cancelled',
 ]);
 
 export type AgentStatus = z.infer<typeof AgentStatusSchema>;
@@ -17,7 +17,7 @@ export const AgentConfigSchema = z.object({
     .string()
     .min(1)
     .max(64)
-    .regex(/^[a-z0-9-]+$/, "slug must be lowercase alphanumeric with hyphens"),
+    .regex(/^[a-z0-9-]+$/, 'slug must be lowercase alphanumeric with hyphens'),
   name: z.string().min(1).max(128),
   description: z.string().max(512).optional(),
   providerId: z.string().uuid(),

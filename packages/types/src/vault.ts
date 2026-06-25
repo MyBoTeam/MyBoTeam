@@ -1,11 +1,6 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-export const VaultEntryTypeSchema = z.enum([
-  "api_key",
-  "oauth_token",
-  "credential",
-  "secret",
-]);
+export const VaultEntryTypeSchema = z.enum(['api_key', 'oauth_token', 'credential', 'secret']);
 
 export type VaultEntryType = z.infer<typeof VaultEntryTypeSchema>;
 

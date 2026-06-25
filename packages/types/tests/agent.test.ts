@@ -1,48 +1,44 @@
-import { describe, it, expect } from "vitest";
-import {
-  AgentConfigSchema,
-  AgentProcessSchema,
-  AgentStatusSchema,
-} from "../src/agent.js";
+import { describe, expect, it } from 'vitest';
+import { AgentConfigSchema, AgentProcessSchema, AgentStatusSchema } from '../src/agent.js';
 
-describe("AgentConfigSchema", () => {
+describe('AgentConfigSchema', () => {
   const validAgent = {
-    id: "550e8400-e29b-41d4-a716-446655440000",
-    slug: "secretary",
-    name: "Secretary Agent",
-    description: "Handles administrative tasks",
-    providerId: "550e8400-e29b-41d4-a716-446655440001",
-    model: "claude-3-sonnet",
-    systemPrompt: "You are a helpful secretary",
+    id: '550e8400-e29b-41d4-a716-446655440000',
+    slug: 'secretary',
+    name: 'Secretary Agent',
+    description: 'Handles administrative tasks',
+    providerId: '550e8400-e29b-41d4-a716-446655440001',
+    model: 'claude-3-sonnet',
+    systemPrompt: 'You are a helpful secretary',
     maxTokens: 4096,
     temperature: 0.7,
-    mcpServerIds: ["550e8400-e29b-41d4-a716-446655440002"],
+    mcpServerIds: ['550e8400-e29b-41d4-a716-446655440002'],
     enabled: true,
-    createdAt: "2026-06-25T00:00:00Z",
-    updatedAt: "2026-06-25T00:00:00Z",
+    createdAt: '2026-06-25T00:00:00Z',
+    updatedAt: '2026-06-25T00:00:00Z',
   };
 
-  it("accepts valid agent config", () => {
+  it('accepts valid agent config', () => {
     const result = AgentConfigSchema.safeParse(validAgent);
     expect(result.success).toBe(true);
   });
 
-  it("rejects invalid slug format", () => {
+  it('rejects invalid slug format', () => {
     const result = AgentConfigSchema.safeParse({
       ...validAgent,
-      slug: "Invalid Slug!",
+      slug: 'Invalid Slug!',
     });
     expect(result.success).toBe(false);
   });
 
-  it("rejects missing required fields", () => {
+  it('rejects missing required fields', () => {
     const result = AgentConfigSchema.safeParse({
-      id: "550e8400-e29b-41d4-a716-446655440000",
+      id: '550e8400-e29b-41d4-a716-446655440000',
     });
     expect(result.success).toBe(false);
   });
 
-  it("applies defaults", () => {
+  it('applies defaults', () => {
     const { mcpServerIds, enabled, ...minimalAgent } = validAgent;
     const result = AgentConfigSchema.safeParse(minimalAgent);
     expect(result.success).toBe(true);
@@ -53,40 +49,33 @@ describe("AgentConfigSchema", () => {
   });
 });
 
-describe("AgentProcessSchema", () => {
+describe('AgentProcessSchema', () => {
   const validProcess = {
-    id: "550e8400-e29b-41d4-a716-446655440000",
-    agentId: "550e8400-e29b-41d4-a716-446655440001",
-    status: "running",
-    startedAt: "2026-06-25T00:00:00Z",
-    lastActivityAt: "2026-06-25T00:00:00Z",
+    id: '550e8400-e29b-41d4-a716-446655440000',
+    agentId: '550e8400-e29b-41d4-a716-446655440001',
+    status: 'running',
+    startedAt: '2026-06-25T00:00:00Z',
+    lastActivityAt: '2026-06-25T00:00:00Z',
     continuationCount: 0,
   };
 
-  it("accepts valid process", () => {
+  it('accepts valid process', () => {
     const result = AgentProcessSchema.safeParse(validProcess);
     expect(result.success).toBe(true);
   });
 
-  it("rejects invalid status", () => {
+  it('rejects invalid status', () => {
     const result = AgentProcessSchema.safeParse({
       ...validProcess,
-      status: "invalid",
+      status: 'invalid',
     });
     expect(result.success).toBe(false);
   });
 });
 
-describe("AgentStatusSchema", () => {
-  it("accepts all valid statuses", () => {
-    const statuses = [
-      "idle",
-      "running",
-      "paused",
-      "completed",
-      "failed",
-      "cancelled",
-    ];
+describe('AgentStatusSchema', () => {
+  it('accepts all valid statuses', () => {
+    const statuses = ['idle', 'running', 'paused', 'completed', 'failed', 'cancelled'];
     statuses.forEach((status) => {
       expect(AgentStatusSchema.safeParse(status).success).toBe(true);
     });

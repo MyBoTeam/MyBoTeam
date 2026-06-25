@@ -1,71 +1,71 @@
-import { describe, it, expect } from "vitest";
-import { ResultSchema, ok, err, isOk, isErr } from "../src/result.js";
+import { describe, expect, it } from 'vitest';
+import { err, isErr, isOk, ok, ResultSchema } from '../src/result.js';
 
-describe("Result helpers", () => {
-  it("creates ok result", () => {
-    const result = ok({ name: "test" });
+describe('Result helpers', () => {
+  it('creates ok result', () => {
+    const result = ok({ name: 'test' });
     expect(result.ok).toBe(true);
     if (result.ok) {
-      expect(result.value).toEqual({ name: "test" });
+      expect(result.value).toEqual({ name: 'test' });
     }
   });
 
-  it("creates err result", () => {
-    const result = err({ code: "E001", message: "Something failed" });
+  it('creates err result', () => {
+    const result = err({ code: 'E001', message: 'Something failed' });
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.error.code).toBe("E001");
-      expect(result.error.message).toBe("Something failed");
+      expect(result.error.code).toBe('E001');
+      expect(result.error.message).toBe('Something failed');
     }
   });
 
-  it("isOk returns true for ok result", () => {
-    const result = ok("value");
+  it('isOk returns true for ok result', () => {
+    const result = ok('value');
     expect(isOk(result)).toBe(true);
   });
 
-  it("isOk returns false for err result", () => {
-    const result = err({ code: "E001", message: "error" });
+  it('isOk returns false for err result', () => {
+    const result = err({ code: 'E001', message: 'error' });
     expect(isOk(result)).toBe(false);
   });
 
-  it("isErr returns true for err result", () => {
-    const result = err({ code: "E001", message: "error" });
+  it('isErr returns true for err result', () => {
+    const result = err({ code: 'E001', message: 'error' });
     expect(isErr(result)).toBe(true);
   });
 
-  it("isErr returns false for ok result", () => {
-    const result = ok("value");
+  it('isErr returns false for ok result', () => {
+    const result = ok('value');
     expect(isErr(result)).toBe(false);
   });
 });
 
-describe("ResultSchema", () => {
+describe('ResultSchema', () => {
   const schema = ResultSchema(
-    require("zod").z.object({
-      name: require("zod").z.string(),
-    })
+    require('zod').z.object({
+      name: require('zod').z.string(),
+    }),
   );
 
-  it("validates ok result", () => {
-    const result = schema.safeParse({ ok: true, value: { name: "test" } });
+  it('validates ok result', () => {
+    const result = schema.safeParse({ ok: true, value: { name: 'test' } });
     expect(result.success).toBe(true);
   });
 
-  it("validates err result", () => {
+  it('validates err result', () => {
     const result = schema.safeParse({
       ok: false,
-      error: { code: "E001", message: "error" },
+      error: { code: 'E001', message: 'error' },
     });
     expect(result.success).toBe(true);
   });
 
-  it("rejects invalid ok result", () => {
+  it('rejects invalid ok result', () => {
     const result = schema.safeParse({ ok: true, value: { invalid: true } });
     expect(result.success).toBe(false);
   });
 
-  it("rejects invalid err result", () => {
+  it('rejects invalid err result', () => {
     const result = schema.safeParse({ ok: false, error: { missing: true } });
     expect(result.success).toBe(false);
   });
