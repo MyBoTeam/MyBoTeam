@@ -5,15 +5,17 @@
     "build": "pnpm -r run build",
     "dev": "pnpm -r run dev",
     "check": "biome check --no-errors-on-unmatched . && pnpm -r run check",
-    "check:fix": "biome check --write .",
+    "check:fix": "biome check --write --no-errors-on-unmatched .",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
     "format": "biome format .",
     "format:fix": "biome format --write .",
-    "test": "pnpm -r run test"
+    "test": "pnpm -r run test",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.1",
+    "husky": "^9.1.7",
     "typescript": "^6.0.3"
   }
 }
