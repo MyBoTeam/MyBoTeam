@@ -3,4 +3,5 @@ packages:
   - "packages/*"
   - "packages/mcp-servers/*"
 
-onlyBuiltDependencies: []
+onlyBuiltDependencies:
+  - esbuild
