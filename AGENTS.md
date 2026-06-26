@@ -1,12 +1,19 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at `specs/002-pnpm-workspace-scaffold/plan.md`.
+at `specs/003-sqlite-storage-layer/plan.md`.
 <!-- SPECKIT END -->
 
 ## Project Conventions
 
 - **Merging**: Always use `git merge --squash` when merging feature branches to main.
+- **Source Reference (MANDATORY)**: Every ticket plan MUST check reference source code from previous versions before planning. Tickets specify source files (e.g., `Source: v0.2.0 (packages/daemon/src/socket-path.ts)`). Reading and understanding these sources is NOT optional. Source locations:
+  - v0.2.0: `/Users/mavishay/Projects/MaorInnovations/myboteam_V0.2.0`
+  - v0.3.0: `/Users/mavishay/Projects/MaorInnovations/myboteam_V0.3.0`
+  - v0.4.0: `/Users/mavishay/Projects/MaorInnovations/myboteam_V0.4.0`
+  - OpenClaw: `/Users/mavishay/Projects/Temp/openclaw`
+  - Odysseus: `/Users/mavishay/Projects/MaorInnovations/odysseus`
+  - Accomplish: `/Users/mavishay/Projects/Accomplish/accomplish`
 
 ## Behavioral Guidelines for LLM Agents
 

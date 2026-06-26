@@ -1,10 +1,10 @@
 <!--
   Sync Impact Report
   ==================
-  Version change: 1.0.0 → 1.1.0
-  Bump rationale: New principle added — Code Structure & Cleanliness (MINOR).
+  Version change: 1.1.0 → 1.2.0
+  Bump rationale: New principle added — Source Reference (MANDATORY) (MINOR).
   Modified principles:
-    - Added "VI. Code Structure & Cleanliness" with 3 rules
+    - Added "VII. Source Reference (MANDATORY)" with source locations
   Added sections: None (new principle under Core Principles).
   Removed sections: None.
   Templates requiring updates:
@@ -65,6 +65,22 @@ prefer managed secrets — never ship hard-coded tokens. Prefer immutable state:
 always create new objects, never mutate shared state. Services MUST be
 stateless, externalizing state to databases or caches. Adopt zero trust:
 verify and authenticate every request regardless of origin.
+
+### VII. Source Reference (MANDATORY)
+
+Every ticket plan MUST check reference source code from previous versions before
+planning. Tickets specify source files (e.g., `Source: v0.2.0
+(packages/daemon/src/socket-path.ts)`). Reading and understanding these sources
+is NOT optional — it is a mandatory prerequisite for planning. This ensures
+continuity, prevents reimplementation, and builds on proven patterns.
+
+Source locations:
+- v0.2.0: `/Users/mavishay/Projects/MaorInnovations/myboteam_V0.2.0`
+- v0.3.0: `/Users/mavishay/Projects/MaorInnovations/myboteam_V0.3.0`
+- v0.4.0: `/Users/mavishay/Projects/MaorInnovations/myboteam_V0.4.0`
+- OpenClaw: `/Users/mavishay/Projects/Temp/openclaw`
+- Odysseus: `/Users/mavishay/Projects/MaorInnovations/odysseus`
+- Accomplish: `/Users/mavishay/Projects/Accomplish/accomplish`
 
 ### VI. Code Structure & Cleanliness
 
@@ -139,4 +155,4 @@ with justification.
 principles (Documentation Matters, Immutability, Stateless Services, Memory as
 the Harness Core) that supplement — but do not override — this document.
 
-**Version**: 1.1.0 | **Ratified**: 2026-06-24 | **Last Amended**: 2026-06-24
+**Version**: 1.2.0 | **Ratified**: 2026-06-24 | **Last Amended**: 2026-06-25
