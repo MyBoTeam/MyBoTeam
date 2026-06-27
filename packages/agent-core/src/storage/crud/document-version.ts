@@ -1,6 +1,5 @@
+import type { DocumentVersion, DocumentVersionFilters } from '@myboteam/types';
 import type Database from 'better-sqlite3';
-import type { DocumentVersion } from '../../types/entities.js';
-import type { DocumentVersionFilters } from '../../types/queries.js';
 import { NotFoundError, ValidationError } from '../errors.js';
 import { type createChildLogger, logOperation } from '../logger.js';
 

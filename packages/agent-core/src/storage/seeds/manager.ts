@@ -5,13 +5,13 @@
 
 import type Database from 'better-sqlite3';
 import { SeedLoader } from './loader.js';
-import type { Logger, Seed, SeedManagerConfig, SeedRecord, SeedResult } from './types.js';
+import type { Seed, SeedLogger, SeedManagerConfig, SeedRecord, SeedResult } from './types.js';
 import { SeedValidator } from './validator.js';
 
 export class SeedManager {
   private db: Database.Database;
   private seedsPath: string;
-  private logger: Logger;
+  private logger: SeedLogger;
   private validator: SeedValidator;
   private loader: SeedLoader;
 

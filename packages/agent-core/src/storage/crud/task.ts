@@ -1,6 +1,5 @@
+import type { Task, TaskFilters, TaskTodo } from '@myboteam/types';
 import type Database from 'better-sqlite3';
-import type { Task, TaskTodo } from '../../types/entities.js';
-import type { TaskFilters } from '../../types/queries.js';
 import { NotFoundError } from '../errors.js';
 import { type createChildLogger, logOperation } from '../logger.js';
 

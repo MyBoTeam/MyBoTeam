@@ -1,5 +1,5 @@
+import type { Agent } from '@myboteam/types';
 import type Database from 'better-sqlite3';
-import type { Agent } from '../../types/entities.js';
 import { NotFoundError, ValidationError } from '../errors.js';
 import { type createChildLogger, logOperation } from '../logger.js';
 

@@ -12,7 +12,19 @@ export {
   type DaemonEventType,
   DaemonEventTypeSchema,
 } from './daemon.js';
-
+export type {
+  Agent,
+  AgentMcpAssignment,
+  Conversation,
+  DocumentVersion,
+  McpServer,
+  MemoryEntry,
+  Message,
+  Note,
+  Schedule,
+  Task,
+  TaskTodo,
+} from './entities.js';
 export {
   type MCPConfig,
   MCPConfigSchema,
@@ -25,6 +37,17 @@ export {
   type ProviderType,
   ProviderTypeSchema,
 } from './provider.js';
+export type {
+  AgentFilters,
+  ConversationFilters,
+  DocumentVersionFilters,
+  McpServerFilters,
+  MemoryEntryFilters,
+  MessageFilters,
+  NoteFilters,
+  ScheduleFilters,
+  TaskFilters,
+} from './queries.js';
 export {
   err,
   isErr,
