@@ -1,0 +1,156 @@
+{
+  "feature": "004-pid-lock-manager",
+  "created": "2026-06-26T12:41:19+07:00",
+  "tasks": {
+    "T001": {
+      "description": "Create PidLockPayload interface, PidLockHandle type, and PidLockError class",
+      "files": "packages/agent-core/src/daemon/pid-lock.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:14+07:00",
+      "completed_at": "2026-06-26T12:56:14+07:00",
+      "result_summary": "Implemented"
+    },
+    "T002": {
+      "description": "Write unit tests for PidLockError and type exports",
+      "files": "packages/agent-core/tests/unit/pid-lock.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:14+07:00",
+      "completed_at": "2026-06-26T12:56:14+07:00",
+      "result_summary": "Implemented"
+    },
+    "T003": {
+      "description": "Write unit tests for acquirePidLock (no lock, live conflict, stale detection)",
+      "files": "packages/agent-core/tests/unit/pid-lock.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:14+07:00",
+      "completed_at": "2026-06-26T12:56:14+07:00",
+      "result_summary": "Implemented"
+    },
+    "T004": {
+      "description": "Write integration test for atomic race condition prevention",
+      "files": "packages/agent-core/tests/integration/pid-lock.test.ts",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:14+07:00",
+      "completed_at": "2026-06-26T12:56:14+07:00",
+      "result_summary": "Implemented"
+    },
+    "T005": {
+      "description": "Implement acquirePidLock() with atomic linkSync, stale detection, and retry logic",
+      "files": "packages/agent-core/src/daemon/pid-lock.ts",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:14+07:00",
+      "completed_at": "2026-06-26T12:56:14+07:00",
+      "result_summary": "Implemented"
+    },
+    "T006": {
+      "description": "Write unit tests for release() (idempotent, file removed, signal handlers)",
+      "files": "packages/agent-core/tests/unit/pid-lock.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:14+07:00",
+      "completed_at": "2026-06-26T12:56:14+07:00",
+      "result_summary": "Implemented"
+    },
+    "T007": {
+      "description": "Implement release() method on PidLockHandle and register SIGINT/SIGTERM handlers",
+      "files": "packages/agent-core/src/daemon/pid-lock.ts",
+      "execution_mode": "SYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:14+07:00",
+      "completed_at": "2026-06-26T12:56:14+07:00",
+      "result_summary": "Implemented"
+    },
+    "T008": {
+      "description": "Write unit tests for stale lock scenarios (dead process, corrupted file, different user)",
+      "files": "packages/agent-core/tests/unit/pid-lock.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:14+07:00",
+      "completed_at": "2026-06-26T12:56:14+07:00",
+      "result_summary": "Implemented"
+    },
+    "T009": {
+      "description": "Ensure isPidAlive() handles ESRCH, EPERM, and corrupted payload gracefully",
+      "files": "packages/agent-core/src/daemon/pid-lock.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:14+07:00",
+      "completed_at": "2026-06-26T12:56:14+07:00",
+      "result_summary": "Implemented"
+    },
+    "T010": {
+      "description": "Write unit tests for saveAgentPids() and cleanupAgentProcesses()",
+      "files": "packages/agent-core/tests/unit/pid-lock.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:14+07:00",
+      "completed_at": "2026-06-26T12:56:14+07:00",
+      "result_summary": "Implemented"
+    },
+    "T011": {
+      "description": "Implement saveAgentPids(dataDir, pids) and cleanupAgentProcesses(dataDir)",
+      "files": "packages/agent-core/src/daemon/pid-lock.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:14+07:00",
+      "completed_at": "2026-06-26T12:56:14+07:00",
+      "result_summary": "Implemented"
+    },
+    "T012": {
+      "description": "Add barrel exports to packages/agent-core/src/daemon/index.ts",
+      "files": "packages/agent-core/src/daemon/index.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:14+07:00",
+      "completed_at": "2026-06-26T12:56:14+07:00",
+      "result_summary": "Implemented"
+    },
+    "T013": {
+      "description": "Validate all tasks pass and run quickstart.md examples end-to-end",
+      "files": "",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:44+07:00",
+      "completed_at": "2026-06-26T12:56:44+07:00",
+      "result_summary": "All 24 tests pass (20 unit + 4 integration)"
+    },
+    "T014": {
+      "description": "Create getPidFilePath(dataDir) stub in socket-path.ts",
+      "files": "packages/agent-core/src/daemon/socket-path.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:14+07:00",
+      "completed_at": "2026-06-26T12:56:14+07:00",
+      "result_summary": "Implemented"
+    },
+    "T015": {
+      "description": "Add integration test verifying PID lock operations do not interfere with database WAL mode (SC-005)",
+      "files": "packages/agent-core/tests/integration/pid-lock.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "completed",
+      "agent_type": "general",
+      "started_at": "2026-06-26T12:56:14+07:00",
+      "completed_at": "2026-06-26T12:56:14+07:00",
+      "result_summary": "Implemented"
+    }
+  }
+}
