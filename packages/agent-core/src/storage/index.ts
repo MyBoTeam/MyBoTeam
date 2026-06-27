@@ -1,3 +1,8 @@
+/**
+ * Storage Module
+ * Exports for database, migrations, and seeds
+ */
+
 export {
   closeDatabase,
   getDatabasePath,
@@ -17,3 +22,7 @@ export {
   seedTestAgentAssignments,
   seedTestMcpServers,
 } from './seeder.js';
+
+// New migrations and seeds exports
+export * from "./migrations/index.js";
+export * from "./seeds/index.js";

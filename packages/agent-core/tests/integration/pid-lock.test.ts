@@ -1,12 +1,15 @@
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { acquirePidLock } from '../../src/daemon/pid-lock.js';
 import { getPidFilePath } from '../../src/daemon/socket-path.js';
 
 function makeTmpDir(): string {
-  const dir = join(tmpdir(), `pid-lock-integration-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  const dir = join(
+    tmpdir(),
+    `pid-lock-integration-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+  );
   mkdirSync(dir, { recursive: true });
   return dir;
 }
@@ -53,7 +56,10 @@ describe('PID Lock Integration', () => {
 
   it('stale lock detection completes within 50ms', () => {
     const pidPath = getPidFilePath(tmpDir);
-    writeFileSync(pidPath, JSON.stringify({ pid: 99999999, createdAt: new Date().toISOString(), startTime: Date.now() }));
+    writeFileSync(
+      pidPath,
+      JSON.stringify({ pid: 99999999, createdAt: new Date().toISOString(), startTime: Date.now() }),
+    );
 
     const start = Date.now();
     const handle = acquirePidLock(tmpDir);
@@ -64,7 +70,14 @@ describe('PID Lock Integration', () => {
 
   it('fail-fast when lock conflict detected (under 100ms)', () => {
     const pidPath = getPidFilePath(tmpDir);
-    writeFileSync(pidPath, JSON.stringify({ pid: process.pid, createdAt: new Date().toISOString(), startTime: Date.now() }));
+    writeFileSync(
+      pidPath,
+      JSON.stringify({
+        pid: process.pid,
+        createdAt: new Date().toISOString(),
+        startTime: Date.now(),
+      }),
+    );
 
     const start = Date.now();
     expect(() => acquirePidLock(tmpDir)).toThrow();

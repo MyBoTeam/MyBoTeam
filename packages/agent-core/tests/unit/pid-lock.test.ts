@@ -1,14 +1,14 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, unlinkSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   acquirePidLock,
   cleanupAgentProcesses,
-  saveAgentPids,
   PidLockError,
   type PidLockHandle,
   type PidLockPayload,
+  saveAgentPids,
 } from '../../src/daemon/pid-lock.js';
 import { getPidFilePath } from '../../src/daemon/socket-path.js';
 

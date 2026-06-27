@@ -1,0 +1,586 @@
+{
+  "feature": "003-schema-migrations-manager",
+  "created": "2026-06-26T12:40:24+07:00",
+  "tasks": {
+    "T001": {
+      "description": "Create migration directory structure",
+      "files": "packages/agent-core/src/storage/migrations/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T002": {
+      "description": "Create seed directory structure",
+      "files": "packages/agent-core/src/storage/seeds/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T003": {
+      "description": "Create migration types file",
+      "files": "packages/agent-core/src/storage/migrations/types.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T004": {
+      "description": "Create seed types file",
+      "files": "packages/agent-core/src/storage/seeds/types.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T005": {
+      "description": "Create migration index file",
+      "files": "packages/agent-core/src/storage/migrations/index.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T006": {
+      "description": "Create seed index file",
+      "files": "packages/agent-core/src/storage/seeds/index.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T007": {
+      "description": "Implement migration table schema creation",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T008": {
+      "description": "Implement file-based lock mechanism",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T009": {
+      "description": "Implement migration file loader",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T010": {
+      "description": "Implement migration validator",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T011": {
+      "description": "US1 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T012": {
+      "description": "US1 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T013": {
+      "description": "US1 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T014": {
+      "description": "US1 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T015": {
+      "description": "US1 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T016": {
+      "description": "US1 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T017": {
+      "description": "US1 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T018": {
+      "description": "US1 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T019": {
+      "description": "US1 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T020": {
+      "description": "US1 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T021": {
+      "description": "US1 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T022": {
+      "description": "US3 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T023": {
+      "description": "US3 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T024": {
+      "description": "US3 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T025": {
+      "description": "US3 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T026": {
+      "description": "US3 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T027": {
+      "description": "US3 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T028": {
+      "description": "US2 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T029": {
+      "description": "US2 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T030": {
+      "description": "US2 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T031": {
+      "description": "US2 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T032": {
+      "description": "US2 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T033": {
+      "description": "US2 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T034": {
+      "description": "US2 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T035": {
+      "description": "US2 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T036": {
+      "description": "US2 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T037": {
+      "description": "US4 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T038": {
+      "description": "US4 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T039": {
+      "description": "US4 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T040": {
+      "description": "US4 test task",
+      "files": "packages/agent-core/tests/unit/storage/migrations/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T041": {
+      "description": "US4 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T042": {
+      "description": "US4 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T043": {
+      "description": "US4 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T044": {
+      "description": "US4 implementation task",
+      "files": "packages/agent-core/src/storage/migrations/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T045": {
+      "description": "US5 test task",
+      "files": "packages/agent-core/tests/unit/storage/seeds/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T046": {
+      "description": "US5 test task",
+      "files": "packages/agent-core/tests/unit/storage/seeds/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T047": {
+      "description": "US5 test task",
+      "files": "packages/agent-core/tests/unit/storage/seeds/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T048": {
+      "description": "US5 test task",
+      "files": "packages/agent-core/tests/unit/storage/seeds/manager.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T049": {
+      "description": "US5 implementation task",
+      "files": "packages/agent-core/src/storage/seeds/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T050": {
+      "description": "US5 implementation task",
+      "files": "packages/agent-core/src/storage/seeds/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T051": {
+      "description": "US5 implementation task",
+      "files": "packages/agent-core/src/storage/seeds/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T052": {
+      "description": "US5 implementation task",
+      "files": "packages/agent-core/src/storage/seeds/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T053": {
+      "description": "US5 implementation task",
+      "files": "packages/agent-core/src/storage/seeds/manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T054": {
+      "description": "Polish task",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T055": {
+      "description": "Polish task",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T056": {
+      "description": "Polish task",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T057": {
+      "description": "Polish task",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T058": {
+      "description": "Polish task",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    }
+  }
+}
