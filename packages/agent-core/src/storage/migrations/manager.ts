@@ -3,20 +3,20 @@
  * Orchestrates migration apply, rollback, and status operations
  */
 
-import type Database from "better-sqlite3";
+import type Database from 'better-sqlite3';
+import { MigrationLoader } from './loader.js';
+import { MigrationLock } from './lock.js';
 import type {
+  Logger,
   Migration,
+  MigrationManagerConfig,
   MigrationRecord,
   MigrationResult,
   RollbackResult,
-  MigrationManagerConfig,
-  Logger,
-} from "./types.js";
-import { MigrationLock } from "./lock.js";
-import { MigrationValidator } from "./validator.js";
-import { MigrationLoader } from "./loader.js";
+} from './types.js';
+import { MigrationValidator } from './validator.js';
 
-const DEFAULT_LOCK_PATH = ".local-data/migration.lock";
+const DEFAULT_LOCK_PATH = '.local-data/migration.lock';
 const DEFAULT_LOCK_TIMEOUT = 30000;
 
 export class MigrationManager {
@@ -34,7 +34,7 @@ export class MigrationManager {
     this.lock = new MigrationLock(
       config.lockFilePath || DEFAULT_LOCK_PATH,
       config.lockTimeout || DEFAULT_LOCK_TIMEOUT,
-      this.logger
+      this.logger,
     );
     this.validator = new MigrationValidator(this.logger);
     this.loader = new MigrationLoader(this.logger);
@@ -51,7 +51,7 @@ export class MigrationManager {
         applied_at TEXT NOT NULL DEFAULT (datetime('now'))
       )
     `);
-    this.logger.info("Migration table schema initialized");
+    this.logger.info('Migration table schema initialized');
   }
 
   /**
@@ -108,7 +108,7 @@ export class MigrationManager {
    */
   async getAppliedMigrations(): Promise<MigrationRecord[]> {
     return this.db
-      .prepare("SELECT version, name, applied_at FROM schema_migrations ORDER BY version")
+      .prepare('SELECT version, name, applied_at FROM schema_migrations ORDER BY version')
       .all() as MigrationRecord[];
   }
 
@@ -143,32 +143,38 @@ export class MigrationManager {
   private executeInTransaction(
     migration: Migration,
     operation: () => void,
-    action: "applied" | "rolled back"
+    action: 'applied' | 'rolled back',
   ): MigrationResult {
     const startTime = Date.now();
 
     try {
-      this.db.exec("BEGIN IMMEDIATE");
+      this.db.exec('BEGIN IMMEDIATE');
       try {
         operation();
-        this.db.exec("COMMIT");
+        this.db.exec('COMMIT');
 
         const duration = Date.now() - startTime;
         this.logger.info(
-          `Migration ${migration.name} (v${migration.version}) ${action} in ${duration}ms`
+          `Migration ${migration.name} (v${migration.version}) ${action} in ${duration}ms`,
         );
         return { success: true, version: migration.version, name: migration.name, duration };
       } catch (error) {
-        this.db.exec("ROLLBACK");
+        this.db.exec('ROLLBACK');
         throw error;
       }
     } catch (error) {
       const duration = Date.now() - startTime;
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(
-        `Migration ${migration.name} (v${migration.version}) ${action} failed: ${errorMessage}`
+        `Migration ${migration.name} (v${migration.version}) ${action} failed: ${errorMessage}`,
       );
-      return { success: false, version: migration.version, name: migration.name, error: errorMessage, duration };
+      return {
+        success: false,
+        version: migration.version,
+        name: migration.name,
+        error: errorMessage,
+        duration,
+      };
     }
   }
 
@@ -181,10 +187,12 @@ export class MigrationManager {
       () => {
         migration.up(this.db);
         this.db
-          .prepare("INSERT INTO schema_migrations (version, name, applied_at) VALUES (?, ?, datetime('now'))")
+          .prepare(
+            "INSERT INTO schema_migrations (version, name, applied_at) VALUES (?, ?, datetime('now'))",
+          )
           .run(migration.version, migration.name);
       },
-      "applied"
+      'applied',
     );
   }
 
@@ -196,9 +204,9 @@ export class MigrationManager {
       migration,
       () => {
         migration.down(this.db);
-        this.db.prepare("DELETE FROM schema_migrations WHERE version = ?").run(migration.version);
+        this.db.prepare('DELETE FROM schema_migrations WHERE version = ?').run(migration.version);
       },
-      "rolled back"
+      'rolled back',
     );
   }
 
@@ -213,7 +221,7 @@ export class MigrationManager {
 
       const lockAcquired = await this.lock.acquire();
       if (!lockAcquired) {
-        this.logger.warn("Could not acquire lock. Another process may be running migrations.");
+        this.logger.warn('Could not acquire lock. Another process may be running migrations.');
         return results;
       }
 
@@ -221,7 +229,7 @@ export class MigrationManager {
         const pending = await this.getPendingMigrations();
 
         if (pending.length === 0) {
-          this.logger.info("No pending migrations");
+          this.logger.info('No pending migrations');
           return results;
         }
 
@@ -263,7 +271,7 @@ export class MigrationManager {
           success: false,
           targetVersion,
           rolledBackVersions: [],
-          error: "Could not acquire lock",
+          error: 'Could not acquire lock',
           duration: Date.now() - startTime,
         };
       }
@@ -275,11 +283,18 @@ export class MigrationManager {
           .sort((a, b) => b.version - a.version);
 
         if (toRollback.length === 0) {
-          this.logger.info("No migrations to rollback");
-          return { success: true, targetVersion, rolledBackVersions: [], duration: Date.now() - startTime };
+          this.logger.info('No migrations to rollback');
+          return {
+            success: true,
+            targetVersion,
+            rolledBackVersions: [],
+            duration: Date.now() - startTime,
+          };
         }
 
-        this.logger.info(`Rolling back ${toRollback.length} migrations to version ${targetVersion}`);
+        this.logger.info(
+          `Rolling back ${toRollback.length} migrations to version ${targetVersion}`,
+        );
 
         const allMigrations = await this.loadMigrations();
         const migrationMap = new Map(allMigrations.map((m) => [m.version, m]));
@@ -310,14 +325,25 @@ export class MigrationManager {
           }
         }
 
-        return { success: true, targetVersion, rolledBackVersions, duration: Date.now() - startTime };
+        return {
+          success: true,
+          targetVersion,
+          rolledBackVersions,
+          duration: Date.now() - startTime,
+        };
       } finally {
         await this.lock.release();
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(`Rollback process failed: ${errorMessage}`);
-      return { success: false, targetVersion, rolledBackVersions, error: errorMessage, duration: Date.now() - startTime };
+      return {
+        success: false,
+        targetVersion,
+        rolledBackVersions,
+        error: errorMessage,
+        duration: Date.now() - startTime,
+      };
     }
   }
 }

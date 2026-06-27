@@ -3,31 +3,31 @@
  * Tests for User Story 1: Automatic Migration on Startup
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import Database from "better-sqlite3";
-import { MigrationManager } from "../../../../src/storage/migrations/manager.js";
-import type { Migration } from "../../../../src/storage/migrations/types.js";
-import fs from "node:fs/promises";
-import path from "node:path";
-import os from "node:os";
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import Database from 'better-sqlite3';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { MigrationManager } from '../../../../src/storage/migrations/manager.js';
+import type { Migration } from '../../../../src/storage/migrations/types.js';
 
-describe("MigrationManager Integration", () => {
+describe('MigrationManager Integration', () => {
   let db: Database.Database;
   let manager: MigrationManager;
   let tempDir: string;
 
   beforeEach(async () => {
     // Create in-memory database
-    db = new Database(":memory:");
+    db = new Database(':memory:');
 
     // Create temporary directory
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "migration-integration-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'migration-integration-'));
 
     // Create manager with test configuration
     manager = new MigrationManager({
-      migrationsPath: path.join(tempDir, "migrations"),
+      migrationsPath: path.join(tempDir, 'migrations'),
       db,
-      lockFilePath: path.join(tempDir, ".local-data", "migration.lock"),
+      lockFilePath: path.join(tempDir, '.local-data', 'migration.lock'),
       lockTimeout: 5000,
     });
   });
@@ -40,28 +40,28 @@ describe("MigrationManager Integration", () => {
     await fs.rm(tempDir, { recursive: true, force: true });
   });
 
-  describe("T031: Full rollback flow", () => {
-    it("should rollback multiple migrations in correct order", async () => {
+  describe('T031: Full rollback flow', () => {
+    it('should rollback multiple migrations in correct order', async () => {
       // Arrange: Create multiple migrations
       const migration1Json = {
         version: 1,
-        name: "create_users_table",
-        upSql: "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL)",
-        downSql: "DROP TABLE IF EXISTS users",
+        name: 'create_users_table',
+        upSql: 'CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL)',
+        downSql: 'DROP TABLE IF EXISTS users',
       };
 
       const migration2Json = {
         version: 2,
-        name: "add_email_column",
-        upSql: "ALTER TABLE users ADD COLUMN email TEXT",
+        name: 'add_email_column',
+        upSql: 'ALTER TABLE users ADD COLUMN email TEXT',
         downSql: "-- Rollback: SQLite doesn't support DROP COLUMN, so we do nothing",
       };
 
       const migration3Json = {
         version: 3,
-        name: "create_posts_table",
-        upSql: "CREATE TABLE posts (id INTEGER PRIMARY KEY, user_id INTEGER)",
-        downSql: "DROP TABLE IF EXISTS posts",
+        name: 'create_posts_table',
+        upSql: 'CREATE TABLE posts (id INTEGER PRIMARY KEY, user_id INTEGER)',
+        downSql: 'DROP TABLE IF EXISTS posts',
       };
 
       // Initialize schema
@@ -78,13 +78,11 @@ describe("MigrationManager Integration", () => {
 
       // Verify all tables exist
       const tables = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
-        )
+        .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
         .all()
         .map((t: any) => t.name);
-      expect(tables).toContain("users");
-      expect(tables).toContain("posts");
+      expect(tables).toContain('users');
+      expect(tables).toContain('posts');
 
       // Act: Rollback migration 3 and 2 manually
       await manager.rollbackMigration(migration3!);
@@ -92,29 +90,25 @@ describe("MigrationManager Integration", () => {
 
       // Verify only users table exists (posts should be dropped)
       const tablesAfterRollback = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
-        )
+        .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
         .all()
         .map((t: any) => t.name);
-      expect(tablesAfterRollback).toContain("users");
-      expect(tablesAfterRollback).not.toContain("posts");
+      expect(tablesAfterRollback).toContain('users');
+      expect(tablesAfterRollback).not.toContain('posts');
 
       // Verify migration records
-      const records = db
-        .prepare("SELECT * FROM schema_migrations ORDER BY version")
-        .all();
+      const records = db.prepare('SELECT * FROM schema_migrations ORDER BY version').all();
       expect(records).toHaveLength(1);
       expect((records[0] as any).version).toBe(1);
     });
   });
 
-  describe("T040: Init migration flow", () => {
-    it("should apply init migration on fresh database", async () => {
+  describe('T040: Init migration flow', () => {
+    it('should apply init migration on fresh database', async () => {
       // Arrange: Create init migration JSON
       const initMigrationJson = {
         version: 1,
-        name: "001_init",
+        name: '001_init',
         upSql: `
           CREATE TABLE users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -122,16 +116,14 @@ describe("MigrationManager Integration", () => {
             email TEXT UNIQUE NOT NULL
           )
         `,
-        downSql: "DROP TABLE IF EXISTS users",
+        downSql: 'DROP TABLE IF EXISTS users',
       };
 
       // Initialize schema
       await manager.initializeSchema();
 
       // Load migration from JSON
-      const migration = manager.loadMigrationFromJson(
-        JSON.stringify(initMigrationJson)
-      );
+      const migration = manager.loadMigrationFromJson(JSON.stringify(initMigrationJson));
       expect(migration).not.toBeNull();
 
       // Act: Apply migration
@@ -142,38 +134,36 @@ describe("MigrationManager Integration", () => {
 
       // Verify table was created
       const tableExists = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='users'"
-        )
+        .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
         .get();
       expect(tableExists).toBeDefined();
 
       // Verify migration record exists
-      const records = db.prepare("SELECT * FROM schema_migrations").all();
+      const records = db.prepare('SELECT * FROM schema_migrations').all();
       expect(records).toHaveLength(1);
-      expect((records[0] as any).name).toBe("001_init");
+      expect((records[0] as any).name).toBe('001_init');
     });
 
-    it("should skip init migration on existing database", async () => {
+    it('should skip init migration on existing database', async () => {
       // Arrange: Create init migration JSON and mark as applied
       const initMigrationJson = {
         version: 1,
-        name: "001_init",
-        upSql: "CREATE TABLE test (id INTEGER PRIMARY KEY)",
-        downSql: "DROP TABLE IF EXISTS test",
+        name: '001_init',
+        upSql: 'CREATE TABLE test (id INTEGER PRIMARY KEY)',
+        downSql: 'DROP TABLE IF EXISTS test',
       };
 
       // Initialize schema and mark migration as applied
       await manager.initializeSchema();
       db.prepare(
-        "INSERT INTO schema_migrations (version, name, applied_at) VALUES (?, ?, datetime('now'))"
-      ).run(1, "001_init");
+        "INSERT INTO schema_migrations (version, name, applied_at) VALUES (?, ?, datetime('now'))",
+      ).run(1, '001_init');
 
       // Create migrations directory with init migration file
-      await fs.mkdir(path.join(tempDir, "migrations"), { recursive: true });
+      await fs.mkdir(path.join(tempDir, 'migrations'), { recursive: true });
       await fs.writeFile(
-        path.join(tempDir, "migrations", "001_init.json"),
-        JSON.stringify(initMigrationJson)
+        path.join(tempDir, 'migrations', '001_init.json'),
+        JSON.stringify(initMigrationJson),
       );
 
       // Act: Get pending migrations
@@ -184,13 +174,13 @@ describe("MigrationManager Integration", () => {
     });
   });
 
-  describe("T031a: Rollback failure when down migration missing", () => {
-    it("should handle rollback failure gracefully", async () => {
+  describe('T031a: Rollback failure when down migration missing', () => {
+    it('should handle rollback failure gracefully', async () => {
       // Arrange: Create migration without down SQL
       const migrationJson = {
         version: 1,
-        name: "test_migration",
-        upSql: "CREATE TABLE test (id INTEGER PRIMARY KEY)",
+        name: 'test_migration',
+        upSql: 'CREATE TABLE test (id INTEGER PRIMARY KEY)',
         // No downSql
       };
 
@@ -211,19 +201,19 @@ describe("MigrationManager Integration", () => {
       expect(rollbackResult.success).toBe(true);
 
       // Verify migration record is deleted
-      const records = db.prepare("SELECT * FROM schema_migrations").all();
+      const records = db.prepare('SELECT * FROM schema_migrations').all();
       expect(records).toHaveLength(0);
     });
   });
 
-  describe("T024: Idempotent apply flow", () => {
-    it("should handle multiple apply calls gracefully", async () => {
+  describe('T024: Idempotent apply flow', () => {
+    it('should handle multiple apply calls gracefully', async () => {
       // Arrange: Create a migration JSON
       const migrationJson = {
         version: 1,
-        name: "test_migration",
-        upSql: "CREATE TABLE test (id INTEGER PRIMARY KEY)",
-        downSql: "DROP TABLE IF EXISTS test",
+        name: 'test_migration',
+        upSql: 'CREATE TABLE test (id INTEGER PRIMARY KEY)',
+        downSql: 'DROP TABLE IF EXISTS test',
       };
 
       // Initialize schema
@@ -244,17 +234,17 @@ describe("MigrationManager Integration", () => {
       expect(result3.success).toBe(false);
 
       // Verify only one migration record exists
-      const records = db.prepare("SELECT * FROM schema_migrations").all();
+      const records = db.prepare('SELECT * FROM schema_migrations').all();
       expect(records).toHaveLength(1);
     });
   });
 
-  describe("T015: Full migration apply flow", () => {
-    it("should apply multiple migrations in correct order", async () => {
+  describe('T015: Full migration apply flow', () => {
+    it('should apply multiple migrations in correct order', async () => {
       // Arrange: Create multiple migration JSONs
       const migration1Json = {
         version: 1,
-        name: "create_users_table",
+        name: 'create_users_table',
         upSql: `
           CREATE TABLE users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -263,19 +253,19 @@ describe("MigrationManager Integration", () => {
             created_at TEXT DEFAULT (datetime('now'))
           )
         `,
-        downSql: "DROP TABLE IF EXISTS users",
+        downSql: 'DROP TABLE IF EXISTS users',
       };
 
       const migration2Json = {
         version: 2,
-        name: "add_age_column",
-        upSql: "ALTER TABLE users ADD COLUMN age INTEGER",
-        downSql: "ALTER TABLE users DROP COLUMN age",
+        name: 'add_age_column',
+        upSql: 'ALTER TABLE users ADD COLUMN age INTEGER',
+        downSql: 'ALTER TABLE users DROP COLUMN age',
       };
 
       const migration3Json = {
         version: 3,
-        name: "create_posts_table",
+        name: 'create_posts_table',
         upSql: `
           CREATE TABLE posts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -286,7 +276,7 @@ describe("MigrationManager Integration", () => {
             FOREIGN KEY (user_id) REFERENCES users(id)
           )
         `,
-        downSql: "DROP TABLE IF EXISTS posts",
+        downSql: 'DROP TABLE IF EXISTS posts',
       };
 
       // Initialize schema
@@ -313,33 +303,29 @@ describe("MigrationManager Integration", () => {
 
       // Verify database schema
       const tables = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
-        )
+        .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
         .all()
         .map((t: any) => t.name);
 
-      expect(tables).toContain("users");
-      expect(tables).toContain("posts");
-      expect(tables).toContain("schema_migrations");
+      expect(tables).toContain('users');
+      expect(tables).toContain('posts');
+      expect(tables).toContain('schema_migrations');
 
       // Verify migration records
-      const records = db
-        .prepare("SELECT * FROM schema_migrations ORDER BY version")
-        .all();
+      const records = db.prepare('SELECT * FROM schema_migrations ORDER BY version').all();
       expect(records).toHaveLength(3);
 
       const versions = records.map((r: any) => r.version);
       expect(versions).toEqual([1, 2, 3]);
     });
 
-    it("should be idempotent - running apply twice should not duplicate migrations", async () => {
+    it('should be idempotent - running apply twice should not duplicate migrations', async () => {
       // Arrange: Create a migration JSON
       const migrationJson = {
         version: 1,
-        name: "test_migration",
-        upSql: "CREATE TABLE test (id INTEGER PRIMARY KEY)",
-        downSql: "DROP TABLE IF EXISTS test",
+        name: 'test_migration',
+        upSql: 'CREATE TABLE test (id INTEGER PRIMARY KEY)',
+        downSql: 'DROP TABLE IF EXISTS test',
       };
 
       // Initialize schema
@@ -359,24 +345,24 @@ describe("MigrationManager Integration", () => {
       expect(result2.success).toBe(false); // Fails because table already exists
 
       // Verify only one migration record exists
-      const records = db.prepare("SELECT * FROM schema_migrations").all();
+      const records = db.prepare('SELECT * FROM schema_migrations').all();
       expect(records).toHaveLength(1);
     });
 
-    it("should handle rollback correctly", async () => {
+    it('should handle rollback correctly', async () => {
       // Arrange: Create migrations with table creation
       const migration1Json = {
         version: 1,
-        name: "create_users_table",
-        upSql: "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL)",
-        downSql: "DROP TABLE IF EXISTS users",
+        name: 'create_users_table',
+        upSql: 'CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL)',
+        downSql: 'DROP TABLE IF EXISTS users',
       };
 
       const migration2Json = {
         version: 2,
-        name: "add_email_column",
-        upSql: "ALTER TABLE users ADD COLUMN email TEXT",
-        downSql: "DROP TABLE IF EXISTS users",
+        name: 'add_email_column',
+        upSql: 'ALTER TABLE users ADD COLUMN email TEXT',
+        downSql: 'DROP TABLE IF EXISTS users',
       };
 
       // Initialize schema
@@ -395,9 +381,7 @@ describe("MigrationManager Integration", () => {
 
       // Verify tables exist
       const tablesAfterApply = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='users'"
-        )
+        .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
         .all();
       expect(tablesAfterApply).toHaveLength(1);
 
@@ -409,20 +393,18 @@ describe("MigrationManager Integration", () => {
       expect(rollbackResult.version).toBe(2);
 
       // Verify migration records
-      const records = db
-        .prepare("SELECT * FROM schema_migrations ORDER BY version")
-        .all();
+      const records = db.prepare('SELECT * FROM schema_migrations ORDER BY version').all();
       expect(records).toHaveLength(1);
       expect((records[0] as any).version).toBe(1);
     });
 
-    it("should handle lock mechanism correctly", async () => {
+    it('should handle lock mechanism correctly', async () => {
       // Arrange: Create a migration JSON
       const migrationJson = {
         version: 1,
-        name: "test_migration",
-        upSql: "CREATE TABLE test (id INTEGER PRIMARY KEY)",
-        downSql: "DROP TABLE IF EXISTS test",
+        name: 'test_migration',
+        upSql: 'CREATE TABLE test (id INTEGER PRIMARY KEY)',
+        downSql: 'DROP TABLE IF EXISTS test',
       };
 
       // Initialize schema
@@ -440,19 +422,19 @@ describe("MigrationManager Integration", () => {
 
       // Verify lock file does not exist after completion
       const lockExists = await fs
-        .access(path.join(tempDir, ".local-data", "migration.lock"))
+        .access(path.join(tempDir, '.local-data', 'migration.lock'))
         .then(() => true)
         .catch(() => false);
       expect(lockExists).toBe(false);
     });
 
-    it("should log migration events", async () => {
+    it('should log migration events', async () => {
       // Arrange: Create a migration JSON and mock logger
       const migrationJson = {
         version: 1,
-        name: "test_migration",
-        upSql: "CREATE TABLE test (id INTEGER PRIMARY KEY)",
-        downSql: "DROP TABLE IF EXISTS test",
+        name: 'test_migration',
+        upSql: 'CREATE TABLE test (id INTEGER PRIMARY KEY)',
+        downSql: 'DROP TABLE IF EXISTS test',
       };
 
       const logger = {
@@ -463,9 +445,9 @@ describe("MigrationManager Integration", () => {
       };
 
       const managerWithLogger = new MigrationManager({
-        migrationsPath: path.join(tempDir, "migrations"),
+        migrationsPath: path.join(tempDir, 'migrations'),
         db,
-        lockFilePath: path.join(tempDir, ".local-data", "migration.lock"),
+        lockFilePath: path.join(tempDir, '.local-data', 'migration.lock'),
         lockTimeout: 5000,
         logger,
       });
@@ -474,9 +456,7 @@ describe("MigrationManager Integration", () => {
       await managerWithLogger.initializeSchema();
 
       // Load migration from JSON
-      const migration = managerWithLogger.loadMigrationFromJson(
-        JSON.stringify(migrationJson)
-      );
+      const migration = managerWithLogger.loadMigrationFromJson(JSON.stringify(migrationJson));
       expect(migration).not.toBeNull();
 
       // Act: Apply migration

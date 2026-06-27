@@ -3,7 +3,7 @@
  * File-based lock with timeout and stale lock recovery
  */
 
-import type { LockInfo, Logger } from "./types.js";
+import type { LockInfo, Logger } from './types.js';
 
 export class MigrationLock {
   private lockFilePath: string;
@@ -20,8 +20,8 @@ export class MigrationLock {
    * Acquire lock for migration execution
    */
   async acquire(): Promise<boolean> {
-    const fs = await import("fs/promises");
-    const path = await import("path");
+    const fs = await import('fs/promises');
+    const path = await import('path');
 
     const lockDir = path.dirname(this.lockFilePath);
     await fs.mkdir(lockDir, { recursive: true });
@@ -34,12 +34,12 @@ export class MigrationLock {
 
     try {
       await fs.writeFile(this.lockFilePath, JSON.stringify(lockInfo), {
-        flag: "wx",
+        flag: 'wx',
       });
       this.logger.debug(`Lock acquired by process ${process.pid}`);
       return true;
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === "EEXIST") {
+      if ((error as NodeJS.ErrnoException).code === 'EEXIST') {
         return await this.checkStale();
       }
       throw error;
@@ -50,28 +50,24 @@ export class MigrationLock {
    * Check if existing lock is stale and can be recovered
    */
   private async checkStale(): Promise<boolean> {
-    const fs = await import("fs/promises");
+    const fs = await import('fs/promises');
 
     try {
-      const lockContent = await fs.readFile(this.lockFilePath, "utf-8");
+      const lockContent = await fs.readFile(this.lockFilePath, 'utf-8');
       const lockInfo: LockInfo = JSON.parse(lockContent);
 
       const lockAge = Date.now() - new Date(lockInfo.acquiredAt).getTime();
 
       if (lockAge > lockInfo.timeout) {
-        this.logger.warn(
-          `Stale lock detected (age: ${lockAge}ms). Recovering...`
-        );
+        this.logger.warn(`Stale lock detected (age: ${lockAge}ms). Recovering...`);
         await this.release();
         return await this.acquire();
       }
 
-      this.logger.debug(
-        `Lock held by process ${lockInfo.pid} (age: ${lockAge}ms)`
-      );
+      this.logger.debug(`Lock held by process ${lockInfo.pid} (age: ${lockAge}ms)`);
       return false;
     } catch {
-      this.logger.warn("Corrupted lock file detected. Removing...");
+      this.logger.warn('Corrupted lock file detected. Removing...');
       await this.release();
       return await this.acquire();
     }
@@ -81,13 +77,13 @@ export class MigrationLock {
    * Release migration lock
    */
   async release(): Promise<void> {
-    const fs = await import("fs/promises");
+    const fs = await import('fs/promises');
 
     try {
       await fs.unlink(this.lockFilePath);
-      this.logger.debug("Lock released");
+      this.logger.debug('Lock released');
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
         throw error;
       }
     }

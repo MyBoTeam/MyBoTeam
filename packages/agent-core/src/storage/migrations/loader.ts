@@ -3,7 +3,7 @@
  * Loads migration files from disk and parses JSON content
  */
 
-import type { Migration, Logger } from "./types.js";
+import type { Logger, Migration } from './types.js';
 
 export class MigrationLoader {
   private logger: Logger;
@@ -16,8 +16,8 @@ export class MigrationLoader {
    * Load all migration files from migrations directory
    */
   async loadAll(migrationsPath: string): Promise<Migration[]> {
-    const fs = await import("fs/promises");
-    const path = await import("path");
+    const fs = await import('fs/promises');
+    const path = await import('path');
 
     const migrations: Migration[] = [];
 
@@ -25,11 +25,7 @@ export class MigrationLoader {
       const files = await fs.readdir(migrationsPath);
 
       for (const file of files) {
-        if (
-          file.endsWith(".ts") ||
-          file.endsWith(".js") ||
-          file.endsWith(".json")
-        ) {
+        if (file.endsWith('.ts') || file.endsWith('.js') || file.endsWith('.json')) {
           const filePath = path.join(migrationsPath, file);
           const migration = await this.loadFile(filePath);
           if (migration) {
@@ -76,7 +72,7 @@ export class MigrationLoader {
       const migration = JSON.parse(jsonContent);
 
       if (validate && !this.isValidMigration(migration)) {
-        this.logger.warn("Invalid migration JSON content");
+        this.logger.warn('Invalid migration JSON content');
         return null;
       }
 
@@ -106,12 +102,12 @@ export class MigrationLoader {
   private isValidMigration(migration: unknown): boolean {
     const m = migration as Partial<Migration> & { upSql?: string; downSql?: string };
     return (
-      typeof m === "object" &&
+      typeof m === 'object' &&
       m !== null &&
-      typeof m.version === "number" &&
-      typeof m.name === "string" &&
-      ((typeof m.up === "function" && typeof m.down === "function") ||
-        (typeof m.upSql === "string" && typeof m.downSql === "string"))
+      typeof m.version === 'number' &&
+      typeof m.name === 'string' &&
+      ((typeof m.up === 'function' && typeof m.down === 'function') ||
+        (typeof m.upSql === 'string' && typeof m.downSql === 'string'))
     );
   }
 }

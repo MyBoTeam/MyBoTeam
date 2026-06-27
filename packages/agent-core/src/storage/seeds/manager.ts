@@ -3,10 +3,10 @@
  * Orchestrates seed apply and rollback operations
  */
 
-import type Database from "better-sqlite3";
-import type { Seed, SeedRecord, SeedResult, SeedManagerConfig, Logger } from "./types.js";
-import { SeedValidator } from "./validator.js";
-import { SeedLoader } from "./loader.js";
+import type Database from 'better-sqlite3';
+import { SeedLoader } from './loader.js';
+import type { Logger, Seed, SeedManagerConfig, SeedRecord, SeedResult } from './types.js';
+import { SeedValidator } from './validator.js';
 
 export class SeedManager {
   private db: Database.Database;
@@ -33,7 +33,7 @@ export class SeedManager {
         applied_at TEXT NOT NULL DEFAULT (datetime('now'))
       )
     `);
-    this.logger.info("Seed table schema initialized");
+    this.logger.info('Seed table schema initialized');
   }
 
   /**
@@ -41,7 +41,7 @@ export class SeedManager {
    */
   async getAppliedSeeds(): Promise<SeedRecord[]> {
     return this.db
-      .prepare("SELECT name, applied_at FROM schema_seeds ORDER BY name")
+      .prepare('SELECT name, applied_at FROM schema_seeds ORDER BY name')
       .all() as SeedRecord[];
   }
 
@@ -83,7 +83,7 @@ export class SeedManager {
     const startTime = Date.now();
 
     try {
-      this.db.exec("BEGIN IMMEDIATE");
+      this.db.exec('BEGIN IMMEDIATE');
       try {
         seed.seed(this.db);
 
@@ -91,13 +91,13 @@ export class SeedManager {
           .prepare("INSERT INTO schema_seeds (name, applied_at) VALUES (?, datetime('now'))")
           .run(seed.name);
 
-        this.db.exec("COMMIT");
+        this.db.exec('COMMIT');
 
         const duration = Date.now() - startTime;
         this.logger.info(`Seed ${seed.name} executed in ${duration}ms`);
         return { success: true, name: seed.name, duration };
       } catch (error) {
-        this.db.exec("ROLLBACK");
+        this.db.exec('ROLLBACK');
         throw error;
       }
     } catch (error) {
@@ -115,19 +115,19 @@ export class SeedManager {
     const startTime = Date.now();
 
     try {
-      this.db.exec("BEGIN IMMEDIATE");
+      this.db.exec('BEGIN IMMEDIATE');
       try {
         seed.rollback(this.db);
 
-        this.db.prepare("DELETE FROM schema_seeds WHERE name = ?").run(seed.name);
+        this.db.prepare('DELETE FROM schema_seeds WHERE name = ?').run(seed.name);
 
-        this.db.exec("COMMIT");
+        this.db.exec('COMMIT');
 
         const duration = Date.now() - startTime;
         this.logger.info(`Seed ${seed.name} rolled back in ${duration}ms`);
         return { success: true, name: seed.name, duration };
       } catch (error) {
-        this.db.exec("ROLLBACK");
+        this.db.exec('ROLLBACK');
         throw error;
       }
     } catch (error) {
@@ -150,7 +150,7 @@ export class SeedManager {
       const pending = await this.getPendingSeeds();
 
       if (pending.length === 0) {
-        this.logger.info("No pending seeds");
+        this.logger.info('No pending seeds');
         return results;
       }
 
@@ -185,7 +185,7 @@ export class SeedManager {
       const applied = await this.getAppliedSeeds();
 
       if (applied.length === 0) {
-        this.logger.info("No seeds to rollback");
+        this.logger.info('No seeds to rollback');
         return results;
       }
 

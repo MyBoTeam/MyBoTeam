@@ -3,7 +3,7 @@
  * Loads seed files from disk and parses JSON content
  */
 
-import type { Seed, Logger } from "./types.js";
+import type { Logger, Seed } from './types.js';
 
 export class SeedLoader {
   private logger: Logger;
@@ -16,8 +16,8 @@ export class SeedLoader {
    * Load all seed files from seeds directory
    */
   async loadAll(seedsPath: string): Promise<Seed[]> {
-    const fs = await import("fs/promises");
-    const path = await import("path");
+    const fs = await import('fs/promises');
+    const path = await import('path');
 
     const seeds: Seed[] = [];
 
@@ -25,11 +25,7 @@ export class SeedLoader {
       const files = await fs.readdir(seedsPath);
 
       for (const file of files) {
-        if (
-          file.endsWith(".ts") ||
-          file.endsWith(".js") ||
-          file.endsWith(".json")
-        ) {
+        if (file.endsWith('.ts') || file.endsWith('.js') || file.endsWith('.json')) {
           const filePath = path.join(seedsPath, file);
           const seed = await this.loadFile(filePath);
           if (seed) {
@@ -76,7 +72,7 @@ export class SeedLoader {
       const seed = JSON.parse(jsonContent);
 
       if (validate && !this.isValidSeed(seed)) {
-        this.logger.warn("Invalid seed JSON content");
+        this.logger.warn('Invalid seed JSON content');
         return null;
       }
 
@@ -106,12 +102,12 @@ export class SeedLoader {
   private isValidSeed(seed: unknown): boolean {
     const s = seed as Partial<Seed> & { seedSql?: string; rollbackSql?: string };
     return (
-      typeof s === "object" &&
+      typeof s === 'object' &&
       s !== null &&
-      typeof s.name === "string" &&
-      typeof s.order === "number" &&
-      ((typeof s.seed === "function" && typeof s.rollback === "function") ||
-        (typeof s.seedSql === "string" && typeof s.rollbackSql === "string"))
+      typeof s.name === 'string' &&
+      typeof s.order === 'number' &&
+      ((typeof s.seed === 'function' && typeof s.rollback === 'function') ||
+        (typeof s.seedSql === 'string' && typeof s.rollbackSql === 'string'))
     );
   }
 }

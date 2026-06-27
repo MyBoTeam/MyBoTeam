@@ -3,7 +3,7 @@
  * Based on data-model.md and contracts/interfaces.md
  */
 
-import type Database from "better-sqlite3";
+import type Database from 'better-sqlite3';
 
 /**
  * Migration file structure
@@ -35,11 +35,7 @@ export interface MigrationRecord {
 /**
  * Migration status
  */
-export type MigrationStatus =
-  | "pending"
-  | "applied"
-  | "failed"
-  | "rolled_back";
+export type MigrationStatus = 'pending' | 'applied' | 'failed' | 'rolled_back';
 
 /**
  * Migration result

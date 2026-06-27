@@ -3,28 +3,28 @@
  * Tests for User Story 5: Seeding Mechanism
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import Database from "better-sqlite3";
-import { SeedManager } from "../../../../src/storage/seeds/manager.js";
-import fs from "node:fs/promises";
-import path from "node:path";
-import os from "node:os";
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import Database from 'better-sqlite3';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SeedManager } from '../../../../src/storage/seeds/manager.js';
 
-describe("SeedManager Integration", () => {
+describe('SeedManager Integration', () => {
   let db: Database.Database;
   let manager: SeedManager;
   let tempDir: string;
 
   beforeEach(async () => {
     // Create in-memory database
-    db = new Database(":memory:");
+    db = new Database(':memory:');
 
     // Create temporary directory
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "seed-integration-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'seed-integration-'));
 
     // Create manager with test configuration
     manager = new SeedManager({
-      seedsPath: path.join(tempDir, "seeds"),
+      seedsPath: path.join(tempDir, 'seeds'),
       db,
     });
   });
@@ -37,21 +37,23 @@ describe("SeedManager Integration", () => {
     await fs.rm(tempDir, { recursive: true, force: true });
   });
 
-  describe("T048: Full seed flow", () => {
-    it("should apply multiple seeds in correct order", async () => {
+  describe('T048: Full seed flow', () => {
+    it('should apply multiple seeds in correct order', async () => {
       // Arrange: Create table for seeding
-      db.exec("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL)");
+      db.exec(
+        'CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL)',
+      );
 
       // Create seeds
       const seed1Json = {
-        name: "seed_users",
+        name: 'seed_users',
         order: 1,
         seedSql: "INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')",
         rollbackSql: "DELETE FROM users WHERE name = 'Alice'",
       };
 
       const seed2Json = {
-        name: "seed_admins",
+        name: 'seed_admins',
         order: 2,
         seedSql: "INSERT INTO users (name, email) VALUES ('Admin', 'admin@example.com')",
         rollbackSql: "DELETE FROM users WHERE name = 'Admin'",
@@ -76,25 +78,27 @@ describe("SeedManager Integration", () => {
       expect(result2.success).toBe(true);
 
       // Verify data was inserted
-      const users = db.prepare("SELECT * FROM users ORDER BY name").all();
+      const users = db.prepare('SELECT * FROM users ORDER BY name').all();
       expect(users).toHaveLength(2);
-      expect((users[0] as any).name).toBe("Admin");
-      expect((users[1] as any).name).toBe("Alice");
+      expect((users[0] as any).name).toBe('Admin');
+      expect((users[1] as any).name).toBe('Alice');
 
       // Verify seed records
-      const records = db.prepare("SELECT * FROM schema_seeds ORDER BY name").all();
+      const records = db.prepare('SELECT * FROM schema_seeds ORDER BY name').all();
       expect(records).toHaveLength(2);
-      expect((records[0] as any).name).toBe("seed_admins");
-      expect((records[1] as any).name).toBe("seed_users");
+      expect((records[0] as any).name).toBe('seed_admins');
+      expect((records[1] as any).name).toBe('seed_users');
     });
 
-    it("should be idempotent - running same seed twice should not duplicate data", async () => {
+    it('should be idempotent - running same seed twice should not duplicate data', async () => {
       // Arrange: Create table for seeding
-      db.exec("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL)");
+      db.exec(
+        'CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL)',
+      );
 
       // Create seed
       const seedJson = {
-        name: "seed_users",
+        name: 'seed_users',
         order: 1,
         seedSql: "INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')",
         rollbackSql: "DELETE FROM users WHERE name = 'Alice'",
@@ -116,21 +120,23 @@ describe("SeedManager Integration", () => {
       expect(result2.success).toBe(false);
 
       // Verify only one record exists
-      const users = db.prepare("SELECT * FROM users").all();
+      const users = db.prepare('SELECT * FROM users').all();
       expect(users).toHaveLength(1);
 
       // Verify only one seed record exists
-      const records = db.prepare("SELECT * FROM schema_seeds").all();
+      const records = db.prepare('SELECT * FROM schema_seeds').all();
       expect(records).toHaveLength(1);
     });
 
-    it("should handle rollback correctly", async () => {
+    it('should handle rollback correctly', async () => {
       // Arrange: Create table for seeding
-      db.exec("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL)");
+      db.exec(
+        'CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL)',
+      );
 
       // Create seed
       const seedJson = {
-        name: "seed_users",
+        name: 'seed_users',
         order: 1,
         seedSql: "INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')",
         rollbackSql: "DELETE FROM users WHERE name = 'Alice'",
@@ -151,21 +157,23 @@ describe("SeedManager Integration", () => {
       expect(rollbackResult.success).toBe(true);
 
       // Verify data was removed
-      const users = db.prepare("SELECT * FROM users").all();
+      const users = db.prepare('SELECT * FROM users').all();
       expect(users).toHaveLength(0);
 
       // Verify seed record was removed
-      const records = db.prepare("SELECT * FROM schema_seeds").all();
+      const records = db.prepare('SELECT * FROM schema_seeds').all();
       expect(records).toHaveLength(0);
     });
 
-    it("should log seed events", async () => {
+    it('should log seed events', async () => {
       // Arrange: Create table for seeding
-      db.exec("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL)");
+      db.exec(
+        'CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL)',
+      );
 
       // Create seed
       const seedJson = {
-        name: "seed_users",
+        name: 'seed_users',
         order: 1,
         seedSql: "INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')",
         rollbackSql: "DELETE FROM users WHERE name = 'Alice'",
@@ -179,7 +187,7 @@ describe("SeedManager Integration", () => {
       };
 
       const managerWithLogger = new SeedManager({
-        seedsPath: path.join(tempDir, "seeds"),
+        seedsPath: path.join(tempDir, 'seeds'),
         db,
         logger,
       });

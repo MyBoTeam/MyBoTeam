@@ -3,30 +3,30 @@
  * Tests for performance validation scenarios
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import Database from "better-sqlite3";
-import { MigrationManager } from "../../../../src/storage/migrations/manager.js";
-import fs from "node:fs/promises";
-import path from "node:path";
-import os from "node:os";
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import Database from 'better-sqlite3';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { MigrationManager } from '../../../../src/storage/migrations/manager.js';
 
-describe("Migration Performance Tests", () => {
+describe('Migration Performance Tests', () => {
   let db: Database.Database;
   let manager: MigrationManager;
   let tempDir: string;
 
   beforeEach(async () => {
     // Create in-memory database
-    db = new Database(":memory:");
+    db = new Database(':memory:');
 
     // Create temporary directory
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "migration-performance-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'migration-performance-'));
 
     // Create manager with test configuration
     manager = new MigrationManager({
-      migrationsPath: path.join(tempDir, "migrations"),
+      migrationsPath: path.join(tempDir, 'migrations'),
       db,
-      lockFilePath: path.join(tempDir, ".local-data", "migration.lock"),
+      lockFilePath: path.join(tempDir, '.local-data', 'migration.lock'),
       lockTimeout: 5000,
     });
   });
@@ -39,8 +39,8 @@ describe("Migration Performance Tests", () => {
     await fs.rm(tempDir, { recursive: true, force: true });
   });
 
-  describe("T057a: Performance test for SC-001 (50 migrations under 5s)", () => {
-    it("should apply 50 migrations under 5 seconds", async () => {
+  describe('T057a: Performance test for SC-001 (50 migrations under 5s)', () => {
+    it('should apply 50 migrations under 5 seconds', async () => {
       // Arrange: Create 50 migrations
       const migrations = [];
       for (let i = 1; i <= 50; i++) {
@@ -57,7 +57,7 @@ describe("Migration Performance Tests", () => {
 
       // Load all migrations
       const loadedMigrations = migrations.map((m) =>
-        manager.loadMigrationFromJson(JSON.stringify(m))
+        manager.loadMigrationFromJson(JSON.stringify(m)),
       );
 
       // Act: Apply all migrations and measure time
@@ -72,9 +72,7 @@ describe("Migration Performance Tests", () => {
 
       // Verify all tables exist
       const tables = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
-        )
+        .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
         .all()
         .map((t: any) => t.name);
 
@@ -83,19 +81,17 @@ describe("Migration Performance Tests", () => {
       }
 
       // Verify migration records
-      const records = db
-        .prepare("SELECT COUNT(*) as count FROM schema_migrations")
-        .get();
+      const records = db.prepare('SELECT COUNT(*) as count FROM schema_migrations').get();
       expect((records as any).count).toBe(50);
     });
   });
 
-  describe("T057b: Performance test for SC-004 (single migration rollback under 10s)", () => {
-    it("should rollback single migration under 10 seconds", async () => {
+  describe('T057b: Performance test for SC-004 (single migration rollback under 10s)', () => {
+    it('should rollback single migration under 10 seconds', async () => {
       // Arrange: Create a migration
       const migrationJson = {
         version: 1,
-        name: "create_users_table",
+        name: 'create_users_table',
         upSql: `
           CREATE TABLE users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -104,7 +100,7 @@ describe("Migration Performance Tests", () => {
             created_at TEXT DEFAULT (datetime('now'))
           )
         `,
-        downSql: "DROP TABLE IF EXISTS users",
+        downSql: 'DROP TABLE IF EXISTS users',
       };
 
       // Initialize schema
@@ -125,26 +121,22 @@ describe("Migration Performance Tests", () => {
 
       // Verify table was dropped
       const tableExists = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='users'"
-        )
+        .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
         .get();
       expect(tableExists).toBeUndefined();
 
       // Verify migration record was deleted
-      const records = db
-        .prepare("SELECT COUNT(*) as count FROM schema_migrations")
-        .get();
+      const records = db.prepare('SELECT COUNT(*) as count FROM schema_migrations').get();
       expect((records as any).count).toBe(0);
     });
   });
 
-  describe("T057c: Idempotency test for SC-006 (100 runs without side effects)", () => {
-    it("should apply same migration 100 times without side effects", async () => {
+  describe('T057c: Idempotency test for SC-006 (100 runs without side effects)', () => {
+    it('should apply same migration 100 times without side effects', async () => {
       // Arrange: Create a migration
       const migrationJson = {
         version: 1,
-        name: "create_users_table",
+        name: 'create_users_table',
         upSql: `
           CREATE TABLE users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -153,7 +145,7 @@ describe("Migration Performance Tests", () => {
             created_at TEXT DEFAULT (datetime('now'))
           )
         `,
-        downSql: "DROP TABLE IF EXISTS users",
+        downSql: 'DROP TABLE IF EXISTS users',
       };
 
       // Initialize schema
@@ -176,26 +168,22 @@ describe("Migration Performance Tests", () => {
       }
 
       // Verify only one migration record exists
-      const records = db
-        .prepare("SELECT COUNT(*) as count FROM schema_migrations")
-        .get();
+      const records = db.prepare('SELECT COUNT(*) as count FROM schema_migrations').get();
       expect((records as any).count).toBe(1);
 
       // Verify table still exists and is correct
       const tableExists = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='users'"
-        )
+        .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
         .get();
       expect(tableExists).toBeDefined();
 
       // Verify table structure is correct
-      const columns = db.prepare("PRAGMA table_info(users)").all();
+      const columns = db.prepare('PRAGMA table_info(users)').all();
       expect(columns).toHaveLength(4);
-      expect((columns[0] as any).name).toBe("id");
-      expect((columns[1] as any).name).toBe("name");
-      expect((columns[2] as any).name).toBe("email");
-      expect((columns[3] as any).name).toBe("created_at");
+      expect((columns[0] as any).name).toBe('id');
+      expect((columns[1] as any).name).toBe('name');
+      expect((columns[2] as any).name).toBe('email');
+      expect((columns[3] as any).name).toBe('created_at');
     });
   });
 });

@@ -4,11 +4,11 @@
  * Existing databases should skip this migration.
  */
 
-import type Database from "better-sqlite3";
+import type Database from 'better-sqlite3';
 
 export default {
   version: 1,
-  name: "001_init",
+  name: '001_init',
   up: (db: Database.Database) => {
     db.exec(`
       CREATE TABLE IF NOT EXISTS schema_migrations (
@@ -25,7 +25,7 @@ export default {
     `);
   },
   down: (db: Database.Database) => {
-    db.exec("DROP TABLE IF EXISTS schema_seeds");
-    db.exec("DROP TABLE IF EXISTS schema_migrations");
+    db.exec('DROP TABLE IF EXISTS schema_seeds');
+    db.exec('DROP TABLE IF EXISTS schema_migrations');
   },
 };

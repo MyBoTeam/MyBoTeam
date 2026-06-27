@@ -3,7 +3,7 @@
  * Based on data-model.md and contracts/interfaces.md
  */
 
-import type Database from "better-sqlite3";
+import type Database from 'better-sqlite3';
 
 /**
  * Seed file structure
@@ -33,7 +33,7 @@ export interface SeedRecord {
 /**
  * Seed status
  */
-export type SeedStatus = "pending" | "applied" | "failed" | "rolled_back";
+export type SeedStatus = 'pending' | 'applied' | 'failed' | 'rolled_back';
 
 /**
  * Seed result
