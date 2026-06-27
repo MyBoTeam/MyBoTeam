@@ -1,6 +1,5 @@
+import type { Conversation, ConversationFilters, Message, MessageFilters } from '@myboteam/types';
 import type Database from 'better-sqlite3';
-import type { Conversation, Message } from '../../types/entities.js';
-import type { ConversationFilters, MessageFilters } from '../../types/queries.js';
 import { NotFoundError } from '../errors.js';
 import { type createChildLogger, logOperation } from '../logger.js';
 

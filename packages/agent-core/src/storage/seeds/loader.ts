@@ -3,12 +3,12 @@
  * Loads seed files from disk and parses JSON content
  */
 
-import type { Logger, Seed } from './types.js';
+import type { Seed, SeedLogger } from './types.js';
 
 export class SeedLoader {
-  private logger: Logger;
+  private logger: SeedLogger;
 
-  constructor(logger: Logger) {
+  constructor(logger: SeedLogger) {
     this.logger = logger;
   }
 

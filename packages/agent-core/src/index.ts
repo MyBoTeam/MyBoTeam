@@ -1,3 +1,25 @@
+export type {
+  Agent,
+  AgentFilters,
+  AgentMcpAssignment,
+  Conversation,
+  ConversationFilters,
+  DocumentVersion,
+  DocumentVersionFilters,
+  McpServer,
+  McpServerFilters,
+  MemoryEntry,
+  MemoryEntryFilters,
+  Message,
+  MessageFilters,
+  Note,
+  NoteFilters,
+  Schedule,
+  ScheduleFilters,
+  Task,
+  TaskFilters,
+  TaskTodo,
+} from '@myboteam/types';
 export type { AgentStorageConfig } from './storage/agent-storage.js';
 export {
   closeDatabase,
@@ -16,27 +38,3 @@ export {
   seedTestAgentAssignments,
   seedTestMcpServers,
 } from './storage/seeder.js';
-export type {
-  Agent,
-  AgentMcpAssignment,
-  Conversation,
-  DocumentVersion,
-  McpServer,
-  MemoryEntry,
-  Message,
-  Note,
-  Schedule,
-  Task,
-  TaskTodo,
-} from './types/entities.js';
-export type {
-  AgentFilters,
-  ConversationFilters,
-  DocumentVersionFilters,
-  McpServerFilters,
-  MemoryEntryFilters,
-  MessageFilters,
-  NoteFilters,
-  ScheduleFilters,
-  TaskFilters,
-} from './types/queries.js';

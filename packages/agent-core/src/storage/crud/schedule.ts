@@ -1,6 +1,5 @@
+import type { Schedule, ScheduleFilters } from '@myboteam/types';
 import type Database from 'better-sqlite3';
-import type { Schedule } from '../../types/entities.js';
-import type { ScheduleFilters } from '../../types/queries.js';
 import { NotFoundError } from '../errors.js';
 import { type createChildLogger, logOperation } from '../logger.js';
 

@@ -3,12 +3,12 @@
  * Validates seed structure and sequence integrity
  */
 
-import type { Logger, Seed } from './types.js';
+import type { Seed, SeedLogger } from './types.js';
 
 export class SeedValidator {
-  private logger: Logger;
+  private logger: SeedLogger;
 
-  constructor(logger: Logger) {
+  constructor(logger: SeedLogger) {
     this.logger = logger;
   }
 

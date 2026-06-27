@@ -58,13 +58,13 @@ export interface SeedManagerConfig {
   /** Database instance */
   db: Database.Database;
   /** Logger instance */
-  logger?: Logger;
+  logger?: SeedLogger;
 }
 
 /**
- * Logger interface for seed events
+ * SeedLogger interface for seed events
  */
-export interface Logger {
+export interface SeedLogger {
   info: (message: string) => void;
   warn: (message: string) => void;
   error: (message: string) => void;

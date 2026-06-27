@@ -1,6 +1,5 @@
+import type { Note, NoteFilters } from '@myboteam/types';
 import type Database from 'better-sqlite3';
-import type { Note } from '../../types/entities.js';
-import type { NoteFilters } from '../../types/queries.js';
 import { NotFoundError } from '../errors.js';
 import { type createChildLogger, logOperation } from '../logger.js';
 
