@@ -10,6 +10,10 @@
       "import": "./src/index.ts",
       "types": "./src/index.ts"
     },
+    "./daemon": {
+      "import": "./src/daemon/index.ts",
+      "types": "./src/daemon/index.ts"
+    },
     "./storage/migrations": {
       "import": "./src/storage/migrations/index.ts",
       "types": "./src/storage/migrations/index.ts"
