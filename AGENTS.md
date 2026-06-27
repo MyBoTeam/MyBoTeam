@@ -1,7 +1,8 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at `specs/003-schema-migrations-manager/plan.md`.
+<<<<<<< HEAD
+at `specs/004-encrypted-secrets-vault/plan.md`.
 <!-- SPECKIT END -->
 
 ## Project Conventions
