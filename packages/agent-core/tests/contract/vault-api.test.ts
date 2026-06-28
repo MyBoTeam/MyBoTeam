@@ -56,7 +56,7 @@ describe('vault-api contract', () => {
       const entry = await vault.retrieve('github-api-key');
 
       expect(entry).not.toBeNull();
-      expect(entry!.key).toBe('github-api-key');
+      expect(entry?.key).toBe('github-api-key');
     });
 
     it('should return null for non-existent key', async () => {

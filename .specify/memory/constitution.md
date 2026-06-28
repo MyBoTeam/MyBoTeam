@@ -1,10 +1,11 @@
 <!--
   Sync Impact Report
   ==================
-  Version change: 1.1.0 → 1.2.0
-  Bump rationale: New principle added — Source Reference (MANDATORY) (MINOR).
+  Version change: 1.2.0 → 1.4.0
+  Bump rationale: New principles added — Git Hooks Are Non-Negotiable, Linter/Formatter Configs Are Protected (MINOR).
   Modified principles:
-    - Added "VII. Source Reference (MANDATORY)" with source locations
+    - Added "VIII. Git Hooks Are Non-Negotiable" — never bypass git hooks
+    - Added "IX. Linter/Formatter Configs Are Protected" — never modify tooling configs
   Added sections: None (new principle under Core Principles).
   Removed sections: None.
   Templates requiring updates:
@@ -82,6 +83,22 @@ Source locations:
 - Odysseus: `/Users/mavishay/Projects/MaorInnovations/odysseus`
 - Accomplish: `/Users/mavishay/Projects/Accomplish/accomplish`
 
+### VIII. Git Hooks Are Non-Negotiable
+
+Never use `--no-verify` on `git commit`, `git push`, or any git command unless
+the user EXPLICITLY instructs you to do so. Git hooks (pre-commit, pre-push,
+etc.) exist for quality enforcement. If a hook fails, FIX the underlying
+issue — do not bypass it. Bypassing hooks undermines the quality gates that the
+constitution establishes.
+
+### IX. Linter/Formatter Configs Are Protected
+
+Never modify `biome.json`, `.eslintrc`, `tsconfig.json`, or similar tooling
+configuration files unless the user EXPLICITLY instructs you to. These configs
+define project-wide quality standards. If lint errors exist, fix the code — do
+not weaken the rules. The agent's job is to make code conform to existing
+standards, not to lower the bar.
+
 ### VI. Code Structure & Cleanliness
 
 Clean code principles MUST be maintained at all times. Name things
@@ -155,4 +172,4 @@ with justification.
 principles (Documentation Matters, Immutability, Stateless Services, Memory as
 the Harness Core) that supplement — but do not override — this document.
 
-**Version**: 1.2.0 | **Ratified**: 2026-06-24 | **Last Amended**: 2026-06-25
+**Version**: 1.4.0 | **Ratified**: 2026-06-24 | **Last Amended**: 2026-06-28

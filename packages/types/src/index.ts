@@ -11,6 +11,14 @@ export {
   DaemonEventSchema,
   type DaemonEventType,
   DaemonEventTypeSchema,
+  type JsonRpcRequest,
+  type JsonRpcSuccessResponse,
+  type JsonRpcErrorResponse,
+  type JsonRpcResponse,
+  type JsonRpcNotification,
+  type JsonRpcError,
+  type JsonRpcMessage,
+  JSON_RPC_ERRORS,
 } from './daemon.js';
 export type {
   Agent,

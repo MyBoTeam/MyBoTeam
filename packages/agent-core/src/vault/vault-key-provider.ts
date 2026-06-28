@@ -68,7 +68,7 @@ export class EnvKeyProvider implements KeyProvider {
     }
   }
 
-  async deriveKey(password: string, salt: Buffer): Promise<Buffer> {
+  async deriveKey(_password: string, salt: Buffer): Promise<Buffer> {
     return pbkdf2Async(
       this.envPassword,
       salt,

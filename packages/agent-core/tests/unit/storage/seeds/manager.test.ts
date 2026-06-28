@@ -7,9 +7,8 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import Database from 'better-sqlite3';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { SeedManager } from '../../../../src/storage/seeds/manager.js';
-import type { Seed } from '../../../../src/storage/seeds/types.js';
 
 describe('SeedManager', () => {
   let db: Database.Database;
@@ -95,8 +94,8 @@ describe('SeedManager', () => {
       expect(seed2).not.toBeNull();
 
       // Act: Execute seeds in order
-      await manager.executeSeed(seed1!);
-      await manager.executeSeed(seed2!);
+      await manager.executeSeed(seed1);
+      await manager.executeSeed(seed2);
 
       // Assert: Seeds executed in order
       const records = db.prepare('SELECT * FROM test ORDER BY id').all();
@@ -133,7 +132,7 @@ describe('SeedManager', () => {
       expect(seed).not.toBeNull();
 
       // Act: Execute seed
-      const result = await manager.executeSeed(seed!);
+      const result = await manager.executeSeed(seed);
 
       // Assert: Seed executed successfully
       expect(result.success).toBe(true);

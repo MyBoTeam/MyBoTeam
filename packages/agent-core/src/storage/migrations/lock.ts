@@ -20,8 +20,8 @@ export class MigrationLock {
    * Acquire lock for migration execution
    */
   async acquire(): Promise<boolean> {
-    const fs = await import('fs/promises');
-    const path = await import('path');
+    const fs = await import('node:fs/promises');
+    const path = await import('node:path');
 
     const lockDir = path.dirname(this.lockFilePath);
     await fs.mkdir(lockDir, { recursive: true });
@@ -50,7 +50,7 @@ export class MigrationLock {
    * Check if existing lock is stale and can be recovered
    */
   private async checkStale(): Promise<boolean> {
-    const fs = await import('fs/promises');
+    const fs = await import('node:fs/promises');
 
     try {
       const lockContent = await fs.readFile(this.lockFilePath, 'utf-8');
@@ -77,7 +77,7 @@ export class MigrationLock {
    * Release migration lock
    */
   async release(): Promise<void> {
-    const fs = await import('fs/promises');
+    const fs = await import('node:fs/promises');
 
     try {
       await fs.unlink(this.lockFilePath);

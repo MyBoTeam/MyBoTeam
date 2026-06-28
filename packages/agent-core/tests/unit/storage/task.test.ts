@@ -42,7 +42,7 @@ describe('Task CRUD', () => {
     const created = storage.createTask({ agent_id: agentId, title: 'get-me' });
     const retrieved = storage.getTask(created.id);
     expect(retrieved).not.toBeNull();
-    expect(retrieved!.id).toBe(created.id);
+    expect(retrieved?.id).toBe(created.id);
   });
 
   it('should return null for non-existent task', () => {
@@ -130,7 +130,7 @@ describe('TaskTodo CRUD', () => {
     const created = storage.createTaskTodo({ task_id: taskId, description: 'get-me' });
     const retrieved = storage.getTaskTodo(created.id);
     expect(retrieved).not.toBeNull();
-    expect(retrieved!.id).toBe(created.id);
+    expect(retrieved?.id).toBe(created.id);
   });
 
   it('should list todos for a task', () => {

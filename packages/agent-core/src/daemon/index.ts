@@ -1,3 +1,4 @@
+export { createChildLogger, logger } from './logger.js';
 export {
   acquirePidLock,
   cleanupAgentProcesses,
@@ -6,5 +7,7 @@ export {
   type PidLockPayload,
   saveAgentPids,
 } from './pid-lock.js';
-
-export { getPidFilePath } from './socket-path.js';
+export { DaemonRpcServer, type DaemonRpcServerOptions } from './rpc-server.js';
+export { getPidFilePath, getSocketPath } from './socket-path.js';
+export { createSocketTransport } from './socket-transport.js';
+export type { DaemonTransport } from './transport.js';

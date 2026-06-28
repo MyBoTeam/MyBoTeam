@@ -21,7 +21,7 @@ export function createAgent(
       db.prepare(
         `INSERT INTO agent (id, slug, provider, model, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
       ).run(id, data.slug, data.provider, data.model, status, ts, ts);
-      return getAgent(db, log, id)!;
+      return getAgent(db, log, id) as Agent;
     },
     { slug: data.slug },
   );
@@ -93,7 +93,7 @@ export function updateAgent(
       values.push(ts);
       values.push(id);
       db.prepare(`UPDATE agent SET ${fields.join(', ')} WHERE id = ?`).run(...values);
-      return getAgent(db, log, id)!;
+      return getAgent(db, log, id) as Agent;
     },
     { id },
   );

@@ -17,16 +17,16 @@ describe('Seeder', () => {
       storage.seedProductionData();
       const secretary = storage.getAgentBySlug('secretary');
       expect(secretary).not.toBeNull();
-      expect(secretary!.provider).toBe('anthropic');
-      expect(secretary!.model).toBe('claude-sonnet-4-20250514');
+      expect(secretary?.provider).toBe('anthropic');
+      expect(secretary?.model).toBe('claude-sonnet-4-20250514');
     });
 
     it('should seed accountant agent with openai provider', () => {
       storage.seedProductionData();
       const accountant = storage.getAgentBySlug('accountant');
       expect(accountant).not.toBeNull();
-      expect(accountant!.provider).toBe('openai');
-      expect(accountant!.model).toBe('gpt-4o');
+      expect(accountant?.provider).toBe('openai');
+      expect(accountant?.model).toBe('gpt-4o');
     });
 
     it('should create exactly 2 agents', () => {
@@ -45,7 +45,7 @@ describe('Seeder', () => {
       storage.createAgent({ slug: 'secretary', provider: 'custom', model: 'custom-model' });
       storage.seedProductionData();
       const secretary = storage.getAgentBySlug('secretary');
-      expect(secretary!.provider).toBe('custom');
+      expect(secretary?.provider).toBe('custom');
     });
   });
 

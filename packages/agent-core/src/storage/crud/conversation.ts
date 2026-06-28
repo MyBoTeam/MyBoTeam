@@ -20,7 +20,7 @@ export function createConversation(
       db.prepare(
         `INSERT INTO conversation (id, agent_id, title, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
       ).run(id, data.agent_id, data.title, ts, ts);
-      return getConversation(db, log, id)!;
+      return getConversation(db, log, id) as Conversation;
     },
     { agent_id: data.agent_id },
   );
@@ -87,7 +87,7 @@ export function updateConversation(
       values.push(ts);
       values.push(id);
       db.prepare(`UPDATE conversation SET ${fields.join(', ')} WHERE id = ?`).run(...values);
-      return getConversation(db, log, id)!;
+      return getConversation(db, log, id) as Conversation;
     },
     { id },
   );
@@ -124,7 +124,7 @@ export function createMessage(
       db.prepare(
         `INSERT INTO message (id, conversation_id, role, content, created_at) VALUES (?, ?, ?, ?, ?)`,
       ).run(id, data.conversation_id, data.role, data.content, ts);
-      return getMessage(db, log, id)!;
+      return getMessage(db, log, id) as Message;
     },
     { conversation_id: data.conversation_id },
   );

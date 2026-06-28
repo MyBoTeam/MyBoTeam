@@ -23,8 +23,8 @@ export class SimpleReadWriteLock implements ReadWriteLock {
   async readUnlock(): Promise<void> {
     this.readers--;
     if (this.readers === 0 && this.writeQueue.length > 0) {
-      const next = this.writeQueue.shift()!;
-      next();
+      const next = this.writeQueue.shift();
+      if (next) next();
     }
   }
 
@@ -40,8 +40,8 @@ export class SimpleReadWriteLock implements ReadWriteLock {
   async writeUnlock(): Promise<void> {
     this.writer = false;
     if (this.writeQueue.length > 0) {
-      const next = this.writeQueue.shift()!;
-      next();
+      const next = this.writeQueue.shift();
+      if (next) next();
     } else if (this.readQueue.length > 0) {
       const resolvers = this.readQueue.splice(0, this.readQueue.length);
       for (const resolve of resolvers) {

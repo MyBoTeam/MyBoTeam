@@ -68,7 +68,10 @@ export class AgentStorage {
 
   constructor(config: AgentStorageConfig = {}) {
     this.config = { mode: 'production', ...config };
-    this.db = initializeDatabase({ dataDir: this.config.dataDir, mode: this.config.mode! });
+    this.db = initializeDatabase({
+      dataDir: this.config.dataDir,
+      mode: this.config.mode ?? 'production',
+    });
     this.log = createChildLogger({ module: 'agent-storage' });
     logOperation(
       this.log,
@@ -85,7 +88,7 @@ export class AgentStorage {
 
   getDbPath(): string {
     if (this.config.mode === 'test') return ':memory:';
-    return (this.db as any).name ?? 'unknown';
+    return (this.db as unknown as { name: string }).name ?? 'unknown';
   }
 
   verifyWalMode(): boolean {
