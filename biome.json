@@ -112,6 +112,16 @@
       }
     },
     {
+      "includes": ["apps/daemon/src/**/*.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["specs/**/*.md", "specs/**/*.json"],
       "formatter": { "enabled": false },
       "linter": { "enabled": false }

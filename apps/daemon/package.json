@@ -1,0 +1,29 @@
+{
+  "name": "@myboteam/daemon",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "check": "biome check .",
+    "lint": "biome lint .",
+    "format": "biome format .",
+    "dev:clean": "node --loader ts-node/esm src/cli.ts clean"
+  },
+  "dependencies": {
+    "@myboteam/agent-core": "workspace:*",
+    "proper-lockfile": "^4.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "@types/proper-lockfile": "^4.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3",
+    "vitest": "^3.2.1"
+  }
+}
