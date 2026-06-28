@@ -1,5 +1,5 @@
+import type { AgentMcpAssignment, McpServer } from '@myboteam/types';
 import type Database from 'better-sqlite3';
-import type { AgentMcpAssignment, McpServer } from '../../types/entities.js';
 import { NotFoundError } from '../errors.js';
 import { type createChildLogger, logOperation } from '../logger.js';
 

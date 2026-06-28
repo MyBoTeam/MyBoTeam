@@ -7,9 +7,9 @@ export { SeedLoader as SeedLoaderImpl } from './loader.js';
 
 export { SeedManager } from './manager.js';
 export type {
-  Logger,
   Seed,
   SeedLoader,
+  SeedLogger,
   SeedManagerConfig,
   SeedRecord,
   SeedResult,

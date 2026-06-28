@@ -1,26 +1,24 @@
-import type Database from 'better-sqlite3';
 import type {
   Agent,
   AgentMcpAssignment,
   Conversation,
+  ConversationFilters,
   DocumentVersion,
+  DocumentVersionFilters,
   McpServer,
   MemoryEntry,
-  Message,
-  Note,
-  Schedule,
-  Task,
-  TaskTodo,
-} from '../types/entities.js';
-import type {
-  ConversationFilters,
-  DocumentVersionFilters,
   MemoryEntryFilters,
+  Message,
   MessageFilters,
+  Note,
   NoteFilters,
+  Schedule,
   ScheduleFilters,
+  Task,
   TaskFilters,
-} from '../types/queries.js';
+  TaskTodo,
+} from '@myboteam/types';
+import type Database from 'better-sqlite3';
 import * as agentCrud from './crud/agent.js';
 import * as conversationCrud from './crud/conversation.js';
 import * as documentVersionCrud from './crud/document-version.js';
