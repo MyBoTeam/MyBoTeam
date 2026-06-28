@@ -16,8 +16,8 @@ export class MigrationLoader {
    * Load all migration files from migrations directory
    */
   async loadAll(migrationsPath: string): Promise<Migration[]> {
-    const fs = await import('fs/promises');
-    const path = await import('path');
+    const fs = await import('node:fs/promises');
+    const path = await import('node:path');
 
     const migrations: Migration[] = [];
 

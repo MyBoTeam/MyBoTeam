@@ -1,0 +1,97 @@
+/**
+ * Contract test for valid JSON-RPC request/response cycle.
+ * Tests that a client can send a request and receive a response with matching correlation ID.
+ *
+ * FR-001: JSON-RPC 2.0 server over Unix domain socket
+ * FR-002: Correlation ID matching
+ * SC-001: Clients can successfully send requests and receive responses with matching correlation IDs
+ */
+
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { DaemonRpcServer } from '../../src/daemon/rpc-server.js';
+import { createSocketTransport } from '../../src/daemon/socket-transport.js';
+import { getSocketPath } from '../../src/daemon/socket-path.js';
+import type { DaemonTransport } from '../../src/daemon/transport.js';
+import { mkdirSync, rmSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+
+describe('Contract: Valid Request/Response', () => {
+  let server: DaemonRpcServer;
+  let transport: DaemonTransport;
+  let testDir: string;
+  let socketPath: string;
+
+  beforeAll(async () => {
+    testDir = join(tmpdir(), `test-contract-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+    socketPath = getSocketPath(testDir);
+
+    server = new DaemonRpcServer({ socketPath });
+    server.registerMethod('test.echo', (params: { message: string }) => {
+      return { echo: params.message };
+    });
+    await server.start();
+
+    transport = await createSocketTransport(socketPath);
+  });
+
+  afterAll(async () => {
+    transport?.close();
+    await server?.stop();
+    rmSync(testDir, { recursive: true, force: true });
+  });
+
+  it('should return response with matching correlation ID', async () => {
+    const correlationId = `req-${Date.now()}`;
+    const response = await sendRequest(transport, correlationId, 'test.echo', { message: 'hello' });
+
+    expect(response).toBeDefined();
+    expect(response.id).toBe(correlationId);
+    expect(response.jsonrpc).toBe('2.0');
+    expect(response.result).toEqual({ echo: 'hello' });
+    expect(response.error).toBeUndefined();
+  });
+
+  it('should handle null correlation ID', async () => {
+    const response = await sendRequest(transport, null, 'test.echo', { message: 'null-id' });
+
+    expect(response).toBeDefined();
+    expect(response.id).toBeNull();
+    expect(response.jsonrpc).toBe('2.0');
+    expect(response.result).toEqual({ echo: 'null-id' });
+  });
+
+  it('should handle numeric correlation ID', async () => {
+    const correlationId = 12345;
+    const response = await sendRequest(transport, correlationId, 'test.echo', { message: 'numeric' });
+
+    expect(response).toBeDefined();
+    expect(response.id).toBe(correlationId);
+  });
+});
+
+function sendRequest(
+  transport: DaemonTransport,
+  id: string | number | null,
+  method: string,
+  params: unknown,
+): Promise<{ jsonrpc: '2.0'; id: string | number | null; result?: unknown; error?: { code: number; message: string } }> {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error('Request timeout')), 5000);
+
+    transport.onMessage((data) => {
+      try {
+        const response = JSON.parse(data);
+        clearTimeout(timeout);
+        resolve(response);
+      } catch (err) {
+        clearTimeout(timeout);
+        reject(err);
+      }
+    });
+
+    const request = { jsonrpc: '2.0', id, method, params };
+    transport.send(JSON.stringify(request));
+  });
+}
