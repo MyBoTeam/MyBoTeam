@@ -34,7 +34,7 @@ export function createMcpServer(
         data.status ?? 'active',
         ts,
       );
-      return getMcpServer(db, log, id)!;
+      return getMcpServer(db, log, id) as McpServer;
     },
     { name: data.name },
   );
@@ -120,7 +120,7 @@ export function updateMcpServer(
       }
       values.push(id);
       db.prepare(`UPDATE mcp_server SET ${fields.join(', ')} WHERE id = ?`).run(...values);
-      return getMcpServer(db, log, id)!;
+      return getMcpServer(db, log, id) as McpServer;
     },
     { id },
   );

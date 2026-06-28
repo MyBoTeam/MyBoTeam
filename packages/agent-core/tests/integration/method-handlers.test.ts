@@ -6,14 +6,14 @@
  * SC-009: Server supports registerMethod(), notify(), hasConnectedClients(), and lifecycle callbacks
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { DaemonRpcServer } from '../../src/daemon/rpc-server.js';
-import { createSocketTransport } from '../../src/daemon/socket-transport.js';
-import { getSocketPath } from '../../src/daemon/socket-path.js';
-import type { DaemonTransport } from '../../src/daemon/transport.js';
 import { mkdirSync, rmSync } from 'node:fs';
-import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { DaemonRpcServer } from '../../src/daemon/rpc-server.js';
+import { getSocketPath } from '../../src/daemon/socket-path.js';
+import { createSocketTransport } from '../../src/daemon/socket-transport.js';
+import type { DaemonTransport } from '../../src/daemon/transport.js';
 
 describe('Integration: Multiple Method Handlers', () => {
   let server: DaemonRpcServer;
@@ -30,7 +30,10 @@ describe('Integration: Multiple Method Handlers', () => {
 
     // Register multiple handlers
     server.registerMethod('math.add', (params: { a: number; b: number }) => params.a + params.b);
-    server.registerMethod('math.subtract', (params: { a: number; b: number }) => params.a - params.b);
+    server.registerMethod(
+      'math.subtract',
+      (params: { a: number; b: number }) => params.a - params.b,
+    );
     server.registerMethod('string.upper', (params: { text: string }) => params.text.toUpperCase());
     server.registerMethod('string.lower', (params: { text: string }) => params.text.toLowerCase());
 
@@ -80,7 +83,12 @@ function sendRequest(
   id: string | number | null,
   method: string,
   params: unknown,
-): Promise<{ jsonrpc: '2.0'; id: string | number | null; result?: unknown; error?: { code: number; message: string } }> {
+): Promise<{
+  jsonrpc: '2.0';
+  id: string | number | null;
+  result?: unknown;
+  error?: { code: number; message: string };
+}> {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('Request timeout')), 5000);
 

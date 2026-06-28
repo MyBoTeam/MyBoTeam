@@ -6,7 +6,7 @@
  * SC-003: Error responses follow JSON-RPC 2.0 error code specification
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { JSON_RPC_ERRORS } from '../../../types/src/daemon.js';
 
 describe('Unit: Error Code Generation', () => {

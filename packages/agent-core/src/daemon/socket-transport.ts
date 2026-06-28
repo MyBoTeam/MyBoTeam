@@ -34,6 +34,22 @@ export function createSocketTransport(socketPath: string): Promise<DaemonTranspo
       cleanup();
       socket.removeListener('error', onError);
 
+      let currentMessageHandler: ((data: string) => void) | null = null;
+      const buffer = new NdjsonBuffer(MAX_MESSAGE_SIZE);
+
+      socket.on('data', (chunk: Buffer) => {
+        const lines = buffer.append(chunk.toString());
+        if (lines === null) {
+          socket.destroy(new Error('Buffer overflow: message exceeds maximum size'));
+          return;
+        }
+        for (const line of lines) {
+          if (line.trim() && currentMessageHandler) {
+            currentMessageHandler(line);
+          }
+        }
+      });
+
       const transport: DaemonTransport = {
         send(message: string) {
           if (message.length > MAX_MESSAGE_SIZE) {
@@ -43,17 +59,7 @@ export function createSocketTransport(socketPath: string): Promise<DaemonTranspo
           socket.write(`${message}\n`);
         },
         onMessage(handler: (data: string) => void) {
-          const buffer = new NdjsonBuffer(MAX_MESSAGE_SIZE);
-          socket.on('data', (chunk: Buffer) => {
-            const lines = buffer.append(chunk.toString());
-            if (lines === null) {
-              socket.destroy(new Error('Buffer overflow: message exceeds maximum size'));
-              return;
-            }
-            for (const line of lines) {
-              if (line.trim()) handler(line);
-            }
-          });
+          currentMessageHandler = handler;
         },
         onDisconnect(handler: () => void) {
           socket.once('close', handler);

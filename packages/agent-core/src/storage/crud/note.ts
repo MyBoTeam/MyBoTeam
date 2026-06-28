@@ -20,7 +20,7 @@ export function createNote(
       db.prepare(
         `INSERT INTO note (id, title, type, content, pinned, archived, due_date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 0, NULL, ?, ?)`,
       ).run(id, data.title, data.type ?? 'text', data.content ?? '', data.pinned ?? 0, ts, ts);
-      return getNote(db, log, id)!;
+      return getNote(db, log, id) as Note;
     },
     { title: data.title },
   );
@@ -99,7 +99,7 @@ export function updateNote(
       values.push(ts);
       values.push(id);
       db.prepare(`UPDATE note SET ${fields.join(', ')} WHERE id = ?`).run(...values);
-      return getNote(db, log, id)!;
+      return getNote(db, log, id) as Note;
     },
     { id },
   );

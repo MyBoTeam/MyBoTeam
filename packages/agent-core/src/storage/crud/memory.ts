@@ -35,7 +35,7 @@ export function createMemoryEntry(
         ts,
         ts,
       );
-      return getMemoryEntry(db, log, id)!;
+      return getMemoryEntry(db, log, id) as MemoryEntry;
     },
     { agent_id: data.agent_id },
   );
@@ -112,7 +112,7 @@ export function updateMemoryEntry(
       values.push(ts);
       values.push(id);
       db.prepare(`UPDATE memory_entry SET ${fields.join(', ')} WHERE id = ?`).run(...values);
-      return getMemoryEntry(db, log, id)!;
+      return getMemoryEntry(db, log, id) as MemoryEntry;
     },
     { id },
   );

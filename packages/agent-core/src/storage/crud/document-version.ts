@@ -27,7 +27,7 @@ export function createDocumentVersion(
       db.prepare(
         `INSERT INTO document_version (id, file_path, content, model, version, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
       ).run(id, data.file_path, data.content, data.model, data.version, ts);
-      return getDocumentVersion(db, log, id)!;
+      return getDocumentVersion(db, log, id) as DocumentVersion;
     },
     { file_path: data.file_path },
   );

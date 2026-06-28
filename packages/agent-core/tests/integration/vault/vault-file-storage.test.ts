@@ -121,7 +121,7 @@ describe('vault-file-storage', () => {
 
       await store.write(JSON.stringify(vaultData));
       const readData = await store.read();
-      const parsed = JSON.parse(readData!);
+      const parsed = JSON.parse(readData ?? '');
 
       expect(parsed.version).toBe('1.0');
       expect(parsed.entries).toHaveLength(1);
@@ -164,7 +164,7 @@ describe('vault-file-storage', () => {
 
       await store.write(JSON.stringify(vaultData));
       const readData = await store.read();
-      const parsed = JSON.parse(readData!);
+      const parsed = JSON.parse(readData ?? '');
 
       expect(parsed.entries).toHaveLength(2);
       expect(parsed.entries[0].key).toBe('github-api-key');
@@ -195,11 +195,11 @@ describe('vault-file-storage', () => {
 
       await store.write(JSON.stringify(vaultData));
       const readData1 = await store.read();
-      const parsed1 = JSON.parse(readData1!);
+      const parsed1 = JSON.parse(readData1 ?? '');
 
       await store.write(JSON.stringify(parsed1));
       const readData2 = await store.read();
-      const parsed2 = JSON.parse(readData2!);
+      const parsed2 = JSON.parse(readData2 ?? '');
 
       expect(parsed2.entries).toHaveLength(1);
       expect(parsed2.entries[0].key).toBe('github-api-key');

@@ -5,14 +5,14 @@
  * SC-005: Server can handle at least 100 concurrent connections without performance degradation
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { DaemonRpcServer } from '../../src/daemon/rpc-server.js';
-import { createSocketTransport } from '../../src/daemon/socket-transport.js';
-import { getSocketPath } from '../../src/daemon/socket-path.js';
-import type { DaemonTransport } from '../../src/daemon/transport.js';
 import { mkdirSync, rmSync } from 'node:fs';
-import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { DaemonRpcServer } from '../../src/daemon/rpc-server.js';
+import { getSocketPath } from '../../src/daemon/socket-path.js';
+import { createSocketTransport } from '../../src/daemon/socket-transport.js';
+import type { DaemonTransport } from '../../src/daemon/transport.js';
 
 const CONCURRENT_CLIENTS = 100;
 const MAX_RESPONSE_TIME_MS = 100;
@@ -28,7 +28,10 @@ describe('Performance: Concurrent Connections', () => {
     socketPath = getSocketPath(testDir);
 
     server = new DaemonRpcServer({ socketPath });
-    server.registerMethod('test.echo', (params: { id: number }) => ({ id: params.id, timestamp: Date.now() }));
+    server.registerMethod('test.echo', (params: { id: number }) => ({
+      id: params.id,
+      timestamp: Date.now(),
+    }));
     await server.start();
   });
 
@@ -71,10 +74,12 @@ describe('Performance: Concurrent Connections', () => {
       const p95 = sortedTimes[Math.floor(sortedTimes.length * 0.95)];
       const p99 = sortedTimes[Math.floor(sortedTimes.length * 0.99)];
 
-      console.log(`Concurrent connections: ${CONCURRENT_CLIENTS}`);
-      console.log(`Total time: ${totalTime}ms`);
-      console.log(`Average response time: ${averageTime.toFixed(2)}ms`);
-      console.log(`p50: ${p50.toFixed(2)}ms, p95: ${p95.toFixed(2)}ms, p99: ${p99.toFixed(2)}ms`);
+      process.stdout.write(`Concurrent connections: ${CONCURRENT_CLIENTS}\n`);
+      process.stdout.write(`Total time: ${totalTime}ms\n`);
+      process.stdout.write(`Average response time: ${averageTime.toFixed(2)}ms\n`);
+      process.stdout.write(
+        `p50: ${p50.toFixed(2)}ms, p95: ${p95.toFixed(2)}ms, p99: ${p99.toFixed(2)}ms\n`,
+      );
 
       // All percentiles should be under threshold
       expect(p50).toBeLessThan(MAX_RESPONSE_TIME_MS);
@@ -95,7 +100,12 @@ function sendRequest(
   method: string,
   params: unknown,
   responseTimes: number[],
-): Promise<{ jsonrpc: '2.0'; id: string | number | null; result?: unknown; error?: { code: number; message: string } }> {
+): Promise<{
+  jsonrpc: '2.0';
+  id: string | number | null;
+  result?: unknown;
+  error?: { code: number; message: string };
+}> {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('Request timeout')), 5000);
     const reqStart = Date.now();

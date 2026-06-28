@@ -6,7 +6,7 @@
  * FR-020: Catch all errors in RPC handler and return JSON-RPC error responses
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('Unit: JSON-RPC Message Parsing', () => {
   it('should parse valid JSON-RPC request', () => {

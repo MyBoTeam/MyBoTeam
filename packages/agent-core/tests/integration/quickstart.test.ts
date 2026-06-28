@@ -5,14 +5,14 @@
  * SC-006: All acceptance scenarios from user stories are satisfied
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { DaemonRpcServer } from '../../src/daemon/rpc-server.js';
-import { createSocketTransport } from '../../src/daemon/socket-transport.js';
-import { getSocketPath } from '../../src/daemon/socket-path.js';
-import type { DaemonTransport } from '../../src/daemon/transport.js';
 import { mkdirSync, rmSync } from 'node:fs';
-import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { DaemonRpcServer } from '../../src/daemon/rpc-server.js';
+import { getSocketPath } from '../../src/daemon/socket-path.js';
+import { createSocketTransport } from '../../src/daemon/socket-transport.js';
+import type { DaemonTransport } from '../../src/daemon/transport.js';
 
 describe('Quickstart Validation', () => {
   let server: DaemonRpcServer;
@@ -59,7 +59,12 @@ function sendRequest(
   id: string | number | null,
   method: string,
   params: unknown,
-): Promise<{ jsonrpc: '2.0'; id: string | number | null; result?: unknown; error?: { code: number; message: string } }> {
+): Promise<{
+  jsonrpc: '2.0';
+  id: string | number | null;
+  result?: unknown;
+  error?: { code: number; message: string };
+}> {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('Request timeout')), 5000);
 

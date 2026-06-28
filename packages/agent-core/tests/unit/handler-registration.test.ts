@@ -5,7 +5,7 @@
  * FR-013: Support registerMethod() API for handler registration
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('Unit: Handler Registration', () => {
   interface HandlerMap {

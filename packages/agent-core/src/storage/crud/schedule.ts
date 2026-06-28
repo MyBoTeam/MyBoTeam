@@ -37,7 +37,7 @@ export function createSchedule(
         ts,
         ts,
       );
-      return getSchedule(db, log, id)!;
+      return getSchedule(db, log, id) as Schedule;
     },
     { name: data.name },
   );
@@ -104,7 +104,7 @@ export function updateSchedule(
       values.push(ts);
       values.push(id);
       db.prepare(`UPDATE schedule SET ${fields.join(', ')} WHERE id = ?`).run(...values);
-      return getSchedule(db, log, id)!;
+      return getSchedule(db, log, id) as Schedule;
     },
     { id },
   );

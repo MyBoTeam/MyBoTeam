@@ -15,7 +15,6 @@ export type AnyMethodHandler = (params: unknown) => Promise<unknown> | unknown;
 export interface RpcClient {
   id: string;
   socket: { destroyed: boolean; write: (data: string) => void };
-  buffer: string;
 }
 
 /**

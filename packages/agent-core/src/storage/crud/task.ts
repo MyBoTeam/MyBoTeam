@@ -21,7 +21,7 @@ export function createTask(
       db.prepare(
         `INSERT INTO task (id, agent_id, title, status, verification_status, continuation_count, created_at, updated_at) VALUES (?, ?, ?, ?, NULL, 0, ?, ?)`,
       ).run(id, data.agent_id, data.title, status, ts, ts);
-      return getTask(db, log, id)!;
+      return getTask(db, log, id) as Task;
     },
     { agent_id: data.agent_id },
   );
@@ -104,7 +104,7 @@ export function updateTask(
       values.push(ts);
       values.push(id);
       db.prepare(`UPDATE task SET ${fields.join(', ')} WHERE id = ?`).run(...values);
-      return getTask(db, log, id)!;
+      return getTask(db, log, id) as Task;
     },
     { id },
   );
@@ -141,7 +141,7 @@ export function createTaskTodo(
       db.prepare(
         `INSERT INTO task_todo (id, task_id, description, is_completed, created_at) VALUES (?, ?, ?, 0, ?)`,
       ).run(id, data.task_id, data.description, ts);
-      return getTaskTodo(db, log, id)!;
+      return getTaskTodo(db, log, id) as TaskTodo;
     },
     { task_id: data.task_id },
   );
@@ -197,7 +197,7 @@ export function updateTaskTodo(
       if (data.is_completed !== undefined) {
         db.prepare('UPDATE task_todo SET is_completed = ? WHERE id = ?').run(data.is_completed, id);
       }
-      return getTaskTodo(db, log, id)!;
+      return getTaskTodo(db, log, id) as TaskTodo;
     },
     { id },
   );

@@ -70,8 +70,8 @@ describe('SeedManager Integration', () => {
       expect(seed2).not.toBeNull();
 
       // Act: Execute seeds
-      const result1 = await manager.executeSeed(seed1!);
-      const result2 = await manager.executeSeed(seed2!);
+      const result1 = await manager.executeSeed(seed1);
+      const result2 = await manager.executeSeed(seed2);
 
       // Assert: Both seeds executed successfully
       expect(result1.success).toBe(true);
@@ -112,8 +112,8 @@ describe('SeedManager Integration', () => {
       expect(seed).not.toBeNull();
 
       // Act: Execute seed twice
-      const result1 = await manager.executeSeed(seed!);
-      const result2 = await manager.executeSeed(seed!);
+      const result1 = await manager.executeSeed(seed);
+      const result2 = await manager.executeSeed(seed);
 
       // Assert: First succeeds, second fails (unique constraint violation)
       expect(result1.success).toBe(true);
@@ -150,8 +150,8 @@ describe('SeedManager Integration', () => {
       expect(seed).not.toBeNull();
 
       // Act: Execute seed then rollback
-      await manager.executeSeed(seed!);
-      const rollbackResult = await manager.rollbackSeed(seed!);
+      await manager.executeSeed(seed);
+      const rollbackResult = await manager.rollbackSeed(seed);
 
       // Assert: Rollback successful
       expect(rollbackResult.success).toBe(true);
@@ -200,7 +200,7 @@ describe('SeedManager Integration', () => {
       expect(seed).not.toBeNull();
 
       // Act: Execute seed
-      await managerWithLogger.executeSeed(seed!);
+      await managerWithLogger.executeSeed(seed);
 
       // Assert: Logger was called
       expect(logger.info).toHaveBeenCalled();
