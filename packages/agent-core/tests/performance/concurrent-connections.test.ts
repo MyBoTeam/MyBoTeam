@@ -82,6 +82,7 @@ describe('Performance: Concurrent Connections', () => {
       );
 
       // All percentiles should be under threshold
+      expect(averageTime).toBeLessThan(MAX_RESPONSE_TIME_MS);
       expect(p50).toBeLessThan(MAX_RESPONSE_TIME_MS);
       expect(p95).toBeLessThan(MAX_RESPONSE_TIME_MS);
       expect(p99).toBeLessThan(MAX_RESPONSE_TIME_MS);

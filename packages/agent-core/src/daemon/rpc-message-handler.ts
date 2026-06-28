@@ -4,7 +4,12 @@
  * Source: Accomplish rpc-message-handler.ts lines 46-86
  */
 
-import type { JsonRpcMessage, JsonRpcRequest, JsonRpcResponse } from '@myboteam/types';
+import type {
+  JsonRpcErrorResponse,
+  JsonRpcMessage,
+  JsonRpcRequest,
+  JsonRpcSuccessResponse,
+} from '@myboteam/types';
 import { JSON_RPC_ERRORS } from '@myboteam/types';
 import { createChildLogger } from './logger.js';
 
@@ -21,7 +26,7 @@ export interface RpcClient {
  * Send a successful result response to a client.
  */
 export function sendResult(client: RpcClient, id: string | number | null, result: unknown): void {
-  const response: JsonRpcResponse = { jsonrpc: '2.0', id, result };
+  const response: JsonRpcSuccessResponse = { jsonrpc: '2.0', id, result };
   if (!client.socket.destroyed) {
     client.socket.write(`${JSON.stringify(response)}\n`);
   }
@@ -35,7 +40,7 @@ export function sendError(
   id: string | number | null,
   error: { code: number; message: string },
 ): void {
-  const response: JsonRpcResponse = { jsonrpc: '2.0', id, error };
+  const response: JsonRpcErrorResponse = { jsonrpc: '2.0', id, error };
   if (!client.socket.destroyed) {
     client.socket.write(`${JSON.stringify(response)}\n`);
   }
@@ -57,6 +62,15 @@ export async function handleRpcLine(
     sendError(client, null, {
       code: JSON_RPC_ERRORS.PARSE_ERROR,
       message: 'Parse error',
+    });
+    return;
+  }
+
+  // Guard: JSON.parse can return primitives (null, number, string)
+  if (message === null || typeof message !== 'object' || Array.isArray(message)) {
+    sendError(client, null, {
+      code: JSON_RPC_ERRORS.INVALID_REQUEST,
+      message: 'Invalid request: message must be an object',
     });
     return;
   }

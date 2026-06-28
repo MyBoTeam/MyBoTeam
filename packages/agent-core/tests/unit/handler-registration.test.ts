@@ -6,84 +6,74 @@
  */
 
 import { describe, expect, it } from 'vitest';
+import { DaemonRpcServer } from '../../src/daemon/rpc-server.js';
 
 describe('Unit: Handler Registration', () => {
-  interface HandlerMap {
-    get(method: string): ((params: unknown) => unknown) | undefined;
-    set(method: string, handler: (params: unknown) => unknown): void;
-    has(method: string): boolean;
-    delete(method: string): boolean;
-    keys(): IterableIterator<string>;
-  }
-
-  function createHandlerMap(): HandlerMap {
-    const handlers = new Map<string, (params: unknown) => unknown>();
-    return {
-      get: (method) => handlers.get(method),
-      set: (method, handler) => handlers.set(method, handler),
-      has: (method) => handlers.has(method),
-      delete: (method) => handlers.delete(method),
-      keys: () => handlers.keys(),
-    };
-  }
-
-  it('should register a handler', () => {
-    const handlers = createHandlerMap();
+  it('should register a handler via registerMethod()', () => {
+    const server = new DaemonRpcServer();
     const handler = (params: unknown) => ({ result: params });
 
-    handlers.set('test.method', handler);
+    server.registerMethod('test.method', handler);
 
-    expect(handlers.has('test.method')).toBe(true);
-    expect(handlers.get('test.method')).toBe(handler);
-  });
-
-  it('should retrieve registered handler', () => {
-    const handlers = createHandlerMap();
-    const handler = (params: unknown) => ({ data: 'test' });
-
-    handlers.set('my.method', handler);
-    const retrieved = handlers.get('my.method');
-
-    expect(retrieved).toBe(handler);
-  });
-
-  it('should return undefined for unregistered method', () => {
-    const handlers = createHandlerMap();
-
-    expect(handlers.get('nonexistent')).toBeUndefined();
+    // Verify by checking daemon.ping includes the registered method in services
+    const pingResult = (server as unknown as { handlers: Map<string, unknown> }).handlers;
+    expect(pingResult.has('test.method')).toBe(true);
   });
 
   it('should overwrite existing handler', () => {
-    const handlers = createHandlerMap();
+    const server = new DaemonRpcServer();
     const handler1 = () => 'first';
     const handler2 = () => 'second';
 
-    handlers.set('test.method', handler1);
-    handlers.set('test.method', handler2);
+    server.registerMethod('test.method', handler1);
+    server.registerMethod('test.method', handler2);
 
+    const handlers = (server as unknown as { handlers: Map<string, unknown> }).handlers;
     expect(handlers.get('test.method')).toBe(handler2);
   });
 
-  it('should delete a handler', () => {
-    const handlers = createHandlerMap();
-    handlers.set('test.method', () => 'test');
+  it('should include daemon.ping as a built-in handler', () => {
+    const server = new DaemonRpcServer();
 
+    const handlers = (server as unknown as { handlers: Map<string, unknown> }).handlers;
+    expect(handlers.has('daemon.ping')).toBe(true);
+  });
+
+  it('should include registered methods in daemon.ping services', () => {
+    const server = new DaemonRpcServer();
+    server.registerMethod('custom.method', () => ({ ok: true }));
+
+    const handlers = (server as unknown as { handlers: Map<string, (params: unknown) => unknown> })
+      .handlers;
+    const pingHandler = handlers.get('daemon.ping');
+    expect(pingHandler).toBeDefined();
+
+    const result = pingHandler?.({}) as { services: string[] };
+    expect(result.services).toContain('daemon.ping');
+    expect(result.services).toContain('custom.method');
+  });
+
+  it('should delete a handler', () => {
+    const server = new DaemonRpcServer();
+    server.registerMethod('test.method', () => 'test');
+
+    const handlers = (server as unknown as { handlers: Map<string, unknown> }).handlers;
     expect(handlers.has('test.method')).toBe(true);
     handlers.delete('test.method');
     expect(handlers.has('test.method')).toBe(false);
   });
 
   it('should list all registered methods', () => {
-    const handlers = createHandlerMap();
-    handlers.set('method1', () => {});
-    handlers.set('method2', () => {});
-    handlers.set('method3', () => {});
+    const server = new DaemonRpcServer();
+    server.registerMethod('method1', () => {});
+    server.registerMethod('method2', () => {});
 
-    const methods = Array.from(handlers.keys());
+    const methods = Array.from(
+      (server as unknown as { handlers: Map<string, unknown> }).handlers.keys(),
+    );
 
     expect(methods).toContain('method1');
     expect(methods).toContain('method2');
-    expect(methods).toContain('method3');
-    expect(methods.length).toBe(3);
+    expect(methods).toContain('daemon.ping');
   });
 });

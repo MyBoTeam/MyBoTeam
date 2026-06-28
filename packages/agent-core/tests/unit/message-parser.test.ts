@@ -7,9 +7,29 @@
  */
 
 import { describe, expect, it } from 'vitest';
+import type { RpcClient } from '../../src/daemon/rpc-message-handler.js';
+import { handleRpcLine } from '../../src/daemon/rpc-message-handler.js';
+
+function createMockClient(): { client: RpcClient; responses: string[] } {
+  const responses: string[] = [];
+  const client: RpcClient = {
+    id: 'test-client',
+    socket: {
+      destroyed: false,
+      write: (data: string) => {
+        responses.push(data);
+        return true;
+      },
+    } as unknown as RpcClient['socket'],
+  };
+  return { client, responses };
+}
 
 describe('Unit: JSON-RPC Message Parsing', () => {
-  it('should parse valid JSON-RPC request', () => {
+  it('should parse and handle valid JSON-RPC request via handleRpcLine', async () => {
+    const { client, responses } = createMockClient();
+    const handlers = new Map([['test.method', (params: unknown) => ({ echo: params })]]);
+
     const message = JSON.stringify({
       jsonrpc: '2.0',
       id: '123',
@@ -17,52 +37,94 @@ describe('Unit: JSON-RPC Message Parsing', () => {
       params: { key: 'value' },
     });
 
-    const parsed = JSON.parse(message);
+    await handleRpcLine(client, message, handlers);
 
-    expect(parsed.jsonrpc).toBe('2.0');
-    expect(parsed.id).toBe('123');
-    expect(parsed.method).toBe('test.method');
-    expect(parsed.params).toEqual({ key: 'value' });
+    expect(responses).toHaveLength(1);
+    const response = JSON.parse(responses[0]);
+    expect(response.jsonrpc).toBe('2.0');
+    expect(response.id).toBe('123');
+    expect(response.result).toEqual({ echo: { key: 'value' } });
   });
 
-  it('should parse JSON-RPC notification (no id)', () => {
+  it('should drop JSON-RPC notification (no id) silently', async () => {
+    const { client, responses } = createMockClient();
+    const handlers = new Map([['test.notification', () => ({})]]);
+
     const message = JSON.stringify({
       jsonrpc: '2.0',
       method: 'test.notification',
       params: { data: 'test' },
     });
 
-    const parsed = JSON.parse(message);
+    await handleRpcLine(client, message, handlers);
 
-    expect(parsed.jsonrpc).toBe('2.0');
-    expect(parsed.method).toBe('test.notification');
-    expect(parsed.id).toBeUndefined();
+    expect(responses).toHaveLength(0);
   });
 
-  it('should reject invalid JSON', () => {
-    const invalidJson = '{ invalid json }';
+  it('should return PARSE_ERROR for invalid JSON', async () => {
+    const { client, responses } = createMockClient();
+    const handlers = new Map<string, (params: unknown) => unknown>();
 
-    expect(() => JSON.parse(invalidJson)).toThrow();
+    await handleRpcLine(client, '{ invalid json }', handlers);
+
+    expect(responses).toHaveLength(1);
+    const response = JSON.parse(responses[0]);
+    expect(response.error.code).toBe(-32700);
+    expect(response.error.message).toBe('Parse error');
   });
 
-  it('should identify request vs response', () => {
-    const request = { jsonrpc: '2.0', id: '1', method: 'test' };
-    const response = { jsonrpc: '2.0', id: '1', result: 'ok' };
+  it('should return INVALID_REQUEST for non-object messages', async () => {
+    const { client, responses } = createMockClient();
+    const handlers = new Map<string, (params: unknown) => unknown>();
 
-    expect('method' in request).toBe(true);
-    expect('method' in response).toBe(false);
-    expect('result' in response).toBe(true);
+    await handleRpcLine(client, '"just a string"', handlers);
+
+    expect(responses).toHaveLength(1);
+    const response = JSON.parse(responses[0]);
+    expect(response.error.code).toBe(-32600);
+    expect(response.error.message).toContain('Invalid request');
   });
 
-  it('should validate required fields', () => {
-    const validRequest = { jsonrpc: '2.0', id: '1', method: 'test' };
-    const missingMethod = { jsonrpc: '2.0', id: '1' };
-    const missingId = { jsonrpc: '2.0', method: 'test' };
-    const wrongVersion = { jsonrpc: '1.0', id: '1', method: 'test' };
+  it('should return METHOD_NOT_FOUND for unregistered methods', async () => {
+    const { client, responses } = createMockClient();
+    const handlers = new Map<string, (params: unknown) => unknown>();
 
-    expect(validRequest.jsonrpc).toBe('2.0');
-    expect('method' in missingMethod).toBe(false);
-    expect('id' in missingId).toBe(false);
-    expect(wrongVersion.jsonrpc).not.toBe('2.0');
+    const message = JSON.stringify({
+      jsonrpc: '2.0',
+      id: '1',
+      method: 'nonexistent.method',
+    });
+
+    await handleRpcLine(client, message, handlers);
+
+    expect(responses).toHaveLength(1);
+    const response = JSON.parse(responses[0]);
+    expect(response.error.code).toBe(-32601);
+    expect(response.error.message).toContain('Method not found');
+  });
+
+  it('should return INTERNAL_ERROR when handler throws', async () => {
+    const { client, responses } = createMockClient();
+    const handlers = new Map([
+      [
+        'failing.method',
+        () => {
+          throw new Error('handler failed');
+        },
+      ],
+    ]);
+
+    const message = JSON.stringify({
+      jsonrpc: '2.0',
+      id: '1',
+      method: 'failing.method',
+    });
+
+    await handleRpcLine(client, message, handlers);
+
+    expect(responses).toHaveLength(1);
+    const response = JSON.parse(responses[0]);
+    expect(response.error.code).toBe(-32603);
+    expect(response.error.message).toBe('handler failed');
   });
 });

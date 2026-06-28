@@ -156,7 +156,7 @@
 - [x] T035 [ASYNC] Add Windows named pipe support to SocketTransport (Source: v0.2.0 socket-path.ts lines 12-15)
 - [x] T036 [ASYNC] Create export barrel updates for new daemon exports
 - [x] T037 [ASYNC] Run quickstart.md validation scenarios
-- [x] T038 [ASYNC] Code cleanup and refactoring
+- [x] T038 [ASYNC] Remove unused imports and consolidate duplicate type definitions across daemon modules
 - [x] T039 [ASYNC] Documentation updates in packages/agent-core/README.md
 - [x] T040 [ASYNC] Add Windows named pipe support to RPC server (complementing T035 client-side support for FR-001)
 

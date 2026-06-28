@@ -95,7 +95,7 @@ Health check endpoint.
   "result": {
     "status": "ok",
     "uptime": 12345,
-    "buildId": "abc123"
+    "services": ["daemon.ping", ...]
   }
 }
 ```

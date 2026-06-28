@@ -62,6 +62,7 @@ The daemon returns structured error responses following JSON-RPC 2.0 error codes
 - How does the system handle a client disconnecting mid-request? The daemon should clean up resources and continue serving other clients.
 - What happens when a handler function throws an exception? The daemon should catch it and return a JSON-RPC error with code -32603 (Internal error).
 - How does the system handle concurrent requests from multiple clients? The daemon should process them concurrently without blocking.
+- What happens when a client sends a notification (message without `id`)? The daemon should invoke the handler but not send a response (JSON-RPC 2.0 notification semantics).
 
 ## Requirements *(mandatory)*
 
@@ -76,24 +77,26 @@ The daemon returns structured error responses following JSON-RPC 2.0 error codes
 - **FR-007**: System MUST use v0.5.0 method names directly (no adaptation from v0.2.0 required — methods are registered by the consumer, not the server).
 - **FR-008**: System MUST provide unit, integration, and contract tests for all RPC methods.
 - **FR-009**: System MUST log using `pino` structured logger with configurable levels (matching plan.md dependency).
-- **FR-010**: System MUST clean up socket file on shutdown to avoid stale files (separate from FR-021 which controls close behavior).
+- **FR-010**: System MUST clean up socket file on graceful shutdown to avoid stale files (separate from FR-021 which controls close behavior).
 - **FR-011**: System MUST enforce 1 MB maximum message size limit (matching Accomplish).
 - **FR-012**: System MUST use newline-delimited JSON (NDJSON) framing protocol.
 - **FR-013**: System MUST support `registerMethod()` API for handler registration (like Accomplish).
 - **FR-014**: System MUST support `notify()` method for server-to-client notifications.
+- **FR-022**: System MUST treat incoming messages without an `id` field as JSON-RPC 2.0 notifications: process the method but do NOT send a response. This enables fire-and-forget message passing.
 - **FR-015**: System MUST include built-in `daemon.ping` health check method.
 - **FR-016**: System MUST expose `hasConnectedClients()` utility method.
 - **FR-017**: System MUST support `onConnection` and `onDisconnection` lifecycle callbacks (signatures: `(clientId: string) => void`, matching Accomplish pattern).
 - **FR-018**: System MUST use a `DaemonTransport` interface for transport abstraction (methods: `send()`, `onMessage()`, `onDisconnect()`, `close()` — matching v0.2.0 socket-transport.ts lines 3-8).
 - **FR-019**: System MUST resolve default socket path from dataDir using pattern `{dataDir}/daemon.sock` (matching v0.2.0 PathResolver and Accomplish). If dataDir is not provided, fallback to `process.env.DATA_DIR` or `{cwd}/data`.
 - **FR-020**: System MUST catch all errors in RPC handler and return JSON-RPC error responses.
-- **FR-021**: System MUST perform immediate close on shutdown (destroy sockets without waiting for pending writes, matching Accomplish behavior).
+- **FR-021**: System MUST perform immediate close on graceful shutdown (destroy sockets without waiting for pending writes, matching Accomplish behavior).
 
 ### Key Entities
 
 - **JSON-RPC Request**: A JSON object with fields "jsonrpc" (string, "2.0"), "method" (string), "params" (optional), "id" (correlation ID, nullable).
 - **JSON-RPC Response**: A JSON object with fields "jsonrpc" (string, "2.0"), "result" (on success) or "error" (on failure), "id" (correlation ID matching request).
 - **Correlation ID**: Unique identifier (string, number, or null) used to match requests with responses.
+- **Notification**: A JSON-RPC 2.0 message without an `id` field. The method is invoked but no response is sent back.
 - **Handler Function**: An async-capable function registered to handle a specific JSON-RPC method name.
 - **Error Code**: Integer code following JSON-RPC 2.0 standard error codes.
 - **DaemonTransport**: Interface abstracting socket communication (supports Unix sockets and Windows named pipes).
@@ -111,6 +114,7 @@ The daemon returns structured error responses following JSON-RPC 2.0 error codes
 - **SC-007**: Server enforces 1 MB maximum message size limit with appropriate error response for oversized messages.
 - **SC-008**: Server correctly handles both Unix domain sockets and Windows named pipes.
 - **SC-009**: Server supports `registerMethod()`, `notify()`, `hasConnectedClients()`, and lifecycle callbacks.
+- **SC-011**: Server correctly handles JSON-RPC 2.0 notifications (messages without `id`): method is invoked but no response is sent.
 - **SC-010**: TypeScript types exported in `/packages/types` for client consumption.
 
 ## Assumptions

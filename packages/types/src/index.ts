@@ -12,6 +12,8 @@ export {
   type DaemonEventType,
   DaemonEventTypeSchema,
   type JsonRpcRequest,
+  type JsonRpcSuccessResponse,
+  type JsonRpcErrorResponse,
   type JsonRpcResponse,
   type JsonRpcNotification,
   type JsonRpcError,

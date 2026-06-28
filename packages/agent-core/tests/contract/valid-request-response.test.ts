@@ -87,16 +87,24 @@ function sendRequest(
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('Request timeout')), 5000);
 
-    transport.onMessage((data) => {
+    const handler = (data: string) => {
       try {
         const response = JSON.parse(data);
-        clearTimeout(timeout);
-        resolve(response);
+        // Correlate by id - only resolve if response.id matches request id
+        if (response.id === id) {
+          clearTimeout(timeout);
+          transport.onMessage(() => {}); // Unregister handler
+          resolve(response);
+        }
+        // Ignore non-matching responses
       } catch (err) {
         clearTimeout(timeout);
+        transport.onMessage(() => {}); // Unregister handler
         reject(err);
       }
-    });
+    };
+
+    transport.onMessage(handler);
 
     const request = { jsonrpc: '2.0', id, method, params };
     transport.send(JSON.stringify(request));

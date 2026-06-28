@@ -7,7 +7,7 @@
  */
 
 import { randomUUID } from 'node:crypto';
-import { unlink } from 'node:fs/promises';
+import { stat, unlink } from 'node:fs/promises';
 import { createServer, type Server, type Socket } from 'node:net';
 import { createChildLogger } from './logger.js';
 import { NdjsonBuffer } from './ndjson-buffer.js';
@@ -161,7 +161,11 @@ export class DaemonRpcServer {
 
   private async removeStaleSocket(): Promise<void> {
     try {
-      await unlink(this.socketPath);
+      const stats = await stat(this.socketPath);
+      // Only unlink if it's a socket (not a regular file)
+      if (stats.isSocket()) {
+        await unlink(this.socketPath);
+      }
     } catch {
       // File doesn't exist — that's fine
     }

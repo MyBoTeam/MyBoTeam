@@ -2,13 +2,13 @@
 
 **Date**: 2026-06-28
 **Feature**: 006-json-rpc-unix-socket
-**Source Reference**: v0.2.0 (`/Users/mavishay/Projects/MaorInnovations/myboteam_V0.2.0/packages/daemon/src/`) and Accomplish (`/Users/mavishay/Projects/Accomplish/accomplish/packages/agent-core/src/daemon/`)
+**Source Reference**: v0.2.0 (`../../myboteam_V0.2.0/packages/daemon/src/`) and Accomplish (`../../../Accomplish/accomplish/packages/agent-core/src/daemon/`)
 
 ## Source Reference Analysis (MANDATORY)
 
 ### v0.2.0 Reference Implementation
 
-**Source Location**: `/Users/mavishay/Projects/MaorInnovations/myboteam_V0.2.0/packages/daemon/src/`
+**Source Location**: `../../myboteam_V0.2.0/packages/daemon/src/`
 
 #### Files Analyzed
 
@@ -78,7 +78,7 @@
 
 ### Accomplish Reference Implementation
 
-**Source Location**: `/Users/mavishay/Projects/Accomplish/accomplish/packages/agent-core/src/daemon/`
+**Source Location**: `../../../Accomplish/accomplish/packages/agent-core/src/daemon/`
 
 #### Files Analyzed
 
