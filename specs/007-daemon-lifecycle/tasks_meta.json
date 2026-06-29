@@ -1,0 +1,636 @@
+{
+  "feature": "007-daemon-lifecycle",
+  "created": "2026-06-29T10:28:15+07:00",
+  "tasks": {
+    "T001": {
+      "description": "Create daemon lifecycle directory structure",
+      "files": "packages/agent-core/src/daemon/lifecycle/",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T002": {
+      "description": "Create contracts directory with TypeScript interfaces",
+      "files": "specs/007-daemon-lifecycle/contracts/",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T003": {
+      "description": "Implement DaemonState enum with valid lifecycle states",
+      "files": "packages/agent-core/src/daemon/lifecycle/daemon-state.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T004": {
+      "description": "Task 4",
+      "files": "packages/agent-core/src/daemon/lifecycle/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T005": {
+      "description": "Task 5",
+      "files": "packages/agent-core/src/daemon/lifecycle/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T006": {
+      "description": "Task 6",
+      "files": "packages/agent-core/src/daemon/lifecycle/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T007": {
+      "description": "Task 7",
+      "files": "packages/agent-core/src/daemon/lifecycle/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T008": {
+      "description": "Task 8",
+      "files": "packages/agent-core/src/daemon/lifecycle/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T09": {
+      "description": "Task 9",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T010": {
+      "description": "Task 10",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T011": {
+      "description": "Task 11",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T012": {
+      "description": "Task 12",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T013": {
+      "description": "Task 13",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T014": {
+      "description": "Task 14",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T015": {
+      "description": "Task 15",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T016": {
+      "description": "Task 16",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T017": {
+      "description": "Task 17",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T018": {
+      "description": "Task 18",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T019": {
+      "description": "Task 19",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T020": {
+      "description": "Task 20",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T021": {
+      "description": "Task 21",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T022": {
+      "description": "Task 22",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T023": {
+      "description": "Task 23",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T024": {
+      "description": "Task 24",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T025": {
+      "description": "Task 25",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T026": {
+      "description": "Task 26",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T027": {
+      "description": "Task 27",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T028": {
+      "description": "Task 28",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T029": {
+      "description": "Task 29",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T030": {
+      "description": "Task 30",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T031": {
+      "description": "Task 31",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T032": {
+      "description": "Task 32",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T033": {
+      "description": "Task 33",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T034": {
+      "description": "Task 34",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T035": {
+      "description": "Task 35",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T036": {
+      "description": "Task 36",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T037": {
+      "description": "Task 37",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T038": {
+      "description": "Task 38",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T039": {
+      "description": "Task 39",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T040": {
+      "description": "Task 40",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T041": {
+      "description": "Task 41",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T042": {
+      "description": "Task 42",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T043": {
+      "description": "Task 43",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T044": {
+      "description": "Task 44",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T045": {
+      "description": "Task 45",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T046": {
+      "description": "Task 46",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T047": {
+      "description": "Task 47",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T048": {
+      "description": "Task 48",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T049": {
+      "description": "Task 49",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T050": {
+      "description": "Task 50",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T051": {
+      "description": "Task 51",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T052": {
+      "description": "Task 52",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T053": {
+      "description": "Task 53",
+      "files": "packages/agent-core/",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T054": {
+      "description": "Task 54",
+      "files": "packages/agent-core/",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T055": {
+      "description": "Task 55",
+      "files": "packages/agent-core/",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T056": {
+      "description": "Task 56",
+      "files": "packages/agent-core/",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T057": {
+      "description": "Task 57",
+      "files": "packages/agent-core/",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T014a": {
+      "description": "Add error propagation to host application on daemon start failure",
+      "files": "packages/agent-core/src/daemon/lifecycle/daemon-process-manager.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T008a": {
+      "description": "Create ADR for graceful shutdown with 30s timeout",
+      "files": "packages/agent-core/src/daemon/lifecycle/adr/001-graceful-shutdown.md",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T008b": {
+      "description": "Create ADR for auto-restart with exponential backoff",
+      "files": "packages/agent-core/src/daemon/lifecycle/adr/002-auto-restart.md",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T008c": {
+      "description": "Create ADR for task draining on shutdown",
+      "files": "packages/agent-core/src/daemon/lifecycle/adr/003-task-draining.md",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T008d": {
+      "description": "Create ADR for resource cleanup on shutdown",
+      "files": "packages/agent-core/src/daemon/lifecycle/adr/004-resource-cleanup.md",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T008e": {
+      "description": "Create ADR for OpenTelemetry observability",
+      "files": "packages/agent-core/src/daemon/lifecycle/adr/005-opentelemetry-observability.md",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    }
+  }
+}
