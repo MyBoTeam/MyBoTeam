@@ -30,7 +30,7 @@ describe('Unit: Error Code Generation', () => {
     expect(JSON_RPC_ERRORS.INTERNAL_ERROR).toBe(-32603);
   });
 
-  it('should create valid error response structure', () => {
+  it('should create valid error response structure using constants', () => {
     const errorResponse = {
       jsonrpc: '2.0',
       id: '123',
@@ -42,7 +42,7 @@ describe('Unit: Error Code Generation', () => {
 
     expect(errorResponse.jsonrpc).toBe('2.0');
     expect(errorResponse.id).toBe('123');
-    expect(errorResponse.error.code).toBe(-32601);
+    expect(errorResponse.error.code).toBe(JSON_RPC_ERRORS.METHOD_NOT_FOUND);
     expect(errorResponse.error.message).toContain('Method not found');
   });
 

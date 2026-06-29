@@ -11,12 +11,20 @@ export interface JsonRpcRequest<TParams = unknown> {
   params?: TParams;
 }
 
-export interface JsonRpcResponse<TResult = unknown> {
+export interface JsonRpcSuccessResponse<TResult = unknown> {
   jsonrpc: '2.0';
   id: string | number | null;
-  result?: TResult;
-  error?: JsonRpcError;
+  result: TResult;
 }
+
+export interface JsonRpcErrorResponse {
+  jsonrpc: '2.0';
+  id: string | number | null;
+  error: JsonRpcError;
+}
+
+/** JSON-RPC 2.0 response - success or error, never both. */
+export type JsonRpcResponse<TResult = unknown> = JsonRpcSuccessResponse<TResult> | JsonRpcErrorResponse;
 
 export interface JsonRpcNotification<TParams = unknown> {
   jsonrpc: '2.0';

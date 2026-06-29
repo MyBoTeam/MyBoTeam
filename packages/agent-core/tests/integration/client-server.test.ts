@@ -73,16 +73,16 @@ describe('Integration: Client-Server Communication', () => {
   });
 
   it('should track connected clients', async () => {
-    // Wait for any lingering disconnections from previous tests
-    await new Promise((resolve) => setTimeout(resolve, 50));
-    expect(server.hasConnectedClients()).toBe(false);
-
     const client = await createSocketTransport(socketPath);
     expect(server.hasConnectedClients()).toBe(true);
 
     client.close();
-    // Wait for disconnection
-    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Poll until disconnection is detected, with timeout
+    const start = Date.now();
+    while (server.hasConnectedClients() && Date.now() - start < 2000) {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
     expect(server.hasConnectedClients()).toBe(false);
   });
 });

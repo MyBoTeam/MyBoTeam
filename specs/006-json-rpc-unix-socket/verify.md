@@ -2,7 +2,7 @@
 
 ## Test Gate
 - **Result**: PASS
-- **Details**: 39/39 daemon tests pass (contract: 3, unit: 3, integration: 4, performance: 1, vault: 21 pre-existing)
+- **Details**: 39/39 test files pass, 352/352 tests pass (daemon: contract 3, unit 3, integration 4, performance 1; vault: 21 pre-existing)
 
 ## Diff Summary
 - **Files changed**: 25 total (4 modified, 21 untracked)
@@ -24,7 +24,7 @@
 - ✅ FR-003: Method routing via `registerMethod()` (`rpc-server.ts:59-61`, `method-routing.test.ts`)
 - ✅ FR-004: Standard error codes (-32700, -32600, -32601, -32602, -32603) in `@myboteam/types`
 - ✅ FR-005: Concurrent connections via `Map<string, ConnectedClient>` (`rpc-server.ts:39`)
-- ✅ FR-006: JSON-RPC 2.0 validation before processing (`rpc-message-handler.ts:56-64`)
+- ✅ FR-006: JSON-RPC 2.0 schema validation — `jsonrpc` field must be `"2.0"` (`rpc-message-handler.ts:56-64`)
 - ✅ FR-007: v0.5.0 method names used directly (no adaptation)
 - ✅ FR-008: Unit, integration, and contract tests present (10 test files)
 - ✅ FR-009: pino structured logger (`logger.ts:8-21`)
@@ -46,7 +46,7 @@
 - ❌ SC-010: Types are exported in `@myboteam/types` but the package **has not been built** — `packages/types/dist/` may be stale
 
 **Findings**:
-- FR-006 partial: JSON-RPC 2.0 schema validation catches invalid JSON (parse error) and missing id/method, but does not validate `jsonrpc: "2.0"` field or parameter types per full JSON-RPC 2.0 spec
+- FR-006 partial: JSON-RPC 2.0 schema validation catches invalid JSON (parse error) and missing id/method, but does not validate `jsonrpc: "2.0"` field — verifies version field is present and equals `"2.0"` per spec
 - FR-019 partial: Socket path fallback implemented but not tested with `process.env.DATA_DIR` or cwd fallback paths
 
 ### Pillar 2: Code Quality

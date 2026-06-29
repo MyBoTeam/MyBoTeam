@@ -11,7 +11,7 @@ Implement a JSON-RPC 2.0 server over Unix domain socket (with Windows named pipe
 
 ### v0.2.0 Reference Implementation
 
-**Source Location**: `/Users/mavishay/Projects/MaorInnovations/myboteam_V0.2.0/packages/daemon/src/`
+**Source Location**: `../../myboteam_V0.2.0/packages/daemon/src/`
 
 **Files Analyzed**:
 - `rpc-server.ts` (310 lines) - Main RPC server with authentication, rate limiting, method aliases
@@ -36,7 +36,7 @@ Implement a JSON-RPC 2.0 server over Unix domain socket (with Windows named pipe
 
 ### Accomplish Reference Implementation
 
-**Source Location**: `/Users/mavishay/Projects/Accomplish/accomplish/packages/agent-core/src/daemon/`
+**Source Location**: `../../../Accomplish/accomplish/packages/agent-core/src/daemon/`
 
 **Files Analyzed**:
 - `rpc-server.ts` (165 lines) - Cleaner server with lifecycle callbacks

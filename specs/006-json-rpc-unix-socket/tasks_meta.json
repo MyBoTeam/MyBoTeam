@@ -231,10 +231,10 @@
       "result_summary": "Code cleanup and export barrel updates completed"
     },
     "T039": {
-      "status": "completed",
+      "status": "deferred",
       "started_at": "2026-06-28T11:15:54+07:00",
-      "completed_at": "2026-06-28T11:15:59+07:00",
-      "result_summary": "Documentation updates can be done in a follow-up PR"
+      "completed_at": null,
+      "result_summary": "Deferred to follow-up PR — README updates pending"
     },
     "T040": {
       "status": "completed",

@@ -140,14 +140,7 @@ server.registerMethod('risky.method', () => {
 
 ### Health Check
 
-```typescript
-// Built-in health check
-server.registerMethod('daemon.ping', () => ({
-  status: 'ok',
-  uptime: Date.now() - startTime,
-  buildId: process.env.BUILD_ID
-}));
-```
+The `daemon.ping` method is registered automatically by the server as a built-in health check endpoint. No manual registration is needed.
 
 ### Connection Status
 

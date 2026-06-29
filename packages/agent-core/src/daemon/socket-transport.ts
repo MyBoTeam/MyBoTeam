@@ -7,8 +7,11 @@
  */
 
 import { connect } from 'node:net';
+import { createChildLogger } from './logger.js';
 import { NdjsonBuffer } from './ndjson-buffer.js';
 import type { DaemonTransport } from './transport.js';
+
+const log = createChildLogger('SocketTransport');
 
 const MAX_MESSAGE_SIZE = 1_048_576; // 1MB
 const CONNECTION_TIMEOUT_MS = 10_000;
@@ -34,11 +37,19 @@ export function createSocketTransport(socketPath: string): Promise<DaemonTranspo
       cleanup();
       socket.removeListener('error', onError);
 
+      // Set encoding for consistent string handling (matches server-side)
+      socket.setEncoding('utf8');
+
       let currentMessageHandler: ((data: string) => void) | null = null;
       const buffer = new NdjsonBuffer(MAX_MESSAGE_SIZE);
 
-      socket.on('data', (chunk: Buffer) => {
-        const lines = buffer.append(chunk.toString());
+      // Keep a persistent internal error handler for socket failures
+      socket.on('error', (err) => {
+        log.error({ error: err.message }, 'Socket error after connect');
+      });
+
+      socket.on('data', (chunk: string) => {
+        const lines = buffer.append(chunk);
         if (lines === null) {
           socket.destroy(new Error('Buffer overflow: message exceeds maximum size'));
           return;
@@ -52,7 +63,7 @@ export function createSocketTransport(socketPath: string): Promise<DaemonTranspo
 
       const transport: DaemonTransport = {
         send(message: string) {
-          if (message.length > MAX_MESSAGE_SIZE) {
+          if (Buffer.byteLength(message, 'utf8') > MAX_MESSAGE_SIZE) {
             socket.destroy(new Error('Message exceeds maximum size limit'));
             return;
           }

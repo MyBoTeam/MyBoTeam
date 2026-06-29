@@ -18,11 +18,11 @@ export class NdjsonBuffer {
    * Returns null if buffer exceeds max size.
    */
   append(chunk: string): string[] | null {
-    this.buffer += chunk;
-
-    if (this.buffer.length > this.maxSize) {
+    const nextBuffer = this.buffer + chunk;
+    if (Buffer.byteLength(nextBuffer, 'utf8') > this.maxSize) {
       return null;
     }
+    this.buffer = nextBuffer;
 
     const lines = this.buffer.split('\n');
     this.buffer = lines.pop() ?? '';
@@ -30,10 +30,10 @@ export class NdjsonBuffer {
   }
 
   /**
-   * Get the current buffer size.
+   * Get the current buffer size in bytes.
    */
   get size(): number {
-    return this.buffer.length;
+    return Buffer.byteLength(this.buffer, 'utf8');
   }
 
   /**

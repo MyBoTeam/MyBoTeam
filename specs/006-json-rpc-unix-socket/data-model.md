@@ -74,7 +74,7 @@ Tracks connected client state.
 |-------|------|----------|-------------|
 | id | string | Yes | UUID identifying the client |
 | socket | Socket | Yes | Underlying network socket |
-| buffer | string | Yes | Incomplete message buffer |
+| buffer | NdjsonBuffer | Yes | Incomplete message buffer (from `./ndjson-buffer.js`) |
 
 **Lifecycle**:
 1. Created on socket connection
