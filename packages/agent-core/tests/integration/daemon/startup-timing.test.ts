@@ -4,8 +4,8 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AutoStartService } from '../../../src/services/auto-start-service.js';
 import { LoginItemPersistence } from '../../../src/daemon/login-item-persistence.js';
+import { AutoStartService } from '../../../src/services/auto-start-service.js';
 import { DEFAULT_TIMEOUT_MS } from '../../../src/types/login-item.js';
 
 describe('Startup Timing Verification', () => {

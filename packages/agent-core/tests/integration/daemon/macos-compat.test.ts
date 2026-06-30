@@ -4,8 +4,8 @@
  */
 
 import { beforeEach, describe, expect, it } from 'vitest';
-import { AutoStartService } from '../../../src/services/auto-start-service.js';
 import { LoginItemPersistence } from '../../../src/daemon/login-item-persistence.js';
+import { AutoStartService } from '../../../src/services/auto-start-service.js';
 
 describe('macOS Compatibility Integration', () => {
   let service: AutoStartService;

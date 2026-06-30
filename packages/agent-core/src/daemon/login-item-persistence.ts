@@ -42,7 +42,10 @@ export class LoginItemPersistence {
    * Save auto-start preference to storage
    */
   saveAutoStartPreference(preference: AutoStartPreference): void {
-    LoginItemPersistence.storage.set(STORAGE_KEYS.AUTO_START_PREFERENCE, JSON.stringify(preference));
+    LoginItemPersistence.storage.set(
+      STORAGE_KEYS.AUTO_START_PREFERENCE,
+      JSON.stringify(preference),
+    );
   }
 
   /**

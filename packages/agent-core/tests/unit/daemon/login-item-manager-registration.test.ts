@@ -14,8 +14,16 @@ import {
 } from '../../../src/daemon/login-item-manager-registration.js';
 import type { LoginItemPersistence } from '../../../src/daemon/login-item-persistence.js';
 import { LoginItemStateMachine } from '../../../src/daemon/login-item-state.js';
-import type { AutoStartPreference, EnableOptions, LoginItem } from '../../../src/types/login-item.js';
-import { AutoStartMethod, LoginItemErrorCode, LoginItemState } from '../../../src/types/login-item.js';
+import type {
+  AutoStartPreference,
+  EnableOptions,
+  LoginItem,
+} from '../../../src/types/login-item.js';
+import {
+  AutoStartMethod,
+  LoginItemErrorCode,
+  LoginItemState,
+} from '../../../src/types/login-item.js';
 
 function createMockLogger() {
   return {

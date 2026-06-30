@@ -6,7 +6,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginItemManager } from '../../../src/daemon/login-item-manager.js';
 import { LoginItemPersistence } from '../../../src/daemon/login-item-persistence.js';
-import { AutoStartMethod, LoginItemErrorCode, LoginItemState } from '../../../src/types/login-item.js';
+import {
+  AutoStartMethod,
+  LoginItemErrorCode,
+  LoginItemState,
+} from '../../../src/types/login-item.js';
 
 vi.mock('../../../src/daemon/login-item-system-query.js', () => ({
   querySystemLoginItem: vi.fn().mockResolvedValue({
