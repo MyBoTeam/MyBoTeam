@@ -6,7 +6,7 @@
 
 **Status**: Draft
 
-**Input**: User description: "I want to address https://linear.app/maor-innovations-ltd/issue/MAO-150/m3-4-login-item-auto-start use Accomplish defaults"
+**Input**: User description: "I want to address https://linear.app/maor-innovations-ltd/issue/MAO-150/m3-4-login-item-auto-start use MyBoTeam defaults"
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -73,36 +73,36 @@ As a user, I want to see whether auto-start is currently enabled, so I can verif
 - **FR-002**: System MUST remove the daemon from macOS login items when auto-start is disabled
 - **FR-003**: System MUST persist the auto-start preference across application restarts
 - **FR-004**: System MUST start the daemon automatically within 5 seconds of user login (measurement: time from macOS login completion to daemon process start, excluding system startup time)
-- **FR-005**: System MUST query the current login item registration state accurately on application launch and sync with any external changes
-- **FR-006**: System MUST handle macOS permission dialogs gracefully using Accomplish defaults as primary approach, with Service Management framework as fallback (permission acquisition phase)
+- **FR-005**: System MUST query the current login item registration state on application launch using `sfltool dumpbtm` (macOS 13+) with `osascript` fallback, and sync local state with any external changes detected
+- **FR-006**: System MUST handle macOS permission dialogs gracefully using MyBoTeam defaults as primary approach, with Service Management framework as fallback (permission acquisition phase)
 - **FR-007**: System MUST update the login item path if the application is relocated or updated
 - **FR-008**: System MUST prevent duplicate login item registrations
 - **FR-009**: System MUST provide clear status indication of auto-start state to the user
 - **FR-010**: System MUST log registration success/failure events with timestamps and error codes for debugging and monitoring
-- **FR-011**: System MUST handle registration failures (post-permission) using Accomplish defaults as primary, with fallback to retry once then show user-friendly error message with manual setup instructions (error recovery phase, distinct from FR-006 permission acquisition)
+- **FR-011**: System MUST handle registration failures (post-permission) using MyBoTeam defaults as primary, with fallback to retry once then show user-friendly error message with manual setup instructions (error recovery phase, distinct from FR-006 permission acquisition)
 
 ### Key Entities
 
 - **LoginItem**: Represents a macOS login item registration with properties: application path, enabled state (Disabled/Enabled/Error), label, last updated timestamp
 - **AutoStartPreference**: User preference for whether the daemon should auto-start on login
-- **LoginItemState**: Valid states (using Accomplish defaults as primary, fallback to three states: Disabled, Enabled, Error) with allowed transitions: Disabled→Enabled, Enabled→Disabled, any state→Error on failure
+- **LoginItemState**: Valid states (using MyBoTeam defaults as primary, fallback to three states: Disabled, Enabled, Error) with allowed transitions: Disabled→Enabled, Enabled→Disabled, any state→Error on failure
 
 ## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes
 
 - **SC-001**: Users can enable auto-start with a single action (toggle switch in settings UI)
-- **SC-002**: Daemon starts automatically within 5 seconds of user login on 100% of macOS versions 12+
+- **SC-002**: Daemon starts automatically within 5 seconds of user login on 100% of macOS versions 13+
 - **SC-003**: Auto-start state persists correctly across 100% of application restarts
 - **SC-004**: Users can verify auto-start status in settings with 100% accuracy
 - **SC-005**: Login item registration succeeds on first attempt for 95% of fresh installations (fresh installation = clean install without previous login item registration)
 
 ## Assumptions
 
-- Target platform is macOS 12 (Monterey) or later
+- Target platform is macOS 13.4 (Ventura) or later for full `sfltool dumpbtm` support
 - Users have administrative privileges to modify login items (or the application uses the Service Management framework which handles permissions)
 - The daemon binary path remains stable within a major version
-- The application uses Accomplish defaults for overlapping fields (as specified in the user request)
+- The application uses MyBoTeam defaults for overlapping fields (as specified in the user request)
 - macOS login item APIs (Service Management framework or LaunchAgent) are available and functional
 - The daemon process name and bundle identifier are consistent across installations
 
@@ -110,8 +110,8 @@ As a user, I want to see whether auto-start is currently enabled, so I can verif
 
 ### Session 2026-06-29
 
-- Q: What specific macOS permissions are required for login item registration, and how should the application request them? → A: Use Accomplish defaults as primary approach, Service Management framework as fallback
+- Q: What specific macOS permissions are required for login item registration, and how should the application request them? → A: Use MyBoTeam defaults as primary approach, Service Management framework as fallback
 - Q: What logging and observability should be implemented for login item registration events? → A: Log registration success/failure with timestamps and error codes
-- Q: What should happen if login item registration fails (e.g., permission denied, system error)? → A: Use Accomplish defaults as primary, retry once then show error message with manual setup instructions as fallback
-- Q: What are the valid states for a login item, and what transitions are allowed? → A: Use Accomplish defaults as primary, three states (Disabled, Enabled, Error) as fallback with transitions: Disabled→Enabled, Enabled→Disabled, any state→Error on failure
+- Q: What should happen if login item registration fails (e.g., permission denied, system error)? → A: Use MyBoTeam defaults as primary, retry once then show error message with manual setup instructions as fallback
+- Q: What are the valid states for a login item, and what transitions are allowed? → A: Use MyBoTeam defaults as primary, three states (Disabled, Enabled, Error) as fallback with transitions: Disabled→Enabled, Enabled→Disabled, any state→Error on failure
 - Q: Should the application detect and sync with external changes to the login item (e.g., via System Preferences)? → A: Yes, query system state on app launch and sync with external changes

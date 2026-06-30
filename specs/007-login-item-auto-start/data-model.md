@@ -25,14 +25,14 @@ User preference for auto-start functionality.
 |-------|------|-------------|------------|
 | id | string | Unique identifier | UUID format |
 | enabled | boolean | Whether auto-start is enabled | Required |
-| method | AutoStartMethod | Registration method used | Enum: AccomplishDefaults, ServiceManagement |
+| method | AutoStartMethod | Registration method used | Enum: MyBoTeamDefaults, ServiceManagement |
 | lastChecked | string | ISO timestamp of last state check | Valid ISO 8601 |
 | createdAt | string | ISO timestamp | Valid ISO 8601 |
 | updatedAt | string | ISO timestamp | Valid ISO 8601 |
 
 ### LoginItemState
 
-Valid states for a login item (Accomplish defaults primary, three states fallback).
+Valid states for a login item (MyBoTeam defaults primary, three states fallback).
 
 | State | Description | Allowed Transitions |
 |-------|-------------|---------------------|
@@ -46,8 +46,8 @@ Method used for login item registration.
 
 | Method | Description | When Used |
 |--------|-------------|-----------|
-| AccomplishDefaults | Primary approach using Accomplish patterns | Default for all versions |
-| ServiceManagement | Fallback using macOS Service Management framework | When Accomplish defaults unavailable |
+| MyBoTeamDefaults | Primary approach using MyBoTeam patterns | Default for all versions |
+| ServiceManagement | Fallback using macOS Service Management framework | When MyBoTeam defaults unavailable |
 
 ## Relationships
 
@@ -99,7 +99,7 @@ stateDiagram-v2
 - **Login Item State**: In-memory state with UserDefaults persistence
 
 ### Fallback Storage
-- **Accomplish Defaults**: System-level defaults for cross-version compatibility
+- **MyBoTeam Defaults**: System-level defaults for cross-version compatibility
 - **Service Management**: macOS system registration for login items
 
 ## Persistence Strategy

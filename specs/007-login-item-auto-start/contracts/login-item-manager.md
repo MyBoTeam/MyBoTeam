@@ -46,12 +46,12 @@ interface LoginItemManager {
 interface EnableOptions {
   applicationPath: string;
   label: string;
-  method?: 'accomplishDefaults' | 'serviceManagement';
+  method?: 'myBoTeamDefaults' | 'serviceManagement';
 }
 
 interface RegistrationResult {
   success: boolean;
-  method: 'accomplishDefaults' | 'serviceManagement';
+  method: 'myBoTeamDefaults' | 'serviceManagement';
   error?: {
     code: string;
     message: string;
@@ -70,7 +70,7 @@ interface UnregistrationResult {
 interface LoginItemStatus {
   registered: boolean;
   state: 'Disabled' | 'Enabled' | 'Error';
-  method: 'accomplishDefaults' | 'serviceManagement' | 'unknown';
+  method: 'myBoTeamDefaults' | 'serviceManagement' | 'unknown';
   lastChecked: string;
   error?: {
     code: string;
@@ -93,8 +93,8 @@ interface LoginItemStatus {
 
 ### Enable Flow
 
-1. Check Accomplish defaults availability
-2. If available, register using Accomplish defaults
+1. Check MyBoTeam defaults availability
+2. If available, register using MyBoTeam defaults
 3. If not available, fallback to Service Management framework
 4. Log registration attempt with result
 5. Return registration result with method used

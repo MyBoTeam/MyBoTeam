@@ -2,34 +2,34 @@
 
 ## Phase 0: Research Findings
 
-### 1. Accomplish Defaults Pattern
+### 1. MyBoTeam Defaults Pattern
 
-**Decision**: Use Accomplish defaults as primary approach for login item management.
+**Decision**: Use MyBoTeam defaults as primary approach for login item management.
 
 **Rationale**: 
-- Accomplish project provides proven patterns for daemon management
-- Existing codebase already follows Accomplish conventions
+- MyBoTeam project provides proven patterns for daemon management
+- Existing codebase already follows MyBoTeam conventions
 - Reduces implementation risk by leveraging tested patterns
 
 **Alternatives Considered**:
-- Native macOS Service Management framework only (rejected: Accomplish defaults provide better cross-version compatibility)
+- Native macOS Service Management framework only (rejected: MyBoTeam defaults provide better cross-version compatibility)
 - LaunchAgent plist approach (rejected: more complex installation and maintenance)
 
 ### 2. macOS Login Item Implementation
 
-**Decision**: Use Accomplish defaults pattern with Service Management framework fallback.
+**Decision**: Use MyBoTeam defaults pattern with Service Management framework fallback.
 
 **Rationale**:
-- Accomplish defaults handle version differences automatically
+- MyBoTeam defaults handle version differences automatically
 - Service Management framework provides modern API for macOS 13+
 - Fallback ensures compatibility with older macOS versions
 
-**Implementation Pattern** (from Accomplish reference):
+**Implementation Pattern** (from MyBoTeam reference):
 ```typescript
-// Primary: Accomplish defaults
-const loginItemEnabled = await checkAccomplishDefaults();
+// Primary: MyBoTeam defaults
+const loginItemEnabled = await checkMyBoTeamDefaults();
 if (loginItemEnabled) {
-  await registerWithAccomplishDefaults();
+  await registerWithMyBoTeamDefaults();
 } else {
   // Fallback: Service Management framework
   await registerWithServiceManagement();
@@ -38,10 +38,10 @@ if (loginItemEnabled) {
 
 ### 3. State Management
 
-**Decision**: Three-state model (Disabled, Enabled, Error) with Accomplish defaults.
+**Decision**: Three-state model (Disabled, Enabled, Error) with MyBoTeam defaults.
 
 **Rationale**:
-- Accomplish defaults define standard state transitions
+- MyBoTeam defaults define standard state transitions
 - Error state allows graceful degradation
 - Clear state machine simplifies debugging
 
@@ -73,10 +73,10 @@ interface LoginItemLogEntry {
 
 ### 5. Error Handling
 
-**Decision**: Accomplish defaults as primary, retry once then show error message.
+**Decision**: MyBoTeam defaults as primary, retry once then show error message.
 
 **Rationale**:
-- Accomplish defaults handle most error scenarios
+- MyBoTeam defaults handle most error scenarios
 - Single retry balances reliability with user experience
 - Manual setup instructions provide escape hatch
 
@@ -103,13 +103,13 @@ interface LoginItemLogEntry {
 
 | Area | Decision | Confidence |
 |------|----------|------------|
-| Primary Approach | Accomplish defaults | High |
+| Primary Approach | MyBoTeam defaults | High |
 | Fallback | Service Management framework | High |
 | State Model | Three states (Disabled/Enabled/Error) | High |
 | Logging | Success/failure with timestamps and error codes | High |
-| Error Handling | Accomplish defaults + retry + manual instructions | High |
+| Error Handling | MyBoTeam defaults + retry + manual instructions | High |
 | External Sync | Query on app launch | Medium |
 
 ## Open Questions
 
-None. All technical decisions have been resolved using Accomplish defaults as primary approach with Service Management framework as fallback.
+None. All technical decisions have been resolved using MyBoTeam defaults as primary approach with Service Management framework as fallback.

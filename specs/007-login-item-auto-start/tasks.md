@@ -53,7 +53,7 @@
 > **⚠️ TDD REQUIREMENT**: These tests MUST be written and verified to FAIL before any implementation tasks
 
 - [ ] T008 [P] [US1] Write unit tests for LoginItemManager.enable() in packages/agent-core/tests/unit/daemon/login-item-manager.test.ts
-- [ ] T009 [P] [US1] Write unit tests for Accomplish defaults registration in packages/agent-core/tests/unit/daemon/login-item-accomplish.test.ts
+- [ ] T009 [P] [US1] Write unit tests for MyBoTeam defaults registration in packages/agent-core/tests/unit/daemon/login-item-registration.test.ts
 - [ ] T010 [P] [US1] Write unit tests for Service Management fallback in packages/agent-core/tests/unit/daemon/login-item-service-mgmt.test.ts
 - [ ] T011 [P] [US1] Write unit tests for path validation in packages/agent-core/tests/unit/daemon/login-item-validator.test.ts
 - [ ] T012 [US1] Write integration test for enable flow in packages/agent-core/tests/integration/daemon/auto-start-enable.test.ts
@@ -64,7 +64,7 @@
 ### Implementation for User Story 1
 
 - [ ] T014 [US1] Implement LoginItemManager.enable() method in packages/agent-core/src/daemon/login-item-manager.ts
-- [ ] T015 [US1] Implement Accomplish defaults registration pattern in packages/agent-core/src/daemon/login-item-accomplish.ts
+- [ ] T015 [US1] Implement MyBoTeam defaults registration pattern in packages/agent-core/src/daemon/login-item-registration.ts
 - [ ] T016 [US1] Implement Service Management framework fallback in packages/agent-core/src/daemon/login-item-service-mgmt.ts
 - [ ] T017 [US1] Implement AutoStartService.enable() in packages/agent-core/src/services/auto-start-service.ts
 - [ ] T018 [US1] Add registration success/failure logging in packages/agent-core/src/daemon/login-item-logger.ts
@@ -85,7 +85,7 @@
 > **⚠️ TDD REQUIREMENT**: These tests MUST be written and verified to FAIL before any implementation tasks
 
 - [ ] T020 [P] [US2] Write unit tests for LoginItemManager.disable() in packages/agent-core/tests/unit/daemon/login-item-manager.test.ts
-- [ ] T021 [P] [US2] Write unit tests for unregistration logic in packages/agent-core/tests/unit/daemon/login-item-accomplish.test.ts
+- [ ] T021 [P] [US2] Write unit tests for unregistration logic in packages/agent-core/tests/unit/daemon/login-item-registration.test.ts
 - [ ] T022 [US2] Write integration test for disable flow in packages/agent-core/tests/integration/daemon/auto-start-disable.test.ts
 
 **✅ TDD Checkpoint**: All tests written and verified to FAIL - implementation can now begin
@@ -93,7 +93,7 @@
 ### Implementation for User Story 2
 
 - [ ] T023 [US2] Implement LoginItemManager.disable() method in packages/agent-core/src/daemon/login-item-manager.ts
-- [ ] T024 [US2] Implement unregistration logic for both methods in packages/agent-core/src/daemon/login-item-accomplish.ts
+- [ ] T024 [US2] Implement unregistration logic for both methods in packages/agent-core/src/daemon/login-item-registration.ts
 - [ ] T025 [US2] Implement AutoStartService.disable() in packages/agent-core/src/services/auto-start-service.ts
 - [ ] T026 [US2] Add unregistration logging in packages/agent-core/src/daemon/login-item-logger.ts
 
@@ -135,30 +135,30 @@
 
 ### Tests for Cross-Cutting Concerns (TDD)
 
-- [ ] T035 [P] Write test for error retry logic with manual setup instructions in packages/agent-core/tests/unit/daemon/login-item-retry.test.ts
+- [ ] T035 [P] Write test for error retry logic with manual setup instructions in packages/agent-core/tests/unit/daemon/login-item-errors.test.ts
 - [ ] T036 [P] Write test for duplicate registration prevention in packages/agent-core/tests/unit/daemon/login-item-manager.test.ts
-- [ ] T037 [P] Write test for path update logic on application relocation in packages/agent-core/tests/unit/daemon/login-item-path-update.test.ts
+- [ ] T037 [P] Write test for path update and reinstallation detection in packages/agent-core/tests/unit/daemon/login-item-manager.test.ts
 
 ### Implementation for Cross-Cutting Concerns
 
-- [ ] T038 [P] Add error retry logic with manual setup instructions in packages/agent-core/src/daemon/login-item-retry.ts
-- [ ] T039 Implement duplicate registration prevention in packages/agent-core/src/daemon/login-item-manager.ts (depends on T014; NOT parallel with T014 due to same file)
-- [ ] T040 [P] Add path update logic for application relocation in packages/agent-core/src/daemon/login-item-path-update.ts
+- [ ] T038 [P] Add error retry logic with manual setup instructions in packages/agent-core/src/daemon/login-item-errors.ts (consolidated)
+- [ ] T039 Implement duplicate registration prevention (path-based) in packages/agent-core/src/daemon/login-item-manager-registration.ts (depends on T014; NOT parallel with T014 due to same file)
+- [ ] T040 [P] Add path update and reinstallation detection in packages/agent-core/src/daemon/login-item-manager.ts (consolidated)
 
 ### UI Tasks for Settings
 
-- [ ] T041 [P] [US1] Write test for auto-start toggle in packages/agent-core/tests/unit/daemon/auto-start-toggle.test.ts
-- [ ] T042 [P] [US3] Write test for status display in packages/agent-core/tests/unit/daemon/auto-start-status-display.test.ts
-- [ ] T043 [US1] Implement auto-start toggle UI component in packages/agent-core/src/ui/auto-start-toggle.ts
-- [ ] T044 [US3] Implement auto-start status display component in packages/agent-core/src/ui/auto-start-status.ts
-- [ ] T045 [US1] Integrate toggle with AutoStartService.enable()/disable() in packages/agent-core/src/ui/auto-start-settings.ts
-- [ ] T046 [US3] Integrate status display with AutoStartService.getStatus() in packages/agent-core/src/ui/auto-start-settings.ts
+- [ ] T041 [P] [US1] Write test for auto-start settings view model in packages/agent-core/tests/unit/ui/auto-start-settings.test.ts
+- [ ] T042 [P] [US3] Write test for status display in packages/agent-core/tests/unit/ui/auto-start-settings.test.ts
+- [ ] T043 [US1] Implement auto-start settings view model builder in packages/agent-core/src/ui/auto-start-settings.ts
+- [ ] T044 [US3] Implement status display in packages/agent-core/src/ui/auto-start-settings.ts (consolidated)
+- [ ] T045 [US1] Integrate with AutoStartService.enable()/disable() in packages/agent-core/src/ui/auto-start-settings.ts (consolidated)
+- [ ] T046 [US3] Integrate with AutoStartService.getStatus() in packages/agent-core/src/ui/auto-start-settings.ts (consolidated)
 
 ### Validation & Documentation
 
-- [ ] T047 [US1] Run quickstart.md validation for User Story 1
-- [ ] T048 [US2] Run quickstart.md validation for User Story 2
-- [ ] T049 [US3] Run quickstart.md validation for User Story 3
+- [ ] T047 [US1] Validate quickstart.md documentation for User Story 1
+- [ ] T048 [US2] Validate quickstart.md documentation for User Story 2
+- [ ] T049 [US3] Validate quickstart.md documentation for User Story 3
 - [ ] T050 Update documentation in specs/007-login-item-auto-start/
 
 ---
@@ -202,18 +202,18 @@
 ```bash
 # Launch all tests for User Story 1 together (TDD - FIRST):
 Task: "Write unit tests for LoginItemManager.enable() in packages/agent-core/tests/unit/daemon/login-item-manager.test.ts"
-Task: "Write unit tests for Accomplish defaults registration in packages/agent-core/tests/unit/daemon/login-item-accomplish.test.ts"
+Task: "Write unit tests for MyBoTeam defaults registration in packages/agent-core/tests/unit/daemon/login-item-registration.test.ts"
 Task: "Write unit tests for Service Management fallback in packages/agent-core/tests/unit/daemon/login-item-service-mgmt.test.ts"
 Task: "Write unit tests for path validation in packages/agent-core/tests/unit/daemon/login-item-validator.test.ts"
 
 # After tests FAIL, launch implementation:
-Task: "Implement Accomplish defaults registration pattern in packages/agent-core/src/daemon/login-item-accomplish.ts"
+Task: "Implement MyBoTeam defaults registration pattern in packages/agent-core/src/daemon/login-item-registration.ts"
 Task: "Implement Service Management framework fallback in packages/agent-core/src/daemon/login-item-service-mgmt.ts"
 Task: "Implement path validation for daemon binary in packages/agent-core/src/daemon/login-item-validator.ts"
 
 # After implementation, launch UI tasks:
-Task: "Write test for auto-start toggle in packages/agent-core/tests/unit/daemon/auto-start-toggle.test.ts"
-Task: "Implement auto-start toggle UI component in packages/agent-core/src/ui/auto-start-toggle.ts"
+Task: "Write test for auto-start toggle in packages/agent-core/tests/unit/ui/auto-start-settings.test.ts"
+Task: "Implement auto-start toggle UI component in packages/agent-core/src/ui/auto-start-settings.ts"
 ```
 
 ---
