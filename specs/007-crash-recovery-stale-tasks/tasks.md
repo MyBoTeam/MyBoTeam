@@ -18,7 +18,7 @@
 
 - [x] T001 [SYNC] Verify existing PID lock manager interface in packages/agent-core/src/daemon/pid-lock.ts
 - [x] T002 [SYNC] Verify existing task CRUD module interface in packages/agent-core/src/storage/crud/task.ts
-- [x] T003 [P] [ASYNC] Review Accomplish reference implementation in /Users/mavishay/Projects/Accomplish/accomplish/apps/daemon/src/index.ts (lines 111-117, 305-347)
+- [x] T003 [P] [ASYNC] Review Accomplish reference implementation in Accomplish/apps/daemon/src/index.ts (lines 111-117, 305-347)
 
 ---
 

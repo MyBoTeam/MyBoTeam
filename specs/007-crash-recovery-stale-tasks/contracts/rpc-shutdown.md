@@ -35,9 +35,7 @@
   "id": "request-uuid",
   "result": {
     "success": true,
-    "tasksDrained": 5,
-    "tasksForceStopped": 0,
-    "duration": 12345
+    "drainTimeout": 30000
   }
 }
 ```
@@ -45,31 +43,40 @@
 | Field | Type | Description |
 |-------|------|-------------|
 | `success` | boolean | Whether shutdown was initiated |
-| `tasksDrained` | number | Number of tasks completed during drain |
-| `tasksForceStopped` | number | Number of tasks force-stopped after timeout |
-| `duration` | number | Total shutdown duration in milliseconds |
+| `drainTimeout` | number | Drain timeout in milliseconds |
 
-### Error Response
+### Idempotent Response (Already Shutting Down)
+
+When `daemon.shutdown` is called while shutdown is already in progress, the handler returns a success response:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "request-uuid",
+  "result": {
+    "success": true,
+    "message": "Shutdown already in progress"
+  }
+}
+```
+
+### Validation Error
+
+If `timeoutMs` is invalid (negative, non-finite, or not a number):
 
 ```json
 {
   "jsonrpc": "2.0",
   "id": "request-uuid",
   "error": {
-    "code": -32001,
-    "message": "Daemon is already shutting down",
+    "code": -32602,
+    "message": "Invalid params",
     "data": {
-      "isShuttingDown": true,
-      "shutdownStartTime": "2026-06-29T12:00:00.000Z"
+      "detail": "Invalid timeoutMs: must be a finite non-negative number"
     }
   }
 }
 ```
-
-| Error Code | Message | Description |
-|------------|---------|-------------|
-| -32001 | Daemon is already shutting down | Shutdown already in progress (idempotent) |
-| -32002 | Drain timeout exceeded | Shutdown completed but tasks were force-stopped |
 
 ### Behavior
 
@@ -119,9 +126,7 @@
   "result": {
     "isShuttingDown": false,
     "shutdownStartTime": null,
-    "drainTimeoutMs": 30000,
-    "tasksRunning": 2,
-    "tasksPending": 0
+    "drainTimeoutMs": 30000
   }
 }
 ```
@@ -131,8 +136,6 @@
 | `isShuttingDown` | boolean | Whether shutdown is in progress |
 | `shutdownStartTime` | string \| null | ISO 8601 timestamp when shutdown started |
 | `drainTimeoutMs` | number | Current drain timeout |
-| `tasksRunning` | number | Number of tasks currently running |
-| `tasksPending` | number | Number of tasks pending |
 
 ## Implementation Notes
 

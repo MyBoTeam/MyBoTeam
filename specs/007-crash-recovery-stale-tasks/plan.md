@@ -37,6 +37,19 @@ Implement crash recovery for the myboteam daemon by detecting stale running task
 
 **Gate Result**: PASS — No violations. Proceeding to Phase 0.
 
+## Source Reference Analysis
+
+**Source file**: `Accomplish/apps/daemon/src/index.ts`
+
+**Patterns to adopt**:
+- Shutdown RPC handler structure — idempotent check, immediate response, background drain
+- Drain loop — polling `setInterval` with configurable timeout and force-stop fallback
+- Signal handling — SIGTERM/SIGINT listeners trigger same shutdown path as drain completion
+
+**Patterns to avoid**:
+- Blocking shutdown — Accomplish pattern blocks event loop during drain; use non-blocking polling instead
+- Missing PID validation — Accomplish does not validate PID before acquiring stale lock; always validate via `isPidAlive()`
+
 ## Project Structure
 
 ### Documentation (this feature)

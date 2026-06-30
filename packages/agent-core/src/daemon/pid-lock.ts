@@ -118,7 +118,7 @@ export function detectStaleLock(dataDir: string): boolean {
   } catch {
     return true;
   }
-  if (typeof parsed.pid !== 'number') {
+  if (typeof parsed.pid !== 'number' || !Number.isFinite(parsed.pid) || parsed.pid <= 0 || !Number.isInteger(parsed.pid)) {
     return true;
   }
   return !isPidAlive(parsed.pid);

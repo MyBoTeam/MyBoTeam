@@ -25,7 +25,7 @@ On startup, the daemon:
 
 ### 2. Graceful Shutdown (RPC Method)
 
-**File**: `apps/daemon/src/rpc-server.ts`
+**File**: `apps/daemon/src/index.ts`
 
 **RPC Method**: `daemon.shutdown`
 
@@ -82,9 +82,7 @@ const response = await rpcClient.call('daemon.shutdown', {
 console.log(response);
 // {
 //   success: true,
-//   tasksDrained: 5,
-//   tasksForceStopped: 0,
-//   duration: 12345
+//   drainTimeout: 60000
 // }
 ```
 
@@ -96,9 +94,7 @@ console.log(status);
 // {
 //   isShuttingDown: false,
 //   shutdownStartTime: null,
-//   drainTimeoutMs: 30000,
-//   tasksRunning: 2,
-//   tasksPending: 0
+//   drainTimeoutMs: 30000
 // }
 ```
 

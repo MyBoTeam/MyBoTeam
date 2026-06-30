@@ -22,9 +22,18 @@ export function cleanupAgentProcesses(dataDir: string): number {
 
   try {
     const raw = readFileSync(pidFilePath, 'utf-8');
-    const pids = JSON.parse(raw) as number[];
+    const parsed = JSON.parse(raw);
 
-    for (const pid of pids) {
+    if (!Array.isArray(parsed)) {
+      log.warn('Agent PIDs file contained non-array data, skipping cleanup');
+      return cleaned;
+    }
+
+    for (const pid of parsed) {
+      if (typeof pid !== 'number' || !Number.isFinite(pid) || pid <= 0 || !Number.isInteger(pid)) {
+        log.warn(`Skipping invalid PID entry: ${pid}`);
+        continue;
+      }
       try {
         process.kill(pid, 'SIGTERM');
         cleaned++;

@@ -4,7 +4,7 @@
 
 **Created**: 2026-06-29
 
-**Status**: Draft
+**Status**: Verified
 
 **Input**: User description: "I want to address https://linear.app/maor-innovations-ltd/issue/MAO-149/m3-3-crash-recovery-pid-detection-stale-tasks"
 

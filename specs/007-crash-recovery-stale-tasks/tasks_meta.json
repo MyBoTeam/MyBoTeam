@@ -23,8 +23,8 @@
       "result_summary": "Verified existing task CRUD module with listTasks (status filter), updateTask, and other CRUD operations"
     },
     "T003": {
-      "description": "Review Accomplish reference implementation in /Users/mavishay/Projects/Accomplish/accomplish/apps/daemon/src/index.ts",
-      "files": "/Users/mavishay/Projects/Accomplish/accomplish/apps/daemon/src/index.ts",
+      "description": "Review Accomplish reference implementation in Accomplish/apps/daemon/src/index.ts",
+      "files": "Accomplish/apps/daemon/src/index.ts",
       "execution_mode": "ASYNC",
       "status": "completed",
       "agent_type": "general",

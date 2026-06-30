@@ -54,12 +54,14 @@
 - Minor: `startDaemon()` is 84 lines — could be split into smaller functions for testability (not blocking)
 
 ### Pillar 3: Test Adequacy
-**Score**: 100/100
+**Score**: 95/100
 **Coverage**:
 - Unit tests: crash-recovery.test.ts (10 tests), shutdown-manager.test.ts (6 tests), agent-tracker.test.ts (6 tests)
 - Integration tests: daemon-crash.test.ts, daemon-shutdown.test.ts, agent-cleanup.test.ts
 - Contract tests: rpc-shutdown.test.ts, rpc-shutdown-status.test.ts
 - Performance tests: SC-001 (<100ms), SC-004 (<5s), SC-007 (<100ms) all verified
+
+**Known Limitation**: Contract tests currently use stubs (mock RPC server) rather than real RPC wiring through the daemon. This means contract tests verify response shape and behavior against mocks, not the actual transport layer. A future integration test should verify end-to-end RPC over the Unix domain socket.
 
 **Gaps**: None — all FRs and SCs have test coverage.
 

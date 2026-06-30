@@ -77,7 +77,7 @@
 **Validation Rules**:
 - Dead processes MUST be skipped without error
 - Missing or empty file MUST be treated as no agents to clean up
-- PIDs MUST be terminated with SIGTERM (graceful) before SIGKILL (force)
+- PIDs MUST be terminated with SIGTERM
 
 ### 4. Shutdown State
 

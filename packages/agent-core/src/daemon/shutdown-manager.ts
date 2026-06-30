@@ -17,10 +17,18 @@ export interface ShutdownManager {
 export function createShutdownManager(
   drainTimeoutMs: number = parseInt(process.env.MYBOTEAM_DRAIN_TIMEOUT_MS || '30000', 10),
 ): ShutdownManager {
+  const defaultTimeout = 30000;
+  const validDrainTimeout =
+    typeof drainTimeoutMs === 'number' &&
+    Number.isFinite(drainTimeoutMs) &&
+    drainTimeoutMs >= 0
+      ? drainTimeoutMs
+      : defaultTimeout;
+
   const state: ShutdownState = {
     isShuttingDown: false,
     shutdownStartTime: null,
-    drainTimeoutMs,
+    drainTimeoutMs: validDrainTimeout,
   };
 
   return {

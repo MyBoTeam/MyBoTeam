@@ -30,15 +30,15 @@
 - Using OS signals (SIGUSR1) for crash detection — rejected: not cross-platform
 - Auto-resuming tasks — rejected: out of scope (M3-4 concern)
 
-**Source**: `/Users/mavishay/Projects/Accomplish/accomplish/apps/daemon/src/index.ts` (lines 111-117)
+**Source**: `Accomplish/apps/daemon/src/index.ts` (lines 111-117)
 
 **Pattern to adopt**:
 ```typescript
 // Check for stale lock on startup
-const staleLockDetected = await pidLock.detectStaleLock();
+const staleLockDetected = detectStaleLock(dataDir);
 if (staleLockDetected) {
   console.warn('Stale lock detected from previous daemon instance');
-  await pidLock.removeStaleLock();
+  removeStaleLock(dataDir);
 }
 
 // Mark stale running tasks as failed
@@ -67,30 +67,35 @@ for (const task of staleTasks) {
 - OS signal handling (SIGTERM/SIGINT) — rejected: not cross-platform (Windows)
 - Single-process shutdown — rejected: daemon must outlive Electron shell
 
-**Source**: `/Users/mavishay/Projects/Accomplish/accomplish/apps/daemon/src/index.ts` (lines 305-347)
+**Source**: `Accomplish/apps/daemon/src/index.ts` (lines 305-347)
 
 **Pattern to adopt**:
 ```typescript
-async function gracefulShutdown() {
+function gracefulShutdown() {
   if (isShuttingDown) return; // Idempotent
   isShuttingDown = true;
   
   // Stop accepting new tasks
   scheduler.stop();
   
-  // Drain active tasks with timeout
-  const drainTimeout = parseInt(process.env.MYBOTEAM_DRAIN_TIMEOUT_MS || '30000');
-  await drainActiveTasks(drainTimeout);
-  
-  // Force-stop remaining tasks
-  await forceStopRemainingTasks();
-  
-  // Terminate agent processes
-  await terminateAgentProcesses();
-  
-  // Release lock and exit
-  await pidLock.release();
-  process.exit(0);
+  // Drain active tasks with polling interval
+  const drainTimeout = parseInt(process.env.MYBOTEAM_DRAIN_TIMEOUT_MS || '30000', 10);
+  const deadline = Date.now() + drainTimeout;
+  const checkInterval = setInterval(() => {
+    const runningTasks = listTasks({ status: 'running' });
+    if (runningTasks.length === 0 || Date.now() >= deadline) {
+      clearInterval(checkInterval);
+      // Force-stop remaining tasks on timeout
+      for (const task of runningTasks) {
+        updateTask(task.id, { status: 'failed' });
+      }
+      // Terminate agent processes
+      agentTracker.cleanupProcesses();
+      // Release lock and exit
+      lockHandle.release();
+      process.exit(0);
+    }
+  }, 1000);
 }
 ```
 
@@ -111,12 +116,12 @@ async function gracefulShutdown() {
 **Interface**:
 ```typescript
 interface PidLockManager {
-  acquire(): Promise<boolean>;
-  release(): Promise<void>;
-  isLocked(): Promise<boolean>;
-  isStale(): Promise<boolean>;
-  detectStaleLock(): Promise<boolean>; // NEW
-  removeStaleLock(): Promise<void>; // NEW
+  acquire(): boolean;
+  release(): void;
+  isLocked(): boolean;
+  isStale(): boolean;
+  detectStaleLock(): boolean; // NEW — synchronous
+  removeStaleLock(): void; // NEW — synchronous
 }
 ```
 
@@ -136,7 +141,7 @@ interface PidLockManager {
 
 **Pattern**:
 ```typescript
-const DRAIN_TIMEOUT_MS = parseInt(process.env.MYBOTEAM_DRAIN_TIMEOUT_MS || '30000');
+const DRAIN_TIMEOUT_MS = parseInt(process.env.MYBOTEAM_DRAIN_TIMEOUT_MS || '30000', 10);
 ```
 
 ### 5. Cross-Platform Shutdown

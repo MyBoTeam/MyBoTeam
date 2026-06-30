@@ -46,7 +46,6 @@ export async function startDaemon(db: Database.Database, dataDir?: string): Prom
 
   // FR-005: Register daemon.shutdown RPC method
   rpc.registerMethod('daemon.shutdown', (params: unknown) => {
-    const { timeoutMs } = (params || {}) as { timeoutMs?: number };
     const { isShuttingDown } = shutdownManager.getState();
     if (isShuttingDown) {
       // FR-012: Idempotent shutdown handling
@@ -61,7 +60,16 @@ export async function startDaemon(db: Database.Database, dataDir?: string): Prom
     // FR-006: Stop scheduler immediately
     scheduler.stop();
 
-    const drainTimeout = timeoutMs || shutdownManager.getDrainTimeout();
+    const raw = (params || {}) as { timeoutMs?: unknown };
+    let drainTimeout: number;
+    if (raw.timeoutMs !== undefined && raw.timeoutMs !== null) {
+      if (typeof raw.timeoutMs !== 'number' || !Number.isFinite(raw.timeoutMs) || raw.timeoutMs < 0) {
+        return { success: false, error: 'Invalid timeoutMs: must be a finite non-negative number' };
+      }
+      drainTimeout = raw.timeoutMs;
+    } else {
+      drainTimeout = shutdownManager.getDrainTimeout();
+    }
     log.info(`Shutdown initiated, draining for up to ${drainTimeout}ms`);
 
     // G2/G5: Drain loop with proper cleanup
@@ -112,14 +120,19 @@ export function markStaleTasksAsFailed(db: Database.Database): void {
 
   const runningTasks = listTasks(db, logger, { status: 'running' });
 
-  for (const task of runningTasks) {
-    logger.warn(`Crash recovery: marking stale task ${task.id} as failed`);
-    updateTask(db, logger, task.id, { status: 'failed' });
+  if (runningTasks.length === 0) {
+    return;
   }
 
-  if (runningTasks.length > 0) {
-    logger.warn(`Crash recovery: marked ${runningTasks.length} stale task(s) as failed`);
-  }
+  const tx = db.transaction(() => {
+    for (const task of runningTasks) {
+      logger.warn(`Crash recovery: marking stale task ${task.id} as failed`);
+      updateTask(db, logger, task.id, { status: 'failed' });
+    }
+  });
+  tx();
+
+  logger.warn(`Crash recovery: marked ${runningTasks.length} stale task(s) as failed`);
 }
 
 /**
@@ -171,9 +184,13 @@ function performDrain(
     log.info(`Draining: ${runningTasks.length} task(s) still running`);
   }, DRAIN_POLL_INTERVAL_MS);
 
-  // Ensure interval is cleaned up on external signals
-  process.on('SIGTERM', cleanup);
-  process.on('SIGINT', cleanup);
+  // External signals trigger the same shutdown path as drain completion
+  const onSignal = () => {
+    cleanup();
+    gracefulExit(agentTracker, lockHandle);
+  };
+  process.on('SIGTERM', onSignal);
+  process.on('SIGINT', onSignal);
 }
 
 /**

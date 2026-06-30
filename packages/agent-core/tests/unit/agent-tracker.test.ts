@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -50,8 +50,7 @@ describe('Agent Tracker', () => {
 
     it('should return 0 when PID file is empty', () => {
       const pidFilePath = join(testDir, 'agent.pids');
-      const fs = require('node:fs');
-      fs.writeFileSync(pidFilePath, '[]');
+      writeFileSync(pidFilePath, '[]');
 
       const cleaned = agentTracker.cleanupProcesses();
       expect(cleaned).toBe(0);
@@ -59,8 +58,7 @@ describe('Agent Tracker', () => {
 
     it('should skip dead processes without error', () => {
       const pidFilePath = join(testDir, 'agent.pids');
-      const fs = require('node:fs');
-      fs.writeFileSync(pidFilePath, JSON.stringify([999999999]));
+      writeFileSync(pidFilePath, JSON.stringify([999999999]));
 
       const cleaned = agentTracker.cleanupProcesses();
       expect(cleaned).toBe(0);
