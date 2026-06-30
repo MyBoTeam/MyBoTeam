@@ -1,11 +1,10 @@
 <!--
   Sync Impact Report
   ==================
-  Version change: 1.2.0 → 1.4.0
-  Bump rationale: New principles added — Git Hooks Are Non-Negotiable, Linter/Formatter Configs Are Protected (MINOR).
+  Version change: 1.4.0 → 1.5.0
+  Bump rationale: New principle added — Test Location (MINOR).
   Modified principles:
-    - Added "VIII. Git Hooks Are Non-Negotiable" — never bypass git hooks
-    - Added "IX. Linter/Formatter Configs Are Protected" — never modify tooling configs
+    - Added "X. Test Location" — tests colocated with code
   Added sections: None (new principle under Core Principles).
   Removed sections: None.
   Templates requiring updates:
@@ -113,6 +112,14 @@ Each file MUST contain at most one top-level class, one top-level function, or
 one UI component. If a file would naturally hold more than one, split each into
 its own file. This keeps modules focused, testable, and easy to navigate.
 
+### X. Test Location
+
+Tests MUST be colocated with the code they test. Never create a root-level
+`tests/` directory. Unit tests go in `packages/*/tests/unit/`, contract tests in
+`packages/*/tests/contract/`, integration tests in `apps/*/tests/integration/`.
+This ensures tests are discoverable, maintainable, and co-located with the code
+they validate.
+
 ## Development Workflow
 
 The project follows a gated Agentic SDLC cycle:
@@ -172,4 +179,4 @@ with justification.
 principles (Documentation Matters, Immutability, Stateless Services, Memory as
 the Harness Core) that supplement — but do not override — this document.
 
-**Version**: 1.4.0 | **Ratified**: 2026-06-24 | **Last Amended**: 2026-06-28
+**Version**: 1.5.0 | **Ratified**: 2026-06-24 | **Last Amended**: 2026-06-30
