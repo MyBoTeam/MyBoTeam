@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { AgentStorage, NotFoundError } from '../../../src/storage/agent-storage.js';
+import { AgentStorage } from '../../../src/storage/agent-storage.js';
 
 describe('DocumentVersion CRUD', () => {
   let storage: AgentStorage;
@@ -29,7 +29,7 @@ describe('DocumentVersion CRUD', () => {
       model: 'gpt-4',
       version: 1,
     });
-    expect(storage.getDocumentVersion(d.id)!.id).toBe(d.id);
+    expect(storage.getDocumentVersion(d.id)?.id).toBe(d.id);
   });
 
   it('should list versions by file path descending', () => {
@@ -109,8 +109,8 @@ describe('Seed Data', () => {
     const storage = new AgentStorage({ mode: 'test' });
     storage.seedProductionData();
     const secretary = storage.getAgentBySlug('secretary');
-    expect(secretary!.provider).toBe('anthropic');
-    expect(secretary!.model).toBe('claude-sonnet-4-20250514');
+    expect(secretary?.provider).toBe('anthropic');
+    expect(secretary?.model).toBe('claude-sonnet-4-20250514');
     storage.close();
   });
 
@@ -118,8 +118,8 @@ describe('Seed Data', () => {
     const storage = new AgentStorage({ mode: 'test' });
     storage.seedProductionData();
     const accountant = storage.getAgentBySlug('accountant');
-    expect(accountant!.provider).toBe('openai');
-    expect(accountant!.model).toBe('gpt-4o');
+    expect(accountant?.provider).toBe('openai');
+    expect(accountant?.model).toBe('gpt-4o');
     storage.close();
   });
 });

@@ -43,7 +43,7 @@ describe('MemoryEntry CRUD', () => {
 
   it('should get by id', () => {
     const m = storage.createMemoryEntry({ agent_id: agentId, category: 'fact', content: 'test' });
-    expect(storage.getMemoryEntry(m.id)!.id).toBe(m.id);
+    expect(storage.getMemoryEntry(m.id)?.id).toBe(m.id);
   });
 
   it('should list with filters', () => {

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { AgentStorage, NotFoundError } from '../../../src/storage/agent-storage.js';
+import { AgentStorage } from '../../../src/storage/agent-storage.js';
 
 describe('McpServer CRUD', () => {
   let storage: AgentStorage;
@@ -28,8 +28,8 @@ describe('McpServer CRUD', () => {
       command: 'node',
       args: ['server.js'],
     });
-    expect(storage.getMcpServer(s.id)!.name).toBe('test-server');
-    expect(storage.getMcpServerByName('test-server')!.id).toBe(s.id);
+    expect(storage.getMcpServer(s.id)?.name).toBe('test-server');
+    expect(storage.getMcpServerByName('test-server')?.id).toBe(s.id);
   });
 
   it('should get null for non-existent', () => {

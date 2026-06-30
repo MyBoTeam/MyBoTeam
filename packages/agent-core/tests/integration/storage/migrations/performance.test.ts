@@ -63,7 +63,7 @@ describe('Migration Performance Tests', () => {
       // Act: Apply all migrations and measure time
       const startTime = Date.now();
       for (const migration of loadedMigrations) {
-        await manager.applyMigration(migration!);
+        await manager.applyMigration(migration as NonNullable<typeof migration>);
       }
       const duration = Date.now() - startTime;
 
@@ -108,11 +108,13 @@ describe('Migration Performance Tests', () => {
 
       // Load and apply migration
       const migration = manager.loadMigrationFromJson(JSON.stringify(migrationJson));
-      await manager.applyMigration(migration!);
+      await manager.applyMigration(migration as NonNullable<typeof migration>);
 
       // Act: Rollback migration and measure time
       const startTime = Date.now();
-      const rollbackResult = await manager.rollbackMigration(migration!);
+      const rollbackResult = await manager.rollbackMigration(
+        migration as NonNullable<typeof migration>,
+      );
       const duration = Date.now() - startTime;
 
       // Assert: Rollback successful and under 10 seconds
@@ -157,7 +159,7 @@ describe('Migration Performance Tests', () => {
       // Act: Apply migration 100 times
       const results = [];
       for (let i = 0; i < 100; i++) {
-        const result = await manager.applyMigration(migration!);
+        const result = await manager.applyMigration(migration as NonNullable<typeof migration>);
         results.push(result);
       }
 

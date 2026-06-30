@@ -25,7 +25,7 @@ describe('Conversation CRUD', () => {
 
   it('should get a conversation by id', () => {
     const created = storage.createConversation({ agent_id: agentId, title: 'get-me' });
-    expect(storage.getConversation(created.id)!.id).toBe(created.id);
+    expect(storage.getConversation(created.id)?.id).toBe(created.id);
   });
 
   it('should return null for non-existent conversation', () => {
@@ -86,7 +86,7 @@ describe('Message CRUD', () => {
 
   it('should get a message by id', () => {
     const m = storage.createMessage({ conversation_id: convId, role: 'assistant', content: 'hi' });
-    expect(storage.getMessage(m.id)!.id).toBe(m.id);
+    expect(storage.getMessage(m.id)?.id).toBe(m.id);
   });
 
   it('should list messages ordered by creation', () => {
