@@ -2,16 +2,15 @@ import {
   acquirePidLock,
   createAgentTracker,
   createChildLogger,
+  createShutdownManager,
   DaemonRpcServer,
   detectStaleLock,
-  listTasks,
   removeStaleLock,
-  updateTask,
-} from '@myboteam/agent-core';
+} from '@myboteam/agent-core/daemon';
 import type Database from 'better-sqlite3';
+import { listTasks, updateTask } from '@myboteam/agent-core';
 import { getDataDirectory } from './data-directory.js';
 import { createScheduler } from './scheduler.js';
-import { createShutdownManager } from './shutdown-manager.js';
 
 const log = createChildLogger('daemon');
 
@@ -46,7 +45,8 @@ export async function startDaemon(db: Database.Database, dataDir?: string): Prom
   const rpc = new DaemonRpcServer();
 
   // FR-005: Register daemon.shutdown RPC method
-  rpc.registerMethod('daemon.shutdown', (params: { timeoutMs?: number }) => {
+  rpc.registerMethod('daemon.shutdown', (params: unknown) => {
+    const { timeoutMs } = (params || {}) as { timeoutMs?: number };
     const { isShuttingDown } = shutdownManager.getState();
     if (isShuttingDown) {
       // FR-012: Idempotent shutdown handling
@@ -61,7 +61,7 @@ export async function startDaemon(db: Database.Database, dataDir?: string): Prom
     // FR-006: Stop scheduler immediately
     scheduler.stop();
 
-    const drainTimeout = params?.timeoutMs || shutdownManager.getDrainTimeout();
+    const drainTimeout = timeoutMs || shutdownManager.getDrainTimeout();
     log.info(`Shutdown initiated, draining for up to ${drainTimeout}ms`);
 
     // G2/G5: Drain loop with proper cleanup
@@ -73,8 +73,9 @@ export async function startDaemon(db: Database.Database, dataDir?: string): Prom
   // FR-007: Register task submission with shutdown rejection.
   // Note: Actual task submission logic is delegated to the caller.
   // This method only handles shutdown-state rejection per FR-007.
-  rpc.registerMethod('task.submit', (params: { agent_id: string; title: string }) => {
-    if (!params?.agent_id || !params?.title) {
+  rpc.registerMethod('task.submit', (params: unknown) => {
+    const { agent_id, title } = (params || {}) as { agent_id?: string; title?: string };
+    if (!agent_id || !title) {
       return { success: false, error: 'Missing required params: agent_id, title' };
     }
 

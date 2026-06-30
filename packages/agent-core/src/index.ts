@@ -38,3 +38,4 @@ export {
   seedTestAgentAssignments,
   seedTestMcpServers,
 } from './storage/seeder.js';
+export { listTasks, updateTask } from './storage/crud/task.js';

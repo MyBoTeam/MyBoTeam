@@ -1,4 +1,4 @@
-import { createChildLogger } from '@myboteam/agent-core';
+import { createChildLogger } from '@myboteam/agent-core/daemon';
 
 const log = createChildLogger('scheduler');
 
