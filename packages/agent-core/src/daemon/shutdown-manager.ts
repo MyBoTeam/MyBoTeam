@@ -19,9 +19,7 @@ export function createShutdownManager(
 ): ShutdownManager {
   const defaultTimeout = 30000;
   const validDrainTimeout =
-    typeof drainTimeoutMs === 'number' &&
-    Number.isFinite(drainTimeoutMs) &&
-    drainTimeoutMs >= 0
+    typeof drainTimeoutMs === 'number' && Number.isFinite(drainTimeoutMs) && drainTimeoutMs >= 0
       ? drainTimeoutMs
       : defaultTimeout;
 
