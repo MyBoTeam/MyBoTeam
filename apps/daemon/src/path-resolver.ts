@@ -1,6 +1,6 @@
 import * as os from 'node:os';
 import * as path from 'node:path';
-import { getPidFilePath } from '../../../packages/agent-core/src/daemon/socket-path.js';
+import { getPidFilePath } from '@myboteam/agent-core/daemon';
 
 export class PathResolver {
   private dataDir: string;

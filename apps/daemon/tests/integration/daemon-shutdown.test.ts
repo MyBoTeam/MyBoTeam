@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createShutdownManager } from '../../../../packages/agent-core/src/daemon/shutdown-manager.js';
+import { createShutdownManager } from '@myboteam/agent-core/daemon';
 
 describe('Graceful Shutdown Integration', () => {
   it('should handle shutdown sequence correctly', () => {
