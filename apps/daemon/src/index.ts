@@ -1,3 +1,4 @@
+import { listTasks, updateTask } from '@myboteam/agent-core';
 import {
   acquirePidLock,
   createAgentTracker,
@@ -8,7 +9,6 @@ import {
   removeStaleLock,
 } from '@myboteam/agent-core/daemon';
 import type Database from 'better-sqlite3';
-import { listTasks, updateTask } from '@myboteam/agent-core';
 import { getDataDirectory } from './data-directory.js';
 import { createScheduler } from './scheduler.js';
 
