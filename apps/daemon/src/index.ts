@@ -63,7 +63,11 @@ export async function startDaemon(db: Database.Database, dataDir?: string): Prom
     const raw = (params || {}) as { timeoutMs?: unknown };
     let drainTimeout: number;
     if (raw.timeoutMs !== undefined && raw.timeoutMs !== null) {
-      if (typeof raw.timeoutMs !== 'number' || !Number.isFinite(raw.timeoutMs) || raw.timeoutMs < 0) {
+      if (
+        typeof raw.timeoutMs !== 'number' ||
+        !Number.isFinite(raw.timeoutMs) ||
+        raw.timeoutMs < 0
+      ) {
         return { success: false, error: 'Invalid timeoutMs: must be a finite non-negative number' };
       }
       drainTimeout = raw.timeoutMs;
