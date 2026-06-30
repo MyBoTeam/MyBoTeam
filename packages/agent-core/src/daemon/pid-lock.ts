@@ -91,6 +91,51 @@ function cleanupTempFile(tmpPath: string): void {
   } catch {}
 }
 
+/**
+ * Detect if the PID lock file is stale (from a crashed daemon).
+ *
+ * Returns `true` if a stale lock is detected (lock file exists but the owning
+ * process is dead, or the file is empty/corrupted). Returns `false` if no
+ * lock file exists or if the lock is held by a live process.
+ *
+ * @param dataDir - The data directory containing the daemon.pid lock file
+ * @returns `true` if a stale lock should be removed, `false` otherwise
+ */
+export function detectStaleLock(dataDir: string): boolean {
+  const resolvedPath = getPidFilePath(dataDir);
+  let raw: string;
+  try {
+    raw = readFileSync(resolvedPath, 'utf-8');
+  } catch {
+    return false;
+  }
+  if (!raw.trim()) {
+    return true;
+  }
+  let parsed: Partial<PidLockPayload>;
+  try {
+    parsed = JSON.parse(raw) as Partial<PidLockPayload>;
+  } catch {
+    return true;
+  }
+  if (
+    typeof parsed.pid !== 'number' ||
+    !Number.isFinite(parsed.pid) ||
+    parsed.pid <= 0 ||
+    !Number.isInteger(parsed.pid)
+  ) {
+    return true;
+  }
+  return !isPidAlive(parsed.pid);
+}
+
+export function removeStaleLock(dataDir: string): void {
+  const resolvedPath = getPidFilePath(dataDir);
+  try {
+    unlinkSync(resolvedPath);
+  } catch {}
+}
+
 export function acquirePidLock(dataDir: string): PidLockHandle {
   const resolvedPath = getPidFilePath(dataDir);
   const dir = dirname(resolvedPath);
@@ -152,37 +197,4 @@ export function acquirePidLock(dataDir: string): PidLockHandle {
   }
 
   throw new PidLockError(`Failed to acquire PID lock after removing stale lock at ${resolvedPath}`);
-}
-
-export function saveAgentPids(dataDir: string, pids: number[]): void {
-  const pidFilePath = join(dataDir, 'agent.pids');
-  const dir = dirname(pidFilePath);
-  mkdirSync(dir, { recursive: true });
-  const fd = openSync(pidFilePath, 'w', 0o600);
-  try {
-    writeSync(fd, JSON.stringify(pids), 0, 'utf-8');
-  } finally {
-    closeSync(fd);
-  }
-}
-
-export function cleanupAgentProcesses(dataDir: string): number {
-  const pidFilePath = join(dataDir, 'agent.pids');
-  let cleaned = 0;
-
-  try {
-    const raw = readFileSync(pidFilePath, 'utf-8');
-    const pids = JSON.parse(raw) as number[];
-
-    for (const pid of pids) {
-      try {
-        process.kill(pid, 'SIGTERM');
-        cleaned++;
-      } catch {}
-    }
-
-    unlinkSync(pidFilePath);
-  } catch {}
-
-  return cleaned;
 }
