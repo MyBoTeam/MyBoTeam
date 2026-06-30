@@ -4,8 +4,8 @@
  */
 
 import { beforeEach, describe, expect, it } from 'vitest';
-import { LoginItemRegistration } from '../../src/daemon/login-item-registration.js';
-import { AutoStartMethod } from '../../src/types/login-item.js';
+import { LoginItemRegistration } from '../../../src/daemon/login-item-registration.js';
+import { AutoStartMethod } from '../../../src/types/login-item.js';
 
 describe('LoginItemRegistration', () => {
   let registration: LoginItemRegistration;

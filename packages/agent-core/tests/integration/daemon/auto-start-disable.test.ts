@@ -4,12 +4,14 @@
  */
 
 import { beforeEach, describe, expect, it } from 'vitest';
-import { AutoStartService } from '../../src/services/auto-start-service.js';
+import { AutoStartService } from '../../../src/services/auto-start-service.js';
+import { LoginItemPersistence } from '../../../src/daemon/login-item-persistence.js';
 
 describe('Auto-Start Disable Integration', () => {
   let service: AutoStartService;
 
   beforeEach(() => {
+    new LoginItemPersistence().clear();
     service = new AutoStartService();
   });
 

@@ -4,14 +4,16 @@
  */
 
 import { beforeEach, describe, expect, it } from 'vitest';
-import { LoginItemError, RetryHandler } from '../../src/daemon/login-item-errors.js';
-import { LoginItemManager } from '../../src/daemon/login-item-manager.js';
-import { LoginItemErrorCode } from '../../src/types/login-item.js';
+import { LoginItemError, RetryHandler } from '../../../src/daemon/login-item-errors.js';
+import { LoginItemManager } from '../../../src/daemon/login-item-manager.js';
+import { LoginItemPersistence } from '../../../src/daemon/login-item-persistence.js';
+import { LoginItemErrorCode } from '../../../src/types/login-item.js';
 
 describe('Edge Case Error Scenarios', () => {
   let manager: LoginItemManager;
 
   beforeEach(() => {
+    new LoginItemPersistence().clear();
     manager = new LoginItemManager();
   });
 

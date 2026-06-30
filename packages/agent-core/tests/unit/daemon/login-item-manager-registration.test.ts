@@ -4,18 +4,18 @@
  */
 
 import { describe, expect, it, vi } from 'vitest';
-import { RetryHandler } from '../../src/daemon/login-item-errors.js';
-import type { LoginItemLogger } from '../../src/daemon/login-item-logger.js';
+import { RetryHandler } from '../../../src/daemon/login-item-errors.js';
+import type { LoginItemLogger } from '../../../src/daemon/login-item-logger.js';
 import {
   handleDisableError,
   handleEnableError,
   performRegistration,
   updatePersistedState,
-} from '../../src/daemon/login-item-manager-registration.js';
-import type { LoginItemPersistence } from '../../src/daemon/login-item-persistence.js';
-import { LoginItemStateMachine } from '../../src/daemon/login-item-state.js';
-import type { AutoStartPreference, EnableOptions, LoginItem } from '../../src/types/login-item.js';
-import { AutoStartMethod, LoginItemErrorCode, LoginItemState } from '../../src/types/login-item.js';
+} from '../../../src/daemon/login-item-manager-registration.js';
+import type { LoginItemPersistence } from '../../../src/daemon/login-item-persistence.js';
+import { LoginItemStateMachine } from '../../../src/daemon/login-item-state.js';
+import type { AutoStartPreference, EnableOptions, LoginItem } from '../../../src/types/login-item.js';
+import { AutoStartMethod, LoginItemErrorCode, LoginItemState } from '../../../src/types/login-item.js';
 
 function createMockLogger() {
   return {
@@ -45,12 +45,14 @@ describe('handleEnableError', () => {
       AutoStartMethod.MyBoTeamDefaults,
       'Invalid path',
       LoginItemErrorCode.INVALID_PATH,
+      Date.now(),
       logger,
     );
     expect(result.success).toBe(false);
     expect(result.errorCode).toBe(LoginItemErrorCode.INVALID_PATH);
     expect(result.errorMessage).toBe('Invalid path');
     expect(result.method).toBe(AutoStartMethod.MyBoTeamDefaults);
+    expect(result.durationMs).toBeDefined();
     expect(logger.logError).toHaveBeenCalled();
   });
 
@@ -61,6 +63,7 @@ describe('handleEnableError', () => {
       undefined,
       'Duplicate',
       LoginItemErrorCode.DUPLICATE_REGISTRATION,
+      Date.now(),
       logger,
     );
     expect(result.method).toBe(AutoStartMethod.MyBoTeamDefaults);

@@ -3,14 +3,31 @@
  * Feature: M3.4 Login Item Auto-Start
  */
 
-import { beforeEach, describe, expect, it } from 'vitest';
-import { LoginItemManager } from '../../src/daemon/login-item-manager.js';
-import { AutoStartMethod, LoginItemErrorCode, LoginItemState } from '../../src/types/login-item.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { LoginItemManager } from '../../../src/daemon/login-item-manager.js';
+import { LoginItemPersistence } from '../../../src/daemon/login-item-persistence.js';
+import { AutoStartMethod, LoginItemErrorCode, LoginItemState } from '../../../src/types/login-item.js';
+
+vi.mock('../../../src/daemon/login-item-system-query.js', () => ({
+  querySystemLoginItem: vi.fn().mockResolvedValue({
+    registered: true,
+    method: 'MyBoTeamDefaults',
+    path: '/usr/local/bin/daemon',
+  }),
+  buildStatusFromSystemQuery: vi.fn().mockReturnValue({
+    enabled: true,
+    state: 'Enabled',
+    method: 'MyBoTeamDefaults',
+    synced: true,
+    lastChecked: new Date().toISOString(),
+  }),
+}));
 
 describe('LoginItemManager', () => {
   let manager: LoginItemManager;
 
   beforeEach(() => {
+    new LoginItemPersistence().clear();
     manager = new LoginItemManager();
   });
 

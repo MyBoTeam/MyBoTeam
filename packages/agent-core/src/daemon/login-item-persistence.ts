@@ -17,17 +17,17 @@ const STORAGE_KEYS = {
  * Persistence manager for auto-start preferences and login item state
  */
 export class LoginItemPersistence {
-  private storage: Map<string, string>;
+  private static storage: Map<string, string> = new Map();
 
   constructor() {
-    this.storage = new Map();
+    // Uses shared static storage so state persists across instances (simulating UserDefaults)
   }
 
   /**
    * Get auto-start preference from storage
    */
   getAutoStartPreference(): AutoStartPreference | null {
-    const data = this.storage.get(STORAGE_KEYS.AUTO_START_PREFERENCE);
+    const data = LoginItemPersistence.storage.get(STORAGE_KEYS.AUTO_START_PREFERENCE);
     if (!data) {
       return null;
     }
@@ -42,14 +42,14 @@ export class LoginItemPersistence {
    * Save auto-start preference to storage
    */
   saveAutoStartPreference(preference: AutoStartPreference): void {
-    this.storage.set(STORAGE_KEYS.AUTO_START_PREFERENCE, JSON.stringify(preference));
+    LoginItemPersistence.storage.set(STORAGE_KEYS.AUTO_START_PREFERENCE, JSON.stringify(preference));
   }
 
   /**
    * Get login item from storage
    */
   getLoginItem(): LoginItem | null {
-    const data = this.storage.get(STORAGE_KEYS.LOGIN_ITEM);
+    const data = LoginItemPersistence.storage.get(STORAGE_KEYS.LOGIN_ITEM);
     if (!data) {
       return null;
     }
@@ -64,20 +64,20 @@ export class LoginItemPersistence {
    * Save login item to storage
    */
   saveLoginItem(item: LoginItem): void {
-    this.storage.set(STORAGE_KEYS.LOGIN_ITEM, JSON.stringify(item));
+    LoginItemPersistence.storage.set(STORAGE_KEYS.LOGIN_ITEM, JSON.stringify(item));
   }
 
   /**
    * Remove login item from storage
    */
   removeLoginItem(): void {
-    this.storage.delete(STORAGE_KEYS.LOGIN_ITEM);
+    LoginItemPersistence.storage.delete(STORAGE_KEYS.LOGIN_ITEM);
   }
 
   /**
    * Clear all stored data
    */
   clear(): void {
-    this.storage.clear();
+    LoginItemPersistence.storage.clear();
   }
 }

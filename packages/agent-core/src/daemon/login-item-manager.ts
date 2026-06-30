@@ -24,7 +24,7 @@ import {
 import { LoginItemPersistence } from './login-item-persistence.js';
 import { LoginItemStateMachine } from './login-item-state.js';
 import { buildStatusFromSystemQuery, querySystemLoginItem } from './login-item-system-query.js';
-import { validatePath } from './login-item-validator.js';
+import { validateLabel, validatePath } from './login-item-validator.js';
 
 /**
  * Login item manager for handling registration and management
@@ -58,6 +58,19 @@ export class LoginItemManager {
         options.method,
         pathValidation.error ?? 'Invalid path',
         LoginItemErrorCode.INVALID_PATH,
+        startTime,
+        this.logger,
+      );
+    }
+
+    const labelValidation = validateLabel(options.label);
+    if (!labelValidation.valid) {
+      return handleEnableError(
+        options.label,
+        options.method,
+        labelValidation.error ?? 'Invalid label',
+        LoginItemErrorCode.INVALID_LABEL,
+        startTime,
         this.logger,
       );
     }
@@ -69,6 +82,7 @@ export class LoginItemManager {
         options.method,
         'Login item already registered for this path',
         LoginItemErrorCode.DUPLICATE_REGISTRATION,
+        startTime,
         this.logger,
       );
     }
@@ -86,12 +100,13 @@ export class LoginItemManager {
         return {
           success: true,
           method: options.method || AutoStartMethod.MyBoTeamDefaults,
+          durationMs: Date.now() - startTime,
           timestamp: new Date().toISOString(),
         };
       }
     }
 
-    return performRegistration(
+    const result = await performRegistration(
       options,
       startTime,
       this.stateMachine,
@@ -99,6 +114,10 @@ export class LoginItemManager {
       this.logger,
       this.retryHandler,
     );
+    if (result.success) {
+      this.loadPersistedState();
+    }
+    return result;
   }
 
   /**

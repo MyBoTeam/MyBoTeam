@@ -4,8 +4,8 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { LoginItemEvent, LoginItemLogger } from '../../src/daemon/login-item-logger.js';
-import { AutoStartMethod, LoginItemState } from '../../src/types/login-item.js';
+import { LoginItemEvent, LoginItemLogger } from '../../../src/daemon/login-item-logger.js';
+import { AutoStartMethod, LoginItemState } from '../../../src/types/login-item.js';
 
 describe('LoginItemLogger', () => {
   it('logs registration event', () => {

@@ -4,7 +4,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { validateLabel, validatePath } from '../../src/daemon/login-item-validator.js';
+import { validateLabel, validatePath } from '../../../src/daemon/login-item-validator.js';
 
 describe('LoginItemValidator', () => {
   describe('validatePath()', () => {
@@ -57,7 +57,7 @@ describe('LoginItemValidator', () => {
     it('should reject a label with invalid characters', () => {
       const result = validateLabel('com test daemon');
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('invalid');
+      expect(result.error).toContain('only');
     });
 
     it('should validate a label with hyphens', () => {

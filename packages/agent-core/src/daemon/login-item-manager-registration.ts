@@ -25,6 +25,7 @@ export function handleEnableError(
   method: AutoStartMethod | undefined,
   message: string,
   code: LoginItemErrorCode,
+  startTime: number,
   logger: LoginItemLogger,
 ): RegistrationResult {
   const error = new LoginItemError(message, code);
@@ -34,6 +35,7 @@ export function handleEnableError(
     method: method || AutoStartMethod.MyBoTeamDefaults,
     errorCode: error.code,
     errorMessage: error.message,
+    durationMs: Date.now() - startTime,
     timestamp: new Date().toISOString(),
   };
 }
@@ -79,11 +81,15 @@ export async function performRegistration(
       return {
         success: true,
         method: options.method || AutoStartMethod.MyBoTeamDefaults,
+        durationMs: Date.now() - startTime,
         timestamp: new Date().toISOString(),
       };
     });
   } catch (error) {
-    const loginItemError = createLoginItemError(error, LoginItemErrorCode.REGISTRATION_FAILED);
+    const message = error instanceof Error ? error.message : String(error);
+    const loginItemError = new LoginItemError(message, LoginItemErrorCode.REGISTRATION_FAILED, {
+      originalError: error,
+    });
     logger.logError({
       label: options.label,
       errorCode: loginItemError.code,
@@ -95,6 +101,7 @@ export async function performRegistration(
       method: options.method || AutoStartMethod.MyBoTeamDefaults,
       errorCode: loginItemError.code,
       errorMessage: loginItemError.message,
+      durationMs: Date.now() - startTime,
       timestamp: new Date().toISOString(),
     };
   }

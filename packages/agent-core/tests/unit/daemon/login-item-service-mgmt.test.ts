@@ -4,8 +4,8 @@
  */
 
 import { beforeEach, describe, expect, it } from 'vitest';
-import { LoginItemServiceMgmt } from '../../src/daemon/login-item-service-mgmt.js';
-import { AutoStartMethod } from '../../src/types/login-item.js';
+import { LoginItemServiceMgmt } from '../../../src/daemon/login-item-service-mgmt.js';
+import { AutoStartMethod } from '../../../src/types/login-item.js';
 
 describe('LoginItemServiceMgmt', () => {
   let serviceMgmt: LoginItemServiceMgmt;
