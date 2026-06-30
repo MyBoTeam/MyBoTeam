@@ -1,12 +1,8 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { acquirePidLock, detectStaleLock, removeStaleLock } from '@myboteam/agent-core/daemon';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import {
-  acquirePidLock,
-  detectStaleLock,
-  removeStaleLock,
-} from '@myboteam/agent-core/daemon';
 
 describe('Daemon Crash Recovery Integration', () => {
   let testDir: string;
