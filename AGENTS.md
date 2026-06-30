@@ -9,6 +9,7 @@ at `specs/007-crash-recovery-stale-tasks/plan.md`.
 - **NEVER bypass git hooks**: Never use `--no-verify` on `git commit`, `git push`, or any git command unless the user EXPLICITLY instructs you to do so. Git hooks (pre-commit, pre-push, etc.) exist for quality enforcement. If a hook fails, FIX the underlying issue — do not bypass it. This is non-negotiable.
 - **NEVER modify linter/formatter configs**: Never modify `biome.json`, `.eslintrc`, `tsconfig.json`, or similar tooling configuration files unless the user EXPLICITLY instructs you to. These configs define project-wide quality standards. If lint errors exist, fix the code — do not weaken the rules.
 - **Merging**: Always use `git merge --squash` when merging feature branches to main.
+- **Test Location**: Tests MUST be colocated with the code they test. Never create a root-level `tests/` directory. Unit tests go in `packages/*/tests/unit/`, contract tests in `packages/*/tests/contract/`, integration tests in `apps/*/tests/integration/`.
 - **Source Reference (MANDATORY)**: Every ticket plan MUST check reference source code from previous versions before planning. Tickets specify source files (e.g., `Source: v0.2.0 (packages/daemon/src/socket-path.ts)`). Reading and understanding these sources is NOT optional. Source locations:
   - v0.2.0: `/Users/mavishay/Projects/MaorInnovations/myboteam_V0.2.0`
   - v0.3.0: `/Users/mavishay/Projects/MaorInnovations/myboteam_V0.3.0`

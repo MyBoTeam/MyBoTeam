@@ -12,7 +12,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['tests/**/*.test.ts'],
+    include: ['packages/*/tests/**/*.test.ts', 'apps/*/tests/**/*.test.ts'],
     exclude: ['**/node_modules/**', '**/.git/**'],
     coverage: {
       provider: 'v8',

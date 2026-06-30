@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { createShutdownManager } from '../../packages/agent-core/src/daemon/shutdown-manager.js';
+import { createShutdownManager } from '../../src/daemon/shutdown-manager.js';
 
 describe('Shutdown Manager', () => {
   let shutdownManager: ReturnType<typeof createShutdownManager>;

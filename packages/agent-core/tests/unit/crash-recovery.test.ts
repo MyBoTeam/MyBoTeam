@@ -6,7 +6,7 @@ import {
   acquirePidLock,
   detectStaleLock,
   removeStaleLock,
-} from '../../packages/agent-core/src/daemon/pid-lock.js';
+} from '../../src/daemon/pid-lock.js';
 
 describe('Crash Detection', () => {
   let testDir: string;

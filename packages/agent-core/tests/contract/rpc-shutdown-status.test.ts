@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createShutdownManager } from '../../packages/agent-core/src/daemon/shutdown-manager.js';
+import { createShutdownManager } from '../../src/daemon/shutdown-manager.js';
 
 describe('daemon.getShutdownStatus RPC Contract', () => {
   it('should return initial shutdown status', () => {

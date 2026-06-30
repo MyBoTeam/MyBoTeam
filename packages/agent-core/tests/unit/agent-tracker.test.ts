@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createAgentTracker } from '../../packages/agent-core/src/daemon/agent-tracker.js';
+import { createAgentTracker } from '../../src/daemon/agent-tracker.js';
 
 describe('Agent Tracker', () => {
   let testDir: string;

@@ -6,7 +6,7 @@ import {
   acquirePidLock,
   detectStaleLock,
   removeStaleLock,
-} from '../../packages/agent-core/src/daemon/pid-lock.js';
+} from '../../../../packages/agent-core/src/daemon/pid-lock.js';
 
 describe('Daemon Crash Recovery Integration', () => {
   let testDir: string;
