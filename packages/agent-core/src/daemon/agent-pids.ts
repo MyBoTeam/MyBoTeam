@@ -19,13 +19,21 @@ export function saveAgentPids(dataDir: string, pids: number[]): void {
 export function cleanupAgentProcesses(dataDir: string): number {
   const pidFilePath = join(dataDir, 'agent.pids');
   let cleaned = 0;
+  let fileExists = false;
 
   try {
     const raw = readFileSync(pidFilePath, 'utf-8');
-    const parsed = JSON.parse(raw);
+    fileExists = true;
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      log.warn('Agent PIDs file contained invalid JSON, removing and skipping cleanup');
+      return cleaned;
+    }
 
     if (!Array.isArray(parsed)) {
-      log.warn('Agent PIDs file contained non-array data, skipping cleanup');
+      log.warn('Agent PIDs file contained non-array data, removing and skipping cleanup');
       return cleaned;
     }
 
@@ -48,11 +56,21 @@ export function cleanupAgentProcesses(dataDir: string): number {
     if (cleaned > 0) {
       log.info(`Sent SIGTERM to ${cleaned} agent process(es)`);
     }
-    unlinkSync(pidFilePath);
   } catch (err) {
     const code = (err as { code?: string }).code;
     if (code && code !== 'ENOENT') {
       log.warn(`Failed to read agent PIDs file: ${code}`);
+    }
+  }
+
+  if (fileExists) {
+    try {
+      unlinkSync(pidFilePath);
+    } catch (err) {
+      const code = (err as { code?: string }).code;
+      if (code && code !== 'ENOENT') {
+        log.warn(`Failed to remove agent PIDs file: ${code}`);
+      }
     }
   }
 
