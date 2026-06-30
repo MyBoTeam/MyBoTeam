@@ -6,7 +6,6 @@ import {
   acquirePidLock,
   cleanupAgentProcesses,
   PidLockError,
-  type PidLockHandle,
   type PidLockPayload,
   saveAgentPids,
 } from '../../src/daemon/pid-lock.js';
@@ -257,7 +256,7 @@ describe('cleanupAgentProcesses()', () => {
   it('sends SIGTERM to live agent processes', async () => {
     const { spawn } = await import('node:child_process');
     const child = spawn('sleep', ['60'], { stdio: 'ignore' });
-    const agentPid = child.pid!;
+    const agentPid = child.pid as NonNullable<typeof child.pid>;
 
     saveAgentPids(tmpDir, [agentPid]);
     const cleaned = cleanupAgentProcesses(tmpDir);

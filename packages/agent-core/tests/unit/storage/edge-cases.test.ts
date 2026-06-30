@@ -1,15 +1,8 @@
-import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import Database from 'better-sqlite3';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import {
-  AgentStorage,
-  DatabaseError,
-  NotFoundError,
-  ValidationError,
-} from '../../../src/storage/agent-storage.js';
-import { closeDatabase, initializeDatabase } from '../../../src/storage/database.js';
+import { AgentStorage } from '../../../src/storage/agent-storage.js';
 
 describe('Edge Cases: Invalid Paths', () => {
   it('should throw DatabaseError for truly invalid paths', () => {
@@ -202,7 +195,7 @@ describe('Edge Cases: Type Coercion', () => {
     expect(task.continuation_count).toBe(0);
     storage.updateTask(task.id, { continuation_count: 5 as any });
     const updated = storage.getTask(task.id);
-    expect(updated!.continuation_count).toBe(5);
+    expect(updated?.continuation_count).toBe(5);
   });
 
   it('should coerce pinned/archived INTEGER fields', () => {
