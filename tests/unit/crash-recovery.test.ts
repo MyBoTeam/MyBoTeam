@@ -119,4 +119,26 @@ describe('Crash Detection', () => {
       expect(existsSync(handle.pidPath)).toBe(false);
     });
   });
+
+  describe('Performance (SC-001)', () => {
+    it('should detect and recover from stale lock within 100ms', () => {
+      const lockPath = join(testDir, 'daemon.pid');
+      writeFileSync(
+        lockPath,
+        JSON.stringify({ pid: 999999999, createdAt: new Date().toISOString() }),
+      );
+
+      const start = performance.now();
+      const isStale = detectStaleLock(testDir);
+      removeStaleLock(testDir);
+      const handle = acquirePidLock(testDir);
+      const elapsed = performance.now() - start;
+
+      expect(isStale).toBe(true);
+      expect(handle.isAcquired).toBe(true);
+      expect(elapsed).toBeLessThan(100);
+
+      handle.release();
+    });
+  });
 });

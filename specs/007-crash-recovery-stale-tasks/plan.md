@@ -64,7 +64,7 @@ packages/agent-core/src/daemon/
 
 apps/daemon/src/
 ├── index.ts             # MODIFY: Add crash recovery, RPC shutdown methods inline
-└── scheduler.ts         # MODIFY: Stop accepting tasks on shutdown
+└── scheduler.ts         # NEW: Scheduler with stop logic for graceful shutdown
 
 packages/agent-core/src/storage/crud/
 └── task.ts              # Existing task CRUD (read-only reference, not modified)

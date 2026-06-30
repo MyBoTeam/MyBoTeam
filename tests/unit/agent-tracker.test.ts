@@ -66,4 +66,29 @@ describe('Agent Tracker', () => {
       expect(cleaned).toBe(0);
     });
   });
+
+  describe('Performance (SC-004)', () => {
+    it('should send SIGTERM to agent processes within 5s', async () => {
+      const { spawn } = await import('node:child_process');
+      const child = spawn('sleep', ['60'], { stdio: 'ignore' });
+      const agentPid = child.pid!;
+
+      agentTracker.savePids([agentPid]);
+
+      const start = performance.now();
+      const cleaned = agentTracker.cleanupProcesses();
+      const elapsed = performance.now() - start;
+
+      expect(cleaned).toBe(1);
+      expect(elapsed).toBeLessThan(5000);
+
+      await new Promise<void>((resolve) => {
+        child.on('exit', () => resolve());
+        setTimeout(() => {
+          child.kill('SIGKILL');
+          resolve();
+        }, 2000);
+      });
+    });
+  });
 });

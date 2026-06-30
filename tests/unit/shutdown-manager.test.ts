@@ -52,4 +52,15 @@ describe('Shutdown Manager', () => {
       expect(timeout).toBe(60000);
     });
   });
+
+  describe('Performance (SC-007)', () => {
+    it('should initiate shutdown within 100ms', () => {
+      const start = performance.now();
+      const result = shutdownManager.initiateShutdown();
+      const elapsed = performance.now() - start;
+
+      expect(result).toBe(true);
+      expect(elapsed).toBeLessThan(100);
+    });
+  });
 });

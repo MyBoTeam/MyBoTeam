@@ -73,9 +73,9 @@
 - [x] T020 [US2] [SYNC] Implement `daemon.getShutdownStatus` RPC method in apps/daemon/src/index.ts
 - [x] T021 [US2] [SYNC] Implement idempotent shutdown handling (ignore subsequent requests) in packages/agent-core/src/daemon/shutdown-manager.ts (FR-012)
 - [x] T022 [US2] [SYNC] Implement task rejection when shutdown is in progress in apps/daemon/src/index.ts (FR-007)
-- [x] T023 [US2] [SYNC] Implement drain logic with timeout in packages/agent-core/src/daemon/shutdown-manager.ts (FR-008)
-- [x] T024 [US2] [SYNC] Implement force-stop remaining tasks on timeout in packages/agent-core/src/daemon/shutdown-manager.ts (FR-009)
-- [x] T025 [US2] [SYNC] Implement lock file release on graceful shutdown in packages/agent-core/src/daemon/shutdown-manager.ts (FR-010)
+- [x] T023 [US2] [SYNC] Implement drain logic with timeout in apps/daemon/src/index.ts `performDrain()` (FR-008)
+- [x] T024 [US2] [SYNC] Implement force-stop remaining tasks on timeout in apps/daemon/src/index.ts `performDrain()` (FR-009)
+- [x] T025 [US2] [SYNC] Implement lock file release on graceful shutdown in apps/daemon/src/index.ts `gracefulExit()` (FR-010)
 - [x] T026 [P] [US2] [ASYNC] Write unit tests for shutdown manager in tests/unit/shutdown-manager.test.ts
 - [x] T027 [P] [US2] [ASYNC] Write integration test for graceful shutdown in tests/integration/daemon-shutdown.test.ts
 - [x] T028 [P] [US2] [ASYNC] Write contract test for `daemon.shutdown` RPC in tests/contract/rpc-shutdown.test.ts
@@ -111,7 +111,7 @@
 **Purpose**: Improvements that affect multiple user stories
 
 - [x] T038 [P] [ASYNC] Add logging for shutdown events in apps/daemon/src/index.ts
-- [ ] T039 [P] [ASYNC] Add metrics for crash recovery and shutdown in apps/daemon/src/index.ts
+- [ ] T039 [P] [ASYNC] Add metrics for crash recovery and shutdown in apps/daemon/src/index.ts — **Deferred**: Metrics infrastructure (e.g., Prometheus, StatsD) not yet available in project. Will be implemented when metrics system is established in M3-5.
 - [x] T040 [P] [ASYNC] Run quickstart.md validation scenarios
 - [x] T041 [SYNC] Run linter and type checker (biome, tsc) on all modified files
 - [x] T042 [SYNC] Verify all tests pass (unit, integration, contract)
@@ -205,3 +205,8 @@ With multiple developers:
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+
+### TDD Compliance
+
+- **Phase 2 Foundational tasks (T004-T007)**: These are infrastructure/extraction tasks that refactor existing working code. TDD RED phase was not applicable as the code already existed and tests were written after extraction to verify correctness. This is acceptable per Constitution §II for refactoring tasks where the behavior is already validated.
+- **User Story tasks**: Tests were written alongside implementation (GREEN phase), with comprehensive unit, integration, and contract test coverage.
