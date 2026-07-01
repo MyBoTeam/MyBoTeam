@@ -1,5 +1,5 @@
 import { existsSync, unlinkSync } from 'node:fs';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DaemonProcessManager } from '../../../src/daemon/lifecycle/daemon-process-manager';
 import { ShutdownManager } from '../../../src/daemon/lifecycle/shutdown-manager';
 
@@ -71,13 +71,12 @@ describe('Forced Shutdown on Timeout Integration', () => {
 
     await daemonManager.start();
 
-    const warningSpy = { called: false };
-    shutdownManager.on('timeout', () => {
-      warningSpy.called = true;
-    });
+    const forceSpy = vi.fn();
+    shutdownManager.on('force', forceSpy);
 
     await shutdownManager.initiateShutdown();
 
     expect(daemonManager.isRunning()).toBe(false);
+    expect(forceSpy).toHaveBeenCalled();
   });
 });

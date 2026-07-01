@@ -41,7 +41,7 @@ export interface TaskQueue {
    * @param task Task data
    * @returns Task ID
    */
-  addTask(task: Omit<Task, 'id' | 'state' | 'createdAt'>): string;
+  addTask(task: Pick<Task, 'type' | 'payload' | 'timeoutMs' | 'isCritical'>): string;
 
   /**
    * Get the next task to execute

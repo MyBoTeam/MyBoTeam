@@ -32,6 +32,7 @@ export class DaemonProcessManager extends EventEmitter implements DaemonProcess 
   private logger: Logger;
   private startTime: number = 0;
   private restartCount: number = 0;
+  private crashRestartTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(config: DaemonConfig) {
     super();
@@ -115,6 +116,12 @@ export class DaemonProcessManager extends EventEmitter implements DaemonProcess 
   async stop(): Promise<void> {
     this.logger.info('Initiating graceful shutdown');
 
+    // Always clear any pending crash restart to prevent resurrection
+    if (this.crashRestartTimer) {
+      clearTimeout(this.crashRestartTimer);
+      this.crashRestartTimer = null;
+    }
+
     if (this.state === DaemonState.Stopped) {
       this.logger.debug('Daemon already stopped');
       return;
@@ -160,6 +167,12 @@ export class DaemonProcessManager extends EventEmitter implements DaemonProcess 
    */
   async kill(): Promise<void> {
     this.logger.info('Force killing daemon');
+
+    // Always clear any pending crash restart to prevent resurrection
+    if (this.crashRestartTimer) {
+      clearTimeout(this.crashRestartTimer);
+      this.crashRestartTimer = null;
+    }
 
     if (this.state === DaemonState.Stopped && !this.process) {
       this.logger.debug('Daemon already stopped');
@@ -277,7 +290,12 @@ export class DaemonProcessManager extends EventEmitter implements DaemonProcess 
     this.emit('restartScheduled', { delay, attempt: this.restartCount });
 
     // Schedule restart
-    setTimeout(async () => {
+    this.crashRestartTimer = setTimeout(async () => {
+      this.crashRestartTimer = null;
+      if (this.state !== DaemonState.Stopped) {
+        this.logger.info('Shutdown in progress, skipping restart');
+        return;
+      }
       try {
         this.logger.info('Attempting restart');
         await this.start();
@@ -295,19 +313,21 @@ export class DaemonProcessManager extends EventEmitter implements DaemonProcess 
    */
   private waitForExit(timeoutMs: number): Promise<void> {
     return new Promise((resolve, reject) => {
-      if (!this.process) {
+      const proc = this.process;
+      if (!proc) {
         resolve();
         return;
       }
 
-      const timer = setTimeout(() => {
-        reject(new Error('Timeout waiting for process to exit'));
-      }, timeoutMs);
-
-      this.process.on('exit', () => {
+      const onExit = () => {
         clearTimeout(timer);
         resolve();
-      });
+      };
+      const timer = setTimeout(() => {
+        proc.removeListener('exit', onExit);
+        reject(new Error('Timeout waiting for process to exit'));
+      }, timeoutMs);
+      proc.once('exit', onExit);
     });
   }
 

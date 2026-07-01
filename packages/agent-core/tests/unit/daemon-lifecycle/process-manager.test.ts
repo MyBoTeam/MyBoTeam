@@ -4,10 +4,13 @@ import { DaemonState } from '../../../src/daemon/lifecycle/daemon-state';
 
 describe('DaemonProcessManager', () => {
   let manager: DaemonProcessManager;
-  const testSocketPath = '/tmp/test-daemon.sock';
-  const testPidPath = '/tmp/test-daemon.pid';
+  let testSocketPath: string;
+  let testPidPath: string;
 
   beforeEach(() => {
+    const testId = Date.now();
+    testSocketPath = `/tmp/test-daemon-${testId}.sock`;
+    testPidPath = `/tmp/test-daemon-${testId}.pid`;
     manager = new DaemonProcessManager({
       socketPath: testSocketPath,
       pidFilePath: testPidPath,

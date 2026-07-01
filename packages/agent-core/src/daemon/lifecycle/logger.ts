@@ -74,7 +74,16 @@ export class Logger {
     };
 
     // Output as JSON to stdout
-    process.stdout.write(`${JSON.stringify(entry)}\n`);
+    try {
+      process.stdout.write(`${JSON.stringify(entry)}\n`);
+    } catch {
+      process.stdout.write(
+        `${JSON.stringify({
+          ...entry,
+          metadata: { serializationError: true },
+        })}\n`,
+      );
+    }
   }
 
   /**

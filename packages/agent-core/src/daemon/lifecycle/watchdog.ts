@@ -104,8 +104,10 @@ export class Watchdog extends EventEmitter {
       });
 
       if (this.consecutiveFailures >= this.config.maxConsecutiveFailures) {
-        this.logger.error('Daemon crash detected');
-        this.emit('crash', { consecutiveFailures: this.consecutiveFailures });
+        if (this.consecutiveFailures === this.config.maxConsecutiveFailures) {
+          this.logger.error('Daemon crash detected');
+          this.emit('crash', { consecutiveFailures: this.consecutiveFailures });
+        }
       }
     }
   }

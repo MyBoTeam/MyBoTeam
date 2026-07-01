@@ -39,6 +39,7 @@ describe('RestartManager', () => {
 
       const stats = manager.getStats();
       expect(stats.attempts).toBe(2);
+      expect(stats.currentDelay).toBeGreaterThan(100);
     });
 
     it('should emit restart event when restart is triggered', async () => {
@@ -55,12 +56,12 @@ describe('RestartManager', () => {
   describe('resetBackoff()', () => {
     it('should reset backoff after stability period', async () => {
       manager.scheduleRestart();
-      await new Promise((resolve) => setTimeout(resolve, 150));
-
-      manager.resetBackoff();
+      // Wait for restart to fire (100ms base delay) + stability period (500ms)
+      await new Promise((resolve) => setTimeout(resolve, 700));
 
       const stats = manager.getStats();
       expect(stats.attempts).toBe(0);
+      expect(stats.currentDelay).toBe(0);
     });
   });
 

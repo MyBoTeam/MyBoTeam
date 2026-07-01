@@ -1,4 +1,4 @@
-import { access, readFile, unlink, writeFile } from 'node:fs/promises';
+import { access, open, readFile, unlink } from 'node:fs/promises';
 
 /**
  * PID Manager for daemon single instance enforcement
@@ -18,8 +18,13 @@ export class PidManager {
    * @param pid Process ID to write
    */
   async writePid(pid: number): Promise<void> {
-    this.currentPid = pid;
-    await writeFile(this.pidFilePath, pid.toString(), 'utf-8');
+    const handle = await open(this.pidFilePath, 'wx');
+    try {
+      await handle.writeFile(pid.toString(), 'utf-8');
+      this.currentPid = pid;
+    } finally {
+      await handle.close();
+    }
   }
 
   /**
@@ -44,7 +49,10 @@ export class PidManager {
    */
   async removePid(): Promise<void> {
     try {
-      await unlink(this.pidFilePath);
+      const content = await readFile(this.pidFilePath, 'utf-8');
+      if (this.currentPid !== null && content.trim() === String(this.currentPid)) {
+        await unlink(this.pidFilePath);
+      }
     } catch {
       // Ignore errors if file doesn't exist
     }
@@ -73,8 +81,10 @@ export class PidManager {
     try {
       process.kill(pid, 0);
       return true;
-    } catch {
-      return false;
+    } catch (err) {
+      // Only treat ESRCH (no such process) as dead
+      // EPERM means process exists but we can't signal it
+      return (err as NodeJS.ErrnoException).code !== 'ESRCH';
     }
   }
 

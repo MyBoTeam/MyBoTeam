@@ -1,5 +1,5 @@
 import { existsSync, unlinkSync } from 'node:fs';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DaemonProcessManager } from '../../../src/daemon/lifecycle/daemon-process-manager';
 import { ShutdownManager } from '../../../src/daemon/lifecycle/shutdown-manager';
 
@@ -113,6 +113,9 @@ describe('Multiple Shutdown Signals Integration', () => {
 
     await daemonManager.start();
 
+    const killSpy = vi.fn();
+    daemonManager.on('kill', killSpy);
+
     // Start graceful shutdown
     const shutdownPromise = shutdownManager.initiateShutdown();
 
@@ -121,7 +124,8 @@ describe('Multiple Shutdown Signals Integration', () => {
 
     // Both should complete
     await shutdownPromise;
-    await daemonManager.kill();
     expect(daemonManager.isRunning()).toBe(false);
+    // Force shutdown should have been invoked once via forceKillFn
+    expect(killSpy).toHaveBeenCalledTimes(1);
   });
 });
