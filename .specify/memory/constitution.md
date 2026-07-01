@@ -117,7 +117,7 @@ its own file. This keeps modules focused, testable, and easy to navigate.
 Tests MUST be colocated with the code they test. Never create a root-level
 `tests/` directory. Unit tests go in `packages/*/tests/unit/`, contract tests in
 `packages/*/tests/contract/`, integration tests in `apps/*/tests/integration/`.
-This ensures tests are discoverable, maintainable, and co-located with the code
+This ensures tests are discoverable, maintainable, and colocated with the code
 they validate.
 
 ## Development Workflow

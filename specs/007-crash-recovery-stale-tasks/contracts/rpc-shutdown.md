@@ -68,12 +68,9 @@ If `timeoutMs` is invalid (negative, non-finite, or not a number):
 {
   "jsonrpc": "2.0",
   "id": "request-uuid",
-  "error": {
-    "code": -32602,
-    "message": "Invalid params",
-    "data": {
-      "detail": "Invalid timeoutMs: must be a finite non-negative number"
-    }
+  "result": {
+    "success": false,
+    "error": "Invalid timeoutMs: must be a finite non-negative number"
   }
 }
 ```
