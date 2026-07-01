@@ -42,9 +42,7 @@ export class LoginItemStateMachine {
    */
   transition(to: LoginItemState): void {
     if (!isValidTransition(this.currentState, to)) {
-      throw new Error(
-        `Invalid transition from ${this.currentState} to ${to}`,
-      );
+      throw new Error(`Invalid transition from ${this.currentState} to ${to}`);
     }
 
     this.currentState = to;

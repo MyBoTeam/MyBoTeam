@@ -6,7 +6,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginItemPersistence } from '../../../src/daemon/login-item-persistence.js';
 import { AutoStartService } from '../../../src/services/auto-start-service.js';
-import { AutoStartMethod, LoginItemState } from '../../../src/types/login-item.js';
 
 vi.mock('node:fs', () => ({
   statSync: vi.fn().mockReturnValue({

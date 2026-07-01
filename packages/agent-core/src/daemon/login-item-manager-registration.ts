@@ -15,9 +15,9 @@ import { AutoStartMethod, LoginItemErrorCode, LoginItemState } from '../types/lo
 import { createLoginItemError, LoginItemError, type RetryHandler } from './login-item-errors.js';
 import type { LoginItemLogger } from './login-item-logger.js';
 import type { LoginItemPersistence } from './login-item-persistence.js';
-import type { LoginItemStateMachine } from './login-item-state.js';
 import { LoginItemRegistration } from './login-item-registration.js';
 import { LoginItemServiceMgmt } from './login-item-service-mgmt.js';
+import type { LoginItemStateMachine } from './login-item-state.js';
 
 /**
  * Handle enable errors (path validation, duplicates)
@@ -90,10 +90,10 @@ export async function performRegistration(
       };
       persistence.saveLoginItem(loginItem);
       persistence.saveAutoStartPreference(autoStartPreference);
-      
+
       // Transition state only after persistence succeeds
       stateMachine.transition(LoginItemState.Enabled);
-      
+
       logger.logRegistration({
         label: options.label,
         method,
