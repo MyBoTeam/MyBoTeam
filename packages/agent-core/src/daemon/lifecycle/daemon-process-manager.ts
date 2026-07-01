@@ -116,6 +116,12 @@ export class DaemonProcessManager extends EventEmitter implements DaemonProcess 
   async stop(): Promise<void> {
     this.logger.info('Initiating graceful shutdown');
 
+    // Always clear any pending crash restart to prevent resurrection
+    if (this.crashRestartTimer) {
+      clearTimeout(this.crashRestartTimer);
+      this.crashRestartTimer = null;
+    }
+
     if (this.state === DaemonState.Stopped) {
       this.logger.debug('Daemon already stopped');
       return;
@@ -125,11 +131,6 @@ export class DaemonProcessManager extends EventEmitter implements DaemonProcess 
       // Already shutting down, ignore
       this.logger.debug('Shutdown already in progress, ignoring');
       return;
-    }
-
-    if (this.crashRestartTimer) {
-      clearTimeout(this.crashRestartTimer);
-      this.crashRestartTimer = null;
     }
 
     this.setState(DaemonState.Draining);
@@ -167,6 +168,12 @@ export class DaemonProcessManager extends EventEmitter implements DaemonProcess 
   async kill(): Promise<void> {
     this.logger.info('Force killing daemon');
 
+    // Always clear any pending crash restart to prevent resurrection
+    if (this.crashRestartTimer) {
+      clearTimeout(this.crashRestartTimer);
+      this.crashRestartTimer = null;
+    }
+
     if (this.state === DaemonState.Stopped && !this.process) {
       this.logger.debug('Daemon already stopped');
       return;
@@ -179,11 +186,6 @@ export class DaemonProcessManager extends EventEmitter implements DaemonProcess 
       }
     } catch {
       this.logger.debug('Process may already be dead');
-    }
-
-    if (this.crashRestartTimer) {
-      clearTimeout(this.crashRestartTimer);
-      this.crashRestartTimer = null;
     }
 
     this.process = null;
