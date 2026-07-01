@@ -1,9 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import {
-  AgentStorage,
-  DatabaseError,
-  ValidationError,
-} from '../../../src/storage/agent-storage.js';
+import { AgentStorage } from '../../../src/storage/agent-storage.js';
 
 describe('Schema Validation', () => {
   let storage: AgentStorage;

@@ -9,7 +9,7 @@ describe('Migration Runner', () => {
   const log = createChildLogger({ module: 'migration-test' });
 
   afterEach(() => {
-    if (db && db.open) {
+    if (db?.open) {
       db.close();
     }
   });

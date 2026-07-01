@@ -98,7 +98,7 @@ describe('MigrationManager', () => {
       expect(migration).not.toBeNull();
 
       // Act: Get pending migrations (using loaded migration)
-      const pending = [migration!];
+      const pending = [migration as NonNullable<typeof migration>];
 
       // Assert: Migration is pending
       expect(pending).toHaveLength(1);
@@ -231,7 +231,7 @@ describe('MigrationManager', () => {
       expect(migration).not.toBeNull();
 
       // Act: Apply migration
-      const result = await manager.applyMigration(migration!);
+      const result = await manager.applyMigration(migration as NonNullable<typeof migration>);
 
       // Assert: Migration failed
       expect(result.success).toBe(false);
@@ -375,8 +375,8 @@ describe('MigrationManager', () => {
       expect(migration).not.toBeNull();
 
       // Act: Apply migration twice
-      const result1 = await manager.applyMigration(migration!);
-      const result2 = await manager.applyMigration(migration!);
+      const result1 = await manager.applyMigration(migration as NonNullable<typeof migration>);
+      const result2 = await manager.applyMigration(migration as NonNullable<typeof migration>);
 
       // Assert: First succeeds, second fails (table already exists)
       expect(result1.success).toBe(true);
@@ -437,9 +437,9 @@ describe('MigrationManager', () => {
       const migration2 = manager.loadMigrationFromJson(JSON.stringify(migration2Json));
       const migration3 = manager.loadMigrationFromJson(JSON.stringify(migration3Json));
 
-      await manager.applyMigration(migration1!);
-      await manager.applyMigration(migration2!);
-      await manager.applyMigration(migration3!);
+      await manager.applyMigration(migration1 as NonNullable<typeof migration1>);
+      await manager.applyMigration(migration2 as NonNullable<typeof migration2>);
+      await manager.applyMigration(migration3 as NonNullable<typeof migration3>);
 
       // Verify all tables exist
       const tables = db
@@ -451,8 +451,8 @@ describe('MigrationManager', () => {
       expect(tables).toContain('third_table');
 
       // Act: Rollback migration 3 and 2 manually
-      await manager.rollbackMigration(migration3!);
-      await manager.rollbackMigration(migration2!);
+      await manager.rollbackMigration(migration3 as NonNullable<typeof migration3>);
+      await manager.rollbackMigration(migration2 as NonNullable<typeof migration2>);
 
       // Verify only first table exists
       const tablesAfterRollback = db
@@ -488,10 +488,12 @@ describe('MigrationManager', () => {
       expect(migration).not.toBeNull();
 
       // Apply migration
-      await manager.applyMigration(migration!);
+      await manager.applyMigration(migration as NonNullable<typeof migration>);
 
       // Act: Try to rollback
-      const rollbackResult = await manager.rollbackMigration(migration!);
+      const rollbackResult = await manager.rollbackMigration(
+        migration as NonNullable<typeof migration>,
+      );
 
       // Assert: Rollback succeeds (down function exists but does nothing)
       expect(rollbackResult.success).toBe(true);
@@ -520,7 +522,7 @@ describe('MigrationManager', () => {
       expect(migration).not.toBeNull();
 
       // Apply migration
-      await manager.applyMigration(migration!);
+      await manager.applyMigration(migration as NonNullable<typeof migration>);
 
       // Verify table exists
       const tableExists = db
@@ -529,7 +531,9 @@ describe('MigrationManager', () => {
       expect(tableExists).toBeDefined();
 
       // Act: Rollback migration
-      const rollbackResult = await manager.rollbackMigration(migration!);
+      const rollbackResult = await manager.rollbackMigration(
+        migration as NonNullable<typeof migration>,
+      );
 
       // Assert: Rollback successful
       expect(rollbackResult.success).toBe(true);
@@ -564,8 +568,8 @@ describe('MigrationManager', () => {
       expect(migration).not.toBeNull();
 
       // Assert: Migration is detected as init migration
-      expect(migration!.name).toBe('001_init');
-      expect(migration!.version).toBe(1);
+      expect(migration?.name).toBe('001_init');
+      expect(migration?.version).toBe(1);
     });
   });
 
@@ -587,7 +591,7 @@ describe('MigrationManager', () => {
       expect(migration).not.toBeNull();
 
       // Act: Apply migration
-      const result = await manager.applyMigration(migration!);
+      const result = await manager.applyMigration(migration as NonNullable<typeof migration>);
 
       // Assert: Migration applied successfully
       expect(result.success).toBe(true);

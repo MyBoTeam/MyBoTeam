@@ -67,8 +67,8 @@ describe('Agent CRUD', () => {
 
     const retrieved = storage.getAgent(created.id);
     expect(retrieved).not.toBeNull();
-    expect(retrieved!.id).toBe(created.id);
-    expect(retrieved!.slug).toBe('accountant');
+    expect(retrieved?.id).toBe(created.id);
+    expect(retrieved?.slug).toBe('accountant');
   });
 
   it('should get an agent by slug', () => {
@@ -79,7 +79,7 @@ describe('Agent CRUD', () => {
     });
     const retrieved = storage.getAgentBySlug('secretary');
     expect(retrieved).not.toBeNull();
-    expect(retrieved!.slug).toBe('secretary');
+    expect(retrieved?.slug).toBe('secretary');
   });
 
   it('should return null for non-existent agent', () => {
