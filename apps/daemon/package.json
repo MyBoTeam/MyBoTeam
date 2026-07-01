@@ -8,8 +8,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "vitest run",
-    "test:watch": "vitest watch",
+    "test": "cd ../.. && npx vitest run --project daemon",
+    "test:watch": "cd ../.. && npx vitest watch --project daemon",
     "check": "biome check .",
     "lint": "biome lint .",
     "format": "biome format .",
@@ -20,10 +20,10 @@
     "proper-lockfile": "^4.1.2"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
     "@types/node": "^22.15.3",
     "@types/proper-lockfile": "^4.1.4",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.3",
-    "vitest": "^3.2.1"
+    "typescript": "^6.0.3"
   }
 }

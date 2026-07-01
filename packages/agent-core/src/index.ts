@@ -21,6 +21,7 @@ export type {
   TaskTodo,
 } from '@myboteam/types';
 export type { AgentStorageConfig } from './storage/agent-storage.js';
+export { listTasks, updateTask } from './storage/crud/task.js';
 export {
   closeDatabase,
   getDatabasePath,
