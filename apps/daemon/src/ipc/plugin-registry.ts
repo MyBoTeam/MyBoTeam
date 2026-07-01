@@ -1,4 +1,7 @@
-import type { RenderingPlugin, PluginRegistration } from '@myboteam/agent-core/ipc/models/rendering-plugin.js';
+import type {
+  PluginRegistration,
+  RenderingPlugin,
+} from '@myboteam/agent-core/ipc/models/rendering-plugin.js';
 import { createPluginRegistration } from '@myboteam/agent-core/ipc/models/rendering-plugin.js';
 import { createChildLogger } from './logger.js';
 

@@ -6,8 +6,8 @@
 import { mkdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { createSocketTransport, DaemonRpcServer, getSocketPath } from '@myboteam/agent-core/daemon';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { DaemonRpcServer, getSocketPath, createSocketTransport } from '@myboteam/agent-core/daemon';
 
 const STARTUP_ITERATIONS = 10;
 const MAX_STARTUP_TIME_MS = 1000;

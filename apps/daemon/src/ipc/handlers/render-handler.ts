@@ -1,7 +1,10 @@
-import type { RenderingPluginRequest, RenderingPluginResult } from '@myboteam/agent-core/ipc/models/rendering-plugin.js';
-import type { PluginLoader } from '../plugin-loader.js';
+import type {
+  RenderingPluginRequest,
+  RenderingPluginResult,
+} from '@myboteam/agent-core/ipc/models/rendering-plugin.js';
 import { createChildLogger } from '../logger.js';
 import { recordRequest } from '../metrics.js';
+import type { PluginLoader } from '../plugin-loader.js';
 
 const log = createChildLogger('render-handler');
 

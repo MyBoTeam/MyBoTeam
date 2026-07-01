@@ -1,13 +1,13 @@
 import { connect, type Socket } from 'node:net';
-import {
-  type IpcBusClientOptions,
-  type DaemonTransport,
-  type JsonRpcMessage,
-  type JsonRpcRequest,
-  type JsonRpcResponse,
+import type {
+  DaemonTransport,
+  IpcBusClientOptions,
+  JsonRpcMessage,
+  JsonRpcRequest,
+  JsonRpcResponse,
 } from '@myboteam/agent-core/ipc/types.js';
+import type { DisconnectHandler, MessageHandler, PendingCall } from './ipc-bus-client-types.js';
 import { getDefaultSocketPath } from './socket-path.js';
-import type { MessageHandler, DisconnectHandler, PendingCall } from './ipc-bus-client-types.js';
 
 const MAX_BUFFER_BYTES = 1 * 1024 * 1024;
 
@@ -60,7 +60,11 @@ export class IpcBusClient implements DaemonTransport {
     this.socket.write(data);
   }
 
-  async call<TResult = unknown>(method: string, params?: unknown, timeoutMs = 5000): Promise<TResult> {
+  async call<TResult = unknown>(
+    method: string,
+    params?: unknown,
+    timeoutMs = 5000,
+  ): Promise<TResult> {
     const id = ++this.idCounter;
     const request: JsonRpcRequest = {
       jsonrpc: '2.0',

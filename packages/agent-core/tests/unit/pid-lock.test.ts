@@ -3,11 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { cleanupAgentProcesses, saveAgentPids } from '../../src/daemon/agent-pids.js';
-import {
-  acquirePidLock,
-  PidLockError,
-  type PidLockPayload,
-} from '../../src/daemon/pid-lock.js';
+import { acquirePidLock, PidLockError, type PidLockPayload } from '../../src/daemon/pid-lock.js';
 import { getPidFilePath } from '../../src/daemon/socket-path.js';
 
 function makeTmpDir(): string {

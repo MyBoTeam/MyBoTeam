@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { IpcBusServer } from '../../src/ipc/ipc-bus-server.js';
-import { IpcBusClient } from '../../src/ipc/ipc-bus-client.js';
-import { join } from 'node:path';
-import { tmpdir } from 'node:os';
 import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { IpcBusClient } from '../../src/ipc/ipc-bus-client.js';
+import { IpcBusServer } from '../../src/ipc/ipc-bus-server.js';
 
 describe('IPC Bus Render Contract', () => {
   let server: IpcBusServer;
@@ -61,15 +61,13 @@ describe('IPC Bus Render Contract', () => {
   });
 
   it('should return error for missing params', async () => {
-    await expect(
-      client.call('render.execute', { type: 'pdf' })
-    ).rejects.toThrow('Missing required params');
+    await expect(client.call('render.execute', { type: 'pdf' })).rejects.toThrow(
+      'Missing required params',
+    );
   });
 
   it('should return error for unknown method', async () => {
-    await expect(
-      client.call('render.unknown')
-    ).rejects.toThrow('Method not found');
+    await expect(client.call('render.unknown')).rejects.toThrow('Method not found');
   });
 
   it('should handle concurrent render requests', async () => {
@@ -77,7 +75,7 @@ describe('IPC Bus Render Contract', () => {
       client.call<{ content: string }>('render.execute', {
         type: 'text',
         data: { id: i },
-      })
+      }),
     );
 
     const results = await Promise.all(requests);

@@ -1,6 +1,9 @@
-import type { IpcBusServer } from './ipc-bus-server.js';
-import { createDaemonStatus, updateDaemonStatus } from '@myboteam/agent-core/ipc/models/daemon-status.js';
 import type { DaemonStatus } from '@myboteam/agent-core/ipc/models/daemon-status.js';
+import {
+  createDaemonStatus,
+  updateDaemonStatus,
+} from '@myboteam/agent-core/ipc/models/daemon-status.js';
+import type { IpcBusServer } from './ipc-bus-server.js';
 import { createChildLogger } from './logger.js';
 
 const log = createChildLogger('lifecycle-manager');

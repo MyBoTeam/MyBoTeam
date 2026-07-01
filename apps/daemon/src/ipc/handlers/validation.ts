@@ -22,7 +22,11 @@ export function validateString(value: unknown, name: string): void {
   }
 }
 
-export function validateNumber(value: unknown, name: string, options?: { min?: number; max?: number }): void {
+export function validateNumber(
+  value: unknown,
+  name: string,
+  options?: { min?: number; max?: number },
+): void {
   if (typeof value !== 'number' || !Number.isFinite(value)) {
     throw new ValidationError(`${name} must be a finite number`);
   }

@@ -1,6 +1,6 @@
-import type { RenderingPlugin, PluginHealth } from '@myboteam/agent-core/ipc/models/rendering-plugin.js';
-import { PluginRegistry } from './plugin-registry.js';
+import type { RenderingPlugin } from '@myboteam/agent-core/ipc/models/rendering-plugin.js';
 import { createChildLogger } from './logger.js';
+import type { PluginRegistry } from './plugin-registry.js';
 
 const log = createChildLogger('plugin-loader-async');
 
@@ -58,7 +58,9 @@ export class PluginLoaderAsync {
     return this.loadPlugin(plugin);
   }
 
-  async loadPlugins(plugins: RenderingPlugin[]): Promise<Array<{ id: string; success: boolean; error?: string }>> {
+  async loadPlugins(
+    plugins: RenderingPlugin[],
+  ): Promise<Array<{ id: string; success: boolean; error?: string }>> {
     const results = await Promise.allSettled(
       plugins.map(async (plugin) => {
         const result = await this.loadPlugin(plugin);

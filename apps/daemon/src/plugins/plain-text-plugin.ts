@@ -1,4 +1,8 @@
-import type { RenderingPlugin, RenderingPluginRequest, RenderingPluginResult } from '@myboteam/agent-core/ipc/models/rendering-plugin.js';
+import type {
+  RenderingPlugin,
+  RenderingPluginRequest,
+  RenderingPluginResult,
+} from '@myboteam/agent-core/ipc/models/rendering-plugin.js';
 
 export class PlainTextPlugin implements RenderingPlugin {
   readonly id = 'plain-text';
@@ -22,7 +26,7 @@ export class PlainTextPlugin implements RenderingPlugin {
       // Apply basic formatting options
       const maxLength = (options?.maxLength as number) ?? undefined;
       if (maxLength && text.length > maxLength) {
-        text = text.slice(0, maxLength) + '...';
+        text = `${text.slice(0, maxLength)}...`;
       }
 
       return {

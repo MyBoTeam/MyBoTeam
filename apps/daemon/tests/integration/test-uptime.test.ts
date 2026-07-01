@@ -6,8 +6,8 @@
 import { mkdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { createSocketTransport, DaemonRpcServer, getSocketPath } from '@myboteam/agent-core/daemon';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { DaemonRpcServer, getSocketPath, createSocketTransport } from '@myboteam/agent-core/daemon';
 
 describe('Integration: Uptime Monitoring (SC-007)', () => {
   let server: DaemonRpcServer;
@@ -63,16 +63,18 @@ describe('Integration: Uptime Monitoring (SC-007)', () => {
 
     try {
       for (let i = 0; i < 5; i++) {
-        const response = await new Promise<{ result: Record<string, unknown> }>((resolve, reject) => {
-          const timeout = setTimeout(() => reject(new Error('Timeout')), 2000);
-          transport.onMessage((data) => {
-            clearTimeout(timeout);
-            resolve(JSON.parse(data));
-          });
-          transport.send(
-            JSON.stringify({ jsonrpc: '2.0', id: i, method: 'daemon.status', params: {} }),
-          );
-        });
+        const response = await new Promise<{ result: Record<string, unknown> }>(
+          (resolve, reject) => {
+            const timeout = setTimeout(() => reject(new Error('Timeout')), 2000);
+            transport.onMessage((data) => {
+              clearTimeout(timeout);
+              resolve(JSON.parse(data));
+            });
+            transport.send(
+              JSON.stringify({ jsonrpc: '2.0', id: i, method: 'daemon.status', params: {} }),
+            );
+          },
+        );
 
         expect(response.result.status).toBe('running');
         await new Promise((r) => setTimeout(r, 100));

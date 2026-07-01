@@ -1,13 +1,13 @@
 import { randomUUID } from 'node:crypto';
-import { createServer, type Server, type Socket } from 'node:net';
 import { unlink } from 'node:fs/promises';
+import { createServer, type Server, type Socket } from 'node:net';
 import {
   type IpcBusServerOptions,
+  JSON_RPC_ERRORS,
   type JsonRpcMessage,
   type JsonRpcRequest,
   type JsonRpcResponse,
   type MethodHandler,
-  JSON_RPC_ERRORS,
 } from '@myboteam/agent-core/ipc/types.js';
 import { getDefaultSocketPath } from './socket-path.js';
 
@@ -26,7 +26,6 @@ export class IpcBusServer {
   private clients = new Map<string, ConnectedClient>();
   private handlers = new Map<string, MethodHandler>();
   private startTime = Date.now();
-  private shuttingDown = false;
 
   constructor(options: IpcBusServerOptions = {}) {
     this.socketPath = options.socketPath ?? getDefaultSocketPath();
@@ -139,7 +138,12 @@ export class IpcBusServer {
 
     const handler = this.handlers.get(request.method);
     if (!handler) {
-      this.sendError(client, request.id, JSON_RPC_ERRORS.METHOD_NOT_FOUND, `Method not found: ${request.method}`);
+      this.sendError(
+        client,
+        request.id,
+        JSON_RPC_ERRORS.METHOD_NOT_FOUND,
+        `Method not found: ${request.method}`,
+      );
       return;
     }
 
@@ -157,7 +161,12 @@ export class IpcBusServer {
     }
   }
 
-  private sendError(client: ConnectedClient, id: string | number, code: number, message: string): void {
+  private sendError(
+    client: ConnectedClient,
+    id: string | number,
+    code: number,
+    message: string,
+  ): void {
     const response: JsonRpcResponse = {
       jsonrpc: '2.0',
       id,

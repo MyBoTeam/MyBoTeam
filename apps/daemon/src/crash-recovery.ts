@@ -1,5 +1,5 @@
 import { listTasks, updateTask } from '@myboteam/agent-core';
-import { createAgentTracker, createChildLogger } from '@myboteam/agent-core/daemon';
+import { type createAgentTracker, createChildLogger } from '@myboteam/agent-core/daemon';
 import type Database from 'better-sqlite3';
 
 const log = createChildLogger('daemon');

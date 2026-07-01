@@ -53,11 +53,10 @@ export function getMetrics(): {
   uptimeMs: number;
 } {
   const latencies = [...metrics.requestLatencies].sort((a, b) => a - b);
-  const averageLatencyMs = latencies.length > 0
-    ? latencies.reduce((a, b) => a + b, 0) / latencies.length
-    : 0;
+  const averageLatencyMs =
+    latencies.length > 0 ? latencies.reduce((a, b) => a + b, 0) / latencies.length : 0;
   const p99Index = Math.floor(latencies.length * 0.99);
-  const p99LatencyMs = latencies.length > 0 ? latencies[p99Index] ?? 0 : 0;
+  const p99LatencyMs = latencies.length > 0 ? (latencies[p99Index] ?? 0) : 0;
 
   return {
     requestsTotal: metrics.requestsTotal,

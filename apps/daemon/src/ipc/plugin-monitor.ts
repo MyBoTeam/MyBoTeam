@@ -1,5 +1,5 @@
-import { PluginRegistry } from './plugin-registry.js';
 import { createChildLogger } from './logger.js';
+import type { PluginRegistry } from './plugin-registry.js';
 
 const log = createChildLogger('plugin-monitor');
 
@@ -87,9 +87,7 @@ export class PluginMonitor {
 
   async checkAllPlugins(): Promise<PluginHealthStatus[]> {
     const plugins = this.registry.list();
-    const statuses = await Promise.all(
-      plugins.map((p) => this.checkPlugin(p.id)),
-    );
+    const statuses = await Promise.all(plugins.map((p) => this.checkPlugin(p.id)));
 
     // Log unhealthy plugins
     for (const status of statuses) {
