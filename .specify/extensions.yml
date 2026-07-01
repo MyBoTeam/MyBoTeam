@@ -79,6 +79,14 @@ hooks:
     description: Auto-discover team context before quick task execution (no-write
       mode)
     condition: null
+  before_tasks:
+  - extension: team-ai-directives
+    command: team.validate_source_reference
+    enabled: true
+    optional: false
+    prompt: Validate source reference analysis exists?
+    description: Ensures plan.md contains comprehensive Source Reference Analysis before tasks generation
+    condition: null
   after_constitution:
   - extension: git
     command: git.commit

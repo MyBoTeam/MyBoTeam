@@ -14,6 +14,14 @@
       "import": "./src/daemon/index.ts",
       "types": "./src/daemon/index.ts"
     },
+    "./ipc/types.js": {
+      "import": "./src/ipc/types.ts",
+      "types": "./src/ipc/types.ts"
+    },
+    "./ipc/models/*.js": {
+      "import": "./src/ipc/models/*.ts",
+      "types": "./src/ipc/models/*.ts"
+    },
     "./storage/migrations": {
       "import": "./src/storage/migrations/index.ts",
       "types": "./src/storage/migrations/index.ts"

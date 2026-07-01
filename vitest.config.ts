@@ -29,6 +29,14 @@ export default defineConfig({
           include: ['apps/daemon/tests/**/*.test.ts'],
         },
       },
+      {
+        test: {
+          name: 'desktop',
+          globals: true,
+          environment: 'node',
+          include: ['apps/desktop/tests/**/*.test.ts'],
+        },
+      },
     ],
     coverage: {
       provider: 'v8',
