@@ -26,6 +26,7 @@ export class IpcBusServer {
   private clients = new Map<string, ConnectedClient>();
   private handlers = new Map<string, MethodHandler>();
   private startTime = Date.now();
+  private shuttingDown = false;
 
   constructor(options: IpcBusServerOptions = {}) {
     this.socketPath = options.socketPath ?? getDefaultSocketPath();
