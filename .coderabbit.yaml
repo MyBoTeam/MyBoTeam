@@ -1,0 +1,98 @@
+language: "en-US"
+
+reviews:
+  profile: "assertive"
+  request_changes_workflow: true
+  high_level_summary: true
+  poem: false
+  review_status: true
+  review_details: true
+  commit_status: true
+  fail_commit_status: true
+  collapse_walkthrough: true
+  changed_files_summary: true
+  sequence_diagrams: true
+  estimate_code_review_effort: true
+  assess_linked_issues: true
+  related_issues: true
+  related_prs: true
+  suggested_labels: true
+  auto_apply_labels: false
+  suggested_reviewers: true
+  enable_prompt_for_ai_agents: true
+
+  path_filters:
+    - "!specs/**"
+    - "!.specify/**"
+    - "!**/*.md"
+    - "!pnpm-lock.yaml"
+    - "!package-lock.json"
+    - "!**/node_modules/**"
+    - "!**/dist/**"
+    - "!**/.turbo/**"
+    - "!**/coverage/**"
+
+  path_instructions:
+    - path: "packages/agent-core/src/**/*.ts"
+      instructions: "This is the core agent library. Focus on: type safety, error handling patterns, resource cleanup (sockets, file handles), async/await correctness, and Node.js best practices. Ensure all public APIs have proper TypeScript types."
+    - path: "apps/daemon/src/**/*.ts"
+      instructions: "This is the daemon application. Focus on: IPC message handling, graceful shutdown patterns, plugin lifecycle management, and Unix domain socket best practices. Ensure proper error propagation."
+    - path: "**/*.test.ts"
+      instructions: "Tests must be colocated with source. Verify test isolation, proper mocking, and assertion correctness. Check that tests cover edge cases and error paths."
+
+  auto_review:
+    enabled: true
+    drafts: false
+    auto_incremental_review: true
+    ignore_title_keywords:
+      - "wip"
+      - "draft"
+      - "chore"
+      - "docs"
+      - "ci"
+    labels:
+      - "!wip"
+      - "!draft"
+
+  tools:
+    biome:
+      enabled: true
+    shellcheck:
+      enabled: true
+    markdownlint:
+      enabled: true
+    yamllint:
+      enabled: true
+    actionlint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    trufflehog:
+      enabled: true
+    semgrep:
+      enabled: true
+    eslint:
+      enabled: false
+    hadolint:
+      enabled: false
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  reviews:
+    enabled: true
+    focus_areas:
+      - "TypeScript best practices"
+      - "Node.js IPC and Unix domain sockets"
+      - "Graceful shutdown patterns"
+      - "Resource cleanup and lifecycle management"
+      - "Plugin architecture patterns"
+
+finishing_touches:
+  docstrings:
+    enabled: true
+  unit_tests:
+    enabled: false
+  simplify:
+    enabled: false
