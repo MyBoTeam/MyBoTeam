@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { AgentStorage, NotFoundError } from '../../../src/storage/agent-storage.js';
+import { AgentStorage } from '../../../src/storage/agent-storage.js';
 
 describe('Note CRUD', () => {
   let storage: AgentStorage;
@@ -31,7 +31,7 @@ describe('Note CRUD', () => {
 
   it('should get by id', () => {
     const n = storage.createNote({ title: 'get-me' });
-    expect(storage.getNote(n.id)!.id).toBe(n.id);
+    expect(storage.getNote(n.id)?.id).toBe(n.id);
   });
 
   it('should list with archived filter', () => {
@@ -100,7 +100,7 @@ describe('Schedule CRUD', () => {
       expression: '1h',
       agent_id: agentId,
     });
-    expect(storage.getSchedule(s.id)!.id).toBe(s.id);
+    expect(storage.getSchedule(s.id)?.id).toBe(s.id);
   });
 
   it('should list all or by agent', () => {

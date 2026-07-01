@@ -3,12 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { cleanupAgentProcesses, saveAgentPids } from '../../src/daemon/agent-pids.js';
-import {
-  acquirePidLock,
-  PidLockError,
-  type PidLockHandle,
-  type PidLockPayload,
-} from '../../src/daemon/pid-lock.js';
+import { acquirePidLock, PidLockError, type PidLockPayload } from '../../src/daemon/pid-lock.js';
 import { getPidFilePath } from '../../src/daemon/socket-path.js';
 
 function makeTmpDir(): string {
@@ -256,7 +251,7 @@ describe('cleanupAgentProcesses()', () => {
   it('sends SIGTERM to live agent processes', async () => {
     const { spawn } = await import('node:child_process');
     const child = spawn('sleep', ['60'], { stdio: 'ignore' });
-    const agentPid = child.pid!;
+    const agentPid = child.pid as NonNullable<typeof child.pid>;
 
     saveAgentPids(tmpDir, [agentPid]);
     const cleaned = cleanupAgentProcesses(tmpDir);
