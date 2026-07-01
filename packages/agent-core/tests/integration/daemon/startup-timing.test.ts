@@ -3,10 +3,16 @@
  * Feature: M3.4 Login Item Auto-Start
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginItemPersistence } from '../../../src/daemon/login-item-persistence.js';
 import { AutoStartService } from '../../../src/services/auto-start-service.js';
 import { DEFAULT_TIMEOUT_MS } from '../../../src/types/login-item.js';
+
+vi.mock('node:fs', () => ({
+  statSync: vi.fn().mockReturnValue({
+    isFile: () => true,
+  }),
+}));
 
 describe('Startup Timing Verification', () => {
   let service: AutoStartService;

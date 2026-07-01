@@ -3,9 +3,15 @@
  * Feature: M3.4 Login Item Auto-Start
  */
 
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginItemPersistence } from '../../../src/daemon/login-item-persistence.js';
 import { AutoStartService } from '../../../src/services/auto-start-service.js';
+
+vi.mock('node:fs', () => ({
+  statSync: vi.fn().mockReturnValue({
+    isFile: () => true,
+  }),
+}));
 
 describe('macOS Compatibility Integration', () => {
   let service: AutoStartService;

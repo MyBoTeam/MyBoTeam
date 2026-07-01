@@ -144,6 +144,8 @@ describe('performRegistration', () => {
     expect(result.success).toBe(false);
     expect(result.errorCode).toBe(LoginItemErrorCode.REGISTRATION_FAILED);
     expect(logger.logError).toHaveBeenCalled();
+    // State machine should remain disabled after failed registration
+    expect(stateMachine.getCurrentState()).toBe(LoginItemState.Disabled);
   });
 });
 

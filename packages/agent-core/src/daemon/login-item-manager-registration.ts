@@ -16,6 +16,8 @@ import { createLoginItemError, LoginItemError, type RetryHandler } from './login
 import type { LoginItemLogger } from './login-item-logger.js';
 import type { LoginItemPersistence } from './login-item-persistence.js';
 import type { LoginItemStateMachine } from './login-item-state.js';
+import { LoginItemRegistration } from './login-item-registration.js';
+import { LoginItemServiceMgmt } from './login-item-service-mgmt.js';
 
 /**
  * Handle enable errors (path validation, duplicates)
@@ -53,7 +55,23 @@ export async function performRegistration(
 ): Promise<RegistrationResult> {
   try {
     return await retryHandler.execute(async () => {
-      stateMachine.transition(LoginItemState.Enabled);
+      // Invoke the real registration path based on method
+      const method = options.method || AutoStartMethod.MyBoTeamDefaults;
+      let registrationResult: RegistrationResult;
+
+      if (method === AutoStartMethod.ServiceManagement) {
+        const serviceMgmt = new LoginItemServiceMgmt();
+        registrationResult = await serviceMgmt.register(options);
+      } else {
+        const registration = new LoginItemRegistration();
+        registrationResult = await registration.register(options);
+      }
+
+      // Only persist and update state if registration succeeded
+      if (!registrationResult.success) {
+        return registrationResult;
+      }
+
       const loginItem: LoginItem = {
         id: randomUUID(),
         applicationPath: options.applicationPath,
@@ -65,22 +83,26 @@ export async function performRegistration(
       const autoStartPreference: AutoStartPreference = {
         id: randomUUID(),
         enabled: true,
-        method: options.method || AutoStartMethod.MyBoTeamDefaults,
+        method,
         lastChecked: new Date().toISOString(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
       persistence.saveLoginItem(loginItem);
       persistence.saveAutoStartPreference(autoStartPreference);
+      
+      // Transition state only after persistence succeeds
+      stateMachine.transition(LoginItemState.Enabled);
+      
       logger.logRegistration({
         label: options.label,
-        method: options.method || AutoStartMethod.MyBoTeamDefaults,
+        method,
         success: true,
         durationMs: Date.now() - startTime,
       });
       return {
         success: true,
-        method: options.method || AutoStartMethod.MyBoTeamDefaults,
+        method,
         durationMs: Date.now() - startTime,
         timestamp: new Date().toISOString(),
       };

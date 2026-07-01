@@ -102,13 +102,14 @@ export function buildStatusFromSystemQuery(
   // Determine effective enabled state
   // If system shows registered and local says enabled, trust system
   // If system shows not registered but local says enabled, external change detected
-  const enabled = queryResult.registered || localEnabled;
+  const enabled = queryResult.registered;
+  const synced = queryResult.registered === localEnabled;
 
   return {
     enabled,
     state: enabled ? LoginItemState.Enabled : LoginItemState.Disabled,
     method: queryResult.method || AutoStartMethod.MyBoTeamDefaults,
-    synced: true,
+    synced,
     lastChecked: new Date().toISOString(),
   };
 }

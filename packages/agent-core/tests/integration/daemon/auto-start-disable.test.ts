@@ -3,9 +3,15 @@
  * Feature: M3.4 Login Item Auto-Start
  */
 
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginItemPersistence } from '../../../src/daemon/login-item-persistence.js';
 import { AutoStartService } from '../../../src/services/auto-start-service.js';
+
+vi.mock('node:fs', () => ({
+  statSync: vi.fn().mockReturnValue({
+    isFile: () => true,
+  }),
+}));
 
 describe('Auto-Start Disable Integration', () => {
   let service: AutoStartService;
@@ -35,7 +41,7 @@ describe('Auto-Start Disable Integration', () => {
 
     it('should handle disable when not enabled', async () => {
       const disableResult = await service.disable('com.test.daemon');
-      expect(disableResult.success).toBe(true);
+      expect(disableResult.success).toBe(false);
 
       const status = await service.getStatus('com.test.daemon');
       expect(status.enabled).toBe(false);
