@@ -111,6 +111,7 @@ fetch_comments() {
 
   local review_comments_file="$TEMP_DIR/review_comments.json"
   local issue_comments_file="$TEMP_DIR/issue_comments.json"
+  local reviews_file="$TEMP_DIR/reviews.json"
   local unified_file="$TEMP_DIR/unified_comments.json"
 
   # Fetch review comments (inline on code) - sanitize to remove control chars
@@ -139,19 +140,33 @@ fetch_comments() {
         type: "issue"
       }]' > "$issue_comments_file" || echo "[]" > "$issue_comments_file"
 
-  local review_count issue_count
+  # Fetch PR reviews with pending status (CHANGES_REQUESTED, COMMENT)
+  gh api "repos/${REPO}/pulls/${PR_NUMBER}/reviews" --paginate 2>/dev/null \
+    | sanitize_json \
+    | jq '[.[] | select(.state == "CHANGES_REQUESTED" or .state == "COMMENT") | {
+        id: .id,
+        user: .user.login,
+        body: .body,
+        path: "",
+        line: 0,
+        created_at: .submitted_at,
+        type: "review_state"
+      }]' > "$reviews_file" || echo "[]" > "$reviews_file"
+
+  local review_count issue_count review_state_count
   review_count=$(jq 'length' "$review_comments_file" 2>/dev/null || echo 0)
   issue_count=$(jq 'length' "$issue_comments_file" 2>/dev/null || echo 0)
+  review_state_count=$(jq 'length' "$reviews_file" 2>/dev/null || echo 0)
 
-  log_info "Found $review_count inline review comments, $issue_count issue comments"
+  log_info "Found $review_count inline review comments, $issue_count issue comments, $review_state_count pending reviews"
 
-  if [[ "$review_count" -eq 0 && "$issue_count" -eq 0 ]]; then
+  if [[ "$review_count" -eq 0 && "$issue_count" -eq 0 && "$review_state_count" -eq 0 ]]; then
     log_ok "No unresolved comments found."
     return 1
   fi
 
   # Merge into unified list
-  jq -s '.[0] + .[1]' "$review_comments_file" "$issue_comments_file" > "$unified_file"
+  jq -s '.[0] + .[1] + .[2]' "$review_comments_file" "$issue_comments_file" "$reviews_file" > "$unified_file"
 
   local total
   total=$(jq 'length' "$unified_file" 2>/dev/null || echo 0)
@@ -163,10 +178,20 @@ fetch_comments() {
 classify_comments() {
   log_info "Classifying comments..."
 
-  # Use jq to classify - skip keywords indicate stylistic/preference comments
+  # Smarter heuristic: only skip if body is PURELY stylistic (short, no action words)
+  # Real issues mention: bug, error, crash, security, race, null, missing, broken, etc.
   jq '[.[] | . + {
     action: (
-      if (.body | test("(?i)(skip|nit|style|preference|optional|consider|suggestion|minor|cosmetic|typo|naming)")) then "SKIP"
+      if (
+        # Short comments with only stylistic keywords and no action words
+        (.body | length < 200) and
+        (.body | test("(?i)^(nit|style|minor|cosmetic|typo|naming):")) and
+        (.body | test("(?i)(should|must|fix|change|add|remove|update|refactor|replace|implement|ensure|check|validate)") | not)
+      ) then "SKIP"
+      elif (
+        # Explicit "skipped" or "skip" as the primary intent
+        (.body | test("(?i)^skip:") or .body | test("(?i)^skipped:"))
+      ) then "SKIP"
       else "FIX"
       end
     )
@@ -238,12 +263,20 @@ process_skip_comments() {
 
     # Determine skip reason based on content
     local reason="This is a stylistic preference; codebase uses existing patterns."
-    if echo "$body" | grep -qiE '(nit|style|minor|cosmetic)'; then
-      reason="This is a minor stylistic suggestion; the change is not necessary for functionality."
-    elif echo "$body" | grep -qiE '(consider|suggestion|optional)'; then
-      reason="This is an optional suggestion; the current implementation is correct."
-    elif echo "$body" | grep -qiE '(typo|naming)'; then
-      reason="Skipped: This naming/typo change does not affect functionality."
+    if echo "$body" | grep -qiE '^nit:'; then
+      reason="Skipped: Nit-level style preference; codebase uses existing patterns."
+    elif echo "$body" | grep -qiE '^style:'; then
+      reason="Skipped: Style preference; codebase conventions take precedence."
+    elif echo "$body" | grep -qiE '^minor:'; then
+      reason="Skipped: Minor preference; current implementation is correct."
+    elif echo "$body" | grep -qiE '^cosmetic:'; then
+      reason="Skipped: Cosmetic suggestion; functional code is correct."
+    elif echo "$body" | grep -qiE '^typo:'; then
+      reason="Skipped: Typo in comment/code; non-functional change."
+    elif echo "$body" | grep -qiE '^naming:'; then
+      reason="Skipped: Naming preference; codebase uses existing conventions."
+    elif echo "$body" | grep -qiE 'skipped?:'; then
+      reason="Skipped: As requested."
     fi
 
     gh api "repos/${REPO}/pulls/${PR_NUMBER}/comments/${id}/replies" \
