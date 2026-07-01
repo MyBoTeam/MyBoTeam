@@ -3,6 +3,11 @@ import * as path from 'node:path';
 import lockfile from 'proper-lockfile';
 import { PathResolver } from './path-resolver.js';
 
+export function getDataDirectory(): string {
+  const pathResolver = new PathResolver();
+  return pathResolver.getDataDir();
+}
+
 export class DataDirectoryManager {
   private pathResolver: PathResolver;
   private subdirectories: string[] = ['data', 'logs', 'vault'];

@@ -132,7 +132,8 @@ export class MigrationManager {
   }> {
     const applied = await this.getAppliedMigrations();
     const pending = await this.getPendingMigrations();
-    const currentVersion = applied.length > 0 ? applied[applied.length - 1].version : null;
+    const lastApplied = applied.length > 0 ? applied[applied.length - 1] : undefined;
+    const currentVersion = lastApplied?.version ?? null;
     return { currentVersion, applied, pending };
   }
 
