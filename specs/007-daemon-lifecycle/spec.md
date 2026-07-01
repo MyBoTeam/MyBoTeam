@@ -111,6 +111,7 @@ As a developer, I want the daemon to clean up all resources (sockets, connection
 - **FR-003**: System MUST drain active tasks before termination during graceful shutdown (queued tasks are discarded).
 - **FR-004**: System MUST survive application window close (daemon continues running).
 - **FR-005**: System MUST clean up all IPC-related resources on shutdown, including: (a) immediately destroy all sockets using socket.destroy() pattern without waiting for pending writes, (b) close all file handles and connections, (c) remove temp files.
+- **FR-006**: System MUST provide unit tests for all lifecycle components (daemon state, task state, PID manager, shutdown manager, task drainer, resource cleanup handler, restart manager, watchdog, logger, metrics collector, tracer).
 - **FR-007**: System MUST exit with code 0 on successful shutdown.
 - **FR-008**: System MUST provide integration tests for start/stop lifecycle covering: normal start/stop, graceful shutdown, forced shutdown, crash recovery. Specific test cases must be defined for each scenario.
 - **FR-009**: System MUST emit structured logs, metrics (uptime, task count, error count, active connections), and traces using OpenTelemetry for operational monitoring.

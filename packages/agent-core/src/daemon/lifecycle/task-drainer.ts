@@ -116,6 +116,7 @@ export class TaskDrainer {
     return new Promise<void>((resolve) => {
       const timer = setTimeout(() => {
         this.logger.warn('Task drain timeout reached');
+        clearInterval(checkInterval);
         if (this.config.abortCriticalOnTimeout) {
           this.abortCriticalTasks().then(() => resolve());
         } else {

@@ -33,18 +33,27 @@ describe('Resource Cleanup Integration', () => {
 
     cleanupHandler = new ResourceCleanupHandler();
 
+    // Register resources that should be cleaned up
+    const mockSocket = { destroy: () => {} };
+    const mockHandle = { close: async () => {} };
+    cleanupHandler.registerSocket(mockSocket as any);
+    cleanupHandler.registerFileHandle(mockHandle as any);
+
+    // Verify resources are registered
+    let counts = cleanupHandler.getResourceCounts();
+    expect(counts.sockets).toBe(1);
+    expect(counts.fileHandles).toBe(1);
+
     await daemonManager.start();
     expect(daemonManager.isRunning()).toBe(true);
 
-    // Register resources for cleanup
-    // In real implementation, these would be actual sockets/file handles
-    // For this test, we're just verifying the cleanup process works
-
-    // Stop daemon
+    // Stop daemon and clean up resources
     await daemonManager.stop();
+    await cleanupHandler.destroySockets();
+    await cleanupHandler.closeFileHandles();
 
     // Verify cleanup
-    const counts = cleanupHandler.getResourceCounts();
+    counts = cleanupHandler.getResourceCounts();
     expect(counts.sockets).toBe(0);
     expect(counts.fileHandles).toBe(0);
     expect(counts.tempFiles).toBe(0);

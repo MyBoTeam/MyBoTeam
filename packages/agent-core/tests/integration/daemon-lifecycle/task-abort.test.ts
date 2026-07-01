@@ -33,7 +33,7 @@ describe('Task Abort on Critical State Integration', () => {
     ];
 
     mockTaskQueue = {
-      getActiveTasks: () => criticalTasks as any,
+      getActiveTasks: () => criticalTasks.filter((t) => t.state === TaskState.Active) as any,
       getPendingTasks: () => [],
       discardPendingTasks: () => 0,
       markFailed: (id: string) => {
@@ -76,7 +76,7 @@ describe('Task Abort on Critical State Integration', () => {
     const criticalTasks = [{ id: 'task-1', state: TaskState.Active, isCritical: true }];
 
     mockTaskQueue = {
-      getActiveTasks: () => criticalTasks as any,
+      getActiveTasks: () => criticalTasks.filter((t) => t.state === TaskState.Active) as any,
       getPendingTasks: () => [],
       discardPendingTasks: () => 0,
       markFailed: (id: string) => {

@@ -51,6 +51,17 @@ export class Tracer {
   }
 
   /**
+   * Clear all completed spans from memory
+   */
+  clear(): void {
+    for (const [id, span] of this.spans) {
+      if (span.endTime !== undefined) {
+        this.spans.delete(id);
+      }
+    }
+  }
+
+  /**
    * Add event to span
    */
   addEvent(spanId: string, name: string, attributes?: Record<string, unknown>): void {
