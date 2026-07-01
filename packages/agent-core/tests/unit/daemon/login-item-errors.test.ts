@@ -3,11 +3,17 @@
  * Feature: M3.4 Login Item Auto-Start
  */
 
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginItemError, RetryHandler } from '../../../src/daemon/login-item-errors.js';
 import { LoginItemManager } from '../../../src/daemon/login-item-manager.js';
 import { LoginItemPersistence } from '../../../src/daemon/login-item-persistence.js';
 import { LoginItemErrorCode } from '../../../src/types/login-item.js';
+
+vi.mock('node:fs', () => ({
+  statSync: vi.fn().mockReturnValue({
+    isFile: () => true,
+  }),
+}));
 
 describe('Edge Case Error Scenarios', () => {
   let manager: LoginItemManager;

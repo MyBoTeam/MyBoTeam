@@ -3,8 +3,14 @@
  * Feature: M3.4 Login Item Auto-Start
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { validateLabel, validatePath } from '../../../src/daemon/login-item-validator.js';
+
+vi.mock('node:fs', () => ({
+  statSync: vi.fn().mockReturnValue({
+    isFile: () => true,
+  }),
+}));
 
 describe('LoginItemValidator', () => {
   describe('validatePath()', () => {

@@ -7,6 +7,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginItemPersistence } from '../../../src/daemon/login-item-persistence.js';
 import { AutoStartService } from '../../../src/services/auto-start-service.js';
 
+vi.mock('node:fs', () => ({
+  statSync: vi.fn().mockReturnValue({
+    isFile: () => true,
+  }),
+}));
+
 vi.mock('../../../src/daemon/login-item-system-query.js', () => ({
   querySystemLoginItem: vi.fn().mockResolvedValue({
     registered: true,

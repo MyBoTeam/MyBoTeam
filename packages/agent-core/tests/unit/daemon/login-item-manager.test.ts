@@ -12,6 +12,12 @@ import {
   LoginItemState,
 } from '../../../src/types/login-item.js';
 
+vi.mock('node:fs', () => ({
+  statSync: vi.fn().mockReturnValue({
+    isFile: () => true,
+  }),
+}));
+
 vi.mock('../../../src/daemon/login-item-system-query.js', () => ({
   querySystemLoginItem: vi.fn().mockResolvedValue({
     registered: true,
@@ -172,9 +178,9 @@ describe('LoginItemManager', () => {
     });
 
     it('should log unregistration failure', async () => {
-      // Mock a failure scenario
+      // Mock a failure scenario - disable with non-existent label should fail
       const result = await manager.disable('non-existent-label');
-      expect(result.success).toBe(true); // Currently always succeeds
+      expect(result.success).toBe(false);
     });
   });
 

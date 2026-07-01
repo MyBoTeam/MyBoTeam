@@ -3,6 +3,7 @@
  * Feature: M3.4 Login Item Auto-Start
  */
 
+import { statSync } from 'node:fs';
 import { LoginItemErrorCode } from '../types/login-item.js';
 
 /**
@@ -41,6 +42,24 @@ export function validatePath(path: string): ValidationResult {
     return {
       valid: false,
       error: 'Application path contains invalid characters',
+      errorCode: LoginItemErrorCode.INVALID_PATH,
+    };
+  }
+
+  // Check if path exists and is a file
+  try {
+    const stat = statSync(path);
+    if (!stat.isFile()) {
+      return {
+        valid: false,
+        error: 'Application path must point to a file',
+        errorCode: LoginItemErrorCode.INVALID_PATH,
+      };
+    }
+  } catch {
+    return {
+      valid: false,
+      error: 'Application path does not exist',
       errorCode: LoginItemErrorCode.INVALID_PATH,
     };
   }

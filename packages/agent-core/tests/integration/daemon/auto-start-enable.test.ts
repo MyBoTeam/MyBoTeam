@@ -8,6 +8,12 @@ import { LoginItemPersistence } from '../../../src/daemon/login-item-persistence
 import { AutoStartService } from '../../../src/services/auto-start-service.js';
 import { AutoStartMethod, LoginItemState } from '../../../src/types/login-item.js';
 
+vi.mock('node:fs', () => ({
+  statSync: vi.fn().mockReturnValue({
+    isFile: () => true,
+  }),
+}));
+
 vi.mock('../../../src/daemon/login-item-system-query.js', () => ({
   querySystemLoginItem: vi.fn().mockResolvedValue({
     registered: true,

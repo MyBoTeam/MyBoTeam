@@ -13,7 +13,7 @@ import type {
   UnregistrationResult,
 } from '../types/login-item.js';
 import { AutoStartMethod, LoginItemErrorCode, LoginItemState } from '../types/login-item.js';
-import { RetryHandler } from './login-item-errors.js';
+import { LoginItemError, RetryHandler } from './login-item-errors.js';
 import { LoginItemLogger } from './login-item-logger.js';
 import {
   handleDisableError,
@@ -22,6 +22,8 @@ import {
   updatePersistedState,
 } from './login-item-manager-registration.js';
 import { LoginItemPersistence } from './login-item-persistence.js';
+import { LoginItemRegistration } from './login-item-registration.js';
+import { LoginItemServiceMgmt } from './login-item-service-mgmt.js';
 import { LoginItemStateMachine } from './login-item-state.js';
 import { buildStatusFromSystemQuery, querySystemLoginItem } from './login-item-system-query.js';
 import { validateLabel, validatePath } from './login-item-validator.js';
@@ -75,8 +77,12 @@ export class LoginItemManager {
       );
     }
 
-    // D7: Check for path-based duplicate (same path, different label)
-    if (this.loginItem && this.loginItem.applicationPath === options.applicationPath) {
+    // D7: Check for path-based duplicate (same path, different label) - ignore disabled records
+    if (
+      this.loginItem &&
+      this.loginItem.applicationPath === options.applicationPath &&
+      this.loginItem.state !== LoginItemState.Disabled
+    ) {
       return handleEnableError(
         options.label,
         options.method,
@@ -127,6 +133,36 @@ export class LoginItemManager {
     const startTime = Date.now();
     try {
       return await this.retryHandler.execute(async () => {
+        // Check if the label matches the stored item
+        if (!this.loginItem || this.loginItem.label !== label) {
+          const error = new LoginItemError(
+            `Login item with label '${label}' not found`,
+            LoginItemErrorCode.INVALID_LABEL,
+          );
+          this.logger.logError({
+            label,
+            errorCode: error.code,
+            errorMessage: error.message,
+            durationMs: Date.now() - startTime,
+          });
+          return {
+            success: false,
+            errorCode: error.code,
+            errorMessage: error.message,
+            timestamp: new Date().toISOString(),
+          };
+        }
+
+        // Invoke the real unregistration path based on method
+        const method = this.autoStartPreference?.method || AutoStartMethod.MyBoTeamDefaults;
+        if (method === AutoStartMethod.ServiceManagement) {
+          const serviceMgmt = new LoginItemServiceMgmt();
+          await serviceMgmt.unregister(label);
+        } else {
+          const registration = new LoginItemRegistration();
+          await registration.unregister(label);
+        }
+
         this.stateMachine.transition(LoginItemState.Disabled);
         updatePersistedState(this.loginItem, this.autoStartPreference, false, this.persistence);
         this.logger.logUnregistration({ label, success: true, durationMs: Date.now() - startTime });
@@ -141,6 +177,22 @@ export class LoginItemManager {
    * Get current status of a login item
    */
   async getStatus(label: string): Promise<LoginItemStatus> {
+    // Check if the label matches the stored item
+    if (!this.loginItem || this.loginItem.label !== label) {
+      this.logger.logStatusCheck({
+        label,
+        state: LoginItemState.Disabled,
+        synced: true,
+      });
+      return {
+        enabled: false,
+        state: LoginItemState.Disabled,
+        method: AutoStartMethod.MyBoTeamDefaults,
+        synced: true,
+        lastChecked: new Date().toISOString(),
+      };
+    }
+
     this.logger.logStatusCheck({
       label,
       state: this.stateMachine.getCurrentState(),
@@ -163,9 +215,10 @@ export class LoginItemManager {
     const systemResult = await querySystemLoginItem(label);
     const status = buildStatusFromSystemQuery(systemResult, localEnabled);
 
-    this.logger.logStatusCheck({ label, state: status.state, synced: true });
+    this.logger.logStatusCheck({ label, state: status.state, synced: status.synced });
 
     if (systemResult.registered !== localEnabled) {
+      // Update both autoStartPreference and loginItem state
       this.autoStartPreference = {
         id: this.autoStartPreference?.id || randomUUID(),
         enabled: systemResult.registered,
@@ -175,6 +228,22 @@ export class LoginItemManager {
         updatedAt: new Date().toISOString(),
       };
       this.persistence.saveAutoStartPreference(this.autoStartPreference);
+
+      // Update loginItem state if it exists
+      if (this.loginItem) {
+        this.loginItem.state = systemResult.registered
+          ? LoginItemState.Enabled
+          : LoginItemState.Disabled;
+        this.loginItem.lastUpdated = new Date().toISOString();
+        this.persistence.saveLoginItem(this.loginItem);
+      }
+
+      // Update state machine
+      if (systemResult.registered) {
+        this.stateMachine.transition(LoginItemState.Enabled);
+      } else {
+        this.stateMachine.transition(LoginItemState.Disabled);
+      }
     }
 
     return status;

@@ -19,6 +19,10 @@ const STORAGE_KEYS = {
 export class LoginItemPersistence {
   private static storage: Map<string, string> = new Map();
 
+  constructor() {
+    // Uses shared static storage so state persists across instances (simulating UserDefaults)
+  }
+
   /**
    * Get auto-start preference from storage
    */

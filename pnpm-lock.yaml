@@ -29,6 +29,9 @@ importers:
       '@myboteam/agent-core':
         specifier: workspace:*
         version: link:../../packages/agent-core
+      better-sqlite3:
+        specifier: ^11.10.0
+        version: 11.10.0
       proper-lockfile:
         specifier: ^4.1.2
         version: 4.1.2

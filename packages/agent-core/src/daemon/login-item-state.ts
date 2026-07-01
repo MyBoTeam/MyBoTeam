@@ -38,11 +38,11 @@ export class LoginItemStateMachine {
 
   /**
    * Attempt to transition to a new state
-   * @returns true if transition was successful, false otherwise
+   * @throws Error if transition is invalid
    */
-  transition(to: LoginItemState): boolean {
+  transition(to: LoginItemState): void {
     if (!isValidTransition(this.currentState, to)) {
-      return false;
+      throw new Error(`Invalid transition from ${this.currentState} to ${to}`);
     }
 
     this.currentState = to;
@@ -50,8 +50,6 @@ export class LoginItemStateMachine {
       state: to,
       timestamp: new Date().toISOString(),
     });
-
-    return true;
   }
 
   /**
