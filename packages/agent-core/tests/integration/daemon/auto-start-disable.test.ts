@@ -57,8 +57,9 @@ describe('Auto-Start Disable Integration', () => {
       // Disable
       await service.disable('com.test.daemon');
 
-      // Verify persistence
-      const preference = service.getAutoStartPreference();
+      // Verify persistence (read from a fresh persistence instance, not the in-memory cache)
+      const persistence = new LoginItemPersistence();
+      const preference = persistence.getAutoStartPreference();
       expect(preference?.enabled).toBe(false);
     });
 
