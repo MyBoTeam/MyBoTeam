@@ -69,7 +69,13 @@ describe('Agent Tracker', () => {
     it('should send SIGTERM to agent processes within 5s', async () => {
       const { spawn } = await import('node:child_process');
       const child = spawn('sleep', ['60'], { stdio: 'ignore' });
-      const agentPid = child.pid ?? 0;
+
+      // Precondition check: spawn must return a PID
+      if (child.pid === undefined || child.pid === null) {
+        child.kill('SIGKILL');
+        throw new Error('spawn() did not return a PID - spawn may have failed');
+      }
+      const agentPid = child.pid;
 
       agentTracker.savePids([agentPid]);
 
