@@ -1,6 +1,6 @@
 import type { IpcMainInvokeEvent } from 'electron';
 import { ipcMain } from 'electron';
-import { IpcBusClient } from '../../daemon/src/ipc/ipc-bus-client.js';
+import type { IpcBusClient } from '../../daemon/src/ipc/ipc-bus-client.js';
 
 let daemonClient: IpcBusClient | null = null;
 
@@ -28,12 +28,15 @@ export function handle<Args extends unknown[], ReturnType = unknown>(
 
 export function initIpcBridge(): void {
   // Render handlers
-  handle('render:execute', async (_event, request: { type: string; data: unknown; options?: unknown }) => {
-    if (!daemonClient?.isConnected) {
-      throw new Error('Daemon not connected');
-    }
-    return daemonClient.call('render.execute', request);
-  });
+  handle(
+    'render:execute',
+    async (_event, request: { type: string; data: unknown; options?: unknown }) => {
+      if (!daemonClient?.isConnected) {
+        throw new Error('Daemon not connected');
+      }
+      return daemonClient.call('render.execute', request);
+    },
+  );
 
   handle('render:supported-types', async () => {
     if (!daemonClient?.isConnected) {

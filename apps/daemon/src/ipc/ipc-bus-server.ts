@@ -26,7 +26,6 @@ export class IpcBusServer {
   private clients = new Map<string, ConnectedClient>();
   private handlers = new Map<string, MethodHandler>();
   private startTime = Date.now();
-  private shuttingDown = false;
 
   constructor(options: IpcBusServerOptions = {}) {
     this.socketPath = options.socketPath ?? getDefaultSocketPath();
@@ -106,8 +105,6 @@ export class IpcBusServer {
   }
 
   async stop(): Promise<void> {
-    this.shuttingDown = true;
-
     // CDR-2026-061: Use socket.destroy() for immediate cleanup on shutdown
     for (const client of this.clients.values()) {
       client.socket.destroy();

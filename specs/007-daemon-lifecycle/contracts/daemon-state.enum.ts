@@ -1,6 +1,6 @@
 /**
  * Daemon lifecycle state machine
- * 
+ *
  * Valid transitions:
  * - Starting → Running (initialization complete)
  * - Running → Draining (SIGTERM received)
@@ -11,5 +11,5 @@ export enum DaemonState {
   Starting = 'Starting',
   Running = 'Running',
   Draining = 'Draining',
-  Stopped = 'Stopped'
+  Stopped = 'Stopped',
 }

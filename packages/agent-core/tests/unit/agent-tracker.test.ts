@@ -69,7 +69,7 @@ describe('Agent Tracker', () => {
     it('should send SIGTERM to agent processes within 5s', async () => {
       const { spawn } = await import('node:child_process');
       const child = spawn('sleep', ['60'], { stdio: 'ignore' });
-      const agentPid = child.pid!;
+      const agentPid = child.pid ?? 0;
 
       agentTracker.savePids([agentPid]);
 

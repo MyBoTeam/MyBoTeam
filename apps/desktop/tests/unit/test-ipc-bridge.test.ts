@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockHandle = vi.fn();
 const mockInvoke = vi.fn();
@@ -14,7 +14,7 @@ vi.mock('../../src/main/ipc-bridge.js', async (importOriginal) => {
   return mod;
 });
 
-import { setDaemonClient, getDaemonClient } from '../../src/main/ipc-bridge.js';
+import { getDaemonClient, setDaemonClient } from '../../src/main/ipc-bridge.js';
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -27,13 +27,17 @@ describe('ipc-bridge daemon client management', () => {
   });
 
   it('setDaemonClient stores client reference', () => {
-    const fakeClient = { isConnected: true, call: vi.fn() } as unknown as Parameters<typeof setDaemonClient>[0];
+    const fakeClient = { isConnected: true, call: vi.fn() } as unknown as Parameters<
+      typeof setDaemonClient
+    >[0];
     setDaemonClient(fakeClient);
     expect(getDaemonClient()).toBe(fakeClient);
   });
 
   it('setDaemonClient(null) clears client reference', () => {
-    const fakeClient = { isConnected: true, call: vi.fn() } as unknown as Parameters<typeof setDaemonClient>[0];
+    const fakeClient = { isConnected: true, call: vi.fn() } as unknown as Parameters<
+      typeof setDaemonClient
+    >[0];
     setDaemonClient(fakeClient);
     setDaemonClient(null);
     expect(getDaemonClient()).toBeNull();
