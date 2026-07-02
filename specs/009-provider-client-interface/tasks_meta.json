@@ -1,0 +1,406 @@
+{
+  "feature": "009-provider-client-interface",
+  "created": "2026-07-02T09:28:57+07:00",
+  "tasks": {
+    "T001": {
+      "description": "Create new type files in packages/types/src/",
+      "files": "packages/types/src/",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T002": {
+      "description": "Update packages/types/src/index.ts to export new type modules",
+      "files": "packages/types/src/index.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T003": {
+      "description": "Create ChatMessage type with Zod schema",
+      "files": "packages/types/src/chat.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T004": {
+      "description": "Create ToolDefinition type with JSON Schema support",
+      "files": "packages/types/src/tools.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T005": {
+      "description": "Create ToolCall type with Zod schema",
+      "files": "packages/types/src/tools.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T006": {
+      "description": "Create ProviderError discriminated union",
+      "files": "packages/types/src/errors.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T007": {
+      "description": "Create UsageInfo type with Zod schema",
+      "files": "packages/types/src/chat.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T008": {
+      "description": "Contract test for ProviderClient interface",
+      "files": "packages/types/tests/contract/provider-client.contract.test.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T009": {
+      "description": "Create ChatRequest type with Zod schema",
+      "files": "packages/types/src/chat.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T010": {
+      "description": "Create ChatResponse type with Zod schema",
+      "files": "packages/types/src/chat.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T011": {
+      "description": "Create ProviderClient interface",
+      "files": "packages/types/src/provider-client.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T012": {
+      "description": "Export ProviderClient from index.ts",
+      "files": "packages/types/src/index.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T013": {
+      "description": "Validation tests for ChatRequest schema",
+      "files": "packages/types/tests/unit/chat.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T014": {
+      "description": "Validation tests for ChatResponse schema",
+      "files": "packages/types/tests/unit/chat.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T015": {
+      "description": "Validation tests for ChatMessage schema",
+      "files": "packages/types/tests/unit/chat.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T016": {
+      "description": "Create StreamingChunk type with Zod schema",
+      "files": "packages/types/src/streaming.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T017": {
+      "description": "Create ToolCallDelta type with Zod schema",
+      "files": "packages/types/src/streaming.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T018": {
+      "description": "Update ProviderClient.streamChat to return AsyncIterable",
+      "files": "packages/types/src/provider-client.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T019": {
+      "description": "Add timeout parameter to ChatRequest schema",
+      "files": "packages/types/src/chat.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T020": {
+      "description": "Add validation tests for StreamingChunk",
+      "files": "packages/types/tests/unit/streaming.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T021": {
+      "description": "Validation tests for ProviderError discriminated union",
+      "files": "packages/types/tests/unit/errors.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T022": {
+      "description": "Test auth error type structure",
+      "files": "packages/types/tests/unit/errors.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T023": {
+      "description": "Test rate_limit error with retryAfter",
+      "files": "packages/types/tests/unit/errors.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T024": {
+      "description": "Test network error with cause",
+      "files": "packages/types/tests/unit/errors.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T025": {
+      "description": "Test provider error with statusCode",
+      "files": "packages/types/tests/unit/errors.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T026": {
+      "description": "Implement auth error category",
+      "files": "packages/types/src/errors.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T027": {
+      "description": "Implement rate_limit error category",
+      "files": "packages/types/src/errors.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T028": {
+      "description": "Implement network error category",
+      "files": "packages/types/src/errors.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T029": {
+      "description": "Implement provider error category",
+      "files": "packages/types/src/errors.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T030": {
+      "description": "Export ProviderError from index.ts",
+      "files": "packages/types/src/index.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T031": {
+      "description": "Validation tests for ModelInfo schema",
+      "files": "packages/types/tests/unit/models.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T032": {
+      "description": "Validation tests for ModelCapabilities schema",
+      "files": "packages/types/tests/unit/models.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T033": {
+      "description": "Create ModelCapabilities type with Zod schema",
+      "files": "packages/types/src/models.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T034": {
+      "description": "Create ModelInfo type with Zod schema",
+      "files": "packages/types/src/models.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T035": {
+      "description": "Export ModelInfo from index.ts",
+      "files": "packages/types/src/index.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T036": {
+      "description": "Run full contract test suite",
+      "files": "packages/types/tests/contract/",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T037": {
+      "description": "Run all unit tests",
+      "files": "packages/types/tests/unit/",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T038": {
+      "description": "Verify TypeScript compilation with strict mode",
+      "files": "packages/types/",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T039": {
+      "description": "Verify Biome lint passes",
+      "files": "packages/types/",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T040": {
+      "description": "Update quickstart.md with final type names",
+      "files": "specs/009-provider-client-interface/quickstart.md",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    }
+  }
+}
