@@ -1,6 +1,6 @@
 /**
  * Task lifecycle states
- * 
+ *
  * Valid transitions:
  * - Pending → Active (task execution starts)
  * - Active → Completed (task succeeds)
@@ -11,5 +11,5 @@ export enum TaskState {
   Pending = 'Pending',
   Active = 'Active',
   Completed = 'Completed',
-  Failed = 'Failed'
+  Failed = 'Failed',
 }

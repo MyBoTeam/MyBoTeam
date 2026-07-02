@@ -3,44 +3,44 @@
 
 // Request types
 export interface RenderRequest {
-  jsonrpc: "2.0";
+  jsonrpc: '2.0';
   id: string | number;
-  method: "render";
+  method: 'render';
   params: {
     rendererType: string;
     documentData: string; // base64 encoded for binary
-    options?: Record<string, any>;
+    options?: Record<string, unknown>;
   };
 }
 
 export interface PingRequest {
-  jsonrpc: "2.0";
+  jsonrpc: '2.0';
   id: string | number;
-  method: "daemon.ping";
-  params?: {};
+  method: 'daemon.ping';
+  params?: Record<string, never>;
 }
 
 export interface GetPluginsRequest {
-  jsonrpc: "2.0";
+  jsonrpc: '2.0';
   id: string | number;
-  method: "daemon.getPlugins";
-  params?: {};
+  method: 'daemon.getPlugins';
+  params?: Record<string, never>;
 }
 
 // Response types
 export interface JsonRpcSuccessResponse<T> {
-  jsonrpc: "2.0";
+  jsonrpc: '2.0';
   id: string | number;
   result: T;
 }
 
 export interface JsonRpcErrorResponse {
-  jsonrpc: "2.0";
+  jsonrpc: '2.0';
   id: string | number | null;
   error: {
     code: number;
     message: string;
-    data?: any;
+    data?: unknown;
   };
 }
 
@@ -50,11 +50,11 @@ export type JsonRpcResponse<T> = JsonRpcSuccessResponse<T> | JsonRpcErrorRespons
 export interface RenderResult {
   output: string; // base64 encoded rendered output
   mimeType: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface PingResult {
-  status: "ok";
+  status: 'ok';
   uptime: number;
   buildId: string;
 }
@@ -71,18 +71,18 @@ export interface GetPluginsResult {
 
 // Event types (daemon → main → renderer)
 export interface DaemonEvent {
-  jsonrpc: "2.0";
-  method: "event.render.progress";
+  jsonrpc: '2.0';
+  method: 'event.render.progress';
   params: {
     requestId: string;
     progress: number; // 0-100
-    status: "processing" | "completed" | "error";
+    status: 'processing' | 'completed' | 'error';
   };
 }
 
 export interface RenderCompleteEvent {
-  jsonrpc: "2.0";
-  method: "event.render.complete";
+  jsonrpc: '2.0';
+  method: 'event.render.complete';
   params: {
     requestId: string;
     output: string; // base64 encoded
@@ -91,8 +91,8 @@ export interface RenderCompleteEvent {
 }
 
 export interface RenderErrorEvent {
-  jsonrpc: "2.0";
-  method: "event.render.error";
+  jsonrpc: '2.0';
+  method: 'event.render.error';
   params: {
     requestId: string;
     error: {
@@ -116,8 +116,8 @@ export const PLUGIN_CRASHED = -32002;
 export const DAEMON_SHUTTING_DOWN = -32003;
 
 // Renderer types (built-in)
-export const RENDERER_PDF = "pdf";
-export const RENDERER_IMAGE = "image";
-export const RENDERER_MARKDOWN = "markdown";
-export const RENDERER_HTML = "html";
-export const RENDERER_PLAIN_TEXT = "plain-text";
+export const RENDERER_PDF = 'pdf';
+export const RENDERER_IMAGE = 'image';
+export const RENDERER_MARKDOWN = 'markdown';
+export const RENDERER_HTML = 'html';
+export const RENDERER_PLAIN_TEXT = 'plain-text';

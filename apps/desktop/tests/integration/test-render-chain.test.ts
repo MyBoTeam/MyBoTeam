@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { IpcBusServer } from '../../../daemon/src/ipc/ipc-bus-server.js';
-import { IpcBusClient } from '../../../daemon/src/ipc/ipc-bus-client.js';
-import { join } from 'node:path';
-import { tmpdir } from 'node:os';
 import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { IpcBusClient } from '../../../daemon/src/ipc/ipc-bus-client.js';
+import { IpcBusServer } from '../../../daemon/src/ipc/ipc-bus-server.js';
 
 describe('Full Rendering Chain Integration', () => {
   let server: IpcBusServer;

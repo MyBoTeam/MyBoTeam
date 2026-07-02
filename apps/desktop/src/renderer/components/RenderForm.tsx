@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 
 interface RenderFormProps {
   onRender: (request: { type: string; data: unknown; options?: unknown }) => Promise<unknown>;
@@ -36,11 +37,7 @@ export function RenderForm({ onRender }: RenderFormProps) {
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="type">Render Type:</label>
-          <select
-            id="type"
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-          >
+          <select id="type" value={type} onChange={(e) => setType(e.target.value)}>
             <option value="pdf">PDF</option>
             <option value="image">Image</option>
             <option value="text">Text</option>

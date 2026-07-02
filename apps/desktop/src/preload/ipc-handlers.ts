@@ -32,8 +32,7 @@ export const daemonHandlers = {
 export const pluginHandlers = {
   list: (): Promise<unknown[]> => ipcRenderer.invoke('plugins:list'),
 
-  getHealth: (pluginId: string): Promise<unknown> =>
-    ipcRenderer.invoke('plugins:health', pluginId),
+  getHealth: (pluginId: string): Promise<unknown> => ipcRenderer.invoke('plugins:health', pluginId),
 
   onPluginError: (callback: (data: { pluginId: string; error: string }) => void) => {
     const listener = (_: unknown, data: { pluginId: string; error: string }) => callback(data);

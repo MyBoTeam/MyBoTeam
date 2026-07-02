@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('electron', () => ({
   ipcRenderer: {
@@ -9,7 +9,12 @@ vi.mock('electron', () => ({
 }));
 
 import { ipcRenderer } from 'electron';
-import { renderHandlers, daemonHandlers, pluginHandlers, ipcBusAPI } from '../../src/preload/ipc-handlers.js';
+import {
+  daemonHandlers,
+  ipcBusAPI,
+  pluginHandlers,
+  renderHandlers,
+} from '../../src/preload/ipc-handlers.js';
 
 const mockInvoke = vi.mocked(ipcRenderer.invoke);
 const mockOn = vi.mocked(ipcRenderer.on);
