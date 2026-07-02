@@ -21,7 +21,7 @@ describe('ProviderClient interface', () => {
           },
         };
       },
-      async *streamChat(_options: StreamOptions): AsyncIterable<StreamingChunk> {
+      async *streamChat(_request: ChatRequest): AsyncIterable<StreamingChunk> {
         yield { content: 'Hello' };
         yield { content: ', ' };
         yield { content: 'world!' };

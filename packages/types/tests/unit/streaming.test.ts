@@ -8,6 +8,11 @@ describe('FinishReasonSchema', () => {
       expect(FinishReasonSchema.safeParse(reason).success).toBe(true);
     });
   });
+
+  it('rejects invalid finishReason', () => {
+    const result = FinishReasonSchema.safeParse('unknown');
+    expect(result.success).toBe(false);
+  });
 });
 
 describe('StreamingChunkSchema', () => {
@@ -43,5 +48,19 @@ describe('StreamingChunkSchema', () => {
   it('accepts empty chunk', () => {
     const result = StreamingChunkSchema.safeParse({});
     expect(result.success).toBe(true);
+  });
+
+  it('rejects negative promptTokens', () => {
+    const result = StreamingChunkSchema.safeParse({
+      usage: { promptTokens: -1, completionTokens: 5 },
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects negative completionTokens', () => {
+    const result = StreamingChunkSchema.safeParse({
+      usage: { promptTokens: 5, completionTokens: -1 },
+    });
+    expect(result.success).toBe(false);
   });
 });

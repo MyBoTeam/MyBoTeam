@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ToolCallSchema, ToolDefinitionSchema } from './tools.js';
 
 export const ChatMessageSchema = z.object({
   role: z.enum(['user', 'assistant', 'system']),
@@ -11,7 +12,7 @@ export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 export const ChatRequestSchema = z.object({
   model: z.string().min(1),
   messages: z.array(ChatMessageSchema).min(1),
-  tools: z.array(z.unknown()).optional(),
+  tools: z.array(ToolDefinitionSchema).optional(),
   timeout: z.number().positive().default(120_000),
   options: z.record(z.unknown()).optional(),
 });
@@ -24,15 +25,7 @@ export const ChatResponseSchema = z.object({
     content: z.string(),
     timestamp: z.string().datetime(),
   }),
-  toolCalls: z
-    .array(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        arguments: z.record(z.unknown()),
-      }),
-    )
-    .optional(),
+  toolCalls: z.array(ToolCallSchema).optional(),
   usage: z
     .object({
       promptTokens: z.number().nonnegative(),
