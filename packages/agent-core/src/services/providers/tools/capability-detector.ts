@@ -2,7 +2,10 @@ import type { ModelInfo } from '@myboteam/types';
 import type { ProviderCapability } from './types.js';
 
 export interface CapabilityDetector {
-  detectCapabilities(endpoint: string, headers: Record<string, string>): Promise<ProviderCapability>;
+  detectCapabilities(
+    endpoint: string,
+    headers: Record<string, string>,
+  ): Promise<ProviderCapability>;
 }
 
 export async function detectCapabilities(
@@ -118,10 +121,7 @@ async function detectVisionSupportByProbe(
   return models.some((m) => {
     const id = m.id.toLowerCase();
     return (
-      id.includes('vision') ||
-      id.includes('vl') ||
-      id.includes('clip') ||
-      id.includes('multimodal')
+      id.includes('vision') || id.includes('vl') || id.includes('clip') || id.includes('multimodal')
     );
   });
 }

@@ -1,9 +1,9 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
+import { mapHttpError, mapNetworkError } from './tools/error-mapper.js';
 import { LocalProviderBase } from './local-provider-base.js';
-import { mapHttpError, mapNetworkError } from './error-mapper.js';
-import { logProviderRequest, logProviderError } from './logger.js';
-import { createLocalMetricsEmitter } from './metrics.js';
-import { parseRateLimitHeaders } from './rate-limit-parser.js';
+import { logProviderError, logProviderRequest } from './tools/logger.js';
+import { createLocalMetricsEmitter } from './tools/metrics.js';
+import { parseRateLimitHeaders } from './tools/rate-limit-parser.js';
 
 export class LMStudioProvider extends LocalProviderBase {
   private readonly metrics = createLocalMetricsEmitter();

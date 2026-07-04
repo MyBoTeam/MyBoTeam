@@ -1,6 +1,5 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
-import type { ProviderCapability } from './types.js';
-import type { LocalProviderConfig } from './types.js';
+import type { LocalProviderConfig, ProviderCapability } from './tools/types.js';
 
 export abstract class LocalProviderBase {
   protected readonly config: LocalProviderConfig;
@@ -24,8 +23,8 @@ export abstract class LocalProviderBase {
     try {
       const models = await Promise.race([
         this.fetchModels(),
-        new Promise<never>((_, reject) => 
-          setTimeout(() => reject(new Error('Capability detection timeout')), timeout)
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Capability detection timeout')), timeout),
         ),
       ]);
 

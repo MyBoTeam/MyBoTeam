@@ -4,7 +4,7 @@ const mockFetch = vi.fn();
 
 globalThis.fetch = mockFetch as unknown as typeof fetch;
 
-const { ProviderDiscovery } = await import('../../../src/services/providers/provider-discovery');
+const { ProviderDiscovery } = await import('../../../src/services/providers/tools/provider-discovery');
 
 describe('Provider Discovery Contract', () => {
   let discovery: InstanceType<typeof ProviderDiscovery>;

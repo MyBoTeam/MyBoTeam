@@ -61,8 +61,9 @@ export class ProviderDiscovery {
     ]);
 
     return results
-      .filter((result): result is PromiseFulfilledResult<DiscoveredProvider> => 
-        result.status === 'fulfilled' && result.value !== null
+      .filter(
+        (result): result is PromiseFulfilledResult<DiscoveredProvider> =>
+          result.status === 'fulfilled' && result.value !== null,
       )
       .map((result) => result.value);
   }

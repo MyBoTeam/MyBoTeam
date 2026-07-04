@@ -1,4 +1,4 @@
-import { createChildLogger } from '../../storage/logger.js';
+import { createChildLogger } from '../../../storage/logger.js';
 
 export interface ProviderLogFields {
   model: string;

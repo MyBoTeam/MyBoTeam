@@ -1,5 +1,10 @@
-export { LocalProviderConfigSchema, LocalProviderTypeSchema } from './types.js';
-export type { LocalProviderConfig, LocalProviderType, DiscoveredProvider, ProviderCapability } from './types.js';
-export { OllamaProvider } from './ollama-provider.js';
 export { LMStudioProvider } from './lmstudio-provider.js';
-export { ProviderDiscovery } from './provider-discovery.js';
+export { OllamaProvider } from './ollama-provider.js';
+export { ProviderDiscovery } from './tools/provider-discovery.js';
+export type {
+  DiscoveredProvider,
+  LocalProviderConfig,
+  LocalProviderType,
+  ProviderCapability,
+} from './tools/types.js';
+export { LocalProviderConfigSchema, LocalProviderTypeSchema } from './tools/types.js';
