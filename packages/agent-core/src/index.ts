@@ -21,14 +21,18 @@ export type {
   TaskTodo,
 } from '@myboteam/types';
 export { AnthropicProvider } from './providers/anthropic-provider.js';
+export { OpenAIProvider } from './providers/openai-provider.js';
 export { ConcurrencyLimiter } from './providers/tools/concurrency-limiter.js';
 export type { HealthCheckFn, ProviderHealth } from './providers/tools/health-check.js';
 export { checkHealth } from './providers/tools/health-check.js';
 export type { MetricsCallback, ProviderMetrics } from './providers/tools/metrics.js';
 export { MetricsEmitter } from './providers/tools/metrics.js';
 export { ModelFallback } from './providers/tools/model-fallback.js';
-export { OpenAIProvider } from './providers/openai-provider.js';
-export type { ProviderConfig, ProxyConfig, RetryConfig } from './providers/tools/provider-config.js';
+export type {
+  ProviderConfig,
+  ProxyConfig,
+  RetryConfig,
+} from './providers/tools/provider-config.js';
 export { isProviderError, safeJsonParse } from './providers/tools/provider-helpers.js';
 export { RetryHandler } from './providers/tools/retry-handler.js';
 export type { AgentStorageConfig } from './storage/agent-storage.js';
