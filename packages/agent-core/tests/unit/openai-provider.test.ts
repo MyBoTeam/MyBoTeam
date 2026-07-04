@@ -257,13 +257,14 @@ describe('OpenAI Provider', () => {
       expect(models[0].capabilities).toEqual({ tools: true, vision: true, streaming: true });
     });
 
-    it('should return empty array on error', async () => {
+    it('should throw ProviderError on error', async () => {
       mockModelsList.mockRejectedValue(new Error('Network error'));
 
       const provider = new OpenAIProvider(makeConfig());
-      const models = await provider.listModels();
 
-      expect(models).toEqual([]);
+      await expect(provider.listModels()).rejects.toMatchObject({
+        category: 'provider',
+      });
     });
   });
 

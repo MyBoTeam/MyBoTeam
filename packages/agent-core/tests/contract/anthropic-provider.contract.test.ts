@@ -95,8 +95,8 @@ describe('Anthropic Provider Contract', () => {
     it('should return AsyncIterable of StreamingChunk', async () => {
       const mockStreamIter = {
         async *[Symbol.asyncIterator]() {
-          yield { type: 'content_block_delta', delta: { type: 'text_delta', text: 'Hello' } };
-          yield { type: 'content_block_delta', delta: { type: 'text_delta', text: '!' } };
+          yield { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text: 'Hello' } };
+          yield { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text: '!' } };
           yield { type: 'message_stop' };
         },
       };
@@ -139,13 +139,10 @@ describe('Anthropic Provider Contract', () => {
       expect(result[0]).toHaveProperty('capabilities');
     });
 
-    it('should return empty array when no models available', async () => {
-      mockModelsList.mockResolvedValue({ data: [] });
+    it('should throw on error', async () => {
+      mockModelsList.mockRejectedValue(new Error('Network error'));
 
-      const result = await provider.listModels();
-
-      expect(Array.isArray(result)).toBe(true);
-      expect(result).toHaveLength(0);
+      await expect(provider.listModels()).rejects.toThrow();
     });
   });
 });

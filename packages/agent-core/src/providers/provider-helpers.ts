@@ -66,12 +66,19 @@ export async function* executeStreamWithFallback<T>(
   try {
     const modelChain = fallback.getModelChain(request.model, provider);
     let lastError: unknown = null;
+    let outputStarted = false;
 
     for (const model of modelChain) {
       try {
-        yield* fn(model);
+        for await (const chunk of fn(model)) {
+          outputStarted = true;
+          yield chunk;
+        }
         return;
       } catch (error) {
+        if (outputStarted) {
+          throw error;
+        }
         lastError = error;
         if (!isRetryable(lastError)) {
           throw lastError;

@@ -97,6 +97,31 @@ describe('Anthropic Provider', () => {
       );
     });
 
+    it('should concatenate multiple system messages', async () => {
+      mockCreate.mockResolvedValue({
+        content: [{ type: 'text', text: 'OK' }],
+        model: 'claude-sonnet-4-20250514',
+        usage: { input_tokens: 10, output_tokens: 5 },
+      });
+
+      const provider = new AnthropicProvider(makeConfig());
+      await provider.chatCompletion({
+        model: 'claude-sonnet-4-20250514',
+        messages: [
+          { role: 'system', content: 'You are helpful' },
+          { role: 'system', content: 'Be concise' },
+          { role: 'user', content: 'Hi' },
+        ],
+      });
+
+      expect(mockCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          system: 'You are helpful\n\nBe concise',
+          messages: [{ role: 'user', content: 'Hi' }],
+        }),
+      );
+    });
+
     it('should throw ProviderError on auth failure', async () => {
       const authError = Object.assign(new Error('Invalid key'), {
         status: 401,
@@ -142,8 +167,8 @@ describe('Anthropic Provider', () => {
     it('should yield streaming chunks', async () => {
       const mockStreamIter = {
         async *[Symbol.asyncIterator]() {
-          yield { type: 'content_block_delta', delta: { type: 'text_delta', text: 'Hello' } };
-          yield { type: 'content_block_delta', delta: { type: 'text_delta', text: ' world' } };
+          yield { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text: 'Hello' } };
+          yield { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text: ' world' } };
           yield { type: 'message_stop' };
         },
       };
@@ -168,13 +193,18 @@ describe('Anthropic Provider', () => {
       const mockStreamIter = {
         async *[Symbol.asyncIterator]() {
           yield {
-            type: 'content_block_delta',
+            type: 'content_block_start',
+            index: 0,
             content_block: { type: 'tool_use', id: 'call_1', name: 'fn' },
+          };
+          yield {
+            type: 'content_block_delta',
+            index: 0,
             delta: { type: 'input_json_delta', partial_json: '{"a":' },
           };
           yield {
             type: 'content_block_delta',
-            content_block: { type: 'tool_use', id: 'call_1', name: 'fn' },
+            index: 0,
             delta: { type: 'input_json_delta', partial_json: '1}' },
           };
           yield { type: 'message_stop' };
@@ -238,13 +268,14 @@ describe('Anthropic Provider', () => {
       expect(models[0].capabilities).toEqual({ tools: true, vision: true, streaming: true });
     });
 
-    it('should return empty array on error', async () => {
+    it('should throw ProviderError on error', async () => {
       mockModelsList.mockRejectedValue(new Error('Network error'));
 
       const provider = new AnthropicProvider(makeConfig());
-      const models = await provider.listModels();
 
-      expect(models).toEqual([]);
+      await expect(provider.listModels()).rejects.toMatchObject({
+        category: 'provider',
+      });
     });
   });
 
@@ -295,7 +326,7 @@ describe('Anthropic Provider', () => {
     it('should handle mid-stream errors gracefully', async () => {
       const mockStreamIter = {
         async *[Symbol.asyncIterator]() {
-          yield { type: 'content_block_delta', delta: { type: 'text_delta', text: 'Hello' } };
+          yield { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text: 'Hello' } };
           throw new Error('Stream interrupted');
         },
       };

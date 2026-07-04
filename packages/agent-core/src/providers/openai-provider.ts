@@ -141,13 +141,13 @@ export class OpenAIProvider {
     }
 
     const toolCallsMap = new Map<number, { id: string; name: string; arguments: string }>();
-    let firstChunk = true;
+    let ttfcEmitted = false;
 
     for await (const chunk of stream) {
       const choice = chunk.choices[0];
       if (!choice) continue;
 
-      if (firstChunk) {
+      if (!ttfcEmitted && (choice.delta.content || choice.delta.tool_calls)) {
         const ttfc = Date.now() - startTime;
         this.metrics.emit({
           requestDuration: ttfc,
@@ -156,7 +156,7 @@ export class OpenAIProvider {
           totalTokens: 0,
           timeToFirstChunk: ttfc,
         });
-        firstChunk = false;
+        ttfcEmitted = true;
       }
 
       if (choice.delta.content) {
@@ -187,10 +187,18 @@ export class OpenAIProvider {
           argumentsDelta: tc.arguments,
         }));
 
-        yield {
-          finishReason: choice.finish_reason === 'stop' ? 'stop' : 'tool_call',
-          toolCall: toolCalls.length > 0 ? toolCalls[0] : undefined,
-        };
+        if (toolCalls.length > 0) {
+          for (const toolCall of toolCalls) {
+            yield {
+              finishReason: 'tool_call',
+              toolCall,
+            };
+          }
+        } else {
+          yield {
+            finishReason: 'stop',
+          };
+        }
       }
     }
   }
@@ -204,8 +212,9 @@ export class OpenAIProvider {
         provider: 'openai',
         capabilities: { tools: true, vision: true, streaming: true },
       }));
-    } catch {
-      return [];
+    } catch (error) {
+      const providerError = toProviderError(error, 'openai');
+      throw providerError;
     }
   }
 

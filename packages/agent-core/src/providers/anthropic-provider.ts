@@ -8,11 +8,7 @@ import { MetricsEmitter } from './metrics.js';
 import { ModelFallback } from './model-fallback.js';
 import type { ProviderConfig } from './provider-config.js';
 import { toProviderError } from './provider-errors.js';
-import {
-  executeStreamWithFallback,
-  executeWithFallback,
-  safeJsonParse,
-} from './provider-helpers.js';
+import { executeStreamWithFallback, executeWithFallback } from './provider-helpers.js';
 import { RetryHandler } from './retry-handler.js';
 
 export class AnthropicProvider {
@@ -53,7 +49,10 @@ export class AnthropicProvider {
   private async executeChatCompletion(request: ChatRequest): Promise<ChatResponse> {
     const startTime = Date.now();
 
-    const systemMessage = request.messages.find((msg) => msg.role === 'system');
+    const systemMessages = request.messages
+      .filter((msg) => msg.role === 'system')
+      .map((msg) => msg.content)
+      .join('\n\n');
     const nonSystemMessages = request.messages.filter((msg) => msg.role !== 'system');
 
     let response: any;
@@ -61,7 +60,7 @@ export class AnthropicProvider {
       response = await this.client.messages.create({
         model: request.model,
         max_tokens: (request.options?.maxTokens as number) ?? 4096,
-        system: systemMessage?.content,
+        system: systemMessages || undefined,
         messages: nonSystemMessages.map((msg) => ({
           role: msg.role as 'user' | 'assistant',
           content: msg.content,
@@ -124,7 +123,10 @@ export class AnthropicProvider {
 
   private async *executeStreamChat(request: ChatRequest): AsyncIterable<StreamingChunk> {
     const startTime = Date.now();
-    const systemMessage = request.messages.find((msg) => msg.role === 'system');
+    const systemMessages = request.messages
+      .filter((msg) => msg.role === 'system')
+      .map((msg) => msg.content)
+      .join('\n\n');
     const nonSystemMessages = request.messages.filter((msg) => msg.role !== 'system');
 
     let stream: any;
@@ -132,7 +134,7 @@ export class AnthropicProvider {
       stream = this.client.messages.stream({
         model: request.model,
         max_tokens: (request.options?.maxTokens as number) ?? 4096,
-        system: systemMessage?.content,
+        system: systemMessages || undefined,
         messages: nonSystemMessages.map((msg) => ({
           role: msg.role as 'user' | 'assistant',
           content: msg.content,
@@ -149,7 +151,7 @@ export class AnthropicProvider {
     }
 
     let firstChunk = true;
-    const toolCallsMap = new Map<string, { id: string; name: string; arguments: string }>();
+    const toolCallsMap = new Map<number, { id: string; name: string; arguments: string }>();
 
     for await (const event of stream) {
       if (firstChunk && event.type === 'content_block_delta') {
@@ -164,23 +166,25 @@ export class AnthropicProvider {
         firstChunk = false;
       }
 
+      if (event.type === 'content_block_start') {
+        const block = event.content_block;
+        if (block.type === 'tool_use') {
+          toolCallsMap.set(event.index, {
+            id: block.id,
+            name: block.name,
+            arguments: '',
+          });
+        }
+      }
+
       if (event.type === 'content_block_delta') {
         const delta = event.delta;
         if (delta.type === 'text_delta') {
           yield { content: delta.text };
         } else if (delta.type === 'input_json_delta') {
-          const toolBlock = event.content_block;
-          if (toolBlock.type === 'tool_use') {
-            const existing = toolCallsMap.get(toolBlock.id);
-            if (existing) {
-              existing.arguments += delta.partial_json;
-            } else {
-              toolCallsMap.set(toolBlock.id, {
-                id: toolBlock.id,
-                name: toolBlock.name,
-                arguments: delta.partial_json,
-              });
-            }
+          const existing = toolCallsMap.get(event.index);
+          if (existing) {
+            existing.arguments += delta.partial_json;
           }
         }
       }
@@ -192,10 +196,18 @@ export class AnthropicProvider {
           argumentsDelta: tc.arguments,
         }));
 
-        yield {
-          finishReason: toolCalls.length > 0 ? 'tool_call' : 'stop',
-          toolCall: toolCalls.length > 0 ? toolCalls[0] : undefined,
-        };
+        if (toolCalls.length > 0) {
+          for (const toolCall of toolCalls) {
+            yield {
+              finishReason: 'tool_call',
+              toolCall,
+            };
+          }
+        } else {
+          yield {
+            finishReason: 'stop',
+          };
+        }
       }
     }
   }
@@ -209,8 +221,9 @@ export class AnthropicProvider {
         provider: 'anthropic',
         capabilities: { tools: true, vision: true, streaming: true },
       }));
-    } catch {
-      return [];
+    } catch (error) {
+      const providerError = toProviderError(error, 'anthropic');
+      throw providerError;
     }
   }
 

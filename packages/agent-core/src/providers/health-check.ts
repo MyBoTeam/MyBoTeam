@@ -12,13 +12,14 @@ export async function checkHealth(
   timeoutMs = 5000,
 ): Promise<ProviderHealth> {
   const start = Date.now();
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   try {
     const result = await Promise.race([
       healthCheckFn(),
-      new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('Health check timeout')), timeoutMs),
-      ),
+      new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error('Health check timeout')), timeoutMs);
+      }),
     ]);
 
     return { ...result, latency: Date.now() - start };
@@ -29,5 +30,9 @@ export async function checkHealth(
       timestamp: new Date().toISOString(),
       error: error instanceof Error ? error.message : 'Unknown error',
     };
+  } finally {
+    if (timeoutId !== undefined) {
+      clearTimeout(timeoutId);
+    }
   }
 }

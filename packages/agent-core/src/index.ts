@@ -30,6 +30,7 @@ export { ModelFallback } from './providers/model-fallback.js';
 export { OpenAIProvider } from './providers/openai-provider.js';
 export type { ProviderConfig, ProxyConfig, RetryConfig } from './providers/provider-config.js';
 export { isProviderError, safeJsonParse } from './providers/provider-helpers.js';
+export { RetryHandler } from './providers/retry-handler.js';
 export type { AgentStorageConfig } from './storage/agent-storage.js';
 export { listTasks, updateTask } from './storage/crud/task.js';
 export {
