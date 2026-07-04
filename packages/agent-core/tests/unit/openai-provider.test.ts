@@ -39,11 +39,10 @@ describe('OpenAI Provider', () => {
         messages: [{ role: 'user', content: 'Hi' }],
       });
 
-      expect(result.content).toBe('Hello!');
-      expect(result.role).toBe('assistant');
-      expect(result.model).toBe('gpt-4o');
-      expect(result.usage.promptTokens).toBe(10);
-      expect(result.usage.completionTokens).toBe(5);
+      expect(result.message.content).toBe('Hello!');
+      expect(result.message.role).toBe('assistant');
+      expect(result.usage?.promptTokens).toBe(10);
+      expect(result.usage?.completionTokens).toBe(5);
     });
 
     it('should extract tool calls from response', async () => {
@@ -167,7 +166,7 @@ describe('OpenAI Provider', () => {
       expect(chunks).toHaveLength(3);
       expect(chunks[0].content).toBe('Hello');
       expect(chunks[1].content).toBe(' world');
-      expect(chunks[2].done).toBe(true);
+      expect(chunks[2].finishReason).toBe('stop');
     });
 
     it('should aggregate tool calls from streaming chunks', async () => {
@@ -214,9 +213,9 @@ describe('OpenAI Provider', () => {
       }
 
       const lastChunk = chunks[chunks.length - 1];
-      expect(lastChunk.done).toBe(true);
-      expect(lastChunk.toolCalls).toHaveLength(1);
-      expect(lastChunk.toolCalls?.[0].arguments).toEqual({ a: 1 });
+      expect(lastChunk.finishReason).toBe('tool_call');
+      expect(lastChunk.toolCall).toBeDefined();
+      expect(lastChunk.toolCall?.argumentsDelta).toBe('{"a":1}');
     });
 
     it('should throw ProviderError on stream init failure', async () => {
@@ -254,7 +253,8 @@ describe('OpenAI Provider', () => {
       const models = await provider.listModels();
 
       expect(models).toHaveLength(2);
-      expect(models[0]).toEqual({ id: 'gpt-4o', name: 'gpt-4o', provider: 'openai' });
+      expect(models[0].id).toBe('gpt-4o');
+      expect(models[0].capabilities).toEqual({ tools: true, vision: true, streaming: true });
     });
 
     it('should return empty array on error', async () => {
@@ -331,7 +331,7 @@ describe('OpenAI Provider', () => {
         messages: [{ role: 'user', content: 'Hi' }],
       });
 
-      expect(result.content).toBeUndefined();
+      expect(result.message.content).toBe('');
     });
 
     it('should handle connection errors as retryable', async () => {

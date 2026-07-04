@@ -54,13 +54,12 @@ describe('Anthropic Provider Contract', () => {
 
       const result = await provider.chatCompletion(request);
 
-      expect(result).toHaveProperty('content');
-      expect(result).toHaveProperty('role', 'assistant');
-      expect(result).toHaveProperty('model');
+      expect(result).toHaveProperty('message');
+      expect(result.message.content).toBe('Hello!');
+      expect(result.message.role).toBe('assistant');
       expect(result).toHaveProperty('usage');
       expect(result.usage).toHaveProperty('promptTokens');
       expect(result.usage).toHaveProperty('completionTokens');
-      expect(result.usage).toHaveProperty('totalTokens');
     });
 
     it('should handle tool definitions in request', async () => {
@@ -114,9 +113,11 @@ describe('Anthropic Provider Contract', () => {
       }
 
       expect(chunks).toHaveLength(3);
-      expect(chunks[0]).toHaveProperty('content');
-      expect(chunks[0]).toHaveProperty('done', false);
-      expect(chunks[2]).toHaveProperty('done', true);
+      expect(chunks[0].content).toBe('Hello');
+      expect(chunks[0].finishReason).toBeUndefined();
+      expect(chunks[1].content).toBe('!');
+      expect(chunks[1].finishReason).toBeUndefined();
+      expect(chunks[2].finishReason).toBe('stop');
     });
   });
 
@@ -135,7 +136,7 @@ describe('Anthropic Provider Contract', () => {
       expect(result.length).toBeGreaterThan(0);
       expect(result[0]).toHaveProperty('id');
       expect(result[0]).toHaveProperty('name');
-      expect(result[0]).toHaveProperty('provider', 'anthropic');
+      expect(result[0]).toHaveProperty('capabilities');
     });
 
     it('should return empty array when no models available', async () => {

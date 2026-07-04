@@ -70,15 +70,15 @@ export class OpenAIProvider {
             parameters: tool.parameters,
           },
         })),
-        temperature: request.temperature,
-        max_tokens: request.maxTokens,
+        temperature: request.options?.temperature as number | undefined,
+        max_tokens: request.options?.maxTokens as number | undefined,
       });
     } catch (error) {
       throw toProviderError(error, 'openai');
     }
 
     const choice = response.choices[0];
-    const toolCalls = choice.message.tool_calls?.map((tc) => ({
+    const toolCalls = choice.message.tool_calls?.map((tc: any) => ({
       id: tc.id,
       name: tc.function.name,
       arguments: safeJsonParse(tc.function.arguments),
@@ -94,9 +94,11 @@ export class OpenAIProvider {
     this.metrics.emit(metrics);
 
     return {
-      content: choice.message.content ?? undefined,
-      role: 'assistant',
-      model: response.model,
+      message: {
+        role: 'assistant',
+        content: choice.message.content ?? '',
+        timestamp: new Date().toISOString(),
+      },
       toolCalls,
       usage: {
         promptTokens: metrics.promptTokens,
@@ -131,8 +133,8 @@ export class OpenAIProvider {
           },
         })),
         stream: true,
-        temperature: request.temperature,
-        max_tokens: request.maxTokens,
+        temperature: request.options?.temperature as number | undefined,
+        max_tokens: request.options?.maxTokens as number | undefined,
       });
     } catch (error) {
       throw toProviderError(error, 'openai');
@@ -158,7 +160,7 @@ export class OpenAIProvider {
       }
 
       if (choice.delta.content) {
-        yield { content: choice.delta.content, done: false };
+        yield { content: choice.delta.content };
       }
 
       if (choice.delta.tool_calls) {
@@ -182,13 +184,12 @@ export class OpenAIProvider {
         const toolCalls = Array.from(toolCallsMap.values()).map((tc) => ({
           id: tc.id,
           name: tc.name,
-          arguments: safeJsonParse(tc.arguments),
+          argumentsDelta: tc.arguments,
         }));
 
         yield {
-          content: '',
-          done: true,
-          toolCalls: toolCalls.length > 0 ? toolCalls : undefined,
+          finishReason: choice.finish_reason === 'stop' ? 'stop' : 'tool_call',
+          toolCall: toolCalls.length > 0 ? toolCalls[0] : undefined,
         };
       }
     }
@@ -200,7 +201,8 @@ export class OpenAIProvider {
       return response.data.map((model) => ({
         id: model.id,
         name: model.id,
-        provider: 'openai' as const,
+        provider: 'openai',
+        capabilities: { tools: true, vision: true, streaming: true },
       }));
     } catch {
       return [];

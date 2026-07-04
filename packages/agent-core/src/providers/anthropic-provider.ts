@@ -60,7 +60,7 @@ export class AnthropicProvider {
     try {
       response = await this.client.messages.create({
         model: request.model,
-        max_tokens: request.maxTokens ?? 4096,
+        max_tokens: (request.options?.maxTokens as number) ?? 4096,
         system: systemMessage?.content,
         messages: nonSystemMessages.map((msg) => ({
           role: msg.role as 'user' | 'assistant',
@@ -71,22 +71,22 @@ export class AnthropicProvider {
           description: tool.description,
           input_schema: tool.parameters as Anthropic.Tool['input_schema'],
         })),
-        temperature: request.temperature,
+        temperature: request.options?.temperature as number | undefined,
       });
     } catch (error) {
       throw toProviderError(error, 'anthropic');
     }
 
     const content = response.content
-      .filter((block): block is Anthropic.TextBlock => block.type === 'text')
-      .map((block) => block.text)
+      .filter((block: any): block is Anthropic.TextBlock => block.type === 'text')
+      .map((block: any) => block.text)
       .join('');
 
     const toolUseBlocks = response.content.filter(
-      (block): block is Anthropic.ToolUseBlock => block.type === 'tool_use',
+      (block: any): block is Anthropic.ToolUseBlock => block.type === 'tool_use',
     );
 
-    const toolCalls = toolUseBlocks.map((block) => ({
+    const toolCalls = toolUseBlocks.map((block: any) => ({
       id: block.id,
       name: block.name,
       arguments: block.input as Record<string, unknown>,
@@ -102,9 +102,11 @@ export class AnthropicProvider {
     this.metrics.emit(metrics);
 
     return {
-      content: content || undefined,
-      role: 'assistant',
-      model: response.model,
+      message: {
+        role: 'assistant',
+        content: content || '',
+        timestamp: new Date().toISOString(),
+      },
       toolCalls: toolCalls.length > 0 ? toolCalls : undefined,
       usage: {
         promptTokens: metrics.promptTokens,
@@ -129,7 +131,7 @@ export class AnthropicProvider {
     try {
       stream = this.client.messages.stream({
         model: request.model,
-        max_tokens: request.maxTokens ?? 4096,
+        max_tokens: (request.options?.maxTokens as number) ?? 4096,
         system: systemMessage?.content,
         messages: nonSystemMessages.map((msg) => ({
           role: msg.role as 'user' | 'assistant',
@@ -140,7 +142,7 @@ export class AnthropicProvider {
           description: tool.description,
           input_schema: tool.parameters as Anthropic.Tool['input_schema'],
         })),
-        temperature: request.temperature,
+        temperature: request.options?.temperature as number | undefined,
       });
     } catch (error) {
       throw toProviderError(error, 'anthropic');
@@ -165,7 +167,7 @@ export class AnthropicProvider {
       if (event.type === 'content_block_delta') {
         const delta = event.delta;
         if (delta.type === 'text_delta') {
-          yield { content: delta.text, done: false };
+          yield { content: delta.text };
         } else if (delta.type === 'input_json_delta') {
           const toolBlock = event.content_block;
           if (toolBlock.type === 'tool_use') {
@@ -187,13 +189,12 @@ export class AnthropicProvider {
         const toolCalls = Array.from(toolCallsMap.values()).map((tc) => ({
           id: tc.id,
           name: tc.name,
-          arguments: safeJsonParse(tc.arguments),
+          argumentsDelta: tc.arguments,
         }));
 
         yield {
-          content: '',
-          done: true,
-          toolCalls: toolCalls.length > 0 ? toolCalls : undefined,
+          finishReason: toolCalls.length > 0 ? 'tool_call' : 'stop',
+          toolCall: toolCalls.length > 0 ? toolCalls[0] : undefined,
         };
       }
     }
@@ -205,7 +206,8 @@ export class AnthropicProvider {
       return response.data.map((model) => ({
         id: model.id,
         name: model.display_name ?? model.id,
-        provider: 'anthropic' as const,
+        provider: 'anthropic',
+        capabilities: { tools: true, vision: true, streaming: true },
       }));
     } catch {
       return [];
