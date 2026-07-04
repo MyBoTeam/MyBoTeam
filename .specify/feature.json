@@ -1,3 +1,3 @@
 {
-  "feature_directory": "specs/010-openai-anthropic-providers"
+  "feature_directory": "specs/010-local-llm-provider"
 }
