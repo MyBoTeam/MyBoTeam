@@ -1,5 +1,5 @@
 import type { ModelInfo } from '@myboteam/types';
-import type { ProviderCapability } from './types.js';
+import type { ProviderCapability } from './local-provider-types.js';
 
 export interface CapabilityDetector {
   detectCapabilities(

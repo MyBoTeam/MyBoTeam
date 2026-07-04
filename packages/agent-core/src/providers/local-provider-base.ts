@@ -1,5 +1,5 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
-import type { LocalProviderConfig, ProviderCapability } from './tools/types.js';
+import type { LocalProviderConfig, ProviderCapability } from './tools/local-provider-types.js';
 
 export abstract class LocalProviderBase {
   protected readonly config: LocalProviderConfig;

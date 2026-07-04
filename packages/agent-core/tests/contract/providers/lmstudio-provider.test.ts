@@ -5,7 +5,7 @@ const mockFetch = vi.fn();
 
 globalThis.fetch = mockFetch as unknown as typeof fetch;
 
-const { LMStudioProvider } = await import('../../../src/services/providers/lmstudio-provider');
+const { LMStudioProvider } = await import('../../../src/providers/lmstudio-provider');
 
 describe('LMStudio Provider Contract', () => {
   let provider: ProviderClient;

@@ -1,5 +1,5 @@
 import type { ModelInfo } from '@myboteam/types';
-import type { DiscoveredProvider, LocalProviderType } from './types.js';
+import type { DiscoveredProvider, LocalProviderType } from './local-provider-types.js';
 
 export interface DiscoveryConfig {
   ollamaPort?: number;

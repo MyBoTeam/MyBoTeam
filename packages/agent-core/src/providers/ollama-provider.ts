@@ -1,11 +1,11 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
-import { mapHttpError, mapNetworkError } from './tools/error-mapper.js';
 import { LocalProviderBase } from './local-provider-base.js';
+import { mapHttpError, mapNetworkError } from './tools/error-mapper.js';
 import { logProviderError, logProviderRequest } from './tools/logger.js';
-import { createLocalMetricsEmitter } from './tools/metrics.js';
+import { createLocalMetricsEmitter } from './tools/local-metrics.js';
 import { parseRateLimitHeaders } from './tools/rate-limit-parser.js';
 
-export class LMStudioProvider extends LocalProviderBase {
+export class OllamaProvider extends LocalProviderBase {
   private readonly metrics = createLocalMetricsEmitter();
 
   async chatCompletion(request: ChatRequest): Promise<ChatResponse> {
@@ -27,8 +27,10 @@ export class LMStudioProvider extends LocalProviderBase {
           },
         })),
         stream: false,
-        temperature: request.options?.temperature,
-        max_tokens: request.options?.maxTokens,
+        options: {
+          temperature: request.options?.temperature,
+          num_predict: request.options?.maxTokens,
+        },
       };
 
       const url = new URL('/v1/chat/completions', this.config.endpoint);
@@ -44,7 +46,7 @@ export class LMStudioProvider extends LocalProviderBase {
         throw mapHttpError(
           response.status,
           `HTTP ${response.status}: ${response.statusText}`,
-          'lmstudio',
+          'ollama',
           rateLimitHeaders,
         );
       }
@@ -92,7 +94,7 @@ export class LMStudioProvider extends LocalProviderBase {
         model: request.model,
         duration_ms: durationMs,
         tokens_used: usage?.totalTokens ?? 0,
-        provider_name: 'lmstudio',
+        provider_name: 'ollama',
         success: true,
       });
 
@@ -107,13 +109,13 @@ export class LMStudioProvider extends LocalProviderBase {
       };
     } catch (error) {
       const durationMs = Date.now() - startTime;
-      logProviderError('lmstudio', request.model, error, durationMs);
+      logProviderError('ollama', request.model, error, durationMs);
 
       if (error && typeof error === 'object' && 'category' in error) {
         throw error;
       }
 
-      throw mapNetworkError(error, 'lmstudio');
+      throw mapNetworkError(error, 'ollama');
     }
   }
 
@@ -136,8 +138,10 @@ export class LMStudioProvider extends LocalProviderBase {
           },
         })),
         stream: true,
-        temperature: request.options?.temperature,
-        max_tokens: request.options?.maxTokens,
+        options: {
+          temperature: request.options?.temperature,
+          num_predict: request.options?.maxTokens,
+        },
       };
 
       const url = new URL('/v1/chat/completions', this.config.endpoint);
@@ -153,7 +157,7 @@ export class LMStudioProvider extends LocalProviderBase {
         throw mapHttpError(
           response.status,
           `HTTP ${response.status}: ${response.statusText}`,
-          'lmstudio',
+          'ollama',
           rateLimitHeaders,
         );
       }
@@ -232,18 +236,18 @@ export class LMStudioProvider extends LocalProviderBase {
         model: request.model,
         duration_ms: durationMs,
         tokens_used: 0,
-        provider_name: 'lmstudio',
+        provider_name: 'ollama',
         success: true,
       });
     } catch (error) {
       const durationMs = Date.now() - startTime;
-      logProviderError('lmstudio', request.model, error, durationMs);
+      logProviderError('ollama', request.model, error, durationMs);
 
       if (error && typeof error === 'object' && 'category' in error) {
         throw error;
       }
 
-      throw mapNetworkError(error, 'lmstudio');
+      throw mapNetworkError(error, 'ollama');
     }
   }
 
@@ -256,7 +260,7 @@ export class LMStudioProvider extends LocalProviderBase {
       return (data.data ?? []).map((model) => ({
         id: model.id,
         name: model.id,
-        provider: 'lmstudio',
+        provider: 'ollama',
         capabilities: {
           tools: false,
           vision: false,
@@ -264,7 +268,7 @@ export class LMStudioProvider extends LocalProviderBase {
         },
       }));
     } catch (error) {
-      throw mapNetworkError(error, 'lmstudio');
+      throw mapNetworkError(error, 'ollama');
     }
   }
 

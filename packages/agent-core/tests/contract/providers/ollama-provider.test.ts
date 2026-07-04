@@ -5,7 +5,7 @@ const mockFetch = vi.fn();
 
 globalThis.fetch = mockFetch as unknown as typeof fetch;
 
-const { OllamaProvider } = await import('../../../src/services/providers/ollama-provider');
+const { OllamaProvider } = await import('../../../src/providers/ollama-provider');
 
 describe('Ollama Provider Contract', () => {
   let provider: ProviderClient;

@@ -1,18 +1,18 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
 import OpenAI from 'openai';
-import { ConcurrencyLimiter } from './concurrency-limiter.js';
-import type { ProviderHealth } from './health-check.js';
-import { checkHealth } from './health-check.js';
-import type { ProviderMetrics } from './metrics.js';
-import { MetricsEmitter } from './metrics.js';
-import { ModelFallback } from './model-fallback.js';
-import type { ProviderConfig } from './provider-config.js';
-import { toProviderError } from './provider-errors.js';
+import { ConcurrencyLimiter } from './tools/concurrency-limiter.js';
+import type { ProviderHealth } from './tools/health-check.js';
+import { checkHealth } from './tools/health-check.js';
+import type { ProviderMetrics } from './tools/metrics.js';
+import { MetricsEmitter } from './tools/metrics.js';
+import { ModelFallback } from './tools/model-fallback.js';
+import type { ProviderConfig } from './tools/provider-config.js';
+import { toProviderError } from './tools/provider-errors.js';
 import {
   executeStreamWithFallback,
   executeWithFallback,
   safeJsonParse,
-} from './provider-helpers.js';
+} from './tools/provider-helpers.js';
 import { RetryHandler } from './retry-handler.js';
 
 export class OpenAIProvider {
