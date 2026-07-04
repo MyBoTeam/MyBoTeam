@@ -55,7 +55,7 @@ export class AnthropicProvider {
       .join('\n\n');
     const nonSystemMessages = request.messages.filter((msg) => msg.role !== 'system');
 
-    let response: any;
+    let response: Anthropic.Message;
     try {
       response = await this.client.messages.create({
         model: request.model,
@@ -77,15 +77,15 @@ export class AnthropicProvider {
     }
 
     const content = response.content
-      .filter((block: any): block is Anthropic.TextBlock => block.type === 'text')
-      .map((block: any) => block.text)
+      .filter((block): block is Anthropic.TextBlock => block.type === 'text')
+      .map((block) => block.text)
       .join('');
 
     const toolUseBlocks = response.content.filter(
-      (block: any): block is Anthropic.ToolUseBlock => block.type === 'tool_use',
+      (block): block is Anthropic.ToolUseBlock => block.type === 'tool_use',
     );
 
-    const toolCalls = toolUseBlocks.map((block: any) => ({
+    const toolCalls = toolUseBlocks.map((block) => ({
       id: block.id,
       name: block.name,
       arguments: block.input as Record<string, unknown>,

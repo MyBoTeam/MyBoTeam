@@ -95,7 +95,11 @@ describe('Anthropic Provider Contract', () => {
     it('should return AsyncIterable of StreamingChunk', async () => {
       const mockStreamIter = {
         async *[Symbol.asyncIterator]() {
-          yield { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text: 'Hello' } };
+          yield {
+            type: 'content_block_delta',
+            index: 0,
+            delta: { type: 'text_delta', text: 'Hello' },
+          };
           yield { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text: '!' } };
           yield { type: 'message_stop' };
         },

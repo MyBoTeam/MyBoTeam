@@ -167,8 +167,16 @@ describe('Anthropic Provider', () => {
     it('should yield streaming chunks', async () => {
       const mockStreamIter = {
         async *[Symbol.asyncIterator]() {
-          yield { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text: 'Hello' } };
-          yield { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text: ' world' } };
+          yield {
+            type: 'content_block_delta',
+            index: 0,
+            delta: { type: 'text_delta', text: 'Hello' },
+          };
+          yield {
+            type: 'content_block_delta',
+            index: 0,
+            delta: { type: 'text_delta', text: ' world' },
+          };
           yield { type: 'message_stop' };
         },
       };
@@ -225,6 +233,58 @@ describe('Anthropic Provider', () => {
       expect(lastChunk.finishReason).toBe('tool_call');
       expect(lastChunk.toolCall).toBeDefined();
       expect(lastChunk.toolCall?.argumentsDelta).toBe('{"a":1}');
+    });
+
+    it('should emit all tool calls from parallel tool-use blocks', async () => {
+      const mockStreamIter = {
+        async *[Symbol.asyncIterator]() {
+          yield {
+            type: 'content_block_start',
+            index: 0,
+            content_block: { type: 'tool_use', id: 'call_1', name: 'get_weather' },
+          };
+          yield {
+            type: 'content_block_delta',
+            index: 0,
+            delta: { type: 'input_json_delta', partial_json: '{"loc":' },
+          };
+          yield {
+            type: 'content_block_start',
+            index: 1,
+            content_block: { type: 'tool_use', id: 'call_2', name: 'get_time' },
+          };
+          yield {
+            type: 'content_block_delta',
+            index: 0,
+            delta: { type: 'input_json_delta', partial_json: '"NYC"}' },
+          };
+          yield {
+            type: 'content_block_delta',
+            index: 1,
+            delta: { type: 'input_json_delta', partial_json: '{"tz":"EST"}' },
+          };
+          yield { type: 'message_stop' };
+        },
+      };
+      mockStream.mockReturnValue(mockStreamIter);
+
+      const provider = new AnthropicProvider(makeConfig());
+      const chunks = [];
+      for await (const chunk of provider.streamChat({
+        model: 'claude-sonnet-4-20250514',
+        messages: [{ role: 'user', content: 'Hi' }],
+      })) {
+        chunks.push(chunk);
+      }
+
+      const toolCallChunks = chunks.filter((c) => c.finishReason === 'tool_call');
+      expect(toolCallChunks).toHaveLength(2);
+      expect(toolCallChunks[0].toolCall?.id).toBe('call_1');
+      expect(toolCallChunks[0].toolCall?.name).toBe('get_weather');
+      expect(toolCallChunks[0].toolCall?.argumentsDelta).toBe('{"loc":"NYC"}');
+      expect(toolCallChunks[1].toolCall?.id).toBe('call_2');
+      expect(toolCallChunks[1].toolCall?.name).toBe('get_time');
+      expect(toolCallChunks[1].toolCall?.argumentsDelta).toBe('{"tz":"EST"}');
     });
 
     it('should throw ProviderError on stream init failure', async () => {
@@ -326,7 +386,11 @@ describe('Anthropic Provider', () => {
     it('should handle mid-stream errors gracefully', async () => {
       const mockStreamIter = {
         async *[Symbol.asyncIterator]() {
-          yield { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text: 'Hello' } };
+          yield {
+            type: 'content_block_delta',
+            index: 0,
+            delta: { type: 'text_delta', text: 'Hello' },
+          };
           throw new Error('Stream interrupted');
         },
       };
