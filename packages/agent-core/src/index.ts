@@ -39,3 +39,13 @@ export {
   seedTestAgentAssignments,
   seedTestMcpServers,
 } from './storage/seeder.js';
+export type { ProviderConfig, ProxyConfig, RetryConfig } from './providers/provider-config.js';
+export { ConcurrencyLimiter } from './providers/concurrency-limiter.js';
+export { ModelFallback } from './providers/model-fallback.js';
+export type { ProviderMetrics, MetricsCallback } from './providers/metrics.js';
+export { MetricsEmitter } from './providers/metrics.js';
+export type { ProviderHealth, HealthCheckFn } from './providers/health-check.js';
+export { checkHealth } from './providers/health-check.js';
+export { OpenAIProvider } from './providers/openai-provider.js';
+export { AnthropicProvider } from './providers/anthropic-provider.js';
+export { isProviderError, safeJsonParse } from './providers/provider-helpers.js';
