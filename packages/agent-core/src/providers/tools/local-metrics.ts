@@ -1,6 +1,6 @@
+import { createChildLogger } from '../../storage/logger.js';
 import type { ProviderMetrics } from './metrics.js';
 import { MetricsEmitter } from './metrics.js';
-import { createChildLogger } from '../../storage/logger.js';
 
 const logger = createChildLogger({ module: 'provider-metrics' });
 
