@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { MetricsEmitter } from '../../src/providers/metrics';
+import { MetricsEmitter } from '../../src/providers/tools/metrics';
 
 describe('MetricsEmitter', () => {
   describe('emit', () => {

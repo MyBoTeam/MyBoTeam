@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { RetryHandler } from '../../src/providers/retry-handler';
+import { RetryHandler } from '../../src/providers/tools/retry-handler';
 
 describe('RetryHandler', () => {
   describe('execute', () => {

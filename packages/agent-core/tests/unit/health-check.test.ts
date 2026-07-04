@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { checkHealth } from '../../src/providers/health-check';
+import { checkHealth } from '../../src/providers/tools/health-check';
 
 describe('Health Check', () => {
   describe('checkHealth', () => {
