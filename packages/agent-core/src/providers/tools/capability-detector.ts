@@ -62,6 +62,7 @@ async function fetchModels(
     id: model.id,
     name: model.id,
     provider: 'local',
+    capabilities: { tools: false, vision: false, streaming: true },
   }));
 }
 

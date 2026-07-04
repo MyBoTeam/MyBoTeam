@@ -91,6 +91,7 @@ export class ProviderDiscovery {
         id: model.id,
         name: model.id,
         provider: type,
+        capabilities: { tools: false, vision: false, streaming: true },
       }));
 
       return {

@@ -1,6 +1,5 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
 import OpenAI from 'openai';
-import { RetryHandler } from './tools/retry-handler.js';
 import { ConcurrencyLimiter } from './tools/concurrency-limiter.js';
 import type { ProviderHealth } from './tools/health-check.js';
 import { checkHealth } from './tools/health-check.js';
@@ -14,6 +13,7 @@ import {
   executeWithFallback,
   safeJsonParse,
 } from './tools/provider-helpers.js';
+import { RetryHandler } from './tools/retry-handler.js';
 
 export class OpenAIProvider {
   private readonly client: OpenAI;

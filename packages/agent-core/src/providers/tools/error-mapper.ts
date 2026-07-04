@@ -4,7 +4,7 @@ export function mapHttpError(
   status: number,
   message: string,
   _provider: string,
-  rateLimitHeaders?: { remaining?: string; reset?: string },
+  _rateLimitHeaders?: { remaining?: string; reset?: string },
 ): ProviderError {
   if (status === 401 || status === 403) {
     return {
@@ -25,12 +25,6 @@ export function mapHttpError(
       statusCode: status,
       retryable: true,
       providerMessage: message,
-      rateLimit: rateLimitHeaders
-        ? {
-            remaining: rateLimitHeaders.remaining ? Number(rateLimitHeaders.remaining) : undefined,
-            reset: rateLimitHeaders.reset ? Number(rateLimitHeaders.reset) : undefined,
-          }
-        : undefined,
     };
   }
 
@@ -94,7 +88,7 @@ export function mapValidationError(
   _provider: string,
 ): ProviderError {
   return {
-    category: 'validation',
+    category: 'provider',
     code: 'VALIDATION_ERROR',
     message: `Validation failed for ${field}: ${message}`,
     retryable: false,

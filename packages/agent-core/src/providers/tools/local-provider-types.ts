@@ -1,35 +1,31 @@
-import { z } from 'zod';
+export type LocalProviderType = 'ollama' | 'lmstudio';
 
-export const LocalProviderTypeSchema = z.enum(['ollama', 'lmstudio']);
+export interface LocalProviderConfig {
+  name: string;
+  type: LocalProviderType;
+  endpoint: string;
+  apiKey?: string;
+  headers: Record<string, string>;
+  timeout: number;
+  enabled: boolean;
+}
 
-export type LocalProviderType = z.infer<typeof LocalProviderTypeSchema>;
+export interface DiscoveredProvider {
+  type: LocalProviderType;
+  port: number;
+  available: boolean;
+  models: Array<{
+    id: string;
+    name: string;
+    provider: string;
+    capabilities: { tools: boolean; vision: boolean; streaming: boolean };
+    contextWindow?: number;
+  }>;
+}
 
-export const LocalProviderConfigSchema = z.object({
-  name: z.string().min(1).max(128),
-  type: LocalProviderTypeSchema,
-  endpoint: z.string().url(),
-  apiKey: z.string().optional(),
-  headers: z.record(z.string()).default({}),
-  timeout: z.number().positive().default(120_000),
-  enabled: z.boolean().default(true),
-});
-
-export type LocalProviderConfig = z.infer<typeof LocalProviderConfigSchema>;
-
-export const DiscoveredProviderSchema = z.object({
-  type: LocalProviderTypeSchema,
-  port: z.number().int().positive(),
-  available: z.boolean(),
-  models: z.array(z.unknown()).default([]),
-});
-
-export type DiscoveredProvider = z.infer<typeof DiscoveredProviderSchema>;
-
-export const ProviderCapabilitySchema = z.object({
-  streaming: z.boolean().default(true),
-  tools: z.boolean().default(false),
-  vision: z.boolean().default(false),
-  maxContextWindow: z.number().positive().optional(),
-});
-
-export type ProviderCapability = z.infer<typeof ProviderCapabilitySchema>;
+export interface ProviderCapability {
+  streaming: boolean;
+  tools: boolean;
+  vision: boolean;
+  maxContextWindow?: number;
+}
