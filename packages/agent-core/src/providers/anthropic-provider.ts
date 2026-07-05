@@ -31,7 +31,7 @@ export class AnthropicProvider {
     });
     this.limiter = new ConcurrencyLimiter(config.maxConcurrent ?? 10);
     this.fallback = new ModelFallback();
-    this.metrics = new MetricsEmitter();
+    this.metrics = new MetricsEmitter(config.onMetrics);
     this.retryHandler = new RetryHandler(config.retry);
   }
 
