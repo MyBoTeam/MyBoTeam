@@ -153,62 +153,66 @@ export class AnthropicProvider {
     let firstChunk = true;
     const toolCallsMap = new Map<number, { id: string; name: string; arguments: string }>();
 
-    for await (const event of stream) {
-      if (firstChunk && event.type === 'content_block_delta') {
-        const ttfc = Date.now() - startTime;
-        this.metrics.emit({
-          requestDuration: ttfc,
-          promptTokens: 0,
-          completionTokens: 0,
-          totalTokens: 0,
-          timeToFirstChunk: ttfc,
-        });
-        firstChunk = false;
-      }
-
-      if (event.type === 'content_block_start') {
-        const block = event.content_block;
-        if (block.type === 'tool_use') {
-          toolCallsMap.set(event.index, {
-            id: block.id,
-            name: block.name,
-            arguments: '',
+    try {
+      for await (const event of stream) {
+        if (firstChunk && event.type === 'content_block_delta') {
+          const ttfc = Date.now() - startTime;
+          this.metrics.emit({
+            requestDuration: ttfc,
+            promptTokens: 0,
+            completionTokens: 0,
+            totalTokens: 0,
+            timeToFirstChunk: ttfc,
           });
+          firstChunk = false;
         }
-      }
 
-      if (event.type === 'content_block_delta') {
-        const delta = event.delta;
-        if (delta.type === 'text_delta') {
-          yield { content: delta.text };
-        } else if (delta.type === 'input_json_delta') {
-          const existing = toolCallsMap.get(event.index);
-          if (existing) {
-            existing.arguments += delta.partial_json;
+        if (event.type === 'content_block_start') {
+          const block = event.content_block;
+          if (block.type === 'tool_use') {
+            toolCallsMap.set(event.index, {
+              id: block.id,
+              name: block.name,
+              arguments: '',
+            });
           }
         }
-      }
 
-      if (event.type === 'message_stop') {
-        const toolCalls = Array.from(toolCallsMap.values()).map((tc) => ({
-          id: tc.id,
-          name: tc.name,
-          argumentsDelta: tc.arguments,
-        }));
+        if (event.type === 'content_block_delta') {
+          const delta = event.delta;
+          if (delta.type === 'text_delta') {
+            yield { content: delta.text };
+          } else if (delta.type === 'input_json_delta') {
+            const existing = toolCallsMap.get(event.index);
+            if (existing) {
+              existing.arguments += delta.partial_json;
+            }
+          }
+        }
 
-        if (toolCalls.length > 0) {
-          for (const toolCall of toolCalls) {
+        if (event.type === 'message_stop') {
+          const toolCalls = Array.from(toolCallsMap.values()).map((tc) => ({
+            id: tc.id,
+            name: tc.name,
+            argumentsDelta: tc.arguments,
+          }));
+
+          if (toolCalls.length > 0) {
+            for (const toolCall of toolCalls) {
+              yield {
+                finishReason: 'tool_call',
+                toolCall,
+              };
+            }
+          } else {
             yield {
-              finishReason: 'tool_call',
-              toolCall,
+              finishReason: 'stop',
             };
           }
-        } else {
-          yield {
-            finishReason: 'stop',
-          };
         }
       }
+    } catch (error) {
+      throw toProviderError(error, 'anthropic');
     }
   }
 
