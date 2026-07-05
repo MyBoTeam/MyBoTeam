@@ -151,17 +151,23 @@ export class AnthropicProvider {
     }
 
     let firstChunk = true;
+    let promptTokens = 0;
+    let completionTokens = 0;
     const toolCallsMap = new Map<number, { id: string; name: string; arguments: string }>();
 
     try {
       for await (const event of stream) {
+        if (event.type === 'message_start') {
+          promptTokens = event.message.usage.input_tokens;
+        }
+
         if (firstChunk && event.type === 'content_block_delta') {
           const ttfc = Date.now() - startTime;
           this.metrics.emit({
             requestDuration: ttfc,
-            promptTokens: 0,
+            promptTokens,
             completionTokens: 0,
-            totalTokens: 0,
+            totalTokens: promptTokens,
             timeToFirstChunk: ttfc,
           });
           firstChunk = false;
@@ -190,7 +196,19 @@ export class AnthropicProvider {
           }
         }
 
+        if (event.type === 'message_delta') {
+          completionTokens = event.usage.output_tokens;
+        }
+
         if (event.type === 'message_stop') {
+          const totalTokens = promptTokens + completionTokens;
+          this.metrics.emit({
+            requestDuration: Date.now() - startTime,
+            promptTokens,
+            completionTokens,
+            totalTokens,
+          });
+
           const toolCalls = Array.from(toolCallsMap.values()).map((tc) => ({
             id: tc.id,
             name: tc.name,
