@@ -6,7 +6,7 @@ export class RetryHandler {
   private readonly backoff: 'linear' | 'exponential';
 
   constructor(config?: RetryConfig) {
-    this.maxAttempts = config?.maxAttempts ?? 3;
+    this.maxAttempts = Math.max(1, config?.maxAttempts ?? 3);
     this.delay = config?.delay ?? 1000;
     this.backoff = config?.backoff ?? 'exponential';
   }

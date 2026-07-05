@@ -1,6 +1,6 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
 import { LocalProviderBase } from './local-provider-base.js';
-import { mapHttpError, mapNetworkError } from './tools/error-mapper.js';
+import { mapHttpError, mapNetworkError, mapValidationError } from './tools/error-mapper.js';
 import { createLocalMetricsEmitter } from './tools/local-metrics.js';
 import { logProviderError, logProviderRequest } from './tools/logger.js';
 import { parseRateLimitHeaders } from './tools/rate-limit-parser.js';
@@ -64,14 +64,30 @@ export class LMStudioProvider extends LocalProviderBase {
         };
       };
 
+      if (!data.choices || !Array.isArray(data.choices) || data.choices.length === 0) {
+        throw mapValidationError('choices', 'Response missing or empty choices array', 'lmstudio');
+      }
+
       const choice = data.choices[0];
       const durationMs = Date.now() - startTime;
 
-      const toolCalls = choice.tool_calls?.map((tc) => ({
-        id: tc.id,
-        name: tc.function.name,
-        arguments: JSON.parse(tc.function.arguments),
-      }));
+      const toolCalls = choice.tool_calls?.map((tc) => {
+        let parsedArgs: Record<string, unknown>;
+        try {
+          parsedArgs = JSON.parse(tc.function.arguments);
+        } catch {
+          throw mapValidationError(
+            'tool_calls',
+            `Invalid JSON in tool call arguments for ${tc.function.name}`,
+            'lmstudio',
+          );
+        }
+        return {
+          id: tc.id,
+          name: tc.function.name,
+          arguments: parsedArgs,
+        };
+      });
 
       const usage = data.usage
         ? {

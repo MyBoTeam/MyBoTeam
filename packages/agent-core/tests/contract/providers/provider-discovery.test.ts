@@ -82,6 +82,25 @@ describe('Provider Discovery Contract', () => {
       expect(Array.isArray(providers)).toBe(true);
       expect(providers.length).toBe(0);
     });
+
+    it('should handle malformed model response (missing data field)', async () => {
+      mockFetch.mockImplementation((url: string) => {
+        if (url.includes('11434')) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({ noDataHere: true }),
+          });
+        }
+        return Promise.reject(new Error('Connection refused'));
+      });
+
+      const providers = await discovery.discover();
+
+      const ollama = providers.find((p) => p.type === 'ollama');
+      expect(ollama).toBeDefined();
+      expect(ollama?.available).toBe(true);
+      expect(ollama?.models).toEqual([]);
+    });
   });
 
   describe('scanPort contract', () => {

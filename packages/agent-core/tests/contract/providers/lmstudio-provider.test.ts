@@ -101,6 +101,72 @@ describe('LMStudio Provider Contract', () => {
       expect(result.toolCalls).toHaveLength(1);
       expect(result.toolCalls?.[0].name).toBe('get_weather');
     });
+
+    it('should handle empty choices array', async () => {
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            choices: [],
+            usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
+          }),
+      });
+
+      const request: ChatRequest = {
+        model: 'mistral-7b',
+        messages: [{ role: 'user', content: 'Hello' }],
+      };
+
+      try {
+        await provider.chatCompletion(request);
+        expect.fail('Should have thrown');
+      } catch (error) {
+        expect(error).toHaveProperty('category', 'provider');
+      }
+    });
+
+    it('should handle malformed tool_calls arguments JSON', async () => {
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            choices: [
+              {
+                message: {
+                  content: null,
+                  role: 'assistant',
+                },
+                tool_calls: [
+                  {
+                    id: 'call_123',
+                    function: { name: 'get_weather', arguments: 'not valid json' },
+                  },
+                ],
+              },
+            ],
+            usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 },
+          }),
+      });
+
+      const request: ChatRequest = {
+        model: 'mistral-7b',
+        messages: [{ role: 'user', content: 'What is the weather?' }],
+        tools: [
+          {
+            name: 'get_weather',
+            description: 'Get weather',
+            parameters: { type: 'object', properties: { location: { type: 'string' } } },
+          },
+        ],
+      };
+
+      try {
+        await provider.chatCompletion(request);
+        expect.fail('Should have thrown');
+      } catch (error) {
+        expect(error).toHaveProperty('category', 'provider');
+      }
+    });
   });
 
   describe('streamChat contract', () => {

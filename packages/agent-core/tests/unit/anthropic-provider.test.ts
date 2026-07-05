@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { ProviderConfig } from '../../src/providers/provider-config';
+import type { ProviderConfig } from '../../src/providers/tools/provider-config';
 
 const mockCreate = vi.fn();
 const mockModelsList = vi.fn();
