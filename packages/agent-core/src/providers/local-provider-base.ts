@@ -21,12 +21,15 @@ export abstract class LocalProviderBase {
     const timeout = 2000;
 
     try {
+      let timer: ReturnType<typeof setTimeout> | undefined;
       const models = await Promise.race([
         this.fetchModels(),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('Capability detection timeout')), timeout),
+        new Promise<never>(
+          (_, reject) =>
+            (timer = setTimeout(() => reject(new Error('Capability detection timeout')), timeout)),
         ),
       ]);
+      if (timer !== undefined) clearTimeout(timer);
 
       this.capabilities = {
         streaming: true,

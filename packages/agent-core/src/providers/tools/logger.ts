@@ -22,12 +22,15 @@ export function logProviderError(
   durationMs: number,
 ): void {
   const message = error instanceof Error ? error.message : String(error);
-  logProviderRequest({
-    model,
-    duration_ms: durationMs,
-    tokens_used: 0,
-    provider_name: providerName,
-    success: false,
-    error: message,
-  });
+  logger.warn(
+    {
+      model,
+      duration_ms: durationMs,
+      tokens_used: 0,
+      provider_name: providerName,
+      success: false,
+      error: message,
+    },
+    'Provider request failed',
+  );
 }

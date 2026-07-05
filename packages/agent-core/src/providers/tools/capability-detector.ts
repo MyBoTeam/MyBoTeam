@@ -15,22 +15,22 @@ export async function detectCapabilities(
   const timeout = 2000;
 
   try {
+    let timer: ReturnType<typeof setTimeout> | undefined;
     const models = await Promise.race([
       fetchModels(endpoint, headers),
-      new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('Capability detection timeout')), timeout),
+      new Promise<never>(
+        (_, reject) =>
+          (timer = setTimeout(() => reject(new Error('Capability detection timeout')), timeout)),
       ),
     ]);
+    if (timer !== undefined) clearTimeout(timer);
 
-    const [tools, vision] = await Promise.all([
-      detectToolSupportByProbe(endpoint, headers).catch(() => false),
-      detectVisionSupportByProbe(endpoint, headers).catch(() => false),
-    ]);
+    const tools = await detectToolSupportByProbe(endpoint, headers, models).catch(() => false);
 
     return {
       streaming: true,
       tools: tools || detectToolSupportByName(models),
-      vision: vision || detectVisionSupportByName(models),
+      vision: detectVisionSupportByName(models),
       maxContextWindow: detectMaxContextWindow(models),
     };
   } catch {
@@ -69,13 +69,16 @@ async function fetchModels(
 async function detectToolSupportByProbe(
   endpoint: string,
   headers: Record<string, string>,
+  models: ModelInfo[],
 ): Promise<boolean> {
+  const probeModel = models[0]?.id ?? 'test';
+
   const url = new URL('/v1/chat/completions', endpoint);
   const response = await fetch(url.toString(), {
     method: 'POST',
     headers: { ...headers, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'test',
+      model: probeModel,
       messages: [{ role: 'user', content: 'test' }],
       tools: [
         {
@@ -99,32 +102,6 @@ async function detectToolSupportByProbe(
   }
 
   return response.ok;
-}
-
-async function detectVisionSupportByProbe(
-  endpoint: string,
-  headers: Record<string, string>,
-): Promise<boolean> {
-  const url = new URL('/v1/models', endpoint);
-  const response = await fetch(url.toString(), {
-    method: 'GET',
-    headers,
-    signal: AbortSignal.timeout(1000),
-  });
-
-  if (!response.ok) {
-    return false;
-  }
-
-  const data = (await response.json()) as { data?: Array<{ id: string }> };
-  const models = data.data ?? [];
-
-  return models.some((m) => {
-    const id = m.id.toLowerCase();
-    return (
-      id.includes('vision') || id.includes('vl') || id.includes('clip') || id.includes('multimodal')
-    );
-  });
 }
 
 function detectToolSupportByName(models: ModelInfo[]): boolean {

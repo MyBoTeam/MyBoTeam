@@ -51,7 +51,7 @@ export class LMStudioProvider extends LocalProviderBase {
 
       const data = (await response.json()) as {
         choices: Array<{
-          message: { content: string; role: string };
+          message: { content: string | null; role: string };
           tool_calls?: Array<{
             id: string;
             function: { name: string; arguments: string };
@@ -115,7 +115,7 @@ export class LMStudioProvider extends LocalProviderBase {
       return {
         message: {
           role: 'assistant',
-          content: choice.message.content,
+          content: choice.message.content ?? '',
           timestamp: new Date().toISOString(),
         },
         toolCalls,
@@ -182,65 +182,73 @@ export class LMStudioProvider extends LocalProviderBase {
       const decoder = new TextDecoder();
       let buffer = '';
       let firstChunk = true;
+      let streamCompleted = false;
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
 
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() ?? '';
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() ?? '';
 
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') {
-              return;
-            }
-
-            try {
-              const parsed = JSON.parse(data);
-              const choice = parsed.choices?.[0];
-              if (!choice) continue;
-
-              if (firstChunk) {
-                const ttfc = Date.now() - startTime;
-                this.metrics.emit({
-                  requestDuration: ttfc,
-                  promptTokens: 0,
-                  completionTokens: 0,
-                  totalTokens: 0,
-                  timeToFirstChunk: ttfc,
-                });
-                firstChunk = false;
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6);
+              if (data === '[DONE]') {
+                streamCompleted = true;
+                break;
               }
 
-              if (choice.delta?.content) {
-                yield { content: choice.delta.content };
-              }
+              try {
+                const parsed = JSON.parse(data);
+                const choice = parsed.choices?.[0];
+                if (!choice) continue;
 
-              if (choice.delta?.tool_calls) {
-                for (const tc of choice.delta.tool_calls) {
+                if (firstChunk) {
+                  const ttfc = Date.now() - startTime;
+                  this.metrics.emit({
+                    requestDuration: ttfc,
+                    promptTokens: 0,
+                    completionTokens: 0,
+                    totalTokens: 0,
+                    timeToFirstChunk: ttfc,
+                  });
+                  firstChunk = false;
+                }
+
+                if (choice.delta?.content) {
+                  yield { content: choice.delta.content };
+                }
+
+                if (choice.delta?.tool_calls) {
+                  for (const tc of choice.delta.tool_calls) {
+                    yield {
+                      toolCall: {
+                        id: tc.id ?? `call_${tc.index}`,
+                        name: tc.function?.name ?? '',
+                        argumentsDelta: tc.function?.arguments ?? '',
+                      },
+                    };
+                  }
+                }
+
+                if (choice.finish_reason) {
                   yield {
-                    toolCall: {
-                      id: tc.id ?? `call_${tc.index}`,
-                      name: tc.function?.name ?? '',
-                      argumentsDelta: tc.function?.arguments ?? '',
-                    },
+                    finishReason: choice.finish_reason === 'stop' ? 'stop' : 'tool_call',
                   };
                 }
+              } catch {
+                // Skip malformed JSON lines
               }
-
-              if (choice.finish_reason) {
-                yield {
-                  finishReason: choice.finish_reason === 'stop' ? 'stop' : 'tool_call',
-                };
-              }
-            } catch {
-              // Skip malformed JSON lines
             }
           }
+
+          if (streamCompleted) break;
         }
+      } finally {
+        reader.releaseLock();
       }
 
       const durationMs = Date.now() - startTime;

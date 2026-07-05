@@ -18,8 +18,7 @@ export interface DiscoveredProvider {
     id: string;
     name: string;
     provider: string;
-    capabilities: { tools: boolean; vision: boolean; streaming: boolean };
-    contextWindow?: number;
+    capabilities: ProviderCapability;
   }>;
 }
 
