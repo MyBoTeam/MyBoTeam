@@ -7,6 +7,9 @@ import { parseRateLimitHeaders } from './tools/rate-limit-parser.js';
 
 export class LMStudioProvider extends LocalProviderBase {
   private readonly metrics = createLocalMetricsEmitter();
+  protected get providerName(): string {
+    return 'lmstudio';
+  }
 
   async chatCompletion(request: ChatRequest): Promise<ChatResponse> {
     const startTime = Date.now();
@@ -235,9 +238,15 @@ export class LMStudioProvider extends LocalProviderBase {
                 }
 
                 if (choice.finish_reason) {
-                  yield {
-                    finishReason: choice.finish_reason === 'stop' ? 'stop' : 'tool_call',
-                  };
+                  const finishReason =
+                    choice.finish_reason === 'stop'
+                      ? 'stop'
+                      : choice.finish_reason === 'tool_calls'
+                        ? 'tool_call'
+                        : choice.finish_reason === 'length'
+                          ? 'length'
+                          : 'error';
+                  yield { finishReason };
                 }
               } catch {
                 // Skip malformed JSON lines
@@ -282,7 +291,7 @@ export class LMStudioProvider extends LocalProviderBase {
         name: model.id,
         provider: 'lmstudio',
         capabilities: {
-          tools: false,
+          tools: true,
           vision: false,
           streaming: true,
         },

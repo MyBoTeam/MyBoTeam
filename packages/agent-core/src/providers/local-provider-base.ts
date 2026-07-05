@@ -1,4 +1,5 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
+import { mapHttpError } from './tools/error-mapper.js';
 import type { LocalProviderConfig, ProviderCapability } from './tools/local-provider-types.js';
 
 export abstract class LocalProviderBase {
@@ -12,6 +13,7 @@ export abstract class LocalProviderBase {
   abstract chatCompletion(request: ChatRequest): Promise<ChatResponse>;
   abstract streamChat(request: ChatRequest): AsyncIterable<StreamingChunk>;
   abstract listModels(): Promise<ModelInfo[]>;
+  protected abstract get providerName(): string;
 
   async detectCapabilities(): Promise<ProviderCapability> {
     if (this.capabilities) {
@@ -84,7 +86,11 @@ export abstract class LocalProviderBase {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      throw mapHttpError(
+        response.status,
+        `HTTP ${response.status}: ${response.statusText}`,
+        this.providerName,
+      );
     }
 
     return response.json() as Promise<T>;
@@ -100,7 +106,11 @@ export abstract class LocalProviderBase {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      throw mapHttpError(
+        response.status,
+        `HTTP ${response.status}: ${response.statusText}`,
+        this.providerName,
+      );
     }
 
     return response.json() as Promise<T>;

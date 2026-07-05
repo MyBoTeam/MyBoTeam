@@ -7,6 +7,9 @@ import { parseRateLimitHeaders } from './tools/rate-limit-parser.js';
 
 export class OllamaProvider extends LocalProviderBase {
   private readonly metrics = createLocalMetricsEmitter();
+  protected get providerName(): string {
+    return 'ollama';
+  }
 
   async chatCompletion(request: ChatRequest): Promise<ChatResponse> {
     const startTime = Date.now();
@@ -239,9 +242,15 @@ export class OllamaProvider extends LocalProviderBase {
                 }
 
                 if (choice.finish_reason) {
-                  yield {
-                    finishReason: choice.finish_reason === 'stop' ? 'stop' : 'tool_call',
-                  };
+                  const finishReason =
+                    choice.finish_reason === 'stop'
+                      ? 'stop'
+                      : choice.finish_reason === 'tool_calls'
+                        ? 'tool_call'
+                        : choice.finish_reason === 'length'
+                          ? 'length'
+                          : 'error';
+                  yield { finishReason };
                 }
               } catch {
                 // Skip malformed JSON lines
