@@ -37,6 +37,29 @@ describe('Health Check', () => {
       expect(result.error).toBe('Health check timeout');
     });
 
+    it('should clean up timeout timer after timeout fires', async () => {
+      vi.useFakeTimers();
+      const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
+      const healthCheckFn = vi.fn().mockImplementation(
+        () => new Promise((resolve) => setTimeout(() => resolve({
+          healthy: true,
+          latency: 0,
+          timestamp: new Date().toISOString(),
+        }), 10000)),
+      );
+
+      const resultPromise = checkHealth(healthCheckFn, 100);
+      vi.advanceTimersByTime(150);
+      const result = await resultPromise;
+
+      expect(result.healthy).toBe(false);
+      expect(result.error).toBe('Health check timeout');
+      expect(clearTimeoutSpy).toHaveBeenCalled();
+
+      clearTimeoutSpy.mockRestore();
+      vi.useRealTimers();
+    });
+
     it('should measure latency correctly', async () => {
       const healthCheckFn = vi.fn().mockImplementation(
         () =>
