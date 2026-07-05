@@ -1,5 +1,6 @@
 import type { ModelInfo } from '@myboteam/types';
 import type { DiscoveredProvider, LocalProviderType } from './local-provider-types.js';
+import { DEFAULT_LMSTUDIO_PORT, DEFAULT_OLLAMA_PORT } from './local-provider-types.js';
 
 export interface DiscoveryConfig {
   ollamaPort?: number;
@@ -8,8 +9,8 @@ export interface DiscoveryConfig {
 }
 
 const DEFAULT_CONFIG: DiscoveryConfig = {
-  ollamaPort: 11434,
-  lmstudioPort: 1234,
+  ollamaPort: DEFAULT_OLLAMA_PORT,
+  lmstudioPort: DEFAULT_LMSTUDIO_PORT,
   timeout: 2000,
 };
 

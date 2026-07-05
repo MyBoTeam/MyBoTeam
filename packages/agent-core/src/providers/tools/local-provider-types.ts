@@ -1,5 +1,8 @@
 export type LocalProviderType = 'ollama' | 'lmstudio';
 
+export const DEFAULT_OLLAMA_PORT = 11434;
+export const DEFAULT_LMSTUDIO_PORT = 1234;
+
 export interface LocalProviderConfig {
   name: string;
   type: LocalProviderType;
