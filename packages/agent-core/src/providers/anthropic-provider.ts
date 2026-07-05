@@ -129,7 +129,7 @@ export class AnthropicProvider {
       .join('\n\n');
     const nonSystemMessages = request.messages.filter((msg) => msg.role !== 'system');
 
-    let stream: any;
+    let stream: AsyncIterable<Anthropic.MessageStreamEvent>;
     try {
       stream = this.client.messages.stream({
         model: request.model,
