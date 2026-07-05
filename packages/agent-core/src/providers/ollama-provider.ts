@@ -49,7 +49,7 @@ export class OllamaProvider extends LocalProviderBase {
         throw mapHttpError(
           response.status,
           `HTTP ${response.status}: ${response.statusText}`,
-          'ollama',
+          this.providerName,
           rateLimitHeaders,
         );
       }
@@ -84,7 +84,7 @@ export class OllamaProvider extends LocalProviderBase {
           throw mapValidationError(
             'tool_calls',
             `Invalid JSON in tool call arguments for ${tc.function.name}`,
-            'ollama',
+            this.providerName,
           );
         }
         return {
@@ -176,7 +176,7 @@ export class OllamaProvider extends LocalProviderBase {
         throw mapHttpError(
           response.status,
           `HTTP ${response.status}: ${response.statusText}`,
-          'ollama',
+          this.providerName,
           rateLimitHeaders,
         );
       }

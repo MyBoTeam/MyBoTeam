@@ -1,10 +1,10 @@
 <!--
   Sync Impact Report
   ==================
-  Version change: 1.4.0 → 1.5.0
-  Bump rationale: New principle added — Test Location (MINOR).
+  Version change: 1.5.0 → 1.6.0
+  Bump rationale: New principle added — PR Review Discipline (MINOR).
   Modified principles:
-    - Added "X. Test Location" — tests colocated with code
+    - Added "XI. PR Review Discipline" — count verification, no out-of-scope, no root comments, verify fixes
   Added sections: None (new principle under Core Principles).
   Removed sections: None.
   Templates requiring updates:
@@ -120,6 +120,26 @@ Tests MUST be colocated with the code they test. Never create a root-level
 This ensures tests are discoverable, maintainable, and colocated with the code
 they validate.
 
+### XI. PR Review Discipline
+
+When addressing PR review comments (CodeRabbit, humans, or any reviewer):
+
+1. **COUNT VERIFICATION**: The number of comments processed MUST match the
+   actionable count reported by the reviewer. If CodeRabbit says 37, find and
+   address all 37. Double-check and triple-check. If counts don't match, STOP
+   and investigate.
+2. **CHECK ALL REVIEWS**: Reviewers may post multiple reviews. Check ALL of
+   them, not just the first.
+3. **NO "OUT OF SCOPE"**: NEVER dismiss a comment as "out of scope." If it's
+   on a file in the PR, it IS in scope. If it's a simple fix (rename, add
+   guard, replace string), do it.
+4. **NO ROOT-LEVEL COMMENTS**: NEVER post top-level PR comments. ALL replies
+   MUST be inline on the specific review comment using
+   `pulls/comments/{comment_id}/replies`.
+5. **VERIFY FIXES**: After each commit, verify every fix against the actual
+   review comment. Read the code at the exact file/line. Confirm the issue is
+   resolved. Do NOT claim "done" without verification.
+
 ## Development Workflow
 
 The project follows a gated Agentic SDLC cycle:
@@ -179,4 +199,4 @@ with justification.
 principles (Documentation Matters, Immutability, Stateless Services, Memory as
 the Harness Core) that supplement — but do not override — this document.
 
-**Version**: 1.5.0 | **Ratified**: 2026-06-24 | **Last Amended**: 2026-06-30
+**Version**: 1.6.0 | **Ratified**: 2026-06-24 | **Last Amended**: 2026-07-05

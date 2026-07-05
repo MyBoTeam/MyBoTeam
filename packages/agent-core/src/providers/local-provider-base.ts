@@ -77,10 +77,10 @@ export abstract class LocalProviderBase {
     return headers;
   }
 
-  protected async fetchJson<T>(path: string): Promise<T> {
+  private async request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const url = new URL(path, this.config.endpoint);
     const response = await fetch(url.toString(), {
-      method: 'GET',
+      ...init,
       headers: this.buildHeaders(),
       signal: AbortSignal.timeout(this.config.timeout),
     });
@@ -96,23 +96,11 @@ export abstract class LocalProviderBase {
     return response.json() as Promise<T>;
   }
 
-  protected async postJson<T>(path: string, body: unknown): Promise<T> {
-    const url = new URL(path, this.config.endpoint);
-    const response = await fetch(url.toString(), {
-      method: 'POST',
-      headers: this.buildHeaders(),
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(this.config.timeout),
-    });
+  protected fetchJson<T>(path: string): Promise<T> {
+    return this.request<T>(path, { method: 'GET' });
+  }
 
-    if (!response.ok) {
-      throw mapHttpError(
-        response.status,
-        `HTTP ${response.status}: ${response.statusText}`,
-        this.providerName,
-      );
-    }
-
-    return response.json() as Promise<T>;
+  protected postJson<T>(path: string, body: unknown): Promise<T> {
+    return this.request<T>(path, { method: 'POST', body: JSON.stringify(body) });
   }
 }

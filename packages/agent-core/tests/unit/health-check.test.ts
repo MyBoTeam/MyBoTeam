@@ -41,11 +41,18 @@ describe('Health Check', () => {
       vi.useFakeTimers();
       const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
       const healthCheckFn = vi.fn().mockImplementation(
-        () => new Promise((resolve) => setTimeout(() => resolve({
-          healthy: true,
-          latency: 0,
-          timestamp: new Date().toISOString(),
-        }), 10000)),
+        () =>
+          new Promise((resolve) =>
+            setTimeout(
+              () =>
+                resolve({
+                  healthy: true,
+                  latency: 0,
+                  timestamp: new Date().toISOString(),
+                }),
+              10000,
+            ),
+          ),
       );
 
       const resultPromise = checkHealth(healthCheckFn, 100);

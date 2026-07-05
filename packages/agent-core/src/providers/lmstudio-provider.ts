@@ -47,7 +47,7 @@ export class LMStudioProvider extends LocalProviderBase {
         throw mapHttpError(
           response.status,
           `HTTP ${response.status}: ${response.statusText}`,
-          'lmstudio',
+          this.providerName,
           rateLimitHeaders,
         );
       }
@@ -68,7 +68,7 @@ export class LMStudioProvider extends LocalProviderBase {
       };
 
       if (!data.choices || !Array.isArray(data.choices) || data.choices.length === 0) {
-        throw mapValidationError('choices', 'Response missing or empty choices array', 'lmstudio');
+        throw mapValidationError('choices', 'Response missing or empty choices array', this.providerName);
       }
 
       const choice = data.choices[0];
@@ -82,7 +82,7 @@ export class LMStudioProvider extends LocalProviderBase {
           throw mapValidationError(
             'tool_calls',
             `Invalid JSON in tool call arguments for ${tc.function.name}`,
-            'lmstudio',
+            this.providerName,
           );
         }
         return {
@@ -111,7 +111,7 @@ export class LMStudioProvider extends LocalProviderBase {
         model: request.model,
         duration_ms: durationMs,
         tokens_used: usage?.totalTokens ?? 0,
-        provider_name: 'lmstudio',
+        provider_name: this.providerName,
         success: true,
       });
 
@@ -126,13 +126,13 @@ export class LMStudioProvider extends LocalProviderBase {
       };
     } catch (error) {
       const durationMs = Date.now() - startTime;
-      logProviderError('lmstudio', request.model, error, durationMs);
+      logProviderError(this.providerName, request.model, error, durationMs);
 
       if (error && typeof error === 'object' && 'category' in error) {
         throw error;
       }
 
-      throw mapNetworkError(error, 'lmstudio');
+      throw mapNetworkError(error, this.providerName);
     }
   }
 
@@ -172,7 +172,7 @@ export class LMStudioProvider extends LocalProviderBase {
         throw mapHttpError(
           response.status,
           `HTTP ${response.status}: ${response.statusText}`,
-          'lmstudio',
+          this.providerName,
           rateLimitHeaders,
         );
       }
@@ -265,18 +265,18 @@ export class LMStudioProvider extends LocalProviderBase {
         model: request.model,
         duration_ms: durationMs,
         tokens_used: 0,
-        provider_name: 'lmstudio',
+        provider_name: this.providerName,
         success: true,
       });
     } catch (error) {
       const durationMs = Date.now() - startTime;
-      logProviderError('lmstudio', request.model, error, durationMs);
+      logProviderError(this.providerName, request.model, error, durationMs);
 
       if (error && typeof error === 'object' && 'category' in error) {
         throw error;
       }
 
-      throw mapNetworkError(error, 'lmstudio');
+      throw mapNetworkError(error, this.providerName);
     }
   }
 
@@ -289,7 +289,7 @@ export class LMStudioProvider extends LocalProviderBase {
       return (data.data ?? []).map((model) => ({
         id: model.id,
         name: model.id,
-        provider: 'lmstudio',
+        provider: this.providerName,
         capabilities: {
           tools: true,
           vision: false,
@@ -297,7 +297,7 @@ export class LMStudioProvider extends LocalProviderBase {
         },
       }));
     } catch (error) {
-      throw mapNetworkError(error, 'lmstudio');
+      throw mapNetworkError(error, this.providerName);
     }
   }
 
