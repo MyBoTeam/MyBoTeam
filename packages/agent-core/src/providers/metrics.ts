@@ -17,6 +17,11 @@ export class MetricsEmitter {
   }
 
   emit(metrics: ProviderMetrics): void {
-    this.callback?.(metrics);
+    try {
+      this.callback?.(metrics);
+    } catch {
+      // Silently ignore errors from user-supplied metrics callback
+      // to keep metrics delivery best-effort without breaking chat/stream flow
+    }
   }
 }
