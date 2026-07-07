@@ -55,16 +55,18 @@ describe('Health Check', () => {
           ),
       );
 
-      const resultPromise = checkHealth(healthCheckFn, 100);
-      vi.advanceTimersByTime(150);
-      const result = await resultPromise;
+      try {
+        const resultPromise = checkHealth(healthCheckFn, 100);
+        vi.advanceTimersByTime(150);
+        const result = await resultPromise;
 
-      expect(result.healthy).toBe(false);
-      expect(result.error).toBe('Health check timeout');
-      expect(clearTimeoutSpy).toHaveBeenCalled();
-
-      clearTimeoutSpy.mockRestore();
-      vi.useRealTimers();
+        expect(result.healthy).toBe(false);
+        expect(result.error).toBe('Health check timeout');
+        expect(clearTimeoutSpy).toHaveBeenCalled();
+      } finally {
+        clearTimeoutSpy.mockRestore();
+        vi.useRealTimers();
+      }
     });
 
     it('should measure latency correctly', async () => {

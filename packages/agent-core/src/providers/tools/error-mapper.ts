@@ -63,7 +63,7 @@ export function mapHttpError(
 export function mapNetworkError(error: unknown, _provider: string): ProviderError {
   const message = error instanceof Error ? error.message : String(error);
 
-  if (error instanceof Error && error.name === 'AbortError') {
+  if (error instanceof Error && (error.name === 'AbortError' || error.name === 'TimeoutError')) {
     return {
       category: 'network',
       code: 'TIMEOUT_ERROR',

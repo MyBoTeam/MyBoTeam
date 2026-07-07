@@ -24,10 +24,7 @@ export class MetricsEmitter {
     } catch (error) {
       // Log errors from user-supplied metrics callback but continue without rethrowing
       // to keep metrics delivery best-effort without breaking chat/stream flow
-      getLogger().debug(
-        { err: error, metrics },
-        'Metrics callback failed',
-      );
+      getLogger().debug({ err: error, metrics }, 'Metrics callback failed');
     }
   }
 }

@@ -3,8 +3,8 @@ import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@mybo
 import { ConcurrencyLimiter } from './tools/concurrency-limiter.js';
 import type { ProviderHealth } from './tools/health-check.js';
 import { checkHealth } from './tools/health-check.js';
-import type { ProviderMetrics } from './tools/metrics.js';
-import { MetricsEmitter } from './tools/metrics.js';
+import { createLocalMetricsEmitter } from './tools/local-metrics.js';
+import type { MetricsEmitter, ProviderMetrics } from './tools/metrics.js';
 import { ModelFallback } from './tools/model-fallback.js';
 import type { ProviderConfig } from './tools/provider-config.js';
 import { toProviderError } from './tools/provider-errors.js';
@@ -31,7 +31,7 @@ export class AnthropicProvider {
     });
     this.limiter = new ConcurrencyLimiter(config.maxConcurrent ?? 10);
     this.fallback = new ModelFallback();
-    this.metrics = new MetricsEmitter();
+    this.metrics = createLocalMetricsEmitter();
     this.retryHandler = new RetryHandler(config.retry);
   }
 
@@ -211,6 +211,13 @@ export class AnthropicProvider {
           }
         }
       }
+
+      this.metrics.emit({
+        requestDuration: Date.now() - startTime,
+        promptTokens: 0,
+        completionTokens: 0,
+        totalTokens: 0,
+      });
     } catch (error) {
       throw toProviderError(error, 'anthropic');
     }
