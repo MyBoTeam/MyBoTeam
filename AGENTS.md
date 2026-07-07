@@ -22,9 +22,9 @@ at `specs/010-local-llm-provider/plan.md`.
 
 When addressing PR review comments (CodeRabbit, humans, or any reviewer):
 
-1. **COUNT VERIFICATION**: The number of comments you process MUST match the actionable count reported by the reviewer. If CodeRabbit says 37, find and address all 37. Double-check and triple-check. If counts don't match, STOP and investigate.
-2. **CHECK ALL REVIEWS**: Reviewers may post multiple reviews. Check ALL of them, not just the first.
-3. **NO "OUT OF SCOPE"**: NEVER dismiss a comment as "out of scope." If it's on a file in the PR, it IS in scope. If it's a simple fix (rename, add guard, replace string), do it.
+1. **NO "OUT OF SCOPE" — EVER**: There is NO such thing as "out of scope" for a PR review comment. If the comment is on a file in the PR diff, it IS in scope. If it's a simple fix, DO IT. The ONLY valid skip reasons are: conflicts with another comment, conflicts with spec/docs, or would break an API contract. "Out of scope" is NOT valid.
+2. **COUNT VERIFICATION**: The number of comments you process MUST match the actionable count reported by the reviewer. If CodeRabbit says 37, find and address all 37. Double-check and triple-check. If counts don't match, STOP and investigate.
+3. **CHECK ALL REVIEWS**: Reviewers may post multiple reviews. Check ALL of them, not just the first.
 4. **NO ROOT-LEVEL COMMENTS**: NEVER post top-level PR comments. ALL replies MUST be inline on the specific review comment using `pulls/comments/{comment_id}/replies`.
 5. **VERIFY FIXES**: After each commit, verify every fix against the actual review comment. Read the code at the exact file/line. Confirm the issue is resolved. Do NOT claim "done" without verification.
 6. **USE /pr-check**: For PR review workflows, use the `/pr-check` command which enforces all these rules.
