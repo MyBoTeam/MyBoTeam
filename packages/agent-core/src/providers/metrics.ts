@@ -1,3 +1,5 @@
+import { getLogger } from '../storage/logger.js';
+
 export interface ProviderMetrics {
   requestDuration: number;
   promptTokens: number;
@@ -19,9 +21,13 @@ export class MetricsEmitter {
   emit(metrics: ProviderMetrics): void {
     try {
       this.callback?.(metrics);
-    } catch {
-      // Silently ignore errors from user-supplied metrics callback
+    } catch (error) {
+      // Log errors from user-supplied metrics callback but continue without rethrowing
       // to keep metrics delivery best-effort without breaking chat/stream flow
+      getLogger().debug(
+        { err: error, metrics },
+        'Metrics callback failed',
+      );
     }
   }
 }
