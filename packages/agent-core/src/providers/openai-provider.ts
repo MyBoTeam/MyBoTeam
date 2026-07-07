@@ -1,6 +1,7 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
 import OpenAI from 'openai';
 import { ConcurrencyLimiter } from './tools/concurrency-limiter.js';
+import { mapValidationError } from './tools/error-mapper.js';
 import type { ProviderHealth } from './tools/health-check.js';
 import { checkHealth } from './tools/health-check.js';
 import type { ProviderMetrics } from './tools/metrics.js';
@@ -77,6 +78,10 @@ export class OpenAIProvider {
       throw toProviderError(error, 'openai');
     }
 
+    if (!response.choices || response.choices.length === 0) {
+      throw mapValidationError('choices', 'Response missing or empty choices array', 'openai');
+    }
+
     const choice = response.choices[0];
     const toolCalls = choice.message.tool_calls?.map((tc: any) => ({
       id: tc.id,
@@ -99,7 +104,7 @@ export class OpenAIProvider {
         content: choice.message.content ?? '',
         timestamp: new Date().toISOString(),
       },
-      toolCalls,
+      toolCalls: toolCalls && toolCalls.length > 0 ? toolCalls : undefined,
       usage: {
         promptTokens: metrics.promptTokens,
         completionTokens: metrics.completionTokens,
