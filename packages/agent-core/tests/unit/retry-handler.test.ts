@@ -74,7 +74,7 @@ describe('RetryHandler', () => {
 
       expect(result).toBe('success');
       expect(elapsed).toBeGreaterThanOrEqual(600); // 100 + 200 + 300
-      expect(elapsed).toBeLessThan(900); // exponential would be 100+200+400=700
+      expect(elapsed).toBeLessThan(700); // exponential would be 100+200+400=700
     });
   });
 });
