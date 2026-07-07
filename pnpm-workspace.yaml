@@ -3,5 +3,9 @@ packages:
   - "packages/*"
   - "packages/mcp-servers/*"
 
+allowBuilds:
+  better-sqlite3: true
+  esbuild: true
+
 onlyBuiltDependencies:
   - esbuild
