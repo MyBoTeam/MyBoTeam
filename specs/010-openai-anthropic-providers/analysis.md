@@ -1,0 +1,148 @@
+# Specification Analysis Report
+
+**Feature**: `010-openai-anthropic-providers`
+**Mode**: Pre-Implementation (No Source Code)
+**Date**: 2026-07-02
+**Status**: ✅ COMPLETE
+
+---
+
+## Requirements Inventory
+
+| ID | Description | Priority | User Story |
+|----|-------------|----------|------------|
+| FR-001 | OpenAIProvider class | P1 | US1 |
+| FR-002 | AnthropicProvider class | P1 | US2 |
+| FR-003 | Official SDK packages | P1 | US1, US2 |
+| FR-004 | SSE streaming | P1 | US1, US2 |
+| FR-005 | Tool call extraction | P1 | US1, US2 |
+| FR-006 | Model fallback | P2 | US1, US2 |
+| FR-007 | Configurable timeout | P2 | US1, US2 |
+| FR-008 | Typed ProviderError | P1 | US1, US2 |
+| FR-009 | listModels | P2 | US3 |
+| FR-010 | Unit tests | P2 | All |
+| FR-011 | Contract tests | P2 | All |
+| FR-012 | Health check | P3 | US4 |
+| FR-013 | Metrics emission | P3 | US5 |
+| FR-014 | Concurrency limit | P2 | US1, US2 |
+
+## Findings
+
+| ID | Category | Severity | Location(s) | Summary |
+|----|----------|----------|-------------|---------|
+| C1 | Constitution | CRITICAL | spec.md:L131-145 | ProviderConfig entity missing `maxConcurrent` field but FR-014 requires it |
+| A1 | Ambiguity | HIGH | spec.md:L156 | SC-006 "< 100ms" lacks measurement methodology |
+| A2 | Ambiguity | HIGH | spec.md:L157 | SC-007 "within 5 seconds" unclear about network latency |
+| D1 | Duplication | MEDIUM | spec.md:L119,L120 | FR-004 and FR-005 overlap in streaming context |
+| U1 | Underspecification | MEDIUM | spec.md:L97-101 | Edge cases listed as questions, not scenarios |
+| U2 | Underspecification | MEDIUM | plan.md:L18 | "max 10 concurrent requests" not in data-model.md |
+| I1 | Inconsistency | LOW | spec.md:L143-145 | "default models" vs "fallback model" terminology |
+
+## Coverage Summary
+
+| Requirement Key | Has Task? | Task IDs |
+|-----------------|-----------|----------|
+| FR-001 | ✅ | T016 |
+| FR-002 | ✅ | T028 |
+| FR-003 | ✅ | T001, T017-T019, T029-T031 |
+| FR-004 | ✅ | T018, T030 |
+| FR-005 | ✅ | T019, T031 |
+| FR-006 | ✅ | T008, T017-T019, T029-T031 |
+| FR-007 | ✅ | T017, T029 |
+| FR-008 | ✅ | T021, T033 |
+| FR-009 | ✅ | T020, T032 |
+| FR-010 | ✅ | T015, T027, T038, T042, T046, T047 |
+| FR-011 | ✅ | T012-T014, T024-T026 |
+| FR-012 | ✅ | T010, T043, T044 |
+| FR-013 | ✅ | T009, T023, T035, T045 |
+| FR-014 | ✅ | T007, T022, T034 |
+
+## Metrics
+
+| Metric | Value |
+|--------|-------|
+| Requirements with Tasks | 14/14 (100%) |
+| Ambiguity Count | 2 |
+| Duplication Count | 1 |
+| Underspecification Count | 2 |
+| Inconsistency Count | 1 |
+| Critical Issues | 1 |
+| High Issues | 2 |
+
+## Constitution Alignment
+
+| Principle | Status |
+|-----------|--------|
+| I. Spec-Driven Development | ✅ PASS |
+| II. Test-First Quality | ✅ PASS |
+| III. Simplicity & Surgical Changes | ✅ PASS |
+| IV. Human Oversight | ✅ PASS |
+| V. Observability, Security & Immutability | ✅ PASS |
+| VI. Code Structure & Cleanliness | ✅ PASS |
+| VII. Source Reference (MANDATORY) | ✅ PASS |
+| VIII. Git Hooks | ✅ PASS |
+| IX. Linter/Formatter Configs | ✅ PASS |
+| X. Test Location | ✅ PASS |
+
+## Recommended Remediation
+
+### Priority 1: CRITICAL (Must Fix Before Implementation)
+
+**C1**: Add `maxConcurrent` field to ProviderConfig entity in spec.md
+
+```
+- `maxConcurrent`: Maximum concurrent requests per provider (optional, default: 10, min: 1, max: 50)
+```
+
+### Priority 2: HIGH (Should Fix)
+
+**A1**: Add measurement methodology to SC-006:
+```
+SC-006: Time-to-first-chunk (TTFC) measured from when the request is sent to the provider API until the first StreamingChunk is yielded by the generator is less than 100ms for local network connections.
+```
+
+**A2**: Clarify SC-007:
+```
+SC-007: Health check completes within 5 seconds including network round-trip to provider API endpoint.
+```
+
+### Priority 3: MEDIUM (Nice to Fix)
+
+**U1**: Convert edge cases to Given/When/Then format:
+
+```gherkin
+# Edge Case: Empty tool_calls array
+GPT-4 returns streaming response with empty `tool_calls: []`
+WHEN the tool calls are extracted
+THEN the response.content contains the text
+AND response.toolCalls is an empty array
+```
+
+**U2**: Add concurrency limit to ProviderConfig in data-model.md
+
+---
+
+## Unmapped Tasks (No Direct FR)
+
+| Task ID | Description | Type |
+|---------|-------------|------|
+| T002 | Create directory structure | Infrastructure |
+| T003 | Create test directories | Infrastructure |
+| T011 | Update index.ts exports | Infrastructure |
+| T048-T053 | Polish tasks | Cross-cutting |
+
+---
+
+## Next Actions
+
+1. **Resolve C1**: Edit spec.md to add `maxConcurrent` field to ProviderConfig entity
+2. **Resolve A1, A2**: Edit spec.md to clarify SC-006 and SC-007 measurement methodology
+3. **Resolve U1**: Convert edge cases to Given/When/Then format in spec.md
+4. **Resolve U2**: Add concurrency limit to data-model.md
+
+**Status**: Analysis complete. Awaiting user decision on remediation before proceeding to implementation.
+
+---
+
+**Generated by**: spec-analyze workflow
+**Artifacts analyzed**: spec.md, plan.md, tasks.md, data-model.md, contracts/provider-client.md, quickstart.md, research.md

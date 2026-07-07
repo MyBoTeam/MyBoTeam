@@ -39,8 +39,10 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.109.1",
     "@myboteam/types": "workspace:*",
     "better-sqlite3": "^11.0.0",
+    "openai": "^6.45.0",
     "pino": "^9.0.0"
   },
   "devDependencies": {
