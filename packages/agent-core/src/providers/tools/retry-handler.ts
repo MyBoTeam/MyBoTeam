@@ -1,9 +1,9 @@
 import type { RetryConfig } from './provider-config.js';
 
 export class RetryHandler {
-  private readonly maxAttempts: number;
-  private readonly delay: number;
-  private readonly backoff: 'linear' | 'exponential';
+  readonly maxAttempts: number;
+  readonly delay: number;
+  readonly backoff: 'linear' | 'exponential';
 
   constructor(config?: RetryConfig) {
     this.maxAttempts = Math.max(1, config?.maxAttempts ?? 3);
@@ -36,7 +36,7 @@ export class RetryHandler {
     throw lastError;
   }
 
-  private calculateDelay(attempt: number): number {
+  calculateDelay(attempt: number): number {
     if (this.backoff === 'exponential') {
       return this.delay * 2 ** (attempt - 1);
     }

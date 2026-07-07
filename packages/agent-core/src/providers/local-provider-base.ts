@@ -1,10 +1,14 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
-import { mapHttpError } from './tools/error-mapper.js';
+import { mapHttpError, mapNetworkError, mapValidationError } from './tools/error-mapper.js';
+import { createLocalMetricsEmitter } from './tools/local-metrics.js';
 import type { LocalProviderConfig, ProviderCapability } from './tools/local-provider-types.js';
+import { logProviderError, logProviderRequest } from './tools/logger.js';
+import { parseRateLimitHeaders } from './tools/rate-limit-parser.js';
 
 export abstract class LocalProviderBase {
   protected readonly config: LocalProviderConfig;
   protected capabilities: ProviderCapability | null = null;
+  protected readonly metrics = createLocalMetricsEmitter();
 
   constructor(config: LocalProviderConfig) {
     this.config = config;
@@ -14,6 +18,10 @@ export abstract class LocalProviderBase {
   abstract streamChat(request: ChatRequest): AsyncIterable<StreamingChunk>;
   abstract listModels(): Promise<ModelInfo[]>;
   protected abstract get providerName(): string;
+  protected abstract buildRequestBody(
+    request: ChatRequest,
+    stream: boolean,
+  ): Record<string, unknown>;
 
   async detectCapabilities(): Promise<ProviderCapability> {
     if (this.capabilities) {
@@ -77,10 +85,32 @@ export abstract class LocalProviderBase {
     return headers;
   }
 
-  private async request<T>(path: string, init: RequestInit = {}): Promise<T> {
+  protected async postJson<T>(path: string, body: unknown): Promise<T> {
     const url = new URL(path, this.config.endpoint);
     const response = await fetch(url.toString(), {
-      ...init,
+      method: 'POST',
+      headers: this.buildHeaders(),
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(this.config.timeout),
+    });
+
+    if (!response.ok) {
+      const rateLimitHeaders = parseRateLimitHeaders(response.headers);
+      throw mapHttpError(
+        response.status,
+        `HTTP ${response.status}: ${response.statusText}`,
+        this.providerName,
+        rateLimitHeaders,
+      );
+    }
+
+    return response.json() as Promise<T>;
+  }
+
+  protected async getJson<T>(path: string): Promise<T> {
+    const url = new URL(path, this.config.endpoint);
+    const response = await fetch(url.toString(), {
+      method: 'GET',
       headers: this.buildHeaders(),
       signal: AbortSignal.timeout(this.config.timeout),
     });
@@ -96,11 +126,59 @@ export abstract class LocalProviderBase {
     return response.json() as Promise<T>;
   }
 
-  protected fetchJson<T>(path: string): Promise<T> {
-    return this.request<T>(path, { method: 'GET' });
+  protected handleProviderError(error: unknown, model: string, durationMs: number): never {
+    logProviderError(this.providerName, model, error, durationMs);
+
+    if (error && typeof error === 'object' && 'category' in error) {
+      throw error;
+    }
+
+    throw mapNetworkError(error, this.providerName);
   }
 
-  protected postJson<T>(path: string, body: unknown): Promise<T> {
-    return this.request<T>(path, { method: 'POST', body: JSON.stringify(body) });
+  protected parseToolCalls(
+    toolCalls: Array<{ id: string; function: { name: string; arguments: string } }>,
+  ) {
+    return toolCalls.map((tc) => {
+      let parsedArgs: Record<string, unknown>;
+      try {
+        parsedArgs = JSON.parse(tc.function.arguments);
+      } catch {
+        throw mapValidationError(
+          'tool_calls',
+          `Invalid JSON in tool call arguments for ${tc.function.name}`,
+          this.providerName,
+        );
+      }
+      return {
+        id: tc.id,
+        name: tc.function.name,
+        arguments: parsedArgs,
+      };
+    });
+  }
+
+  protected emitMetrics(
+    startTime: number,
+    usage?: { promptTokens: number; completionTokens: number; totalTokens: number },
+  ) {
+    const durationMs = Date.now() - startTime;
+    this.metrics.emit({
+      requestDuration: durationMs,
+      promptTokens: usage?.promptTokens ?? 0,
+      completionTokens: usage?.completionTokens ?? 0,
+      totalTokens: usage?.totalTokens ?? 0,
+    });
+    return durationMs;
+  }
+
+  protected logSuccess(model: string, durationMs: number, totalTokens: number) {
+    logProviderRequest({
+      model,
+      duration_ms: durationMs,
+      tokens_used: totalTokens,
+      provider_name: this.providerName,
+      success: true,
+    });
   }
 }

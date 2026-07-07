@@ -1,60 +1,41 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
 import { LocalProviderBase } from './local-provider-base.js';
-import { mapHttpError, mapNetworkError, mapValidationError } from './tools/error-mapper.js';
-import { createLocalMetricsEmitter } from './tools/local-metrics.js';
-import { logProviderError, logProviderRequest } from './tools/logger.js';
-import { parseRateLimitHeaders } from './tools/rate-limit-parser.js';
+import { mapValidationError } from './tools/error-mapper.js';
 
 export class OllamaProvider extends LocalProviderBase {
-  private readonly metrics = createLocalMetricsEmitter();
   protected get providerName(): string {
     return 'ollama';
+  }
+
+  protected buildRequestBody(request: ChatRequest, stream: boolean): Record<string, unknown> {
+    return {
+      model: request.model,
+      messages: request.messages.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      })),
+      tools: request.tools?.map((tool) => ({
+        type: 'function',
+        function: {
+          name: tool.name,
+          description: tool.description,
+          parameters: tool.parameters,
+        },
+      })),
+      stream,
+      options: {
+        temperature: request.options?.temperature,
+        num_predict: request.options?.maxTokens,
+      },
+    };
   }
 
   async chatCompletion(request: ChatRequest): Promise<ChatResponse> {
     const startTime = Date.now();
 
     try {
-      const body = {
-        model: request.model,
-        messages: request.messages.map((msg) => ({
-          role: msg.role,
-          content: msg.content,
-        })),
-        tools: request.tools?.map((tool) => ({
-          type: 'function',
-          function: {
-            name: tool.name,
-            description: tool.description,
-            parameters: tool.parameters,
-          },
-        })),
-        stream: false,
-        options: {
-          temperature: request.options?.temperature,
-          num_predict: request.options?.maxTokens,
-        },
-      };
-
-      const url = new URL('/v1/chat/completions', this.config.endpoint);
-      const response = await fetch(url.toString(), {
-        method: 'POST',
-        headers: this.buildHeaders(),
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(request.timeout ?? this.config.timeout),
-      });
-
-      if (!response.ok) {
-        const rateLimitHeaders = parseRateLimitHeaders(response.headers);
-        throw mapHttpError(
-          response.status,
-          `HTTP ${response.status}: ${response.statusText}`,
-          this.providerName,
-          rateLimitHeaders,
-        );
-      }
-
-      const data = (await response.json()) as {
+      const body = this.buildRequestBody(request, false);
+      const data = await this.postJson<{
         choices: Array<{
           message: { content: string | null; role: string };
           tool_calls?: Array<{
@@ -67,33 +48,13 @@ export class OllamaProvider extends LocalProviderBase {
           completion_tokens: number;
           total_tokens: number;
         };
-      };
+      }>('/v1/chat/completions', body);
 
       if (!data.choices || !Array.isArray(data.choices) || data.choices.length === 0) {
         throw mapValidationError('choices', 'Response missing or empty choices array', 'ollama');
       }
 
       const choice = data.choices[0];
-      const durationMs = Date.now() - startTime;
-
-      const toolCalls = choice.tool_calls?.map((tc) => {
-        let parsedArgs: Record<string, unknown>;
-        try {
-          parsedArgs = JSON.parse(tc.function.arguments);
-        } catch {
-          throw mapValidationError(
-            'tool_calls',
-            `Invalid JSON in tool call arguments for ${tc.function.name}`,
-            this.providerName,
-          );
-        }
-        return {
-          id: tc.id,
-          name: tc.function.name,
-          arguments: parsedArgs,
-        };
-      });
-
       const usage = data.usage
         ? {
             promptTokens: data.usage.prompt_tokens,
@@ -102,20 +63,9 @@ export class OllamaProvider extends LocalProviderBase {
           }
         : undefined;
 
-      this.metrics.emit({
-        requestDuration: durationMs,
-        promptTokens: usage?.promptTokens ?? 0,
-        completionTokens: usage?.completionTokens ?? 0,
-        totalTokens: usage?.totalTokens ?? 0,
-      });
+      const durationMs = this.emitMetrics(startTime, usage);
 
-      logProviderRequest({
-        model: request.model,
-        duration_ms: durationMs,
-        tokens_used: usage?.totalTokens ?? 0,
-        provider_name: 'ollama',
-        success: true,
-      });
+      this.logSuccess(request.model, durationMs, usage?.totalTokens ?? 0);
 
       return {
         message: {
@@ -123,18 +73,12 @@ export class OllamaProvider extends LocalProviderBase {
           content: choice.message.content ?? '',
           timestamp: new Date().toISOString(),
         },
-        toolCalls,
+        toolCalls: choice.tool_calls ? this.parseToolCalls(choice.tool_calls) : undefined,
         usage,
       };
     } catch (error) {
       const durationMs = Date.now() - startTime;
-      logProviderError('ollama', request.model, error, durationMs);
-
-      if (error && typeof error === 'object' && 'category' in error) {
-        throw error;
-      }
-
-      throw mapNetworkError(error, 'ollama');
+      this.handleProviderError(error, request.model, durationMs);
     }
   }
 
@@ -142,27 +86,7 @@ export class OllamaProvider extends LocalProviderBase {
     const startTime = Date.now();
 
     try {
-      const body = {
-        model: request.model,
-        messages: request.messages.map((msg) => ({
-          role: msg.role,
-          content: msg.content,
-        })),
-        tools: request.tools?.map((tool) => ({
-          type: 'function',
-          function: {
-            name: tool.name,
-            description: tool.description,
-            parameters: tool.parameters,
-          },
-        })),
-        stream: true,
-        options: {
-          temperature: request.options?.temperature,
-          num_predict: request.options?.maxTokens,
-        },
-      };
-
+      const body = this.buildRequestBody(request, true);
       const url = new URL('/v1/chat/completions', this.config.endpoint);
       const response = await fetch(url.toString(), {
         method: 'POST',
@@ -172,6 +96,8 @@ export class OllamaProvider extends LocalProviderBase {
       });
 
       if (!response.ok) {
+        const { parseRateLimitHeaders } = await import('./tools/rate-limit-parser.js');
+        const { mapHttpError } = await import('./tools/error-mapper.js');
         const rateLimitHeaders = parseRateLimitHeaders(response.headers);
         throw mapHttpError(
           response.status,
@@ -265,28 +191,16 @@ export class OllamaProvider extends LocalProviderBase {
       }
 
       const durationMs = Date.now() - startTime;
-      logProviderRequest({
-        model: request.model,
-        duration_ms: durationMs,
-        tokens_used: 0,
-        provider_name: 'ollama',
-        success: true,
-      });
+      this.logSuccess(request.model, durationMs, 0);
     } catch (error) {
       const durationMs = Date.now() - startTime;
-      logProviderError('ollama', request.model, error, durationMs);
-
-      if (error && typeof error === 'object' && 'category' in error) {
-        throw error;
-      }
-
-      throw mapNetworkError(error, 'ollama');
+      this.handleProviderError(error, request.model, durationMs);
     }
   }
 
   async listModels(): Promise<ModelInfo[]> {
     try {
-      const data = await this.fetchJson<{ data: Array<{ id: string; object?: string }> }>(
+      const data = await this.getJson<{ data: Array<{ id: string; object?: string }> }>(
         '/v1/models',
       );
 
@@ -301,7 +215,7 @@ export class OllamaProvider extends LocalProviderBase {
         },
       }));
     } catch (error) {
-      throw mapNetworkError(error, 'ollama');
+      throw (await import('./tools/error-mapper.js')).mapNetworkError(error, 'ollama');
     }
   }
 

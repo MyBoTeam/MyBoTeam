@@ -3,8 +3,8 @@ import type { ProviderError } from '@myboteam/types';
 export function mapHttpError(
   status: number,
   message: string,
-  _provider: string,
-  _rateLimitHeaders?: { remaining?: string; reset?: string },
+  provider: string,
+  rateLimitHeaders?: { remaining?: string; reset?: string },
 ): ProviderError {
   if (status === 401 || status === 403) {
     return {
@@ -13,6 +13,7 @@ export function mapHttpError(
       message,
       statusCode: status,
       retryable: false,
+      provider,
       providerMessage: message,
     };
   }
@@ -24,7 +25,9 @@ export function mapHttpError(
       message,
       statusCode: status,
       retryable: true,
+      provider,
       providerMessage: message,
+      details: rateLimitHeaders,
     };
   }
 
@@ -35,6 +38,7 @@ export function mapHttpError(
       message,
       statusCode: status,
       retryable: true,
+      provider,
       providerMessage: message,
     };
   }
@@ -46,6 +50,7 @@ export function mapHttpError(
       message,
       statusCode: status,
       retryable: true,
+      provider,
       providerMessage: message,
     };
   }
@@ -56,11 +61,12 @@ export function mapHttpError(
     message,
     statusCode: status,
     retryable: false,
+    provider,
     providerMessage: message,
   };
 }
 
-export function mapNetworkError(error: unknown, _provider: string): ProviderError {
+export function mapNetworkError(error: unknown, provider: string): ProviderError {
   const message = error instanceof Error ? error.message : String(error);
 
   if (error instanceof Error && (error.name === 'AbortError' || error.name === 'TimeoutError')) {
@@ -69,6 +75,7 @@ export function mapNetworkError(error: unknown, _provider: string): ProviderErro
       code: 'TIMEOUT_ERROR',
       message: 'Request timed out',
       retryable: true,
+      provider,
       providerMessage: message,
     };
   }
@@ -78,6 +85,7 @@ export function mapNetworkError(error: unknown, _provider: string): ProviderErro
     code: 'CONNECTION_ERROR',
     message: 'Failed to connect to provider',
     retryable: true,
+    provider,
     providerMessage: message,
   };
 }
@@ -85,13 +93,14 @@ export function mapNetworkError(error: unknown, _provider: string): ProviderErro
 export function mapValidationError(
   field: string,
   message: string,
-  _provider: string,
+  provider: string,
 ): ProviderError {
   return {
     category: 'provider',
     code: 'VALIDATION_ERROR',
     message: `Validation failed for ${field}: ${message}`,
     retryable: false,
+    provider,
     providerMessage: message,
   };
 }

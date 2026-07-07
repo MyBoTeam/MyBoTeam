@@ -1,32 +1,21 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
 import OpenAI from 'openai';
-import { ConcurrencyLimiter } from './tools/concurrency-limiter.js';
+import { CloudProviderBase } from './cloud-provider-base.js';
 import { mapValidationError } from './tools/error-mapper.js';
-import type { ProviderHealth } from './tools/health-check.js';
-import { checkHealth } from './tools/health-check.js';
 import type { ProviderMetrics } from './tools/metrics.js';
-import { MetricsEmitter } from './tools/metrics.js';
-import { ModelFallback } from './tools/model-fallback.js';
 import type { ProviderConfig } from './tools/provider-config.js';
 import { toProviderError } from './tools/provider-errors.js';
-import {
-  executeStreamWithFallback,
-  executeWithFallback,
-  safeJsonParse,
-} from './tools/provider-helpers.js';
-import { RetryHandler } from './tools/retry-handler.js';
+import { safeJsonParse } from './tools/provider-helpers.js';
 
-export class OpenAIProvider {
+export class OpenAIProvider extends CloudProviderBase {
   private readonly client: OpenAI;
-  private readonly limiter: ConcurrencyLimiter;
-  private readonly fallback: ModelFallback;
-  private readonly metrics: MetricsEmitter;
-  private readonly retryHandler: RetryHandler;
 
   constructor(config: ProviderConfig) {
     if (!config.apiKey) {
       throw new Error('API key is required');
     }
+
+    super(config);
 
     this.client = new OpenAI({
       apiKey: config.apiKey,
@@ -35,24 +24,13 @@ export class OpenAIProvider {
       defaultHeaders: config.customHeaders,
       timeout: config.timeout ?? 120_000,
     });
-    this.limiter = new ConcurrencyLimiter(config.maxConcurrent ?? 10);
-    this.fallback = new ModelFallback();
-    this.metrics = new MetricsEmitter();
-    this.retryHandler = new RetryHandler(config.retry);
   }
 
-  async chatCompletion(request: ChatRequest): Promise<ChatResponse> {
-    return executeWithFallback(
-      request,
-      'openai',
-      this.limiter,
-      this.fallback,
-      this.retryHandler,
-      (model) => this.executeChatCompletion({ ...request, model }),
-    );
+  protected get providerName(): string {
+    return 'openai';
   }
 
-  private async executeChatCompletion(request: ChatRequest): Promise<ChatResponse> {
+  protected async executeChatCompletion(request: ChatRequest): Promise<ChatResponse> {
     const startTime = Date.now();
 
     let response: any;
@@ -113,13 +91,7 @@ export class OpenAIProvider {
     };
   }
 
-  async *streamChat(request: ChatRequest): AsyncIterable<StreamingChunk> {
-    yield* executeStreamWithFallback(request, 'openai', this.limiter, this.fallback, (model) =>
-      this.executeStreamChat({ ...request, model }),
-    );
-  }
-
-  private async *executeStreamChat(request: ChatRequest): AsyncIterable<StreamingChunk> {
+  protected async *executeStreamChat(request: ChatRequest): AsyncIterable<StreamingChunk> {
     const startTime = Date.now();
     let stream: any;
     try {
@@ -208,7 +180,7 @@ export class OpenAIProvider {
     }
   }
 
-  async listModels(): Promise<ModelInfo[]> {
+  protected async listModelsFromApi(): Promise<ModelInfo[]> {
     try {
       const response = await this.client.models.list();
       return response.data.map((model) => ({
@@ -218,20 +190,7 @@ export class OpenAIProvider {
         capabilities: { tools: true, vision: true, streaming: true },
       }));
     } catch (error) {
-      const providerError = toProviderError(error, 'openai');
-      throw providerError;
+      throw toProviderError(error, 'openai');
     }
-  }
-
-  async healthCheck(): Promise<ProviderHealth> {
-    return checkHealth(async () => {
-      const startTime = Date.now();
-      await this.client.models.list();
-      return {
-        healthy: true,
-        latency: Date.now() - startTime,
-        timestamp: new Date().toISOString(),
-      };
-    });
   }
 }

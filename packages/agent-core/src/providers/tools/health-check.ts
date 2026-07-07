@@ -5,20 +5,24 @@ export interface ProviderHealth {
   error?: string;
 }
 
-export type HealthCheckFn = () => Promise<ProviderHealth>;
+export type HealthCheckFn = (signal?: AbortSignal) => Promise<ProviderHealth>;
 
 export async function checkHealth(
   healthCheckFn: HealthCheckFn,
   timeoutMs = 5000,
 ): Promise<ProviderHealth> {
   const start = Date.now();
+  const controller = new AbortController();
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   try {
     const result = await Promise.race([
-      healthCheckFn(),
+      healthCheckFn(controller.signal),
       new Promise<never>((_, reject) => {
-        timeoutId = setTimeout(() => reject(new Error('Health check timeout')), timeoutMs);
+        timeoutId = setTimeout(() => {
+          controller.abort();
+          reject(new Error('Health check timeout'));
+        }, timeoutMs);
       }),
     ]);
 
@@ -28,7 +32,12 @@ export async function checkHealth(
       healthy: false,
       latency: Date.now() - start,
       timestamp: new Date().toISOString(),
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error:
+        error instanceof Error
+          ? error.message
+          : typeof error === 'object' && error !== null && 'message' in error
+            ? String((error as { message: unknown }).message)
+            : 'Unknown error',
     };
   } finally {
     if (timeoutId !== undefined) {

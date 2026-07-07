@@ -10,6 +10,7 @@ export const ProviderErrorSchema = z.object({
   message: z.string().min(1),
   statusCode: z.number().int().optional(),
   retryable: z.boolean().default(false),
+  provider: z.string().optional(),
   providerMessage: z.string().optional(),
   details: z.unknown().optional(),
 });

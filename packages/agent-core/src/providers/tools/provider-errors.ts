@@ -11,6 +11,7 @@ export function toProviderError(error: unknown, provider: string): ProviderError
     code: 'UNKNOWN_ERROR',
     message,
     retryable: false,
+    provider,
     providerMessage: message,
   };
 }
@@ -52,7 +53,7 @@ function mapSdkError(
     error?: unknown;
     name: string;
   },
-  _provider: string,
+  provider: string,
 ): ProviderError {
   const status = error.status;
   const message = error.message;
@@ -64,6 +65,7 @@ function mapSdkError(
       message,
       statusCode: status,
       retryable: false,
+      provider,
       providerMessage: message,
     };
   }
@@ -75,6 +77,7 @@ function mapSdkError(
       message,
       statusCode: status,
       retryable: true,
+      provider,
       providerMessage: message,
     };
   }
@@ -85,6 +88,7 @@ function mapSdkError(
       code: 'CONNECTION_ERROR',
       message,
       retryable: true,
+      provider,
       providerMessage: message,
     };
   }
@@ -95,6 +99,7 @@ function mapSdkError(
       code: 'TIMEOUT_ERROR',
       message,
       retryable: true,
+      provider,
       providerMessage: message,
     };
   }
@@ -106,6 +111,7 @@ function mapSdkError(
       message,
       statusCode: status,
       retryable: true,
+      provider,
       providerMessage: message,
     };
   }
@@ -117,6 +123,7 @@ function mapSdkError(
       message,
       statusCode: status,
       retryable: false,
+      provider,
       providerMessage: message,
     };
   }
@@ -127,6 +134,7 @@ function mapSdkError(
     message,
     statusCode: status,
     retryable: false,
+    provider,
     providerMessage: message,
     details: error.error,
   };
