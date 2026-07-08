@@ -28,3 +28,5 @@ export {
 } from './custom-validation.js';
 
 export type { ProviderConfigInput } from './custom-validation.js';
+
+export { CustomProviderService } from './custom-config.js';
