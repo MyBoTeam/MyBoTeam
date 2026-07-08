@@ -60,13 +60,15 @@ export interface CreateProviderResponse {
   error?: string;
 }
 
+export type UpdatableProviderStatus = Extract<CustomProviderStatus, 'Active' | 'Inactive'>;
+
 export interface UpdateProviderRequest {
   providerId: string;
   name?: string;
   url?: string;
   apiKey?: string;
   modelName?: string;
-  status?: 'Active' | 'Inactive';
+  status?: UpdatableProviderStatus;
 }
 
 export interface UpdateProviderResponse {
@@ -96,7 +98,7 @@ export interface TestConnectionResponse {
 }
 
 export interface ListProvidersRequest {
-  status?: 'Active' | 'Inactive' | 'Error';
+  status?: CustomProviderStatus;
   limit?: number;
   offset?: number;
 }
@@ -127,3 +129,12 @@ export type CustomProviderErrorCode =
   | 'INVALID_API_KEY'
   | 'MODEL_NOT_FOUND'
   | 'VALIDATION_FAILED';
+
+export const CUSTOM_PROVIDER_ERRORS = {
+  PROVIDER_NOT_FOUND: 'PROVIDER_NOT_FOUND',
+  PROVIDER_NAME_EXISTS: 'PROVIDER_NAME_EXISTS',
+  INVALID_URL: 'INVALID_URL',
+  INVALID_API_KEY: 'INVALID_API_KEY',
+  MODEL_NOT_FOUND: 'MODEL_NOT_FOUND',
+  VALIDATION_FAILED: 'VALIDATION_FAILED',
+} as const satisfies Record<CustomProviderErrorCode, CustomProviderErrorCode>;
