@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at `specs/010-local-llm-provider/plan.md`.
+at `specs/010-custom-provider-config/plan.md`.
 <!-- SPECKIT END -->
 
 ## Project Conventions

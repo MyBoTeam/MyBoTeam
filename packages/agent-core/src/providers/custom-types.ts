@@ -1,0 +1,129 @@
+/**
+ * Custom Provider Configuration Types
+ *
+ * Types for custom LLM provider configuration management.
+ * Note: CustomProviderConfig (validation state) is different from upstream's
+ * ProviderConfig (SDK configuration) in provider-config.ts.
+ */
+
+// Enums
+
+export type CustomProviderStatus = 'Active' | 'Inactive' | 'Error';
+
+export type ValidationState = 'Valid' | 'Invalid' | 'Pending';
+
+// Entities
+
+export interface CustomProvider {
+  id: string;
+  name: string;
+  url: string;
+  apiKey: string | null;
+  modelName: string;
+  status: CustomProviderStatus;
+  createdAt: Date;
+  updatedAt: Date;
+  lastTestedAt: Date | null;
+  testResult: ConnectionTestResult | null;
+}
+
+export interface ConnectionTestResult {
+  id: string;
+  providerId: string;
+  testedAt: Date;
+  success: boolean;
+  error: string | null;
+  responseTime: number | null;
+  models: string[] | null;
+}
+
+export interface CustomProviderConfig {
+  providerId: string;
+  validationState: ValidationState;
+  lastValidationAt: Date | null;
+  validationErrors: string[];
+  connectionTestResult: ConnectionTestResult | null;
+}
+
+// Request/Response Types
+
+export interface CreateProviderRequest {
+  name: string;
+  url: string;
+  apiKey?: string;
+  modelName: string;
+}
+
+export interface CreateProviderResponse {
+  success: boolean;
+  provider?: CustomProvider;
+  error?: string;
+}
+
+export interface UpdateProviderRequest {
+  providerId: string;
+  name?: string;
+  url?: string;
+  apiKey?: string;
+  modelName?: string;
+  status?: 'Active' | 'Inactive';
+}
+
+export interface UpdateProviderResponse {
+  success: boolean;
+  provider?: CustomProvider;
+  error?: string;
+}
+
+export interface DeleteProviderRequest {
+  providerId: string;
+}
+
+export interface DeleteProviderResponse {
+  success: boolean;
+  error?: string;
+}
+
+export interface TestConnectionRequest {
+  providerId: string;
+  timeout?: number;
+}
+
+export interface TestConnectionResponse {
+  success: boolean;
+  result?: ConnectionTestResult;
+  error?: string;
+}
+
+export interface ListProvidersRequest {
+  status?: 'Active' | 'Inactive' | 'Error';
+  limit?: number;
+  offset?: number;
+}
+
+export interface ListProvidersResponse {
+  success: boolean;
+  providers?: CustomProvider[];
+  total?: number;
+  error?: string;
+}
+
+export interface GetProviderRequest {
+  providerId: string;
+}
+
+export interface GetProviderResponse {
+  success: boolean;
+  provider?: CustomProvider;
+  error?: string;
+}
+
+// Error Codes
+
+export type CustomProviderErrorCode =
+  | 'PROVIDER_NOT_FOUND'
+  | 'PROVIDER_NAME_EXISTS'
+  | 'INVALID_URL'
+  | 'INVALID_API_KEY'
+  | 'MODEL_NOT_FOUND'
+  | 'VALIDATION_FAILED';
