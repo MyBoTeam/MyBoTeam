@@ -52,7 +52,11 @@ export class OllamaProvider extends LocalProviderBase {
       }>('/v1/chat/completions', body);
 
       if (!data.choices || !Array.isArray(data.choices) || data.choices.length === 0) {
-        throw mapValidationError('choices', 'Response missing or empty choices array', this.providerName);
+        throw mapValidationError(
+          'choices',
+          'Response missing or empty choices array',
+          this.providerName,
+        );
       }
 
       const choice = data.choices[0];
