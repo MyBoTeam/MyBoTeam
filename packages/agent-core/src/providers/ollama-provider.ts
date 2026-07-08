@@ -1,6 +1,7 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
 import { LocalProviderBase } from './local-provider-base.js';
 import { mapValidationError } from './tools/error-mapper.js';
+import { isProviderError } from './tools/provider-helpers.js';
 
 export class OllamaProvider extends LocalProviderBase {
   protected get providerName(): string {
@@ -51,7 +52,7 @@ export class OllamaProvider extends LocalProviderBase {
       }>('/v1/chat/completions', body);
 
       if (!data.choices || !Array.isArray(data.choices) || data.choices.length === 0) {
-        throw mapValidationError('choices', 'Response missing or empty choices array', 'ollama');
+        throw mapValidationError('choices', 'Response missing or empty choices array', this.providerName);
       }
 
       const choice = data.choices[0];
@@ -207,7 +208,7 @@ export class OllamaProvider extends LocalProviderBase {
       return (data.data ?? []).map((model) => ({
         id: model.id,
         name: model.id,
-        provider: 'ollama',
+        provider: this.providerName,
         capabilities: {
           tools: true,
           vision: false,
@@ -215,7 +216,8 @@ export class OllamaProvider extends LocalProviderBase {
         },
       }));
     } catch (error) {
-      throw (await import('./tools/error-mapper.js')).mapNetworkError(error, 'ollama');
+      if (isProviderError(error)) throw error;
+      throw (await import('./tools/error-mapper.js')).mapNetworkError(error, this.providerName);
     }
   }
 

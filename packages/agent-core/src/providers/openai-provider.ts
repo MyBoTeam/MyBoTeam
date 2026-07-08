@@ -180,9 +180,9 @@ export class OpenAIProvider extends CloudProviderBase {
     }
   }
 
-  protected async listModelsFromApi(): Promise<ModelInfo[]> {
+  protected async listModelsFromApi(signal?: AbortSignal): Promise<ModelInfo[]> {
     try {
-      const response = await this.client.models.list();
+      const response = await this.client.models.list({ signal });
       return response.data.map((model) => ({
         id: model.id,
         name: model.id,

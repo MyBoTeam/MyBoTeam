@@ -23,7 +23,7 @@ export abstract class CloudProviderBase {
   protected abstract get providerName(): string;
   protected abstract executeChatCompletion(request: ChatRequest): Promise<ChatResponse>;
   protected abstract executeStreamChat(request: ChatRequest): AsyncIterable<StreamingChunk>;
-  protected abstract listModelsFromApi(): Promise<ModelInfo[]>;
+  protected abstract listModelsFromApi(signal?: AbortSignal): Promise<ModelInfo[]>;
 
   async chatCompletion(request: ChatRequest): Promise<ChatResponse> {
     return executeWithFallback(
@@ -52,9 +52,9 @@ export abstract class CloudProviderBase {
   }
 
   async healthCheck(): Promise<ProviderHealth> {
-    return checkHealth(async () => {
+    return checkHealth(async (signal) => {
       const startTime = Date.now();
-      await this.listModelsFromApi();
+      await this.listModelsFromApi(signal);
       return {
         healthy: true,
         latency: Date.now() - startTime,

@@ -1,6 +1,7 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
 import { LocalProviderBase } from './local-provider-base.js';
 import { mapValidationError } from './tools/error-mapper.js';
+import { isProviderError } from './tools/provider-helpers.js';
 
 export class LMStudioProvider extends LocalProviderBase {
   protected get providerName(): string {
@@ -217,6 +218,7 @@ export class LMStudioProvider extends LocalProviderBase {
         },
       }));
     } catch (error) {
+      if (isProviderError(error)) throw error;
       throw (await import('./tools/error-mapper.js')).mapNetworkError(error, this.providerName);
     }
   }
