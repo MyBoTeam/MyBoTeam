@@ -15,7 +15,10 @@ export function isProviderError(error: unknown): error is ProviderError {
 
 export function safeJsonParse(input: string): Record<string, unknown> {
   try {
-    return JSON.parse(input) as Record<string, unknown>;
+    const parsed: unknown = JSON.parse(input);
+    return typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : {};
   } catch {
     return {};
   }
@@ -60,6 +63,7 @@ export async function* executeStreamWithFallback<T>(
   provider: string,
   limiter: ConcurrencyLimiter,
   fallback: ModelFallback,
+  retryHandler: RetryHandler,
   fn: (model: string) => AsyncIterable<T>,
 ): AsyncIterable<T> {
   await limiter.acquire();
@@ -69,19 +73,26 @@ export async function* executeStreamWithFallback<T>(
     let outputStarted = false;
 
     for (const model of modelChain) {
-      try {
-        for await (const chunk of fn(model)) {
-          outputStarted = true;
-          yield chunk;
-        }
-        return;
-      } catch (error) {
-        if (outputStarted) {
-          throw error;
-        }
-        lastError = error;
-        if (!isRetryable(lastError)) {
-          throw lastError;
+      let attempts = 0;
+
+      while (true) {
+        try {
+          for await (const chunk of fn(model)) {
+            outputStarted = true;
+            yield chunk;
+          }
+          return;
+        } catch (error) {
+          if (outputStarted) {
+            throw error;
+          }
+          attempts++;
+          if (attempts >= retryHandler.maxAttempts || !isRetryable(error)) {
+            lastError = error;
+            break;
+          }
+          const delay = retryHandler.calculateDelay(attempts);
+          await new Promise((resolve) => setTimeout(resolve, delay));
         }
       }
     }

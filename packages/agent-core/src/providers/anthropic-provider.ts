@@ -1,27 +1,19 @@
 import Anthropic from '@anthropic-ai/sdk';
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
-import { ConcurrencyLimiter } from './concurrency-limiter.js';
-import type { ProviderHealth } from './health-check.js';
-import { checkHealth } from './health-check.js';
-import type { ProviderMetrics } from './metrics.js';
-import { MetricsEmitter } from './metrics.js';
-import { ModelFallback } from './model-fallback.js';
-import type { ProviderConfig } from './provider-config.js';
-import { toProviderError } from './provider-errors.js';
-import { executeStreamWithFallback, executeWithFallback } from './provider-helpers.js';
-import { RetryHandler } from './retry-handler.js';
+import { CloudProviderBase } from './cloud-provider-base.js';
+import type { MetricsEmitter, ProviderMetrics } from './tools/metrics.js';
+import type { ProviderConfig } from './tools/provider-config.js';
+import { toProviderError } from './tools/provider-errors.js';
 
-export class AnthropicProvider {
+export class AnthropicProvider extends CloudProviderBase {
   private readonly client: Anthropic;
-  private readonly limiter: ConcurrencyLimiter;
-  private readonly fallback: ModelFallback;
-  private readonly metrics: MetricsEmitter;
-  private readonly retryHandler: RetryHandler;
 
   constructor(config: ProviderConfig) {
     if (!config.apiKey) {
       throw new Error('API key is required');
     }
+
+    super(config);
 
     this.client = new Anthropic({
       apiKey: config.apiKey,
@@ -29,24 +21,13 @@ export class AnthropicProvider {
       defaultHeaders: config.customHeaders,
       timeout: config.timeout ?? 120_000,
     });
-    this.limiter = new ConcurrencyLimiter(config.maxConcurrent ?? 10);
-    this.fallback = new ModelFallback();
-    this.metrics = new MetricsEmitter(config.onMetrics);
-    this.retryHandler = new RetryHandler(config.retry);
   }
 
-  async chatCompletion(request: ChatRequest): Promise<ChatResponse> {
-    return executeWithFallback(
-      request,
-      'anthropic',
-      this.limiter,
-      this.fallback,
-      this.retryHandler,
-      (model) => this.executeChatCompletion({ ...request, model }),
-    );
+  protected get providerName(): string {
+    return 'anthropic';
   }
 
-  private async executeChatCompletion(request: ChatRequest): Promise<ChatResponse> {
+  protected async executeChatCompletion(request: ChatRequest): Promise<ChatResponse> {
     const startTime = Date.now();
 
     const systemMessages = request.messages
@@ -115,13 +96,7 @@ export class AnthropicProvider {
     };
   }
 
-  async *streamChat(request: ChatRequest): AsyncIterable<StreamingChunk> {
-    yield* executeStreamWithFallback(request, 'anthropic', this.limiter, this.fallback, (model) =>
-      this.executeStreamChat({ ...request, model }),
-    );
-  }
-
-  private async *executeStreamChat(request: ChatRequest): AsyncIterable<StreamingChunk> {
+  protected async *executeStreamChat(request: ChatRequest): AsyncIterable<StreamingChunk> {
     const startTime = Date.now();
     const systemMessages = request.messages
       .filter((msg) => msg.role === 'system')
@@ -151,23 +126,17 @@ export class AnthropicProvider {
     }
 
     let firstChunk = true;
-    let promptTokens = 0;
-    let completionTokens = 0;
     const toolCallsMap = new Map<number, { id: string; name: string; arguments: string }>();
 
     try {
       for await (const event of stream) {
-        if (event.type === 'message_start') {
-          promptTokens = event.message.usage.input_tokens;
-        }
-
         if (firstChunk && event.type === 'content_block_delta') {
           const ttfc = Date.now() - startTime;
           this.metrics.emit({
             requestDuration: ttfc,
-            promptTokens,
+            promptTokens: 0,
             completionTokens: 0,
-            totalTokens: promptTokens,
+            totalTokens: 0,
             timeToFirstChunk: ttfc,
           });
           firstChunk = false;
@@ -196,19 +165,7 @@ export class AnthropicProvider {
           }
         }
 
-        if (event.type === 'message_delta') {
-          completionTokens = event.usage.output_tokens;
-        }
-
         if (event.type === 'message_stop') {
-          const totalTokens = promptTokens + completionTokens;
-          this.metrics.emit({
-            requestDuration: Date.now() - startTime,
-            promptTokens,
-            completionTokens,
-            totalTokens,
-          });
-
           const toolCalls = Array.from(toolCallsMap.values()).map((tc) => ({
             id: tc.id,
             name: tc.name,
@@ -229,35 +186,29 @@ export class AnthropicProvider {
           }
         }
       }
+
+      this.metrics.emit({
+        requestDuration: Date.now() - startTime,
+        promptTokens: 0,
+        completionTokens: 0,
+        totalTokens: 0,
+      });
     } catch (error) {
       throw toProviderError(error, 'anthropic');
     }
   }
 
-  async listModels(): Promise<ModelInfo[]> {
+  protected async listModelsFromApi(signal?: AbortSignal): Promise<ModelInfo[]> {
     try {
-      const response = await this.client.models.list();
+      const response = await this.client.models.list({}, { signal });
       return response.data.map((model) => ({
         id: model.id,
         name: model.display_name ?? model.id,
-        provider: 'anthropic',
+        provider: 'anthropic' as const,
         capabilities: { tools: true, vision: true, streaming: true },
       }));
     } catch (error) {
-      const providerError = toProviderError(error, 'anthropic');
-      throw providerError;
+      throw toProviderError(error, 'anthropic');
     }
-  }
-
-  async healthCheck(): Promise<ProviderHealth> {
-    return checkHealth(async () => {
-      const startTime = Date.now();
-      await this.client.models.list();
-      return {
-        healthy: true,
-        latency: Date.now() - startTime,
-        timestamp: new Date().toISOString(),
-      };
-    });
   }
 }

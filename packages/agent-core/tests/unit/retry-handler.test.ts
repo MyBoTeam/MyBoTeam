@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { RetryHandler } from '../../src/providers/retry-handler';
+import { RetryHandler } from '../../src/providers/tools/retry-handler';
 
 describe('RetryHandler', () => {
   describe('execute', () => {
@@ -60,11 +60,12 @@ describe('RetryHandler', () => {
     });
 
     it('should use linear backoff', async () => {
-      const handler = new RetryHandler({ maxAttempts: 3, delay: 100, backoff: 'linear' });
+      const handler = new RetryHandler({ maxAttempts: 4, delay: 100, backoff: 'linear' });
       const fn = vi
         .fn()
         .mockRejectedValueOnce(new Error('Error 1'))
         .mockRejectedValueOnce(new Error('Error 2'))
+        .mockRejectedValueOnce(new Error('Error 3'))
         .mockResolvedValue('success');
 
       const start = Date.now();
@@ -72,7 +73,8 @@ describe('RetryHandler', () => {
       const elapsed = Date.now() - start;
 
       expect(result).toBe('success');
-      expect(elapsed).toBeGreaterThanOrEqual(300); // 100 + 200
+      expect(elapsed).toBeGreaterThanOrEqual(600); // 100 + 200 + 300
+      expect(elapsed).toBeLessThan(650); // exponential would be 100+200+400=700
     });
   });
 });

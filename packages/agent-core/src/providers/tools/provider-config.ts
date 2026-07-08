@@ -23,5 +23,4 @@ export interface ProviderConfig {
   retry?: RetryConfig;
   maxConcurrent?: number;
   timeout?: number;
-  onMetrics?: (metrics: import('./tools/metrics.js').ProviderMetrics) => void;
 }
