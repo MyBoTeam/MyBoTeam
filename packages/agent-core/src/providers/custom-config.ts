@@ -31,11 +31,17 @@ import {
   maskApiKey,
 } from './tools/custom-utils.js';
 import {
+  validateApiKey,
   validateModelName,
   validateProviderConfig,
   validateProviderUrl,
 } from './tools/custom-validation.js';
-import { checkUniqueness } from './tools/custom-validation-utils.js';
+import {
+  checkUniqueness,
+  validateApiFormat as validateApiFormatUtil,
+  validateModelInList as validateModelInListUtil,
+} from './tools/custom-validation-utils.js';
+import { sanitizeString } from '../utils/sanitize.js';
 import { parseRateLimitHeaders } from './tools/rate-limit-parser.js';
 
 const VAULT_TYPE = 'api_key';
@@ -102,6 +108,7 @@ export class CustomProviderService {
   async createProvider(request: CreateProviderRequest): Promise<CreateProviderResponse> {
     try {
       validateProviderConfig(request);
+      const validatedApiKey = validateApiKey(request.apiKey);
 
       const existingProviders = await this.vault.list({ type: 'api_key' });
       const customProviders = existingProviders.filter((e) => e.key.startsWith(VAULT_KEY_PREFIX));
@@ -150,7 +157,7 @@ export class CustomProviderService {
       const vaultKey = buildVaultKey(providerId);
       await this.vault.store_entry(
         vaultKey,
-        request.apiKey || NO_API_KEY_PLACEHOLDER,
+        validatedApiKey || NO_API_KEY_PLACEHOLDER,
         VAULT_TYPE,
         metadata as unknown as Record<string, unknown>,
       );
@@ -327,10 +334,10 @@ export class CustomProviderService {
       let rateLimitDetected = false;
       let retryAfter: string | null = null;
 
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
 
+      try {
         const modelsUrl = new URL('/v1/models', meta.url).toString();
         const response = await fetch(modelsUrl, {
           method: 'GET',
@@ -341,13 +348,11 @@ export class CustomProviderService {
           },
         });
 
-        clearTimeout(timeoutId);
         const responseTime = Date.now() - startTime;
 
         if (response.ok) {
           const models = await this.extractAvailableModels(response);
 
-          // T038b: Validate configured model exists in available models
           if (meta.modelName && !models.includes(meta.modelName)) {
             const modelList = models.length > 0 ? models.join(', ') : 'none found';
             result = {
@@ -375,7 +380,7 @@ export class CustomProviderService {
           const rateLimitInfo = parseRateLimitHeaders(response.headers);
           retryAfter = response.headers.get('Retry-After') ?? rateLimitInfo?.reset ?? null;
 
-          const retryMessage = retryAfter ? `Retry after ${retryAfter} seconds` : 'Retry later';
+          const retryMessage = retryAfter ? `Retry after ${retryAfter}` : 'Retry later';
 
           result = {
             id: randomUUID(),
@@ -410,9 +415,16 @@ export class CustomProviderService {
           responseTime,
           models: null,
         };
+      } finally {
+        clearTimeout(timeoutId);
       }
 
-      const newStatus: CustomProviderStatus = result.success ? 'Active' : 'Error';
+      let newStatus: CustomProviderStatus;
+      if (result.success) {
+        newStatus = isValidStateTransition(meta.status, 'Active') ? 'Active' : meta.status;
+      } else {
+        newStatus = isValidStateTransition(meta.status, 'Error') ? 'Error' : meta.status;
+      }
       const now = new Date().toISOString();
 
       const updatedRateLimitState = { ...rateLimitState };
@@ -508,6 +520,14 @@ export class CustomProviderService {
         validateModelName(request.modelName);
       }
 
+      if (request.name !== undefined) {
+        sanitizeString(request.name, 'Provider name', 100);
+      }
+
+      if (request.apiKey !== undefined) {
+        validateApiKey(request.apiKey);
+      }
+
       const updatedMetadata: ProviderVaultMetadata = {
         ...meta,
         ...(request.name !== undefined && { name: request.name }),
@@ -518,7 +538,8 @@ export class CustomProviderService {
 
       let newValue: string;
       if (request.apiKey !== undefined) {
-        newValue = request.apiKey || NO_API_KEY_PLACEHOLDER;
+        const trimmedKey = validateApiKey(request.apiKey);
+        newValue = trimmedKey || NO_API_KEY_PLACEHOLDER;
       } else {
         newValue = entry.encryptedValue;
       }
@@ -667,40 +688,7 @@ export class CustomProviderService {
     url: string,
     apiKey?: string,
   ): Promise<{ valid: boolean; error?: string }> {
-    try {
-      const modelsUrl = new URL('/v1/models', url).toString();
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TEST_TIMEOUT_MS);
-
-      const response = await fetch(modelsUrl, {
-        method: 'GET',
-        signal: controller.signal,
-        headers: {
-          'User-Agent': 'MyBotTeam-CustomProvider/1.0',
-          ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
-        },
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        if (response.status === 401 || response.status === 403) {
-          return {
-            valid: false,
-            error: `[AUTH_FAILED] Endpoint requires valid API key (HTTP ${response.status})`,
-          };
-        }
-        return {
-          valid: false,
-          error: `[API_FORMAT_INVALID] Endpoint does not support OpenAI API format (HTTP ${response.status})`,
-        };
-      }
-
-      return { valid: true };
-    } catch (error) {
-      const networkError = classifyNetworkError(error);
-      return { valid: false, error: networkError.message };
-    }
+    return validateApiFormatUtil(url, apiKey);
   }
 
   /**
@@ -733,48 +721,6 @@ export class CustomProviderService {
     modelName: string,
     apiKey?: string,
   ): Promise<{ valid: boolean; availableModels?: string[]; error?: string }> {
-    try {
-      const modelsUrl = new URL('/v1/models', url).toString();
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TEST_TIMEOUT_MS);
-
-      const response = await fetch(modelsUrl, {
-        method: 'GET',
-        signal: controller.signal,
-        headers: {
-          'User-Agent': 'MyBotTeam-CustomProvider/1.0',
-          ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
-        },
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        return { valid: false, error: `HTTP ${response.status}: ${response.statusText}` };
-      }
-
-      const data = (await response.json()) as Record<string, unknown>;
-      let availableModels: string[] = [];
-
-      if (Array.isArray(data.data)) {
-        availableModels = data.data
-          .filter((m: unknown) => typeof m === 'object' && m !== null && 'id' in m)
-          .map((m: unknown) => (m as { id: string }).id);
-      }
-
-      if (!availableModels.includes(modelName)) {
-        const modelList = availableModels.length > 0 ? availableModels.join(', ') : 'none found';
-        return {
-          valid: false,
-          availableModels,
-          error: `[MODEL_NOT_IN_LIST] Model "${modelName}" not found. Available models: ${modelList}`,
-        };
-      }
-
-      return { valid: true, availableModels };
-    } catch (error) {
-      const networkError = classifyNetworkError(error);
-      return { valid: false, error: networkError.message };
-    }
+    return validateModelInListUtil(url, modelName, apiKey);
   }
 }

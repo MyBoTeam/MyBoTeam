@@ -78,6 +78,12 @@ export function buildVaultKey(providerId: string): string {
  */
 export function createProviderFromVault(entry: VaultEntry, providerId: string): CustomProvider {
   const meta = entry.metadata as unknown as ProviderVaultMetadata;
+  const testResult = meta.testResult
+    ? {
+        ...meta.testResult,
+        testedAt: new Date(meta.testResult.testedAt),
+      }
+    : null;
   return {
     id: providerId,
     name: meta.name,
@@ -88,6 +94,6 @@ export function createProviderFromVault(entry: VaultEntry, providerId: string): 
     createdAt: new Date(meta.createdAt),
     updatedAt: new Date(meta.updatedAt),
     lastTestedAt: meta.lastTestedAt ? new Date(meta.lastTestedAt) : null,
-    testResult: meta.testResult,
+    testResult,
   };
 }

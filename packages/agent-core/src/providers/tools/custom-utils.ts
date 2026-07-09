@@ -126,7 +126,7 @@ export function detectAndTransformResponse(data: unknown): ResponseFormatResult 
   if (Array.isArray(obj.generations) && obj.generations.length > 0) {
     const gen = obj.generations[0] as Record<string, unknown>;
     if (typeof gen.text === 'string') {
-      return { content: gen.text, format: 'anthropic' };
+      return { content: gen.text, format: 'ai-sdk' };
     }
   }
 
