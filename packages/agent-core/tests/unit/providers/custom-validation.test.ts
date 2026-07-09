@@ -25,12 +25,23 @@ describe('CustomProviderValidation', () => {
     });
 
     it('should reject private/loopback addresses (SSRF protection)', () => {
+      // IPv4 private/loopback
       expect(() => validateProviderUrl('http://localhost:3000/api')).toThrow('[INVALID_URL]');
       expect(() => validateProviderUrl('http://127.0.0.1:3000/api')).toThrow('[INVALID_URL]');
       expect(() => validateProviderUrl('http://10.0.0.1/api')).toThrow('[INVALID_URL]');
       expect(() => validateProviderUrl('http://172.16.0.1/api')).toThrow('[INVALID_URL]');
       expect(() => validateProviderUrl('http://192.168.1.1/api')).toThrow('[INVALID_URL]');
       expect(() => validateProviderUrl('http://169.254.1.1/api')).toThrow('[INVALID_URL]');
+      // IPv6 loopback
+      expect(() => validateProviderUrl('http://[::1]/api')).toThrow('[INVALID_URL]');
+      // IPv6 unique-local
+      expect(() => validateProviderUrl('http://[fc00::1]/api')).toThrow('[INVALID_URL]');
+      expect(() => validateProviderUrl('http://[fd00::1]/api')).toThrow('[INVALID_URL]');
+      // IPv6 link-local
+      expect(() => validateProviderUrl('http://[fe80::1]/api')).toThrow('[INVALID_URL]');
+      // IPv4-mapped IPv6
+      expect(() => validateProviderUrl('http://[::ffff:127.0.0.1]/api')).toThrow('[INVALID_URL]');
+      expect(() => validateProviderUrl('http://[::ffff:10.0.0.1]/api')).toThrow('[INVALID_URL]');
     });
 
     it('should reject a non-URL string', () => {

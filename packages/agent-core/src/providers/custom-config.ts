@@ -26,10 +26,7 @@ import {
   isValidStateTransition,
   VAULT_KEY_PREFIX,
 } from './tools/custom-metadata.js';
-import {
-  classifyNetworkError,
-  maskApiKey,
-} from './tools/custom-utils.js';
+import { classifyNetworkError, maskApiKey } from './tools/custom-utils.js';
 import {
   validateApiKey,
   validateModelName,
@@ -519,17 +516,17 @@ export class CustomProviderService {
         validateModelName(request.modelName);
       }
 
-      if (request.name !== undefined) {
-        sanitizeString(request.name, 'Provider name', 100);
-      }
+      const trimmedName =
+        request.name !== undefined
+          ? sanitizeString(request.name, 'Provider name', 100)
+          : undefined;
 
-      if (request.apiKey !== undefined) {
-        validateApiKey(request.apiKey);
-      }
+      const trimmedApiKey =
+        request.apiKey !== undefined ? validateApiKey(request.apiKey) : undefined;
 
       const updatedMetadata: ProviderVaultMetadata = {
         ...meta,
-        ...(request.name !== undefined && { name: request.name }),
+        ...(trimmedName !== undefined && { name: trimmedName }),
         ...(request.url !== undefined && { url: request.url }),
         ...(request.modelName !== undefined && { modelName: request.modelName }),
         updatedAt: new Date().toISOString(),
@@ -537,8 +534,7 @@ export class CustomProviderService {
 
       let newValue: string;
       if (request.apiKey !== undefined) {
-        const trimmedKey = validateApiKey(request.apiKey);
-        newValue = trimmedKey || NO_API_KEY_PLACEHOLDER;
+        newValue = trimmedApiKey || NO_API_KEY_PLACEHOLDER;
       } else {
         newValue = entry.encryptedValue;
       }

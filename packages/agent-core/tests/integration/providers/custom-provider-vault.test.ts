@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { CustomProviderService } from '../../../src/providers/custom-config.js';
+import { buildVaultKey } from '../../../src/providers/tools/custom-metadata.js';
 import { VaultService } from '../../../src/vault/vault-service.js';
 
 describe('custom-provider-vault-integration', () => {
@@ -160,7 +161,7 @@ describe('custom-provider-vault-integration', () => {
       });
 
       const providerId = createResult.provider!.id;
-      const vaultKey = `custom-provider:${providerId}`;
+      const vaultKey = buildVaultKey(providerId);
 
       const vaultEntry = await vaultService.retrieve(vaultKey);
       expect(vaultEntry).not.toBeNull();
@@ -323,7 +324,7 @@ describe('custom-provider-vault-integration', () => {
 
       const providerId = createResult.provider!.id;
 
-      const testResult = await service.testConnection({ providerId });
+      const testResult = await service.testConnection({ providerId, timeout: 1000 });
       expect(testResult.success).toBe(true);
       expect(testResult.result).toBeDefined();
       expect(testResult.result!.success).toBe(false);
