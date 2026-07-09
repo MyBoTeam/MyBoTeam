@@ -20,8 +20,17 @@ describe('CustomProviderValidation', () => {
     });
 
     it('should accept a valid HTTP URL', () => {
-      const url = validateProviderUrl('http://localhost:3000/api');
-      expect(url.href).toBe('http://localhost:3000/api');
+      const url = validateProviderUrl('http://example.com:3000/api');
+      expect(url.href).toBe('http://example.com:3000/api');
+    });
+
+    it('should reject private/loopback addresses (SSRF protection)', () => {
+      expect(() => validateProviderUrl('http://localhost:3000/api')).toThrow('[INVALID_URL]');
+      expect(() => validateProviderUrl('http://127.0.0.1:3000/api')).toThrow('[INVALID_URL]');
+      expect(() => validateProviderUrl('http://10.0.0.1/api')).toThrow('[INVALID_URL]');
+      expect(() => validateProviderUrl('http://172.16.0.1/api')).toThrow('[INVALID_URL]');
+      expect(() => validateProviderUrl('http://192.168.1.1/api')).toThrow('[INVALID_URL]');
+      expect(() => validateProviderUrl('http://169.254.1.1/api')).toThrow('[INVALID_URL]');
     });
 
     it('should reject a non-URL string', () => {

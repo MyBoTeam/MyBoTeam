@@ -317,25 +317,23 @@ describe('custom-provider-vault-integration', () => {
     it('should return error for connection failure', async () => {
       const createResult = await service.createProvider({
         name: 'Connection Failure Provider',
-        url: 'http://localhost:1', // Invalid port that will fail to connect
+        url: 'http://192.0.2.1:1', // TEST-NET-3 address, guaranteed unreachable
         modelName: 'gpt-4',
       });
 
       const providerId = createResult.provider!.id;
 
       const testResult = await service.testConnection({ providerId });
-      // testResult.success means the method executed successfully
-      // testResult.result.success means the actual connection test passed
-      expect(testResult.success).toBe(true); // Method executed
+      expect(testResult.success).toBe(true);
       expect(testResult.result).toBeDefined();
-      expect(testResult.result!.success).toBe(false); // Connection test failed
+      expect(testResult.result!.success).toBe(false);
       expect(testResult.result!.error).toBeDefined();
     });
 
     it('should respect timeout parameter', async () => {
       const createResult = await service.createProvider({
         name: 'Timeout Parameter Provider',
-        url: 'http://localhost:1',
+        url: 'http://192.0.2.1:1',
         modelName: 'gpt-4',
       });
 
@@ -345,10 +343,9 @@ describe('custom-provider-vault-integration', () => {
       const testResult = await service.testConnection({ providerId, timeout: 1000 });
       const duration = Date.now() - startTime;
 
-      expect(testResult.success).toBe(true); // Method executed
+      expect(testResult.success).toBe(true);
       expect(testResult.result).toBeDefined();
-      expect(testResult.result!.success).toBe(false); // Connection test failed
-      // Should complete reasonably quickly (within 5 seconds including network overhead)
+      expect(testResult.result!.success).toBe(false);
       expect(duration).toBeLessThan(5000);
     });
   });
