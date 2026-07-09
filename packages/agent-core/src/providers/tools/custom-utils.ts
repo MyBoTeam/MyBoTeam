@@ -81,7 +81,7 @@ export interface ResponseFormatResult {
   /** The extracted content string */
   content: string;
   /** The detected format type */
-  format: 'openai' | 'anthropic' | 'generic' | 'unknown';
+  format: 'openai' | 'ai-sdk' | 'generic' | 'unknown';
   /** Optional warning for unrecognized formats */
   warning?: string;
 }

@@ -17,6 +17,7 @@ import type {
   UpdateProviderResponse,
 } from '@myboteam/types';
 import { createChildLogger } from '../storage/logger.js';
+import { sanitizeString } from '../utils/sanitize.js';
 import type { VaultService } from '../vault/vault-service.js';
 import type { ProviderVaultMetadata } from './tools/custom-metadata.js';
 import {
@@ -27,7 +28,6 @@ import {
 } from './tools/custom-metadata.js';
 import {
   classifyNetworkError,
-  detectAndTransformResponse,
   maskApiKey,
 } from './tools/custom-utils.js';
 import {
@@ -41,7 +41,6 @@ import {
   validateApiFormat as validateApiFormatUtil,
   validateModelInList as validateModelInListUtil,
 } from './tools/custom-validation-utils.js';
-import { sanitizeString } from '../utils/sanitize.js';
 import { parseRateLimitHeaders } from './tools/rate-limit-parser.js';
 
 const VAULT_TYPE = 'api_key';
