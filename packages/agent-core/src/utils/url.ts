@@ -23,14 +23,13 @@ function isPrivateHost(hostname: string): boolean {
   const hexMatch = hostname.match(/^\[?::ffff:([0-9a-f]+):([0-9a-f]+)\]?$/i);
   if (hexMatch) {
     const high = parseInt(hexMatch[1], 16);
-    const low = parseInt(hexMatch[2], 16);
-    // 127.0.0.0/8 → high=0x7f00 (127*256), low any
+    // 127.0.0.0/8 → high=0x7f00 (127*256)
     if (high >= 0x7f00 && high <= 0x7fff) return true;
-    // 10.0.0.0/8 → high=0x0a00 (10*256), low any
+    // 10.0.0.0/8 → high=0x0a00 (10*256)
     if (high >= 0x0a00 && high <= 0x0aff) return true;
-    // 172.16.0.0/12 → high=0xac00+ (172*256), low 0x1000-0x1fff
-    if (high >= 0xac00 && high <= 0xacff && low >= 0x1000 && low <= 0x1fff) return true;
-    // 192.168.0.0/16 → high=0xc0a8 (192*256+168), low any
+    // 172.16.0.0/12 → high=0xac10 through 0xac1f (172.16-172.31)
+    if (high >= 0xac10 && high <= 0xac1f) return true;
+    // 192.168.0.0/16 → high=0xc0a8 (192*256+168)
     if (high === 0xc0a8) return true;
     // 0.0.0.0/8 → high=0
     if (high === 0) return true;
