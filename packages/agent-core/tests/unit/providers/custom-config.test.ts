@@ -5,7 +5,8 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CustomProviderService } from '../../../src/providers/custom-config.js';
-import type { CreateProviderRequest } from '../../../src/providers/custom-types.js';
+import type { CreateProviderRequest } from '@myboteam/types';
+import { maskApiKey } from '../../../src/providers/tools/custom-utils.js';
 import type { VaultService } from '../../../src/vault/vault-service.js';
 import type { VaultEntry } from '../../../src/vault/vault-types.js';
 
@@ -24,10 +25,13 @@ function createMockVault(): VaultService {
   } as unknown as VaultService;
 }
 
-function createMockVaultEntry(_apiKey: string, metadata: Record<string, unknown> = {}): VaultEntry {
+function createMockVaultEntry(
+  providerId: string,
+  metadata: Record<string, unknown> = {},
+): VaultEntry {
   return {
     id: 'test-id',
-    key: 'custom-provider:test-provider-id',
+    key: `custom-provider:${providerId}`,
     type: 'api_key',
     encryptedValue: 'encrypted-value',
     iv: 'iv',
@@ -91,7 +95,7 @@ describe('CustomProviderService', () => {
       await service.createProvider(request);
 
       const [, value] = (vault.store_entry as any).mock.calls[0];
-      expect(value).toBe('');
+      expect(value).toBe('__NO_API_KEY__');
     });
 
     it('should generate unique vault key for each provider', async () => {
@@ -196,13 +200,16 @@ describe('CustomProviderService', () => {
 
     it('should allow creating provider after deleting one when at limit', async () => {
       const providers = Array.from({ length: 49 }, (_, i) =>
-        createMockVaultEntry(`key-${i}`, { name: `Provider ${i}` }),
+        createMockVaultEntry(`provider-${i}`, {
+          name: `Provider ${i}`,
+          url: `https://api${i}.example.com/v1`,
+        }),
       );
       (vault.list as any).mockResolvedValue(providers);
 
       const request: CreateProviderRequest = {
         name: 'New Provider',
-        url: 'https://api.example.com/v1',
+        url: 'https://api.new.example.com/v1',
         apiKey: 'sk-test',
         modelName: 'gpt-4',
       };
@@ -212,23 +219,22 @@ describe('CustomProviderService', () => {
     });
   });
 
-  describe('Secure Logging', () => {
-    it('should mask API keys with asterisks', async () => {
-      const request: CreateProviderRequest = {
-        name: 'My Provider',
-        url: 'https://api.example.com/v1',
-        apiKey: 'sk-very-secret-api-key-12345',
-        modelName: 'gpt-4',
-      };
+  describe('maskApiKey', () => {
+    it('should mask long API keys as first4****last4', () => {
+      expect(maskApiKey('sk-12345678901234567890')).toBe('sk-1****7890');
+    });
 
-      const result = await service.createProvider(request);
+    it('should mask short API keys as ****', () => {
+      expect(maskApiKey('short')).toBe('****');
+      expect(maskApiKey('12345678')).toBe('****');
+    });
 
-      expect(result.success).toBe(true);
-      expect(result.provider?.apiKey).toBeNull();
+    it('should handle undefined API key', () => {
+      expect(maskApiKey(undefined)).toBe('');
+    });
 
-      const callArgs = (vault.store_entry as any).mock.calls[0];
-      const storedApiKey = callArgs[1];
-      expect(storedApiKey).toBe('sk-very-secret-api-key-12345');
+    it('should handle empty string', () => {
+      expect(maskApiKey('')).toBe('');
     });
   });
 });

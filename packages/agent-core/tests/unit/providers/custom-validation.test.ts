@@ -4,12 +4,13 @@
  */
 
 import { describe, expect, it } from 'vitest';
+import { CUSTOM_PROVIDER_ERRORS } from '@myboteam/types';
 import {
-  validateProviderUrl,
   validateApiKey,
   validateModelName,
-} from '../../../src/providers/custom-validation.js';
-import { CUSTOM_PROVIDER_ERRORS } from '../../../src/providers/custom-types.js';
+  validateProviderConfig,
+  validateProviderUrl,
+} from '../../../src/providers/tools/custom-validation.js';
 
 describe('CustomProviderValidation', () => {
   describe('validateProviderUrl()', () => {
@@ -102,6 +103,70 @@ describe('CustomProviderValidation', () => {
     it('should accept a model name at maximum length', () => {
       const maxName = 'a'.repeat(256);
       expect(validateModelName(maxName)).toBe(maxName);
+    });
+  });
+
+  describe('validateProviderConfig', () => {
+    it('should pass for valid config', () => {
+      expect(() =>
+        validateProviderConfig({
+          name: 'My Provider',
+          url: 'https://api.example.com/v1',
+          apiKey: 'sk-test-123',
+          modelName: 'gpt-4',
+        }),
+      ).not.toThrow();
+    });
+
+    it('should pass for config without optional apiKey', () => {
+      expect(() =>
+        validateProviderConfig({
+          name: 'Public Provider',
+          url: 'https://api.example.com/v1',
+          modelName: 'llama-3',
+        }),
+      ).not.toThrow();
+    });
+
+    it('should throw for invalid URL', () => {
+      expect(() =>
+        validateProviderConfig({
+          name: 'Bad URL',
+          url: 'not-a-url',
+          modelName: 'gpt-4',
+        }),
+      ).toThrow('[INVALID_URL]');
+    });
+
+    it('should throw for empty name', () => {
+      expect(() =>
+        validateProviderConfig({
+          name: '',
+          url: 'https://api.example.com/v1',
+          modelName: 'gpt-4',
+        }),
+      ).toThrow('[VALIDATION_FAILED]');
+    });
+
+    it('should throw for empty modelName', () => {
+      expect(() =>
+        validateProviderConfig({
+          name: 'Valid Name',
+          url: 'https://api.example.com/v1',
+          modelName: '',
+        }),
+      ).toThrow('[VALIDATION_FAILED]');
+    });
+
+    it('should throw for empty apiKey', () => {
+      expect(() =>
+        validateProviderConfig({
+          name: 'Valid Name',
+          url: 'https://api.example.com/v1',
+          apiKey: '',
+          modelName: 'gpt-4',
+        }),
+      ).toThrow('[INVALID_API_KEY]');
     });
   });
 

@@ -1,0 +1,456 @@
+{
+  "feature": "010-custom-provider-config",
+  "created": "2026-07-02T15:38:06+07:00",
+  "tasks": {
+    "T000a": {
+      "description": "Port packages/agent-core/src/utils/url.ts (validateHttpUrl) from v0.3.0",
+      "files": "packages/agent-core/src/utils/url.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T000b": {
+      "description": "Port packages/agent-core/src/utils/sanitize.ts (sanitizeString) from v0.3.0",
+      "files": "packages/agent-core/src/utils/sanitize.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T000d": {
+      "description": "Create packages/agent-core/src/utils/index.ts barrel export",
+      "files": "packages/agent-core/src/utils/index.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T001": {
+      "description": "Create TypeScript interfaces for CustomProvider, ConnectionTestResult, CustomProviderConfig (renamed to avoid upstream naming conflict)",
+      "files": "packages/agent-core/src/providers/custom-types.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T002": {
+      "description": "Create barrel export for new types",
+      "files": "packages/agent-core/src/providers/index.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T003": {
+      "description": "Implement URL validation utility",
+      "files": "packages/agent-core/src/providers/custom-validation.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T004": {
+      "description": "Implement API key format validation",
+      "files": "packages/agent-core/src/providers/custom-validation.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T005": {
+      "description": "Implement model name validation",
+      "files": "packages/agent-core/src/providers/custom-validation.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T006": {
+      "description": "Implement vault integration for encrypted storage",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T007": {
+      "description": "Contract test for CreateProvider",
+      "files": "packages/agent-core/tests/contract/providers/custom-provider.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T008": {
+      "description": "Contract test for TestConnection",
+      "files": "packages/agent-core/tests/contract/providers/custom-provider.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T009": {
+      "description": "Implement CustomProviderService.createProvider()",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T010": {
+      "description": "Implement CustomProviderService.getProvider()",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T011": {
+      "description": "Implement CustomProviderService.testConnection()",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T012": {
+      "description": "Add provider status management",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T013": {
+      "description": "Add connection test result storage",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T014": {
+      "description": "Unit test for URL validation",
+      "files": "packages/agent-core/tests/unit/providers/custom-validation.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T015": {
+      "description": "Unit test for API key validation",
+      "files": "packages/agent-core/tests/unit/providers/custom-validation.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T016": {
+      "description": "Unit test for model name validation",
+      "files": "packages/agent-core/tests/unit/providers/custom-validation.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T017": {
+      "description": "Implement validateProviderConfig()",
+      "files": "packages/agent-core/src/providers/custom-validation.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T018": {
+      "description": "Implement validateUrlFormat()",
+      "files": "packages/agent-core/src/providers/custom-validation.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T019": {
+      "description": "Implement validateApiKeyFormat()",
+      "files": "packages/agent-core/src/providers/custom-validation.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T020": {
+      "description": "Add custom provider error codes (PROVIDER_NOT_FOUND, PROVIDER_NAME_EXISTS, INVALID_URL, INVALID_API_KEY, MODEL_NOT_FOUND, VALIDATION_FAILED); upstream codes (AUTHENTICATION_ERROR, RATE_LIMIT_ERROR, TIMEOUT_ERROR, CONNECTION_ERROR) reused from provider-errors.ts",
+      "files": "packages/agent-core/src/providers/custom-types.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T021": {
+      "description": "Integrate validation into createProvider() and updateProvider()",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T022": {
+      "description": "Unit test for API key encryption",
+      "files": "packages/agent-core/tests/unit/providers/custom-config.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T023": {
+      "description": "Unit test for API key masking",
+      "files": "packages/agent-core/tests/unit/providers/custom-config.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T024": {
+      "description": "Implement API key encryption using vault",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T025": {
+      "description": "Implement API key masking for responses",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T026": {
+      "description": "Implement secure logging (mask API keys)",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T027": {
+      "description": "Add provider count limit validation (max 50)",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T028": {
+      "description": "Contract test for UpdateProvider",
+      "files": "packages/agent-core/tests/contract/providers/custom-provider.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T029": {
+      "description": "Contract test for DeleteProvider",
+      "files": "packages/agent-core/tests/contract/providers/custom-provider.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T030": {
+      "description": "Contract test for ListProviders",
+      "files": "packages/agent-core/tests/contract/providers/custom-provider.test.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T031": {
+      "description": "Implement CustomProviderService.updateProvider()",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T032": {
+      "description": "Implement CustomProviderService.deleteProvider() (soft delete)",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T033": {
+      "description": "Implement CustomProviderService.listProviders() with pagination",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T034": {
+      "description": "Implement provider uniqueness validation (URL + Name)",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T035": {
+      "description": "Implement state transition validation",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T036": {
+      "description": "Add network failure error handling: timeout (10s), DNS failure, connection refused, SSL errors",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T037": {
+      "description": "Add rate limit detection: reuse upstream tools/rate-limit-parser.ts for HTTP 429 + Retry-After header; notify user; disable after 3 consecutive events",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T038": {
+      "description": "Add response format auto-detection: choices[0].message.content, generations[0].text, results[0].output",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T038a": {
+      "description": "Add OpenAI-compatible API format validation: verify /v1/models and /v1/chat/completions support",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T038b": {
+      "description": "Add missing model handling: return error with available models list when modelName not found",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T039": {
+      "description": "Add JSDoc documentation for all public APIs",
+      "files": "packages/agent-core/src/providers/custom-config.ts",
+      "execution_mode": "ASYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    },
+    "T040": {
+      "description": "Run quickstart.md validation scenarios",
+      "files": "specs/010-custom-provider-config/quickstart.md",
+      "execution_mode": "SYNC",
+      "status": "pending",
+      "agent_type": "general",
+      "started_at": null,
+      "completed_at": null,
+      "result_summary": null
+    }
+  }
+}

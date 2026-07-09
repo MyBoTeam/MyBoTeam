@@ -21,6 +21,27 @@ export type {
   TaskTodo,
 } from '@myboteam/types';
 export { AnthropicProvider } from './providers/anthropic-provider.js';
+export type {
+  ConnectionTestResult,
+  CreateProviderRequest,
+  CreateProviderResponse,
+  CustomProvider,
+  CustomProviderConfig,
+  CustomProviderErrorCode,
+  CustomProviderStatus,
+  DeleteProviderRequest,
+  DeleteProviderResponse,
+  GetProviderRequest,
+  GetProviderResponse,
+  ListProvidersRequest,
+  ListProvidersResponse,
+  TestConnectionRequest,
+  TestConnectionResponse,
+  UpdatableProviderStatus,
+  UpdateProviderRequest,
+  UpdateProviderResponse,
+  ValidationState,
+} from '@myboteam/types';
 export { OpenAIProvider } from './providers/openai-provider.js';
 export { ConcurrencyLimiter } from './providers/tools/concurrency-limiter.js';
 export type { HealthCheckFn, ProviderHealth } from './providers/tools/health-check.js';
