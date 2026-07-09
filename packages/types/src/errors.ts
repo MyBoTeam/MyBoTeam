@@ -16,3 +16,26 @@ export const ProviderErrorSchema = z.object({
 });
 
 export type ProviderError = z.infer<typeof ProviderErrorSchema>;
+
+// --- Routing Error Codes ---
+
+export const RoutingErrorCodeSchema = z.enum([
+  'PROVIDER_UNAVAILABLE',
+  'ALL_PROVIDERS_FAILED',
+  'FALLBACK_EXHAUSTED',
+  'COOLDOWN_ACTIVE',
+  'VAULT_LOCKED',
+  'NO_PROVIDER_CONFIGURED',
+]);
+
+export type RoutingErrorCode = z.infer<typeof RoutingErrorCodeSchema>;
+
+export const RoutingErrorSchema = z.object({
+  code: RoutingErrorCodeSchema,
+  message: z.string().min(1),
+  provider: z.string().optional(),
+  cooldownExpiresAt: z.string().datetime().optional(),
+  details: z.unknown().optional(),
+});
+
+export type RoutingError = z.infer<typeof RoutingErrorSchema>;

@@ -1,4 +1,4 @@
-import { createChildLogger } from '../../storage/logger.js';
+import { createChildLogger, maskSensitiveFields } from '../../storage/logger.js';
 
 export interface ProviderLogFields {
   model: string;
@@ -12,7 +12,7 @@ export interface ProviderLogFields {
 const logger = createChildLogger({ module: 'provider' });
 
 export function logProviderRequest(fields: ProviderLogFields): void {
-  logger.debug(fields, 'Provider request completed');
+  logger.debug(maskSensitiveFields(fields), 'Provider request completed');
 }
 
 export function logProviderError(
@@ -23,14 +23,14 @@ export function logProviderError(
 ): void {
   const message = error instanceof Error ? error.message : String(error);
   logger.warn(
-    {
+    maskSensitiveFields({
       model,
       duration_ms: durationMs,
       tokens_used: 0,
       provider_name: providerName,
       success: false,
       error: message,
-    },
+    }),
     'Provider request failed',
   );
 }

@@ -2,6 +2,24 @@ import pino from 'pino';
 
 let rootLogger: pino.Logger | null = null;
 
+const SENSITIVE_FIELDS = ['apiKey', 'api_key', 'authorization', 'token', 'secret', 'password'];
+
+function maskValue(value: unknown): unknown {
+  if (typeof value !== 'string') return value;
+  if (value.length <= 8) return '****';
+  return `${value.slice(0, 4)}****${value.slice(-4)}`;
+}
+
+export function maskSensitiveFields<T extends Record<string, unknown>>(obj: T): T {
+  const masked = { ...obj };
+  for (const key of SENSITIVE_FIELDS) {
+    if (key in masked) {
+      (masked as Record<string, unknown>)[key] = maskValue(masked[key]);
+    }
+  }
+  return masked;
+}
+
 export function getLogger(): pino.Logger {
   if (!rootLogger) {
     const level = process.env.LOG_LEVEL ?? 'info';

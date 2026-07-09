@@ -46,6 +46,10 @@ export {
   ErrorCategorySchema,
   type ProviderError,
   ProviderErrorSchema,
+  type RoutingError,
+  type RoutingErrorCode,
+  RoutingErrorCodeSchema,
+  RoutingErrorSchema,
 } from './errors.js';
 export {
   type MCPConfig,
@@ -65,7 +69,23 @@ export {
   type ProviderType,
   ProviderTypeSchema,
 } from './provider.js';
-export type { ProviderClient, ProviderClientResult } from './provider-client.js';
+export type { ProviderClient, ProviderClientResult, RoutingMetadata } from './provider-client.js';
+export {
+  type FallbackChainResult,
+  FallbackChainResultSchema,
+  type FallbackProviderConfig,
+  FallbackProviderConfigSchema,
+  type FallbackProviderEntry,
+  FallbackProviderEntrySchema,
+  type ProviderHealthState,
+  ProviderHealthStateSchema,
+  type ProviderHealthStateInfo,
+  ProviderHealthStateInfoSchema,
+  type ProviderHealthStatus,
+  ProviderHealthStatusSchema,
+  type RoutingDecision,
+  RoutingDecisionSchema,
+} from './router.js';
 export type {
   AgentFilters,
   ConversationFilters,
