@@ -10,14 +10,14 @@ function maskValue(value: unknown): unknown {
   return `${value.slice(0, 4)}****${value.slice(-4)}`;
 }
 
-export function maskSensitiveFields<T extends Record<string, unknown>>(obj: T): T {
-  const masked = { ...obj };
+export function maskSensitiveFields<T extends object>(obj: T): T {
+  const masked = { ...obj } as Record<string, unknown>;
   for (const key of SENSITIVE_FIELDS) {
     if (key in masked) {
-      (masked as Record<string, unknown>)[key] = maskValue(masked[key]);
+      masked[key] = maskValue(masked[key]);
     }
   }
-  return masked;
+  return masked as T;
 }
 
 export function getLogger(): pino.Logger {

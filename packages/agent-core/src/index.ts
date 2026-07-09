@@ -41,12 +41,12 @@ export type {
 } from '@myboteam/types';
 export { AnthropicProvider } from './providers/anthropic-provider.js';
 export { BYOKInjector } from './providers/byok-injector.js';
-export { ModelRouter } from './providers/model-router.js';
 export type { ModelRouterDeps } from './providers/model-router.js';
+export { ModelRouter } from './providers/model-router.js';
 export { OpenAIProvider } from './providers/openai-provider.js';
 export { ProviderHealthTracker } from './providers/provider-health.js';
-export { ProviderRegistry } from './providers/provider-registry.js';
 export type { ProviderRegistryEntry } from './providers/provider-registry.js';
+export { ProviderRegistry } from './providers/provider-registry.js';
 export { ConcurrencyLimiter } from './providers/tools/concurrency-limiter.js';
 export type { HealthCheckFn, ProviderHealth } from './providers/tools/health-check.js';
 export { checkHealth } from './providers/tools/health-check.js';
@@ -59,8 +59,13 @@ export type {
   RetryConfig,
 } from './providers/tools/provider-config.js';
 export { isProviderError, safeJsonParse } from './providers/tools/provider-helpers.js';
-export { classifyFailure, classifyPermanent, classifyTransient, isRetryableForRouting } from './providers/tools/router-error-mapper.js';
 export { RetryHandler } from './providers/tools/retry-handler.js';
+export {
+  classifyFailure,
+  classifyPermanent,
+  classifyTransient,
+  isRetryableForRouting,
+} from './providers/tools/router-error-mapper.js';
 export type { AgentStorageConfig } from './storage/agent-storage.js';
 export { listTasks, updateTask } from './storage/crud/task.js';
 export {

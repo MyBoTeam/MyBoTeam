@@ -1,7 +1,7 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BYOKInjector } from '../../../src/providers/byok-injector.js';
-import type { VaultService } from '../../../src/vault/vault-service.js';
 import type { ProviderConfig } from '../../../src/providers/tools/provider-config.js';
+import type { VaultService } from '../../../src/vault/vault-service.js';
 
 function createMockVault(overrides?: Partial<VaultService>): VaultService {
   return {

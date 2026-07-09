@@ -4,6 +4,7 @@ import type {
   ChatResponse,
   FallbackChainResult,
   FallbackProviderEntry,
+  ProviderClient,
   ProviderClientResult,
   ProviderHealthStatus,
   RoutingDecision,
@@ -113,7 +114,7 @@ export class ModelRouter {
 
   private async executeWithFallback<T>(
     chain: FallbackChainResult,
-    execute: (client: ProviderClient) => Promise<T> | AsyncIterable<T>,
+    execute: (client: ProviderClient) => Promise<T> | T,
     _operation: string,
     model: string,
   ): Promise<ProviderClientResult<T>> {
@@ -143,7 +144,7 @@ export class ModelRouter {
       try {
         const retryHandler = new RetryHandler(this.deps.retryConfig ?? RETRY_CONFIG);
         const result = await retryHandler.execute(
-          () => execute(provider.client) as Promise<T>,
+          () => Promise.resolve(execute(provider.client)),
           (error) => {
             const providerError = this.toProviderError(error, provider.name);
             return classifyFailure(providerError) === 'transient';
@@ -206,7 +207,7 @@ export class ModelRouter {
   ): {
     code: string;
     message: string;
-    category: string;
+    category: 'auth' | 'rate_limit' | 'network' | 'provider';
     retryable: boolean;
     provider?: string;
     statusCode?: number;
@@ -215,7 +216,7 @@ export class ModelRouter {
       return error as {
         code: string;
         message: string;
-        category: string;
+        category: 'auth' | 'rate_limit' | 'network' | 'provider';
         retryable: boolean;
         provider?: string;
         statusCode?: number;

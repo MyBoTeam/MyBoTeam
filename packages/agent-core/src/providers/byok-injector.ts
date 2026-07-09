@@ -41,10 +41,7 @@ export class BYOKInjector {
     return maskApiKey(apiKey);
   }
 
-  async inject(
-    config: ProviderConfig,
-    encryptedKey: string,
-  ): Promise<ByokConfigInjectionResult> {
+  async inject(config: ProviderConfig, encryptedKey: string): Promise<ByokConfigInjectionResult> {
     const result = await this.decryptApiKey(encryptedKey);
 
     if (result.injected && result.apiKey) {
