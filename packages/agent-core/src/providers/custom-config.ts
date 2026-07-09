@@ -517,9 +517,7 @@ export class CustomProviderService {
       }
 
       const trimmedName =
-        request.name !== undefined
-          ? sanitizeString(request.name, 'Provider name', 100)
-          : undefined;
+        request.name !== undefined ? sanitizeString(request.name, 'Provider name', 100) : undefined;
 
       const trimmedApiKey =
         request.apiKey !== undefined ? validateApiKey(request.apiKey) : undefined;
