@@ -68,7 +68,6 @@ export interface UpdateProviderRequest {
   url?: string;
   apiKey?: string;
   modelName?: string;
-  status?: UpdatableProviderStatus;
 }
 
 export interface UpdateProviderResponse {

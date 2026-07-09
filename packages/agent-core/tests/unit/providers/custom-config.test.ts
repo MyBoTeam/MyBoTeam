@@ -198,7 +198,7 @@ describe('CustomProviderService', () => {
       expect(result.error).toContain('50');
     });
 
-    it('should allow creating provider after deleting one when at limit', async () => {
+    it('should allow creating provider when under limit (49 existing)', async () => {
       const providers = Array.from({ length: 49 }, (_, i) =>
         createMockVaultEntry(`provider-${i}`, {
           name: `Provider ${i}`,

@@ -40,7 +40,7 @@ describe('custom-validation-utils', () => {
       );
     });
 
-    it('should return valid for 401 response (endpoint exists, auth required)', async () => {
+    it('should return invalid for 401 response (endpoint exists, auth required)', async () => {
       mockFetch.mockResolvedValue({
         ok: false,
         status: 401,
@@ -54,7 +54,7 @@ describe('custom-validation-utils', () => {
       expect(result.error).toContain('401');
     });
 
-    it('should return valid for 403 response (endpoint exists, auth required)', async () => {
+    it('should return invalid for 403 response (endpoint exists, auth required)', async () => {
       mockFetch.mockResolvedValue({
         ok: false,
         status: 403,

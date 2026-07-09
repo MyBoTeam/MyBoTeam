@@ -59,31 +59,33 @@ export async function validateApiFormat(
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TEST_TIMEOUT_MS);
 
-    const response = await fetch(modelsUrl, {
-      method: 'GET',
-      signal: controller.signal,
-      headers: {
-        'User-Agent': 'MyBotTeam-CustomProvider/1.0',
-        ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
-      },
-    });
+    try {
+      const response = await fetch(modelsUrl, {
+        method: 'GET',
+        signal: controller.signal,
+        headers: {
+          'User-Agent': 'MyBotTeam-CustomProvider/1.0',
+          ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+        },
+      });
 
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      if (response.status === 401 || response.status === 403) {
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          return {
+            valid: false,
+            error: `[AUTH_FAILED] Endpoint requires valid API key (HTTP ${response.status})`,
+          };
+        }
         return {
           valid: false,
-          error: `[AUTH_FAILED] Endpoint requires valid API key (HTTP ${response.status})`,
+          error: `[API_FORMAT_INVALID] Endpoint does not support OpenAI API format (HTTP ${response.status})`,
         };
       }
-      return {
-        valid: false,
-        error: `[API_FORMAT_INVALID] Endpoint does not support OpenAI API format (HTTP ${response.status})`,
-      };
-    }
 
-    return { valid: true };
+      return { valid: true };
+    } finally {
+      clearTimeout(timeoutId);
+    }
   } catch (error) {
     const networkError = classifyNetworkError(error);
     return { valid: false, error: networkError.message };
@@ -125,40 +127,42 @@ export async function validateModelInList(
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TEST_TIMEOUT_MS);
 
-    const response = await fetch(modelsUrl, {
-      method: 'GET',
-      signal: controller.signal,
-      headers: {
-        'User-Agent': 'MyBotTeam-CustomProvider/1.0',
-        ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
-      },
-    });
+    try {
+      const response = await fetch(modelsUrl, {
+        method: 'GET',
+        signal: controller.signal,
+        headers: {
+          'User-Agent': 'MyBotTeam-CustomProvider/1.0',
+          ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+        },
+      });
 
-    clearTimeout(timeoutId);
+      if (!response.ok) {
+        return { valid: false, error: `HTTP ${response.status}: ${response.statusText}` };
+      }
 
-    if (!response.ok) {
-      return { valid: false, error: `HTTP ${response.status}: ${response.statusText}` };
+      const data = (await response.json()) as Record<string, unknown>;
+      let availableModels: string[] = [];
+
+      if (Array.isArray(data.data)) {
+        availableModels = data.data
+          .filter((m: unknown) => typeof m === 'object' && m !== null && 'id' in m)
+          .map((m: unknown) => (m as { id: string }).id);
+      }
+
+      if (!availableModels.includes(modelName)) {
+        const modelList = availableModels.length > 0 ? availableModels.join(', ') : 'none found';
+        return {
+          valid: false,
+          availableModels,
+          error: `[MODEL_NOT_IN_LIST] Model "${modelName}" not found. Available models: ${modelList}`,
+        };
+      }
+
+      return { valid: true, availableModels };
+    } finally {
+      clearTimeout(timeoutId);
     }
-
-    const data = (await response.json()) as Record<string, unknown>;
-    let availableModels: string[] = [];
-
-    if (Array.isArray(data.data)) {
-      availableModels = data.data
-        .filter((m: unknown) => typeof m === 'object' && m !== null && 'id' in m)
-        .map((m: unknown) => (m as { id: string }).id);
-    }
-
-    if (!availableModels.includes(modelName)) {
-      const modelList = availableModels.length > 0 ? availableModels.join(', ') : 'none found';
-      return {
-        valid: false,
-        availableModels,
-        error: `[MODEL_NOT_IN_LIST] Model "${modelName}" not found. Available models: ${modelList}`,
-      };
-    }
-
-    return { valid: true, availableModels };
   } catch (error) {
     const networkError = classifyNetworkError(error);
     return { valid: false, error: networkError.message };
