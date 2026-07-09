@@ -116,11 +116,7 @@ describe('custom-validation-utils', () => {
         }),
       });
 
-      const result = await validateModelInList(
-        'https://api.example.com/v1',
-        'gpt-4',
-        'sk-key',
-      );
+      const result = await validateModelInList('https://api.example.com/v1', 'gpt-4', 'sk-key');
 
       expect(result.valid).toBe(true);
       expect(result.availableModels).toEqual(['gpt-4', 'gpt-3.5-turbo']);
@@ -138,11 +134,7 @@ describe('custom-validation-utils', () => {
         }),
       });
 
-      const result = await validateModelInList(
-        'https://api.example.com/v1',
-        'claude-3',
-        'sk-key',
-      );
+      const result = await validateModelInList('https://api.example.com/v1', 'claude-3', 'sk-key');
 
       expect(result.valid).toBe(false);
       expect(result.error).toContain('MODEL_NOT_IN_LIST');
@@ -157,10 +149,7 @@ describe('custom-validation-utils', () => {
         json: vi.fn().mockResolvedValue({ data: [] }),
       });
 
-      const result = await validateModelInList(
-        'https://api.example.com/v1',
-        'gpt-4',
-      );
+      const result = await validateModelInList('https://api.example.com/v1', 'gpt-4');
 
       expect(result.valid).toBe(false);
       expect(result.error).toContain('MODEL_NOT_IN_LIST');
@@ -175,10 +164,7 @@ describe('custom-validation-utils', () => {
         statusText: 'Internal Server Error',
       });
 
-      const result = await validateModelInList(
-        'https://api.example.com/v1',
-        'gpt-4',
-      );
+      const result = await validateModelInList('https://api.example.com/v1', 'gpt-4');
 
       expect(result.valid).toBe(false);
       expect(result.error).toContain('500');
@@ -187,10 +173,7 @@ describe('custom-validation-utils', () => {
     it('should handle network errors', async () => {
       mockFetch.mockRejectedValue(new Error('fetch failed'));
 
-      const result = await validateModelInList(
-        'https://api.example.com/v1',
-        'gpt-4',
-      );
+      const result = await validateModelInList('https://api.example.com/v1', 'gpt-4');
 
       expect(result.valid).toBe(false);
       expect(result.error).toContain('NETWORK_ERROR');

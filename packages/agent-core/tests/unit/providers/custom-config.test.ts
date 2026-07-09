@@ -3,9 +3,9 @@
  * Tests API key encryption via vault, API key masking, and provider count limits.
  */
 
+import type { CreateProviderRequest } from '@myboteam/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CustomProviderService } from '../../../src/providers/custom-config.js';
-import type { CreateProviderRequest } from '@myboteam/types';
 import { maskApiKey } from '../../../src/providers/tools/custom-utils.js';
 import type { VaultService } from '../../../src/vault/vault-service.js';
 import type { VaultEntry } from '../../../src/vault/vault-types.js';

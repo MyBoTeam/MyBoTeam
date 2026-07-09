@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import type {
   ConnectionTestResult,
   CreateProviderRequest,
@@ -15,7 +16,6 @@ import type {
   UpdateProviderRequest,
   UpdateProviderResponse,
 } from '@myboteam/types';
-import { randomUUID } from 'node:crypto';
 import { createChildLogger } from '../storage/logger.js';
 import type { VaultService } from '../vault/vault-service.js';
 import type { ProviderVaultMetadata } from './tools/custom-metadata.js';
@@ -25,7 +25,11 @@ import {
   isValidStateTransition,
   VAULT_KEY_PREFIX,
 } from './tools/custom-metadata.js';
-import { classifyNetworkError, detectAndTransformResponse, maskApiKey } from './tools/custom-utils.js';
+import {
+  classifyNetworkError,
+  detectAndTransformResponse,
+  maskApiKey,
+} from './tools/custom-utils.js';
 import {
   validateModelName,
   validateProviderConfig,

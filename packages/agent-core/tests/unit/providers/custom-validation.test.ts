@@ -3,8 +3,8 @@
  * Tests URL validation, API key validation, model name validation, and error code constants.
  */
 
-import { describe, expect, it } from 'vitest';
 import { CUSTOM_PROVIDER_ERRORS } from '@myboteam/types';
+import { describe, expect, it } from 'vitest';
 import {
   validateApiKey,
   validateModelName,

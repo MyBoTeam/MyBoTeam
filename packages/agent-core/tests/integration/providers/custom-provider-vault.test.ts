@@ -317,7 +317,7 @@ describe('custom-provider-vault-integration', () => {
     it('should return error for connection failure', async () => {
       const createResult = await service.createProvider({
         name: 'Connection Failure Provider',
-        url: 'http://localhost:1',  // Invalid port that will fail to connect
+        url: 'http://localhost:1', // Invalid port that will fail to connect
         modelName: 'gpt-4',
       });
 

@@ -4,11 +4,7 @@
  * @module custom-metadata
  */
 
-import type {
-  ConnectionTestResult,
-  CustomProvider,
-  CustomProviderStatus,
-} from '@myboteam/types';
+import type { ConnectionTestResult, CustomProvider, CustomProviderStatus } from '@myboteam/types';
 import type { VaultEntry } from '../../vault/vault-types.js';
 
 export const VAULT_KEY_PREFIX = 'custom-provider:';

@@ -2,10 +2,23 @@ export type {
   Agent,
   AgentFilters,
   AgentMcpAssignment,
+  ConnectionTestResult,
   Conversation,
   ConversationFilters,
+  CreateProviderRequest,
+  CreateProviderResponse,
+  CustomProvider,
+  CustomProviderConfig,
+  CustomProviderErrorCode,
+  CustomProviderStatus,
+  DeleteProviderRequest,
+  DeleteProviderResponse,
   DocumentVersion,
   DocumentVersionFilters,
+  GetProviderRequest,
+  GetProviderResponse,
+  ListProvidersRequest,
+  ListProvidersResponse,
   McpServer,
   McpServerFilters,
   MemoryEntry,
@@ -19,22 +32,6 @@ export type {
   Task,
   TaskFilters,
   TaskTodo,
-} from '@myboteam/types';
-export { AnthropicProvider } from './providers/anthropic-provider.js';
-export type {
-  ConnectionTestResult,
-  CreateProviderRequest,
-  CreateProviderResponse,
-  CustomProvider,
-  CustomProviderConfig,
-  CustomProviderErrorCode,
-  CustomProviderStatus,
-  DeleteProviderRequest,
-  DeleteProviderResponse,
-  GetProviderRequest,
-  GetProviderResponse,
-  ListProvidersRequest,
-  ListProvidersResponse,
   TestConnectionRequest,
   TestConnectionResponse,
   UpdatableProviderStatus,
@@ -42,6 +39,7 @@ export type {
   UpdateProviderResponse,
   ValidationState,
 } from '@myboteam/types';
+export { AnthropicProvider } from './providers/anthropic-provider.js';
 export { OpenAIProvider } from './providers/openai-provider.js';
 export { ConcurrencyLimiter } from './providers/tools/concurrency-limiter.js';
 export type { HealthCheckFn, ProviderHealth } from './providers/tools/health-check.js';
