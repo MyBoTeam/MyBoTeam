@@ -74,7 +74,7 @@ export class ProviderRegistry {
   getEnabledByIds(ids: string[]): ProviderRegistryEntry[] {
     return ids
       .map((id) => this.providers.get(id))
-      .filter((e): e is ProviderRegistryEntry => e !== undefined && e.enabled);
+      .filter((e): e is ProviderRegistryEntry => e?.enabled === true);
   }
 
   get size(): number {

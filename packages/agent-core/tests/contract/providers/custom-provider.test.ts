@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type {
   CreateProviderRequest,
   DeleteProviderRequest,
-  ListProvidersRequest,
   UpdateProviderRequest,
 } from '../../../src/index.js';
 import { CustomProviderService } from '../../../src/providers/custom-config.js';

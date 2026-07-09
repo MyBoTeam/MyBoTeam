@@ -1,5 +1,6 @@
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
 import OpenAI from 'openai';
+import type { Stream } from 'openai/core/streaming';
 import { CloudProviderBase } from './cloud-provider-base.js';
 import { mapValidationError } from './tools/error-mapper.js';
 import type { ProviderMetrics } from './tools/metrics.js';
@@ -33,7 +34,7 @@ export class OpenAIProvider extends CloudProviderBase {
   protected async executeChatCompletion(request: ChatRequest): Promise<ChatResponse> {
     const startTime = Date.now();
 
-    let response: any;
+    let response: OpenAI.ChatCompletion;
     try {
       response = await this.client.chat.completions.create({
         model: request.model,
@@ -61,10 +62,12 @@ export class OpenAIProvider extends CloudProviderBase {
     }
 
     const choice = response.choices[0];
-    const toolCalls = choice.message.tool_calls?.map((tc: any) => ({
+    const toolCalls = choice.message.tool_calls?.map((tc) => ({
       id: tc.id,
-      name: tc.function.name,
-      arguments: safeJsonParse(tc.function.arguments),
+      name: (tc as OpenAI.ChatCompletionMessageFunctionToolCall).function.name,
+      arguments: safeJsonParse(
+        (tc as OpenAI.ChatCompletionMessageFunctionToolCall).function.arguments,
+      ),
     }));
 
     const metrics: ProviderMetrics = {
@@ -93,7 +96,7 @@ export class OpenAIProvider extends CloudProviderBase {
 
   protected async *executeStreamChat(request: ChatRequest): AsyncIterable<StreamingChunk> {
     const startTime = Date.now();
-    let stream: any;
+    let stream: Stream<OpenAI.ChatCompletionChunk>;
     try {
       stream = await this.client.chat.completions.create({
         model: request.model,

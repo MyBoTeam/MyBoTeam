@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import type { RoutingErrorCode, RoutingError } from './errors.js';
+import type { RoutingError, RoutingErrorCode } from './errors.js';
 import { RoutingErrorCodeSchema, RoutingErrorSchema } from './errors.js';
 
-export type { RoutingErrorCode, RoutingError };
+export type { RoutingError, RoutingErrorCode };
 export { RoutingErrorCodeSchema, RoutingErrorSchema };
 
 // --- Fallback Chain ---
