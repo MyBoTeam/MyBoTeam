@@ -190,6 +190,9 @@ export class VaultService {
       const salt = generateSalt();
       const encrypted = await encrypt(value, this.encryptionKey);
       const entry = vaultData.entries[entryIndex];
+      if (!entry) {
+        throw new Error(`Entry with key "${key}" not found`);
+      }
 
       entry.encryptedValue = encrypted.encrypted;
       entry.iv = encrypted.iv;

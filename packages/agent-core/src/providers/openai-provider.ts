@@ -62,6 +62,9 @@ export class OpenAIProvider extends CloudProviderBase {
     }
 
     const choice = response.choices[0];
+    if (!choice) {
+      throw mapValidationError('choices', 'Response missing or empty choices array', 'openai');
+    }
     const toolCalls = choice.message.tool_calls?.map((tc) => ({
       id: tc.id,
       name: (tc as OpenAI.ChatCompletionMessageFunctionToolCall).function.name,
