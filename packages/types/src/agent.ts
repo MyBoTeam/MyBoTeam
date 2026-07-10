@@ -11,25 +11,45 @@ export const AgentStatusSchema = z.enum([
 
 export type AgentStatus = z.infer<typeof AgentStatusSchema>;
 
-export const AgentConfigSchema = z.object({
-  id: z.string().uuid(),
-  slug: z
-    .string()
-    .min(1)
-    .max(64)
-    .regex(/^[a-z0-9-]+$/, 'slug must be lowercase alphanumeric with hyphens'),
-  name: z.string().min(1).max(128),
-  description: z.string().max(512).optional(),
-  providerId: z.string().uuid(),
-  model: z.string().min(1),
-  systemPrompt: z.string().min(1),
-  maxTokens: z.number().int().positive().optional(),
-  temperature: z.number().min(0).max(2).optional(),
-  mcpServerIds: z.array(z.string().uuid()).default([]),
-  enabled: z.boolean().default(true),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
-});
+export const AgentConfigSchema = z
+  .object({
+    id: z.string().uuid(),
+    slug: z
+      .string()
+      .min(1)
+      .max(64)
+      .regex(/^[a-z0-9-]+$/, 'slug must be lowercase alphanumeric with hyphens'),
+    name: z.string().min(1).max(128),
+    description: z.string().max(512).optional(),
+    providerId: z.string().uuid(),
+    model: z.string().min(1),
+    fallbackProviderIds: z.array(z.string().uuid()).optional(),
+    systemPrompt: z.string().min(1),
+    maxTokens: z.number().int().positive().optional(),
+    temperature: z.number().min(0).max(2).optional(),
+    mcpServerIds: z.array(z.string().uuid()).default([]),
+    enabled: z.boolean().default(true),
+    createdAt: z.string().datetime(),
+    updatedAt: z.string().datetime(),
+  })
+  .refine(
+    (data) => {
+      if (!data.fallbackProviderIds) return true;
+      const ids = data.fallbackProviderIds;
+      return new Set(ids).size === ids.length;
+    },
+    { message: 'fallbackProviderIds must not contain duplicates', path: ['fallbackProviderIds'] },
+  )
+  .refine(
+    (data) => {
+      if (!data.fallbackProviderIds) return true;
+      return !data.fallbackProviderIds.includes(data.providerId);
+    },
+    {
+      message: 'fallbackProviderIds must not contain the primary providerId',
+      path: ['fallbackProviderIds'],
+    },
+  );
 
 export type AgentConfig = z.infer<typeof AgentConfigSchema>;
 

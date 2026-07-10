@@ -6,6 +6,11 @@ import { CustomProviderService } from '../../../src/providers/custom-config.js';
 import { buildVaultKey } from '../../../src/providers/tools/custom-metadata.js';
 import { VaultService } from '../../../src/vault/vault-service.js';
 
+function assertDefined<T>(value: T | null | undefined, message?: string): T {
+  expect(value, message).toBeDefined();
+  return value as T;
+}
+
 describe('custom-provider-vault-integration', () => {
   let tempDir: string;
   let vaultService: VaultService;
@@ -32,14 +37,16 @@ describe('custom-provider-vault-integration', () => {
       });
 
       expect(createResult.success).toBe(true);
-      const providerId = createResult.provider!.id;
+      const provider = assertDefined(createResult.provider);
+      const providerId = provider.id;
 
       const getResult = await service.getProvider({ providerId });
       expect(getResult.success).toBe(true);
-      expect(getResult.provider!.name).toBe('Test Provider');
-      expect(getResult.provider!.url).toBe('https://api.example.com/v1');
-      expect(getResult.provider!.modelName).toBe('gpt-4');
-      expect(getResult.provider!.apiKey).toBeNull();
+      const gotProvider = assertDefined(getResult.provider);
+      expect(gotProvider.name).toBe('Test Provider');
+      expect(gotProvider.url).toBe('https://api.example.com/v1');
+      expect(gotProvider.modelName).toBe('gpt-4');
+      expect(gotProvider.apiKey).toBeNull();
     });
 
     it('should update provider and persist changes', async () => {
@@ -50,7 +57,9 @@ describe('custom-provider-vault-integration', () => {
         modelName: 'gpt-4',
       });
 
-      const providerId = createResult.provider!.id;
+      expect(createResult.provider).toBeDefined();
+      const provider = assertDefined(createResult.provider);
+      const providerId = provider.id;
 
       const updateResult = await service.updateProvider({
         providerId,
@@ -59,11 +68,13 @@ describe('custom-provider-vault-integration', () => {
       });
 
       expect(updateResult.success).toBe(true);
-      expect(updateResult.provider!.name).toBe('Updated Name');
-      expect(updateResult.provider!.url).toBe('https://api.updated.com/v1');
+      const updatedProvider = assertDefined(updateResult.provider);
+      expect(updatedProvider.name).toBe('Updated Name');
+      expect(updatedProvider.url).toBe('https://api.updated.com/v1');
 
       const getResult = await service.getProvider({ providerId });
-      expect(getResult.provider!.name).toBe('Updated Name');
+      const getResultProvider = assertDefined(getResult.provider);
+      expect(getResultProvider.name).toBe('Updated Name');
     });
 
     it('should soft delete provider (set status to Inactive)', async () => {
@@ -74,13 +85,16 @@ describe('custom-provider-vault-integration', () => {
         modelName: 'gpt-4',
       });
 
-      const providerId = createResult.provider!.id;
+      expect(createResult.provider).toBeDefined();
+      const provider = assertDefined(createResult.provider);
+      const providerId = provider.id;
 
       const deleteResult = await service.deleteProvider({ providerId });
       expect(deleteResult.success).toBe(true);
 
       const getResult = await service.getProvider({ providerId });
-      expect(getResult.provider!.status).toBe('Inactive');
+      const getResultProvider = assertDefined(getResult.provider);
+      expect(getResultProvider.status).toBe('Inactive');
     });
 
     it('should list all providers with pagination', async () => {
@@ -122,7 +136,7 @@ describe('custom-provider-vault-integration', () => {
         modelName: 'gpt-4',
       });
 
-      await service.deleteProvider({ providerId: createResult.provider!.id });
+      await service.deleteProvider({ providerId: createResult.provider?.id });
 
       const activeResult = await service.listProviders({ status: 'Active' });
       expect(activeResult.providers).toHaveLength(1);
@@ -141,13 +155,13 @@ describe('custom-provider-vault-integration', () => {
         modelName: 'gpt-4',
       });
 
-      expect(createResult.provider!.apiKey).toBeNull();
+      expect(createResult.provider?.apiKey).toBeNull();
 
-      const getResult = await service.getProvider({ providerId: createResult.provider!.id });
-      expect(getResult.provider!.apiKey).toBeNull();
+      const getResult = await service.getProvider({ providerId: createResult.provider?.id });
+      expect(getResult.provider?.apiKey).toBeNull();
 
       const listResult = await service.listProviders({});
-      for (const provider of listResult.providers!) {
+      for (const provider of listResult.providers ?? []) {
         expect(provider.apiKey).toBeNull();
       }
     });
@@ -160,13 +174,13 @@ describe('custom-provider-vault-integration', () => {
         modelName: 'gpt-4',
       });
 
-      const providerId = createResult.provider!.id;
+      const providerId = createResult.provider?.id;
       const vaultKey = buildVaultKey(providerId);
 
       const vaultEntry = await vaultService.retrieve(vaultKey);
       expect(vaultEntry).not.toBeNull();
-      expect(vaultEntry!.encryptedValue).not.toBe('sk-plaintext-key');
-      expect(vaultEntry!.encryptedValue.length).toBeGreaterThan(0);
+      expect(vaultEntry?.encryptedValue).not.toBe('sk-plaintext-key');
+      expect(vaultEntry?.encryptedValue.length).toBeGreaterThan(0);
     });
   });
 
@@ -178,14 +192,14 @@ describe('custom-provider-vault-integration', () => {
         modelName: 'gpt-4',
       });
 
-      const providerId = createResult.provider!.id;
-      expect(createResult.provider!.status).toBe('Active');
+      const providerId = createResult.provider?.id;
+      expect(createResult.provider?.status).toBe('Active');
 
       const deactivateResult = await service.updateProviderStatus(providerId, 'Inactive');
-      expect(deactivateResult.provider!.status).toBe('Inactive');
+      expect(deactivateResult.provider?.status).toBe('Inactive');
 
       const reactivateResult = await service.updateProviderStatus(providerId, 'Active');
-      expect(reactivateResult.provider!.status).toBe('Active');
+      expect(reactivateResult.provider?.status).toBe('Active');
     });
 
     it('should reject invalid state transitions', async () => {
@@ -195,7 +209,7 @@ describe('custom-provider-vault-integration', () => {
         modelName: 'gpt-4',
       });
 
-      const providerId = createResult.provider!.id;
+      const providerId = createResult.provider?.id;
 
       const result = await service.updateProviderStatus(providerId, 'Inactive');
       expect(result.success).toBe(true);
@@ -285,7 +299,7 @@ describe('custom-provider-vault-integration', () => {
         modelName: 'gpt-4',
       });
 
-      const providerId = createResult.provider!.id;
+      const providerId = createResult.provider?.id;
 
       const startTime = Date.now();
       await service.getProvider({ providerId });
@@ -322,13 +336,13 @@ describe('custom-provider-vault-integration', () => {
         modelName: 'gpt-4',
       });
 
-      const providerId = createResult.provider!.id;
+      const providerId = createResult.provider?.id;
 
       const testResult = await service.testConnection({ providerId, timeout: 1000 });
       expect(testResult.success).toBe(true);
       expect(testResult.result).toBeDefined();
-      expect(testResult.result!.success).toBe(false);
-      expect(testResult.result!.error).toBeDefined();
+      expect(testResult.result?.success).toBe(false);
+      expect(testResult.result?.error).toBeDefined();
     });
 
     it('should respect timeout parameter', async () => {
@@ -338,7 +352,7 @@ describe('custom-provider-vault-integration', () => {
         modelName: 'gpt-4',
       });
 
-      const providerId = createResult.provider!.id;
+      const providerId = createResult.provider?.id;
 
       const startTime = Date.now();
       const testResult = await service.testConnection({ providerId, timeout: 1000 });
@@ -346,7 +360,7 @@ describe('custom-provider-vault-integration', () => {
 
       expect(testResult.success).toBe(true);
       expect(testResult.result).toBeDefined();
-      expect(testResult.result!.success).toBe(false);
+      expect(testResult.result?.success).toBe(false);
       expect(duration).toBeLessThan(5000);
     });
   });

@@ -15,6 +15,28 @@ export {
   ChatResponseSchema,
 } from './chat.js';
 export {
+  type ConnectionTestResult,
+  type CreateProviderRequest,
+  type CreateProviderResponse,
+  CUSTOM_PROVIDER_ERRORS,
+  type CustomProvider,
+  type CustomProviderConfig,
+  type CustomProviderErrorCode,
+  type CustomProviderStatus,
+  type DeleteProviderRequest,
+  type DeleteProviderResponse,
+  type GetProviderRequest,
+  type GetProviderResponse,
+  type ListProvidersRequest,
+  type ListProvidersResponse,
+  type TestConnectionRequest,
+  type TestConnectionResponse,
+  type UpdatableProviderStatus,
+  type UpdateProviderRequest,
+  type UpdateProviderResponse,
+  type ValidationState,
+} from './custom-provider.js';
+export {
   type DaemonEvent,
   DaemonEventSchema,
   type DaemonEventType,
@@ -46,6 +68,10 @@ export {
   ErrorCategorySchema,
   type ProviderError,
   ProviderErrorSchema,
+  type RoutingError,
+  type RoutingErrorCode,
+  RoutingErrorCodeSchema,
+  RoutingErrorSchema,
 } from './errors.js';
 export {
   type MCPConfig,
@@ -65,7 +91,7 @@ export {
   type ProviderType,
   ProviderTypeSchema,
 } from './provider.js';
-export type { ProviderClient, ProviderClientResult } from './provider-client.js';
+export type { ProviderClient, ProviderClientResult, RoutingMetadata } from './provider-client.js';
 export type {
   AgentFilters,
   ConversationFilters,
@@ -85,6 +111,22 @@ export {
   type Result,
   ResultSchema,
 } from './result.js';
+export {
+  type FallbackChainResult,
+  FallbackChainResultSchema,
+  type FallbackProviderConfig,
+  FallbackProviderConfigSchema,
+  type FallbackProviderEntry,
+  FallbackProviderEntrySchema,
+  type ProviderHealthState,
+  type ProviderHealthStateInfo,
+  ProviderHealthStateInfoSchema,
+  ProviderHealthStateSchema,
+  type ProviderHealthStatus,
+  ProviderHealthStatusSchema,
+  type RoutingDecision,
+  RoutingDecisionSchema,
+} from './router.js';
 export {
   type RpcMethod,
   RpcMethodSchema,
@@ -116,25 +158,3 @@ export {
   type VaultEntryType,
   VaultEntryTypeSchema,
 } from './vault.js';
-export {
-  type ConnectionTestResult,
-  type CreateProviderRequest,
-  type CreateProviderResponse,
-  type CustomProvider,
-  type CustomProviderConfig,
-  type CustomProviderErrorCode,
-  type CustomProviderStatus,
-  CUSTOM_PROVIDER_ERRORS,
-  type DeleteProviderRequest,
-  type DeleteProviderResponse,
-  type GetProviderRequest,
-  type GetProviderResponse,
-  type ListProvidersRequest,
-  type ListProvidersResponse,
-  type TestConnectionRequest,
-  type TestConnectionResponse,
-  type UpdatableProviderStatus,
-  type UpdateProviderRequest,
-  type UpdateProviderResponse,
-  type ValidationState,
-} from './custom-provider.js';

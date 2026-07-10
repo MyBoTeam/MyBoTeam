@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import type { ChatRequest, ChatResponse, ModelInfo, StreamingChunk } from '@myboteam/types';
 import { CloudProviderBase } from './cloud-provider-base.js';
-import type { MetricsEmitter, ProviderMetrics } from './tools/metrics.js';
+import type { ProviderMetrics } from './tools/metrics.js';
 import type { ProviderConfig } from './tools/provider-config.js';
 import { toProviderError } from './tools/provider-errors.js';
 

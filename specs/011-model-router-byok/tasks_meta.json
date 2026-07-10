@@ -1,0 +1,141 @@
+{
+  "feature": "011-model-router-byok",
+  "created": "2026-07-09T20:46:28+08:00",
+  "tasks": {
+    "T001": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:46:54+08:00",
+      "result_summary": "Router types already exist in packages/types/src/router.ts"
+    },
+    "T002": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:46:56+08:00",
+      "result_summary": "RouterError types already exist in packages/types/src/errors.ts"
+    },
+    "T003": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:46:56+08:00",
+      "result_summary": "fallbackProviderIds already exists in AgentConfigSchema"
+    },
+    "T004": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:47:00+08:00",
+      "result_summary": "Router types already exported from packages/types/src/index.ts"
+    },
+    "T005": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:50:25+08:00",
+      "result_summary": "classifyFailure/isRetryableForRouting already exist in router-error-mapper.ts"
+    },
+    "T006": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:50:26+08:00",
+      "result_summary": "ProviderRegistry already exists in provider-registry.ts"
+    },
+    "T007": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:50:27+08:00",
+      "result_summary": "ProviderHealthTracker already exists in provider-health.ts"
+    },
+    "T008": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:50:28+08:00",
+      "result_summary": "BYOKInjector already exists in byok-injector.ts"
+    },
+    "T009": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:50:29+08:00",
+      "result_summary": "Unit tests for router-error-mapper already exist"
+    },
+    "T010": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:50:31+08:00",
+      "result_summary": "Unit tests for ProviderRegistry already exist"
+    },
+    "T011": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:50:32+08:00",
+      "result_summary": "Unit tests for ProviderHealthTracker already exist"
+    },
+    "T012": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:50:34+08:00",
+      "result_summary": "Unit tests for BYOKInjector need to be created"
+    },
+    "T013": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:50:53+08:00",
+      "result_summary": "ModelRouter.chatCompletion already exists in model-router.ts"
+    },
+    "T014": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:50:55+08:00",
+      "result_summary": "Unit tests for ModelRouter already exist in model-router.test.ts"
+    },
+    "T015": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:51:08+08:00",
+      "result_summary": "Fallback chain iteration already exists in executeWithFallback method"
+    },
+    "T016": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:51:09+08:00",
+      "result_summary": "streamChat fallback already exists in ModelRouter"
+    },
+    "T017": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:51:10+08:00",
+      "result_summary": "Unit tests for fallback chain already exist in model-router.test.ts"
+    },
+    "T018": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:51:43+08:00",
+      "result_summary": "Logger doesn't log API keys, no masking needed. BYOKInjector.maskKey used internally."
+    },
+    "T019": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:52:23+08:00",
+      "result_summary": "Created unit tests for BYOKInjector in byok-injector.test.ts"
+    },
+    "T020": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:53:00+08:00",
+      "result_summary": "Added validation for fallbackProviderIds: no duplicates, must not contain primary providerId"
+    },
+    "T021": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:53:06+08:00",
+      "result_summary": "Unit tests for per-agent override already exist in model-router.test.ts"
+    },
+    "T022": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:54:01+08:00",
+      "result_summary": "Added getHealthStatus() method to ModelRouter and ProviderHealthStatus type"
+    },
+    "T023": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:54:29+08:00",
+      "result_summary": "Added unit tests for getHealthStatus in model-router.test.ts"
+    },
+    "T024": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:55:18+08:00",
+      "result_summary": "Updated barrel exports in packages/agent-core/src/index.ts"
+    },
+    "T025": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:55:20+08:00",
+      "result_summary": "Updated barrel exports in packages/types/src/index.ts"
+    },
+    "T026": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:57:20+08:00",
+      "result_summary": "All 851 unit tests pass (95 test files)"
+    },
+    "T027": {
+      "status": "completed",
+      "completed_at": "2026-07-09T20:57:41+08:00",
+      "result_summary": "Verified quickstart.md architecture matches implementation"
+    }
+  }
+}
