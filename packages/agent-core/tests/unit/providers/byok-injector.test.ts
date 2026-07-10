@@ -39,7 +39,19 @@ describe('BYOKInjector', () => {
 
       expect(result.injected).toBe(true);
       expect(result.apiKey).toBe('decrypted-key-123');
-      expect(vault.decrypt).toHaveBeenCalledWith({ encryptedValue: 'encrypted-key' });
+      expect(vault.decrypt).toHaveBeenCalledWith({
+        encryptedValue: 'encrypted-key',
+        iv: '',
+        salt: '',
+        tag: '',
+        key: '',
+        type: 'api_key',
+        id: '',
+        state: 'active',
+        metadata: {},
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+      });
     });
 
     it('should handle vault locked error', async () => {
@@ -83,7 +95,7 @@ describe('BYOKInjector', () => {
       expect(masked).toBe('');
     });
 
-    it('should not cache decrypted keys', () => {
+    it('should generate different masked values for different keys', () => {
       const key1 = 'sk-real-key-1234567890';
       const key2 = 'sk-real-key-0987654321';
 
@@ -188,6 +200,20 @@ describe('BYOKInjector', () => {
 
       expect(result.client).toBe(mockClient);
       expect(result.warning).toBe('Vault is locked');
+    });
+
+    it('should return warning on general decryption failure', async () => {
+      vault = createMockVault({
+        decrypt: vi.fn().mockRejectedValue(new Error('Invalid key')),
+      });
+      injector = new BYOKInjector(vault);
+
+      const mockClient = { chatCompletion: vi.fn(), streamChat: vi.fn(), listModels: vi.fn() };
+
+      const result = await injector.resolveProviderClient(mockClient, 'encrypted-key');
+
+      expect(result.client).toBe(mockClient);
+      expect(result.warning).toContain('Decryption failed');
     });
   });
 });

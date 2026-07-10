@@ -21,9 +21,10 @@ export class ProviderRegistry {
       log.warn({ providerId: entry.providerId }, 'Provider already registered, overwriting');
     }
 
+    const existing = this.providers.get(entry.providerId);
     this.providers.set(entry.providerId, {
       ...entry,
-      priority: this.nextPriority++,
+      priority: existing?.priority ?? this.nextPriority++,
     });
 
     log.debug(

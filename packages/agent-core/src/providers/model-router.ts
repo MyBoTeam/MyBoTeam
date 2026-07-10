@@ -12,7 +12,6 @@ import type {
 } from '@myboteam/types';
 import { err, ok } from '@myboteam/types';
 import { createChildLogger } from '../storage/logger.js';
-import type { BYOKInjector } from './byok-injector.js';
 import type { ProviderHealthTracker } from './provider-health.js';
 import type { ProviderRegistryEntry } from './provider-registry.js';
 import { RetryHandler } from './tools/retry-handler.js';
@@ -25,7 +24,6 @@ const RETRY_CONFIG = { maxAttempts: 3, delay: 1000, backoff: 'exponential' as co
 export interface ModelRouterDeps {
   getEnabledProviders(): ProviderRegistryEntry[];
   getProvider(id: string): ProviderRegistryEntry | undefined;
-  byokInjector: BYOKInjector;
   healthTracker: ProviderHealthTracker;
   retryConfig?: { maxAttempts: number; delay: number; backoff: 'linear' | 'exponential' };
 }
@@ -73,7 +71,7 @@ export class ModelRouter {
         entries.push({
           providerId: provider.providerId,
           priority: entries.length,
-          source: agentIds ? 'global' : 'agent',
+          source: 'global',
         });
         seen.add(provider.providerId);
       }
@@ -118,10 +116,7 @@ export class ModelRouter {
     _operation: string,
     model: string,
   ): Promise<ProviderClientResult<T>> {
-    let _attempts = 0;
-
     for (const entry of chain.chain) {
-      _attempts++;
       const provider = this.deps.getProvider(entry.providerId);
 
       if (!provider) {
@@ -213,13 +208,19 @@ export class ModelRouter {
     statusCode?: number;
   } {
     if (error && typeof error === 'object' && 'code' in error) {
-      return error as {
-        code: string;
-        message: string;
-        category: 'auth' | 'rate_limit' | 'network' | 'provider';
-        retryable: boolean;
-        provider?: string;
-        statusCode?: number;
+      const obj = error as Record<string, unknown>;
+      return {
+        code: typeof obj.code === 'string' ? obj.code : 'PROVIDER_ERROR',
+        message: typeof obj.message === 'string' ? obj.message : String(error),
+        category:
+          'category' in obj && typeof obj.category === 'string'
+            ? (obj.category as 'auth' | 'rate_limit' | 'network' | 'provider')
+            : 'provider',
+        retryable: 'retryable' in obj && typeof obj.retryable === 'boolean' ? obj.retryable : false,
+        provider:
+          'provider' in obj && typeof obj.provider === 'string' ? obj.provider : providerName,
+        statusCode:
+          'statusCode' in obj && typeof obj.statusCode === 'number' ? obj.statusCode : undefined,
       };
     }
 

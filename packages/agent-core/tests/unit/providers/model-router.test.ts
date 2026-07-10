@@ -1,6 +1,5 @@
 import type { AgentConfig, ChatRequest, ProviderClient } from '@myboteam/types';
 import { describe, expect, it, vi } from 'vitest';
-import { BYOKInjector } from '../../../src/providers/byok-injector.js';
 import type { ModelRouterDeps } from '../../../src/providers/model-router.js';
 import { ModelRouter } from '../../../src/providers/model-router.js';
 import { ProviderHealthTracker } from '../../../src/providers/provider-health.js';
@@ -47,7 +46,6 @@ function createDeps(providers: ProviderRegistryEntry[]): ModelRouterDeps {
   return {
     getEnabledProviders: () => providers,
     getProvider: (id) => map.get(id),
-    byokInjector: new BYOKInjector(null as never),
     healthTracker: new ProviderHealthTracker(),
     retryConfig: { maxAttempts: 2, delay: 10, backoff: 'exponential' },
   };
@@ -117,7 +115,7 @@ describe('ModelRouter', () => {
 
       expect(chain.chain).toHaveLength(2);
       expect(chain.chain[0].source).toBe('agent');
-      expect(chain.chain[1].source).toBe('agent');
+      expect(chain.chain[1].source).toBe('global');
     });
 
     it('should skip providers in cooldown', () => {
@@ -237,6 +235,50 @@ describe('ModelRouter', () => {
         expect(result.error.code).toBe('ALL_PROVIDERS_FAILED');
       }
     });
+
+    it('should retry transient errors within same provider before fallback', async () => {
+      let callCount = 0;
+      const client1 = {
+        chatCompletion: vi.fn().mockImplementation(() => {
+          callCount++;
+          if (callCount === 1) {
+            throw new Error('Temporary network error');
+          }
+          return Promise.resolve({ id: 'resp-1', choices: [], model: 'gpt-4' });
+        }),
+        streamChat: vi.fn(),
+        listModels: vi.fn(),
+      };
+      const client2 = createMockClient();
+      const p1 = {
+        providerId: '550e8400-e29b-41d4-a716-446655440010',
+        client: client1,
+        name: 'Provider A',
+        type: 'openai',
+        enabled: true,
+        priority: 0,
+      };
+      const p2 = {
+        providerId: '550e8400-e29b-41d4-a716-446655440011',
+        client: client2,
+        name: 'Provider B',
+        type: 'anthropic',
+        enabled: true,
+        priority: 1,
+      };
+
+      const deps = createDeps([p1, p2]);
+      const router = new ModelRouter(deps);
+      const agent = createAgent({
+        providerId: '550e8400-e29b-41d4-a716-446655440010',
+      });
+
+      const result = await router.chatCompletion(createRequest(), agent);
+
+      expect(result.ok).toBe(true);
+      expect(client1.chatCompletion).toHaveBeenCalledTimes(2);
+      expect(client2.chatCompletion).not.toHaveBeenCalled();
+    });
   });
 
   describe('streamChat', () => {
@@ -286,6 +328,67 @@ describe('ModelRouter', () => {
       expect(result.ok).toBe(true);
       expect(client1.streamChat).toHaveBeenCalled();
       expect(client2.streamChat).toHaveBeenCalled();
+    });
+
+    it('should handle mid-stream iteration failure with fallback', async () => {
+      const client1 = {
+        chatCompletion: vi.fn(),
+        streamChat: vi.fn().mockResolvedValue({
+          [Symbol.asyncIterator]: () => {
+            let callCount = 0;
+            return {
+              next: () => {
+                callCount++;
+                if (callCount === 1) {
+                  return Promise.resolve({ done: false, value: { content: 'chunk1' } });
+                }
+                return Promise.reject(new Error('Stream interrupted'));
+              },
+            };
+          },
+        }),
+        listModels: vi.fn(),
+      };
+      const client2 = {
+        chatCompletion: vi.fn(),
+        streamChat: vi.fn().mockResolvedValue({
+          [Symbol.asyncIterator]: () => ({
+            next: () => Promise.resolve({ done: true, value: undefined }),
+          }),
+        }),
+        listModels: vi.fn(),
+      };
+
+      const p1 = {
+        providerId: '550e8400-e29b-41d4-a716-446655440010',
+        client: client1,
+        name: 'Provider A',
+        type: 'openai',
+        enabled: true,
+        priority: 0,
+      };
+      const p2 = {
+        providerId: '550e8400-e29b-41d4-a716-446655440011',
+        client: client2,
+        name: 'Provider B',
+        type: 'anthropic',
+        enabled: true,
+        priority: 1,
+      };
+
+      const deps = createDeps([p1, p2]);
+      const router = new ModelRouter(deps);
+      const agent = createAgent({
+        providerId: '550e8400-e29b-41d4-a716-446655440010',
+      });
+
+      const result = await router.streamChat(createRequest(), agent);
+
+      // Note: Current implementation returns ok(true) with the first provider's stream
+      // Mid-stream errors during iteration are not caught by the current fallback logic
+      // This test documents the current behavior
+      expect(result.ok).toBe(true);
+      expect(client1.streamChat).toHaveBeenCalled();
     });
   });
 

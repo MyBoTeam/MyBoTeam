@@ -22,7 +22,19 @@ export class BYOKInjector {
 
   async decryptApiKey(encryptedKey: string): Promise<ByokInjectionResult> {
     try {
-      const decrypted = await this.vault.decrypt({ encryptedValue: encryptedKey } as never);
+      const decrypted = await this.vault.decrypt({
+        encryptedValue: encryptedKey,
+        iv: '',
+        salt: '',
+        tag: '',
+        key: '',
+        type: 'api_key' as const,
+        id: '',
+        state: 'active' as const,
+        metadata: {},
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
       return { injected: true, apiKey: decrypted };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);

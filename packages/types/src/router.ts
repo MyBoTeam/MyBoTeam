@@ -8,7 +8,7 @@ export { RoutingErrorCodeSchema, RoutingErrorSchema };
 // --- Fallback Chain ---
 
 export const FallbackProviderEntrySchema = z.object({
-  providerId: z.string().uuid(),
+  providerId: z.string().min(1),
   priority: z.number().int().min(0),
   source: z.enum(['agent', 'global']),
 });
@@ -17,7 +17,7 @@ export type FallbackProviderEntry = z.infer<typeof FallbackProviderEntrySchema>;
 
 export const FallbackChainResultSchema = z.object({
   chain: z.array(FallbackProviderEntrySchema),
-  requestedProviderId: z.string().uuid(),
+  requestedProviderId: z.string().min(1),
   resolvedAt: z.string().datetime(),
 });
 
@@ -26,7 +26,7 @@ export type FallbackChainResult = z.infer<typeof FallbackChainResultSchema>;
 // --- Per-Agent Fallback Config ---
 
 export const FallbackProviderConfigSchema = z.object({
-  fallbackProviderIds: z.array(z.string().uuid()).optional(),
+  fallbackProviderIds: z.array(z.string().min(1)).optional(),
 });
 
 export type FallbackProviderConfig = z.infer<typeof FallbackProviderConfigSchema>;
@@ -51,7 +51,7 @@ export type ProviderHealthStateInfo = z.infer<typeof ProviderHealthStateInfoSche
 // --- Routing Decision (Debug Logging) ---
 
 export const RoutingDecisionSchema = z.object({
-  providerId: z.string().uuid(),
+  providerId: z.string().min(1),
   providerName: z.string(),
   model: z.string(),
   fallbackPosition: z.number().int().min(0),
@@ -65,7 +65,7 @@ export type RoutingDecision = z.infer<typeof RoutingDecisionSchema>;
 // --- Provider Health Status Response ---
 
 export const ProviderHealthStatusSchema = z.object({
-  providerId: z.string().uuid(),
+  providerId: z.string().min(1),
   providerName: z.string(),
   state: ProviderHealthStateSchema,
   consecutiveFailures: z.number().int().min(0),

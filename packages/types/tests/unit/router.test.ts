@@ -63,6 +63,33 @@ describe('FallbackProviderEntrySchema', () => {
     expect(result.success).toBe(true);
   });
 
+  it('accepts non-UUID provider ID', () => {
+    const result = FallbackProviderEntrySchema.safeParse({
+      providerId: 'p1',
+      priority: 0,
+      source: 'agent',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects empty provider ID', () => {
+    const result = FallbackProviderEntrySchema.safeParse({
+      providerId: '',
+      priority: 0,
+      source: 'agent',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects negative priority', () => {
+    const result = FallbackProviderEntrySchema.safeParse({
+      providerId: '550e8400-e29b-41d4-a716-446655440000',
+      priority: -1,
+      source: 'agent',
+    });
+    expect(result.success).toBe(false);
+  });
+
   it('rejects invalid source', () => {
     const result = FallbackProviderEntrySchema.safeParse({
       providerId: '550e8400-e29b-41d4-a716-446655440000',
@@ -97,6 +124,24 @@ describe('FallbackChainResultSchema', () => {
     });
     expect(result.success).toBe(true);
   });
+
+  it('rejects empty requestedProviderId', () => {
+    const result = FallbackChainResultSchema.safeParse({
+      chain: [],
+      requestedProviderId: '',
+      resolvedAt: '2026-01-01T00:00:00Z',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects invalid resolvedAt datetime', () => {
+    const result = FallbackChainResultSchema.safeParse({
+      chain: [],
+      requestedProviderId: '550e8400-e29b-41d4-a716-446655440000',
+      resolvedAt: 'not-a-date',
+    });
+    expect(result.success).toBe(false);
+  });
 });
 
 describe('ProviderHealthStateSchema', () => {
@@ -105,6 +150,11 @@ describe('ProviderHealthStateSchema', () => {
     states.forEach((state) => {
       expect(ProviderHealthStateSchema.safeParse(state).success).toBe(true);
     });
+  });
+
+  it('rejects invalid state', () => {
+    expect(ProviderHealthStateSchema.safeParse('unknown').success).toBe(false);
+    expect(ProviderHealthStateSchema.safeParse('error').success).toBe(false);
   });
 });
 
@@ -127,6 +177,23 @@ describe('ProviderHealthStateInfoSchema', () => {
     });
     expect(result.success).toBe(true);
   });
+
+  it('rejects negative failureCount', () => {
+    const result = ProviderHealthStateInfoSchema.safeParse({
+      state: 'healthy',
+      failureCount: -1,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects invalid cooldownExpiresAt datetime', () => {
+    const result = ProviderHealthStateInfoSchema.safeParse({
+      state: 'cooldown',
+      failureCount: 3,
+      cooldownExpiresAt: 'not-a-date',
+    });
+    expect(result.success).toBe(false);
+  });
 });
 
 describe('RoutingDecisionSchema', () => {
@@ -141,5 +208,44 @@ describe('RoutingDecisionSchema', () => {
       attemptTimestamp: '2026-01-01T00:00:00Z',
     });
     expect(result.success).toBe(true);
+  });
+
+  it('rejects empty providerId', () => {
+    const result = RoutingDecisionSchema.safeParse({
+      providerId: '',
+      providerName: 'Test Provider',
+      model: 'gpt-4',
+      fallbackPosition: 0,
+      totalProviders: 2,
+      reason: 'Primary provider',
+      attemptTimestamp: '2026-01-01T00:00:00Z',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects negative fallbackPosition', () => {
+    const result = RoutingDecisionSchema.safeParse({
+      providerId: '550e8400-e29b-41d4-a716-446655440000',
+      providerName: 'Test Provider',
+      model: 'gpt-4',
+      fallbackPosition: -1,
+      totalProviders: 2,
+      reason: 'Primary provider',
+      attemptTimestamp: '2026-01-01T00:00:00Z',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects totalProviders of 0', () => {
+    const result = RoutingDecisionSchema.safeParse({
+      providerId: '550e8400-e29b-41d4-a716-446655440000',
+      providerName: 'Test Provider',
+      model: 'gpt-4',
+      fallbackPosition: 0,
+      totalProviders: 0,
+      reason: 'Primary provider',
+      attemptTimestamp: '2026-01-01T00:00:00Z',
+    });
+    expect(result.success).toBe(false);
   });
 });

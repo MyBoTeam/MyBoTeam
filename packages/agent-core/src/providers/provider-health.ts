@@ -79,8 +79,8 @@ export class ProviderHealthTracker {
     if (info.cooldownExpiresAt && new Date(info.cooldownExpiresAt) <= new Date()) {
       this.state.set(providerId, {
         ...info,
-        state: 'healthy',
-        failureCount: 0,
+        state: 'degraded',
+        failureCount: info.failureCount,
         cooldownExpiresAt: undefined,
         cooldownStartedAt: undefined,
       });
