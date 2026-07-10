@@ -92,7 +92,6 @@ export class ModelRouter {
     return this.executeWithFallback(
       chain,
       (client) => client.chatCompletion(request),
-      'chatCompletion',
       agent.model,
     );
   }
@@ -105,7 +104,6 @@ export class ModelRouter {
     return this.executeWithFallback(
       chain,
       (client) => client.streamChat(request),
-      'streamChat',
       agent.model,
     );
   }
@@ -113,7 +111,6 @@ export class ModelRouter {
   private async executeWithFallback<T>(
     chain: FallbackChainResult,
     execute: (client: ProviderClient) => Promise<T> | T,
-    _operation: string,
     model: string,
   ): Promise<ProviderClientResult<T>> {
     for (const entry of chain.chain) {
