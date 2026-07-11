@@ -74,6 +74,7 @@ export class AgentRegistry {
     if (!result.success) {
       throw new Error(`Validation failed: ${result.error.issues.map((i) => i.message).join(', ')}`);
     }
+    const data = result.data;
 
     const ts = now();
     const id = uuid();
@@ -87,22 +88,22 @@ export class AgentRegistry {
     }
 
     // Check unique name
-    const existingName = this.db.prepare(`SELECT id FROM ${TABLE} WHERE name = ?`).get(config.name);
+    const existingName = this.db.prepare(`SELECT id FROM ${TABLE} WHERE name = ?`).get(data.name);
     if (existingName) {
-      throw new Error(`Agent with name '${config.name}' already exists`);
+      throw new Error(`Agent with name '${data.name}' already exists`);
     }
 
     const row = {
       id,
-      name: config.name,
-      description: config.description ?? null,
-      role: config.role ?? null,
-      model: config.model,
-      provider: config.provider,
-      params: config.params ? JSON.stringify(config.params) : null,
-      secrets: config.secrets ? JSON.stringify(config.secrets) : null,
-      skills: config.skills ? JSON.stringify(config.skills) : null,
-      mcps: config.mcps ? JSON.stringify(config.mcps) : null,
+      name: data.name,
+      description: data.description ?? null,
+      role: data.role ?? null,
+      model: data.model,
+      provider: data.provider,
+      params: data.params ? JSON.stringify(data.params) : null,
+      secrets: data.secrets ? JSON.stringify(data.secrets) : null,
+      skills: data.skills ? JSON.stringify(data.skills) : null,
+      mcps: data.mcps ? JSON.stringify(data.mcps) : null,
       created_at: ts,
       updated_at: ts,
     };
