@@ -3,7 +3,18 @@
  * States: idle → materialized → starting → running → stopped/error → idle
  */
 
-export type AgentStatus = 'idle' | 'materialized' | 'starting' | 'running' | 'stopped' | 'error';
+import { z } from 'zod';
+
+export const AgentStatusSchema = z.enum([
+  'idle',
+  'materialized',
+  'starting',
+  'running',
+  'stopped',
+  'error',
+]);
+
+export type AgentStatus = z.infer<typeof AgentStatusSchema>;
 
 /**
  * VALID_TRANSITIONS - Map of allowed status transitions

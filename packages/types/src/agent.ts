@@ -4,10 +4,10 @@ import { z } from 'zod';
 export {
   type AgentStatus,
   AgentStatusSchema,
-  VALID_STATUSES,
-  VALID_TRANSITIONS,
   isValidStatus,
   isValidTransition,
+  VALID_STATUSES,
+  VALID_TRANSITIONS,
 } from './agent-status.js';
 
 export const AgentConfigLegacySchema = z
