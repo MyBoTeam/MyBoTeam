@@ -89,11 +89,7 @@ export class ModelRouter {
     agent: AgentConfig,
   ): Promise<ProviderClientResult<ChatResponse>> {
     const chain = this.resolveFallbackChain(agent);
-    return this.executeWithFallback(
-      chain,
-      (client) => client.chatCompletion(request),
-      agent.model,
-    );
+    return this.executeWithFallback(chain, (client) => client.chatCompletion(request), agent.model);
   }
 
   async streamChat(
@@ -101,11 +97,7 @@ export class ModelRouter {
     agent: AgentConfig,
   ): Promise<ProviderClientResult<AsyncIterable<StreamingChunk>>> {
     const chain = this.resolveFallbackChain(agent);
-    return this.executeWithFallback(
-      chain,
-      (client) => client.streamChat(request),
-      agent.model,
-    );
+    return this.executeWithFallback(chain, (client) => client.streamChat(request), agent.model);
   }
 
   private async executeWithFallback<T>(

@@ -11,7 +11,7 @@ export const AgentStatusSchema = z.enum([
 
 export type AgentStatus = z.infer<typeof AgentStatusSchema>;
 
-export const AgentConfigSchema = z
+export const AgentConfigLegacySchema = z
   .object({
     id: z.string().uuid(),
     slug: z
@@ -51,7 +51,7 @@ export const AgentConfigSchema = z
     },
   );
 
-export type AgentConfig = z.infer<typeof AgentConfigSchema>;
+export type AgentConfigLegacy = z.infer<typeof AgentConfigLegacySchema>;
 
 export const AgentProcessSchema = z.object({
   id: z.string().uuid(),

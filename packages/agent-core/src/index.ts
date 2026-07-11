@@ -39,6 +39,20 @@ export type {
   UpdateProviderResponse,
   ValidationState,
 } from '@myboteam/types';
+export {
+  type AgentConfig,
+  type AgentConfigPartial,
+  AgentConfigSchema,
+  type AgentStatus,
+  type InferenceParams,
+  InferenceParamsSchema,
+  isValidStatus,
+  isValidTransition,
+  VALID_STATUSES,
+  VALID_TRANSITIONS,
+} from '@myboteam/types';
+export { DEFAULT_AGENTS } from './agent-defaults.js';
+export { AgentRegistry } from './agent-registry.js';
 export { AnthropicProvider } from './providers/anthropic-provider.js';
 export { BYOKInjector } from './providers/byok-injector.js';
 export type { ModelRouterDeps } from './providers/model-router.js';

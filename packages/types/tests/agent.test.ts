@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { AgentConfigSchema, AgentProcessSchema, AgentStatusSchema } from '../src/agent.js';
+import { AgentConfigLegacySchema, AgentProcessSchema, AgentStatusSchema } from '../src/agent.js';
 
-describe('AgentConfigSchema', () => {
+describe('AgentConfigLegacySchema', () => {
   const validAgent = {
     id: '550e8400-e29b-41d4-a716-446655440000',
     slug: 'secretary',
@@ -19,12 +19,12 @@ describe('AgentConfigSchema', () => {
   };
 
   it('accepts valid agent config', () => {
-    const result = AgentConfigSchema.safeParse(validAgent);
+    const result = AgentConfigLegacySchema.safeParse(validAgent);
     expect(result.success).toBe(true);
   });
 
   it('rejects invalid slug format', () => {
-    const result = AgentConfigSchema.safeParse({
+    const result = AgentConfigLegacySchema.safeParse({
       ...validAgent,
       slug: 'Invalid Slug!',
     });
@@ -32,7 +32,7 @@ describe('AgentConfigSchema', () => {
   });
 
   it('rejects missing required fields', () => {
-    const result = AgentConfigSchema.safeParse({
+    const result = AgentConfigLegacySchema.safeParse({
       id: '550e8400-e29b-41d4-a716-446655440000',
     });
     expect(result.success).toBe(false);
@@ -40,7 +40,7 @@ describe('AgentConfigSchema', () => {
 
   it('applies defaults', () => {
     const { mcpServerIds, enabled, ...minimalAgent } = validAgent;
-    const result = AgentConfigSchema.safeParse(minimalAgent);
+    const result = AgentConfigLegacySchema.safeParse(minimalAgent);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.mcpServerIds).toEqual([]);
