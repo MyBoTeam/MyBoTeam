@@ -79,7 +79,7 @@ describe('ModelRouter', () => {
       expect(chain.chain[1].source).toBe('global');
     });
 
-    it('should use global default when no fallbackProviderIds', () => {
+    it('should use global default when agent has no provider-specific fallbacks', () => {
       const p1 = {
         providerId: '550e8400-e29b-41d4-a716-446655440010',
         client: createMockClient(),

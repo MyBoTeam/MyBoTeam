@@ -1,5 +1,5 @@
-import { AgentConfigSchema, InferenceParamsSchema } from '@myboteam/types';
 import { describe, expect, it } from 'vitest';
+import { AgentConfigSchema, InferenceParamsSchema } from '../../src/agent-config.js';
 
 describe('AgentConfigSchema', () => {
   const validConfig = {
@@ -53,6 +53,18 @@ describe('AgentConfigSchema', () => {
     const result = AgentConfigSchema.safeParse(config);
     expect(result.success).toBe(false);
   });
+
+  it('should reject mcps exceeding 10 items', () => {
+    const config = { ...validConfig, mcps: Array(11).fill('mcp') };
+    const result = AgentConfigSchema.safeParse(config);
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject unknown keys (strict mode)', () => {
+    const config = { ...validConfig, unknownKey: 'value' };
+    const result = AgentConfigSchema.safeParse(config);
+    expect(result.success).toBe(false);
+  });
 });
 
 describe('InferenceParamsSchema', () => {
@@ -86,8 +98,32 @@ describe('InferenceParamsSchema', () => {
     expect(result.success).toBe(false);
   });
 
+  it('should reject topP < 0', () => {
+    const params = { topP: -0.1 };
+    const result = InferenceParamsSchema.safeParse(params);
+    expect(result.success).toBe(false);
+  });
+
   it('should reject presencePenalty out of range', () => {
     const params = { presencePenalty: 3 };
+    const result = InferenceParamsSchema.safeParse(params);
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject frequencyPenalty out of range', () => {
+    const params = { frequencyPenalty: 3 };
+    const result = InferenceParamsSchema.safeParse(params);
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject maxTokens non-positive', () => {
+    const params = { maxTokens: 0 };
+    const result = InferenceParamsSchema.safeParse(params);
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject maxTokens non-integer', () => {
+    const params = { maxTokens: 1.5 };
     const result = InferenceParamsSchema.safeParse(params);
     expect(result.success).toBe(false);
   });

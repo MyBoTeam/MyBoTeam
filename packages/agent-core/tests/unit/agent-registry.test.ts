@@ -3,24 +3,6 @@ import Database from 'better-sqlite3';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { AgentRegistry } from '../../src/agent-registry.js';
 
-const TABLE_SCHEMA = `
-  CREATE TABLE agent_registry (
-    id TEXT PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE,
-    description TEXT,
-    role TEXT,
-    model TEXT NOT NULL,
-    provider TEXT NOT NULL,
-    status TEXT NOT NULL DEFAULT 'idle',
-    params TEXT,
-    secrets TEXT,
-    skills TEXT,
-    mcps TEXT,
-    created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL
-  );
-`;
-
 const validConfig = {
   name: 'test-agent',
   model: 'gpt-4',
@@ -38,8 +20,8 @@ describe('AgentRegistry', () => {
 
   beforeEach(() => {
     db = new Database(':memory:');
-    db.exec(TABLE_SCHEMA);
     registry = new AgentRegistry(db);
+    registry.ensureTable();
   });
 
   afterEach(() => {
@@ -80,6 +62,20 @@ describe('AgentRegistry', () => {
       expect(() => {
         registry.register({ ...validConfig, name: 'agent-20' });
       }).toThrow();
+    });
+
+    it('should reject config with invalid fields', () => {
+      expect(() => {
+        registry.register({ ...validConfig, name: '' });
+      }).toThrow();
+    });
+
+    it('should accept config with optional fields undefined', () => {
+      const config = { name: 'minimal', model: 'gpt-4', provider: 'openai' };
+      const result = registry.register(config);
+
+      expect(result).toBeDefined();
+      expect(result.name).toBe('minimal');
     });
   });
 
@@ -204,6 +200,15 @@ describe('AgentRegistry', () => {
         registry.delete('non-existent-id');
       }).toThrow();
     });
+
+    it('should allow re-registration after deletion', () => {
+      const created = registry.register(validConfig);
+      registry.delete(created.id);
+
+      const newConfig = registry.register(validConfig);
+      expect(newConfig).toBeDefined();
+      expect(newConfig.id).not.toBe(created.id);
+    });
   });
 
   describe('status transitions', () => {
@@ -316,6 +321,20 @@ describe('AgentRegistry', () => {
       }).toThrow();
 
       expect(registry.getStatus(created.id)).toBe('materialized');
+    });
+
+    it('should throw when setting status on non-existent agent', () => {
+      expect(() => {
+        registry.setStatus('non-existent-id', 'running');
+      }).toThrow();
+    });
+
+    it('should throw for invalid status value', () => {
+      const created = registry.register(validConfig);
+
+      expect(() => {
+        registry.setStatus(created.id, 'invalid-status' as AgentStatus);
+      }).toThrow();
     });
   });
 });

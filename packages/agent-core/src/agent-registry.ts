@@ -70,6 +70,11 @@ export class AgentRegistry {
   }
 
   register(config: Omit<AgentConfig, 'id'>): AgentConfig {
+    const result = AgentConfigSchema.safeParse(config);
+    if (!result.success) {
+      throw new Error(`Validation failed: ${result.error.issues.map((i) => i.message).join(', ')}`);
+    }
+
     const ts = now();
     const id = uuid();
 
@@ -215,7 +220,7 @@ export class AgentRegistry {
     }
 
     // Validate status value
-    const validStatuses = ['idle', 'materialized', 'starting', 'running', 'stopped', 'error'];
+    const validStatuses = Object.keys(VALID_TRANSITIONS) as AgentStatus[];
     if (!validStatuses.includes(newStatus)) {
       throw new Error(`Invalid status: '${newStatus}'`);
     }
