@@ -37,16 +37,9 @@ export function isValidTransition(from: AgentStatus, to: AgentStatus): boolean {
 }
 
 /**
- * VALID_STATUSES - All valid status values
+ * VALID_STATUSES - All valid status values (derived from schema)
  */
-export const VALID_STATUSES: AgentStatus[] = [
-  'idle',
-  'materialized',
-  'starting',
-  'running',
-  'stopped',
-  'error',
-];
+export const VALID_STATUSES: AgentStatus[] = AgentStatusSchema.options;
 
 /**
  * Check if a status value is valid
