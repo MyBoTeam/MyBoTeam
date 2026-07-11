@@ -144,6 +144,17 @@ export class AgentRegistry {
     if (!result.success) {
       throw new Error(`Validation failed: ${result.error.issues.map((i) => i.message).join(', ')}`);
     }
+    const data = result.data;
+
+    // Check unique name if being updated
+    if ('name' in partial) {
+      const existingName = this.db
+        .prepare(`SELECT id FROM ${TABLE} WHERE name = ? AND id != ?`)
+        .get(data.name, id);
+      if (existingName) {
+        throw new Error(`Agent with name '${data.name}' already exists`);
+      }
+    }
 
     const ts = now();
     const fields: string[] = [];
@@ -159,17 +170,17 @@ export class AgentRegistry {
 
     for (const field of scalarFields) {
       if (field in partial) {
-        const val = partial[field];
+        const val = data[field];
         fields.push(`${field} = ?`);
         values.push(val === undefined ? null : val);
       }
     }
 
     const jsonFields: Array<{ key: keyof AgentConfig; value: unknown }> = [
-      { key: 'params', value: partial.params },
-      { key: 'secrets', value: partial.secrets },
-      { key: 'skills', value: partial.skills },
-      { key: 'mcps', value: partial.mcps },
+      { key: 'params', value: data.params },
+      { key: 'secrets', value: data.secrets },
+      { key: 'skills', value: data.skills },
+      { key: 'mcps', value: data.mcps },
     ];
 
     for (const { key, value } of jsonFields) {
