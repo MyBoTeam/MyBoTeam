@@ -75,7 +75,7 @@ describe('AgentProcessSchema', () => {
 
 describe('AgentStatusSchema', () => {
   it('accepts all valid statuses', () => {
-    const statuses = ['idle', 'running', 'paused', 'completed', 'failed', 'cancelled'];
+    const statuses = ['idle', 'materialized', 'starting', 'running', 'stopped', 'error'];
     statuses.forEach((status) => {
       expect(AgentStatusSchema.safeParse(status).success).toBe(true);
     });
