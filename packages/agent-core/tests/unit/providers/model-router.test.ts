@@ -18,16 +18,9 @@ function createMockClient(shouldFail = false): ProviderClient {
 
 function createAgent(overrides?: Partial<AgentConfig>): AgentConfig {
   return {
-    id: '550e8400-e29b-41d4-a716-446655440000',
-    slug: 'test-agent',
     name: 'Test Agent',
-    providerId: '550e8400-e29b-41d4-a716-446655440001',
+    provider: '550e8400-e29b-41d4-a716-446655440001',
     model: 'gpt-4',
-    systemPrompt: 'You are helpful',
-    mcpServerIds: [],
-    enabled: true,
-    createdAt: '2026-01-01T00:00:00Z',
-    updatedAt: '2026-01-01T00:00:00Z',
     ...overrides,
   };
 }
@@ -74,8 +67,7 @@ describe('ModelRouter', () => {
       const deps = createDeps([p1, p2]);
       const router = new ModelRouter(deps);
       const agent = createAgent({
-        providerId: '550e8400-e29b-41d4-a716-446655440010',
-        fallbackProviderIds: ['550e8400-e29b-41d4-a716-446655440011'],
+        provider: '550e8400-e29b-41d4-a716-446655440010',
       });
 
       const chain = router.resolveFallbackChain(agent);
@@ -84,7 +76,7 @@ describe('ModelRouter', () => {
       expect(chain.chain[0].providerId).toBe('550e8400-e29b-41d4-a716-446655440010');
       expect(chain.chain[0].source).toBe('agent');
       expect(chain.chain[1].providerId).toBe('550e8400-e29b-41d4-a716-446655440011');
-      expect(chain.chain[1].source).toBe('agent');
+      expect(chain.chain[1].source).toBe('global');
     });
 
     it('should use global default when no fallbackProviderIds', () => {
@@ -108,7 +100,7 @@ describe('ModelRouter', () => {
       const deps = createDeps([p1, p2]);
       const router = new ModelRouter(deps);
       const agent = createAgent({
-        providerId: '550e8400-e29b-41d4-a716-446655440010',
+        provider: '550e8400-e29b-41d4-a716-446655440010',
       });
 
       const chain = router.resolveFallbackChain(agent);
@@ -131,7 +123,7 @@ describe('ModelRouter', () => {
       const deps = createDeps([p1]);
       const router = new ModelRouter(deps);
       const agent = createAgent({
-        providerId: '550e8400-e29b-41d4-a716-446655440010',
+        provider: '550e8400-e29b-41d4-a716-446655440010',
       });
 
       // Put provider in cooldown
@@ -160,7 +152,7 @@ describe('ModelRouter', () => {
       const deps = createDeps([p1]);
       const router = new ModelRouter(deps);
       const agent = createAgent({
-        providerId: '550e8400-e29b-41d4-a716-446655440010',
+        provider: '550e8400-e29b-41d4-a716-446655440010',
       });
 
       const result = await router.chatCompletion(createRequest(), agent);
@@ -192,7 +184,7 @@ describe('ModelRouter', () => {
       const deps = createDeps([p1, p2]);
       const router = new ModelRouter(deps);
       const agent = createAgent({
-        providerId: '550e8400-e29b-41d4-a716-446655440010',
+        provider: '550e8400-e29b-41d4-a716-446655440010',
       });
 
       const result = await router.chatCompletion(createRequest(), agent);
@@ -225,7 +217,7 @@ describe('ModelRouter', () => {
       const deps = createDeps([p1, p2]);
       const router = new ModelRouter(deps);
       const agent = createAgent({
-        providerId: '550e8400-e29b-41d4-a716-446655440010',
+        provider: '550e8400-e29b-41d4-a716-446655440010',
       });
 
       const result = await router.chatCompletion(createRequest(), agent);
@@ -270,7 +262,7 @@ describe('ModelRouter', () => {
       const deps = createDeps([p1, p2]);
       const router = new ModelRouter(deps);
       const agent = createAgent({
-        providerId: '550e8400-e29b-41d4-a716-446655440010',
+        provider: '550e8400-e29b-41d4-a716-446655440010',
       });
 
       const result = await router.chatCompletion(createRequest(), agent);
@@ -320,7 +312,7 @@ describe('ModelRouter', () => {
       const deps = createDeps([p1, p2]);
       const router = new ModelRouter(deps);
       const agent = createAgent({
-        providerId: '550e8400-e29b-41d4-a716-446655440010',
+        provider: '550e8400-e29b-41d4-a716-446655440010',
       });
 
       const result = await router.streamChat(createRequest(), agent);
@@ -379,7 +371,7 @@ describe('ModelRouter', () => {
       const deps = createDeps([p1, p2]);
       const router = new ModelRouter(deps);
       const agent = createAgent({
-        providerId: '550e8400-e29b-41d4-a716-446655440010',
+        provider: '550e8400-e29b-41d4-a716-446655440010',
       });
 
       const result = await router.streamChat(createRequest(), agent);

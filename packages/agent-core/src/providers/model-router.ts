@@ -36,7 +36,6 @@ export class ModelRouter {
   }
 
   resolveFallbackChain(agent: AgentConfig): FallbackChainResult {
-    const agentIds = agent.fallbackProviderIds;
     const allProviders = this.deps.getEnabledProviders();
     const now = new Date().toISOString();
 
@@ -44,25 +43,9 @@ export class ModelRouter {
     const seen = new Set<string>();
 
     // Primary provider first (from agent config)
-    if (
-      this.deps.healthTracker.canUse(agent.providerId) &&
-      this.deps.getProvider(agent.providerId)
-    ) {
-      entries.push({ providerId: agent.providerId, priority: 0, source: 'agent' });
-      seen.add(agent.providerId);
-    }
-
-    // Agent-specified fallback providers
-    if (agentIds) {
-      for (const id of agentIds) {
-        if (!seen.has(id) && this.deps.healthTracker.canUse(id)) {
-          const provider = this.deps.getProvider(id);
-          if (provider) {
-            entries.push({ providerId: id, priority: entries.length, source: 'agent' });
-            seen.add(id);
-          }
-        }
-      }
+    if (this.deps.healthTracker.canUse(agent.provider) && this.deps.getProvider(agent.provider)) {
+      entries.push({ providerId: agent.provider, priority: 0, source: 'agent' });
+      seen.add(agent.provider);
     }
 
     // Global fallback providers (remaining enabled)
@@ -79,7 +62,7 @@ export class ModelRouter {
 
     return {
       chain: entries,
-      requestedProviderId: agent.providerId,
+      requestedProviderId: agent.provider,
       resolvedAt: now,
     };
   }
