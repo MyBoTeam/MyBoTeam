@@ -1,15 +1,14 @@
 import { z } from 'zod';
 
-export const AgentStatusSchema = z.enum([
-  'idle',
-  'running',
-  'paused',
-  'completed',
-  'failed',
-  'cancelled',
-]);
-
-export type AgentStatus = z.infer<typeof AgentStatusSchema>;
+// Re-export AgentStatus from agent-status.ts (ADR-002 aligned)
+export {
+  type AgentStatus,
+  AgentStatusSchema,
+  VALID_STATUSES,
+  VALID_TRANSITIONS,
+  isValidStatus,
+  isValidTransition,
+} from './agent-status.js';
 
 export const AgentConfigLegacySchema = z
   .object({

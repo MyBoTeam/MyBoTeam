@@ -3,8 +3,6 @@ export {
   AgentConfigLegacySchema,
   type AgentProcess,
   AgentProcessSchema,
-  type AgentStatus,
-  AgentStatusSchema,
 } from './agent.js';
 export {
   type AgentConfig,
@@ -14,7 +12,8 @@ export {
   InferenceParamsSchema,
 } from './agent-config.js';
 export {
-  type AgentStatus as AgentStatusV2,
+  type AgentStatus,
+  AgentStatusSchema,
   isValidStatus,
   isValidTransition,
   VALID_STATUSES,
