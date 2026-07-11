@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-// Re-export AgentStatus from agent-status.ts (ADR-002 aligned)
-export {
+// Import and re-export AgentStatus from agent-status.ts (ADR-002 aligned)
+import {
   type AgentStatus,
   AgentStatusSchema,
   isValidStatus,
@@ -9,6 +9,15 @@ export {
   VALID_STATUSES,
   VALID_TRANSITIONS,
 } from './agent-status.js';
+
+export {
+  type AgentStatus,
+  AgentStatusSchema,
+  isValidStatus,
+  isValidTransition,
+  VALID_STATUSES,
+  VALID_TRANSITIONS,
+};
 
 export const AgentConfigLegacySchema = z
   .object({
