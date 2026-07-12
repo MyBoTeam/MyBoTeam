@@ -174,8 +174,8 @@ fetch_comments() {
       if [[ -n "$outside_comments" ]]; then
         while IFS= read -r line; do
           local file_line comment_text file_path line_range start_line end_line
-          file_line=$(echo "$line" | sed 's/`//g' | cut -d: -f1)
-          comment_text=$(echo "$line" | sed 's/^[^:]*: *//')
+          file_line=$(echo "$line" | sed 's/`//g' | cut -d: -f1,2)
+          comment_text=$(echo "$line" | sed 's/^`[^`]*`: *//')
 
           # Parse file path and line range
           file_path=$(echo "$file_line" | rev | cut -d: -f2- | rev)
