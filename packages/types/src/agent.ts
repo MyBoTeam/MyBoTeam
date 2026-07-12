@@ -1,17 +1,25 @@
 import { z } from 'zod';
 
-export const AgentStatusSchema = z.enum([
-  'idle',
-  'running',
-  'paused',
-  'completed',
-  'failed',
-  'cancelled',
-]);
+// Import and re-export AgentStatus from agent-status.ts (ADR-002 aligned)
+import {
+  type AgentStatus,
+  AgentStatusSchema,
+  isValidStatus,
+  isValidTransition,
+  VALID_STATUSES,
+  VALID_TRANSITIONS,
+} from './agent-status.js';
 
-export type AgentStatus = z.infer<typeof AgentStatusSchema>;
+export {
+  type AgentStatus,
+  AgentStatusSchema,
+  isValidStatus,
+  isValidTransition,
+  VALID_STATUSES,
+  VALID_TRANSITIONS,
+};
 
-export const AgentConfigSchema = z
+export const AgentConfigLegacySchema = z
   .object({
     id: z.string().uuid(),
     slug: z
@@ -51,7 +59,7 @@ export const AgentConfigSchema = z
     },
   );
 
-export type AgentConfig = z.infer<typeof AgentConfigSchema>;
+export type AgentConfigLegacy = z.infer<typeof AgentConfigLegacySchema>;
 
 export const AgentProcessSchema = z.object({
   id: z.string().uuid(),

@@ -1,11 +1,24 @@
 export {
-  type AgentConfig,
-  AgentConfigSchema,
+  type AgentConfigLegacy,
+  AgentConfigLegacySchema,
   type AgentProcess,
   AgentProcessSchema,
+} from './agent.js';
+export {
+  type AgentConfig,
+  type AgentConfigPartial,
+  AgentConfigSchema,
+  type InferenceParams,
+  InferenceParamsSchema,
+} from './agent-config.js';
+export {
   type AgentStatus,
   AgentStatusSchema,
-} from './agent.js';
+  isValidStatus,
+  isValidTransition,
+  VALID_STATUSES,
+  VALID_TRANSITIONS,
+} from './agent-status.js';
 export {
   type ChatMessage,
   ChatMessageSchema,

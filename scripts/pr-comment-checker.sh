@@ -112,6 +112,7 @@ fetch_comments() {
   local review_comments_file="$TEMP_DIR/review_comments.json"
   local issue_comments_file="$TEMP_DIR/issue_comments.json"
   local reviews_file="$TEMP_DIR/reviews.json"
+  local outside_diff_file="$TEMP_DIR/outside_diff_comments.json"
   local unified_file="$TEMP_DIR/unified_comments.json"
 
   # Fetch review comments (inline on code) - sanitize to remove control chars
@@ -153,20 +154,103 @@ fetch_comments() {
         type: "review_state"
       }]' > "$reviews_file" || echo "[]" > "$reviews_file"
 
-  local review_count issue_count review_state_count
+  # Extract outside-diff comments from review bodies
+  # These are comments that couldn't be posted inline due to platform limitations
+  echo "[]" > "$outside_diff_file"
+  jq -c '.[]' "$reviews_file" 2>/dev/null | while IFS= read -r review; do
+    local review_id review_body
+    review_id=$(echo "$review" | jq -r '.id')
+    review_body=$(echo "$review" | jq -r '.body')
+
+    # Check if review has outside-diff comments
+    if echo "$review_body" | grep -q "Outside diff range comments"; then
+      log_info "Found outside-diff comments in review #$review_id, extracting..."
+
+      # Extract outside-diff comments, preserving multiline bodies
+      # Format: `path:startLine-endLine`: comment text (may span multiple lines)
+      # Each new marker starts a new comment; continuation lines belong to the previous comment
+      local current_file_line=""
+      local current_comment_text=""
+      local current_file_path=""
+      local current_line_range=""
+      local current_start_line=""
+      local current_end_line=""
+      local outside_diff_comments="[]"
+
+      flush_outside_comment() {
+        if [[ -n "$current_file_line" && -n "$current_comment_text" ]]; then
+          local synthetic_comment
+          synthetic_comment=$(jq -n \
+            --arg id "${review_id}_outside_${current_start_line}" \
+            --arg user "coderabbitai[bot]" \
+            --arg body "$current_comment_text" \
+            --arg path "$current_file_path" \
+            --argjson line "${current_start_line:-0}" \
+            --arg created_at "" \
+            --arg type "outside_diff" \
+            '{
+              id: $id,
+              user: $user,
+              body: $body,
+              path: $path,
+              line: $line,
+              created_at: $created_at,
+              type: $type
+            }')
+          outside_diff_comments=$(echo "$outside_diff_comments" | jq --argjson comment "$synthetic_comment" '. + [$comment]')
+        fi
+      }
+
+      while IFS= read -r line; do
+        # Check if this line starts a new outside-diff comment marker
+        if echo "$line" | grep -qE '`[^`]+:[0-9]+-[0-9]+`:.*'; then
+          # Flush the previous comment if any
+          flush_outside_comment
+
+          # Start new comment
+          current_file_line=$(echo "$line" | sed 's/`//g' | cut -d: -f1,2)
+          current_comment_text=$(echo "$line" | sed 's/^`[^`]*`: *//')
+
+          # Parse file path and line range
+          current_file_path=$(echo "$current_file_line" | rev | cut -d: -f2- | rev)
+          current_line_range=$(echo "$current_file_line" | rev | cut -d: -f1 | rev)
+          current_start_line=$(echo "$current_line_range" | cut -d- -f1)
+          current_end_line=$(echo "$current_line_range" | cut -d- -f2)
+        elif [[ -n "$current_file_line" ]]; then
+          # Continuation line - append to current comment body
+          if [[ -n "$current_comment_text" ]]; then
+            current_comment_text="${current_comment_text}
+${line}"
+          else
+            current_comment_text="$line"
+          fi
+        fi
+      done <<< "$outside_comments"
+
+      # Flush the last comment
+      flush_outside_comment
+
+      # Write all collected outside-diff comments to the file
+      echo "$outside_diff_comments" | jq '.' > "$TEMP_DIR/outside_diff_tmp.json"
+      mv "$TEMP_DIR/outside_diff_tmp.json" "$outside_diff_file"
+    fi
+  done
+
+  local review_count issue_count review_state_count outside_diff_count
   review_count=$(jq 'length' "$review_comments_file" 2>/dev/null || echo 0)
   issue_count=$(jq 'length' "$issue_comments_file" 2>/dev/null || echo 0)
   review_state_count=$(jq 'length' "$reviews_file" 2>/dev/null || echo 0)
+  outside_diff_count=$(jq 'length' "$outside_diff_file" 2>/dev/null || echo 0)
 
-  log_info "Found $review_count inline review comments, $issue_count issue comments, $review_state_count pending reviews"
+  log_info "Found $review_count inline review comments, $issue_count issue comments, $review_state_count pending reviews, $outside_diff_count outside-diff comments"
 
-  if [[ "$review_count" -eq 0 && "$issue_count" -eq 0 && "$review_state_count" -eq 0 ]]; then
+  if [[ "$review_count" -eq 0 && "$issue_count" -eq 0 && "$review_state_count" -eq 0 && "$outside_diff_count" -eq 0 ]]; then
     log_ok "No unresolved comments found."
     return 1
   fi
 
   # Merge into unified list
-  jq -s '.[0] + .[1] + .[2]' "$review_comments_file" "$issue_comments_file" "$reviews_file" > "$unified_file"
+  jq -s '.[0] + .[1] + .[2] + .[3]' "$review_comments_file" "$issue_comments_file" "$reviews_file" "$outside_diff_file" > "$unified_file"
 
   local total
   total=$(jq 'length' "$unified_file" 2>/dev/null || echo 0)
