@@ -166,31 +166,26 @@ fetch_comments() {
     if echo "$review_body" | grep -q "Outside diff range comments"; then
       log_info "Found outside-diff comments in review #$review_id, extracting..."
 
-      # Extract file paths and line ranges from outside-diff section
-      # Format: `path:startLine-endLine`: comment text
-      local outside_comments
-      outside_comments=$(echo "$review_body" | grep -oE '`[^`]+:[0-9]+-[0-9]+`:.*' || true)
+      # Extract outside-diff comments, preserving multiline bodies
+      # Format: `path:startLine-endLine`: comment text (may span multiple lines)
+      # Each new marker starts a new comment; continuation lines belong to the previous comment
+      local current_file_line=""
+      local current_comment_text=""
+      local current_file_path=""
+      local current_line_range=""
+      local current_start_line=""
+      local current_end_line=""
+      local outside_diff_comments="[]"
 
-      if [[ -n "$outside_comments" ]]; then
-        while IFS= read -r line; do
-          local file_line comment_text file_path line_range start_line end_line
-          file_line=$(echo "$line" | sed 's/`//g' | cut -d: -f1,2)
-          comment_text=$(echo "$line" | sed 's/^`[^`]*`: *//')
-
-          # Parse file path and line range
-          file_path=$(echo "$file_line" | rev | cut -d: -f2- | rev)
-          line_range=$(echo "$file_line" | rev | cut -d: -f1 | rev)
-          start_line=$(echo "$line_range" | cut -d- -f1)
-          end_line=$(echo "$line_range" | cut -d- -f2)
-
-          # Create a synthetic comment entry
+      flush_outside_comment() {
+        if [[ -n "$current_file_line" && -n "$current_comment_text" ]]; then
           local synthetic_comment
           synthetic_comment=$(jq -n \
-            --arg id "${review_id}_outside_${start_line}" \
+            --arg id "${review_id}_outside_${current_start_line}" \
             --arg user "coderabbitai[bot]" \
-            --arg body "$comment_text" \
-            --arg path "$file_path" \
-            --argjson line "${start_line:-0}" \
+            --arg body "$current_comment_text" \
+            --arg path "$current_file_path" \
+            --argjson line "${current_start_line:-0}" \
             --arg created_at "" \
             --arg type "outside_diff" \
             '{
@@ -202,12 +197,42 @@ fetch_comments() {
               created_at: $created_at,
               type: $type
             }')
+          outside_diff_comments=$(echo "$outside_diff_comments" | jq --argjson comment "$synthetic_comment" '. + [$comment]')
+        fi
+      }
 
-          # Append to outside_diff_file
-          jq --argjson new "$synthetic_comment" '. + [$new]' "$outside_diff_file" > "$TEMP_DIR/outside_diff_tmp.json"
-          mv "$outside_diff_tmp.json" "$outside_diff_file"
-        done <<< "$outside_comments"
-      fi
+      while IFS= read -r line; do
+        # Check if this line starts a new outside-diff comment marker
+        if echo "$line" | grep -qE '`[^`]+:[0-9]+-[0-9]+`:.*'; then
+          # Flush the previous comment if any
+          flush_outside_comment
+
+          # Start new comment
+          current_file_line=$(echo "$line" | sed 's/`//g' | cut -d: -f1,2)
+          current_comment_text=$(echo "$line" | sed 's/^`[^`]*`: *//')
+
+          # Parse file path and line range
+          current_file_path=$(echo "$current_file_line" | rev | cut -d: -f2- | rev)
+          current_line_range=$(echo "$current_file_line" | rev | cut -d: -f1 | rev)
+          current_start_line=$(echo "$current_line_range" | cut -d- -f1)
+          current_end_line=$(echo "$current_line_range" | cut -d- -f2)
+        elif [[ -n "$current_file_line" ]]; then
+          # Continuation line - append to current comment body
+          if [[ -n "$current_comment_text" ]]; then
+            current_comment_text="${current_comment_text}
+${line}"
+          else
+            current_comment_text="$line"
+          fi
+        fi
+      done <<< "$outside_comments"
+
+      # Flush the last comment
+      flush_outside_comment
+
+      # Write all collected outside-diff comments to the file
+      echo "$outside_diff_comments" | jq '.' > "$TEMP_DIR/outside_diff_tmp.json"
+      mv "$TEMP_DIR/outside_diff_tmp.json" "$outside_diff_file"
     fi
   done
 
