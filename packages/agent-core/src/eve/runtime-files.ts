@@ -60,6 +60,7 @@ export interface MaterializedFiles {
 export interface MaterializeOptions {
   readonly baseDir: string;
   readonly availableTools: ToolCatalogEntry[];
+  readonly delegationPolicy?: DelegationPolicy | null;
 }
 
 /**

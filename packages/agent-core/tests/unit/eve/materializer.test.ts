@@ -3,7 +3,11 @@ import * as path from 'node:path';
 import type { AgentConfig } from '@myboteam/types';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { dematerialize, materialize } from '../../../src/eve/materializer.js';
-import type { MaterializeOptions, ToolCatalogEntry } from '../../../src/eve/runtime-files.js';
+import type {
+  DelegationPolicy,
+  MaterializeOptions,
+  ToolCatalogEntry,
+} from '../../../src/eve/runtime-files.js';
 
 const validConfig: AgentConfig = {
   name: 'test-agent',
@@ -295,6 +299,70 @@ describe('EveMaterializer', () => {
       const filesAfter = await fs.readdir(outputDir);
       expect(filesAfter).toEqual(filesBefore);
     });
+
+    it('should generate delegation-policy.json when delegation policy is provided', async () => {
+      const delegationPolicy: DelegationPolicy = {
+        enabled: true,
+        rules: [{ targetAgent: 'helper', condition: 'always', maxDepth: 1 }],
+        defaultBehavior: 'deny',
+      };
+
+      const options: MaterializeOptions = {
+        baseDir: tempDir,
+        availableTools,
+        delegationPolicy,
+      };
+
+      const result = await materialize(validConfig, options);
+
+      expect(result.filesGenerated).toContain('delegation-policy.json');
+      expect(result.filesGenerated).toContain('checksums.sha256');
+
+      const policyContent = JSON.parse(
+        await fs.readFile(path.join(result.outputDir, 'delegation-policy.json'), 'utf8'),
+      );
+      expect(policyContent.enabled).toBe(true);
+      expect(policyContent.rules).toHaveLength(1);
+      expect(policyContent.rules[0].targetAgent).toBe('helper');
+      expect(policyContent.defaultBehavior).toBe('deny');
+
+      const checksums = JSON.parse(
+        await fs.readFile(path.join(result.outputDir, 'checksums.sha256'), 'utf8'),
+      );
+      expect(checksums['delegation-policy.json']).toBeDefined();
+      expect(checksums['delegation-policy.json']).toMatch(/^[a-f0-9]{64}$/);
+    });
+
+    it('should not generate delegation-policy.json when no policy provided', async () => {
+      const options: MaterializeOptions = {
+        baseDir: tempDir,
+        availableTools,
+      };
+
+      const result = await materialize(validConfig, options);
+
+      expect(result.filesGenerated).not.toContain('delegation-policy.json');
+
+      const files = await fs.readdir(result.outputDir);
+      expect(files).not.toContain('delegation-policy.json');
+    });
+
+    it('should reject path traversal in agentId', async () => {
+      // Zod schema regex [a-zA-Z0-9 _-] already prevents dots/slashes,
+      // but resolveAgentDirectory adds defense-in-depth for edge cases
+      const traversalConfig: AgentConfig = {
+        ...validConfig,
+        name: '../../../etc/passwd',
+      };
+
+      const options: MaterializeOptions = {
+        baseDir: tempDir,
+        availableTools,
+      };
+
+      // Zod validation rejects this first (regex), then path check would reject it
+      await expect(materialize(traversalConfig, options)).rejects.toThrow();
+    });
   });
 
   describe('dematerialize()', () => {
@@ -324,6 +392,12 @@ describe('EveMaterializer', () => {
     it('should handle dematerializing non-existent agent gracefully', async () => {
       // Should not throw
       await expect(dematerialize('non-existent-agent', tempDir)).resolves.not.toThrow();
+    });
+
+    it('should reject path traversal in agentId', async () => {
+      await expect(dematerialize('../../etc/passwd', tempDir)).rejects.toThrow(
+        'Invalid agent identifier',
+      );
     });
   });
 });

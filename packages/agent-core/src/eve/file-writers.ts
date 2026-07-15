@@ -1,6 +1,6 @@
 import * as crypto from 'node:crypto';
 import * as fs from 'node:fs/promises';
-import type { AgentConfig } from '@myboteam/types';
+import type { AgentConfig, InferenceParams } from '@myboteam/types';
 import type { AgentProviderConfig, DelegationPolicy, ToolCatalogEntry } from './runtime-files.js';
 import { DEFAULT_INFERENCE_PARAMS } from './runtime-files.js';
 
@@ -93,7 +93,7 @@ export async function writeChecksumManifest(
 export function buildProviderConfig(
   provider: string,
   model: string,
-  params?: Record<string, unknown>,
+  params?: Partial<InferenceParams>,
 ): AgentProviderConfig {
   return {
     provider,

@@ -17,6 +17,27 @@ import type { MaterializeOptions, MaterializeResult } from './runtime-files.js';
 const logger = new Logger('EveMaterializer');
 
 /**
+ * Resolve agent directory and validate it is a strict descendant of baseDir
+ * Prevents path traversal attacks via agentId (e.g., "../../target")
+ */
+function resolveAgentDirectory(baseDir: string, agentId: string): string {
+  const resolvedBase = path.resolve(baseDir);
+  const outputDir = path.resolve(resolvedBase, agentId);
+  const relative = path.relative(resolvedBase, outputDir);
+
+  if (
+    !relative ||
+    relative === '..' ||
+    relative.startsWith(`..${path.sep}`) ||
+    path.isAbsolute(relative)
+  ) {
+    throw new Error(`Invalid agent identifier: ${agentId}`);
+  }
+
+  return outputDir;
+}
+
+/**
  * Materialize agent configuration into deterministic runtime files
  *
  * Generates five individual runtime files from agent configuration:
@@ -47,7 +68,7 @@ export async function materialize(
 
   const validConfig = result.data;
   const agentId = validConfig.id ?? validConfig.name;
-  const outputDir = path.join(options.baseDir, agentId);
+  const outputDir = resolveAgentDirectory(options.baseDir, agentId);
 
   // Ensure output directory exists
   await mkdir(outputDir, { recursive: true });
@@ -61,25 +82,33 @@ export async function materialize(
   const providerConfig = buildProviderConfig(
     validConfig.provider,
     validConfig.model,
-    validConfig.params as Record<string, unknown> | undefined,
+    validConfig.params,
   );
 
-  const generatedFiles: string[] = [];
+  const allTargets = [
+    'tool-catalog.json',
+    'provider-config.json',
+    'instructions.md',
+    'checksums.sha256',
+  ];
+
+  const writtenFiles: string[] = [];
 
   try {
     // Write tool catalog
     await writeToolCatalog(path.join(outputDir, 'tool-catalog.json'), filteredTools);
-    generatedFiles.push('tool-catalog.json');
+    writtenFiles.push('tool-catalog.json');
 
     // Write provider config
     await writeProviderConfig(path.join(outputDir, 'provider-config.json'), providerConfig);
-    generatedFiles.push('provider-config.json');
+    writtenFiles.push('provider-config.json');
 
     // Write delegation policy only if rules exist
-    const delegationPolicy = null; // No delegation rules in default config
+    const delegationPolicy = options.delegationPolicy ?? null;
     if (delegationPolicy) {
+      allTargets.push('delegation-policy.json');
       await writeDelegationPolicy(path.join(outputDir, 'delegation-policy.json'), delegationPolicy);
-      generatedFiles.push('delegation-policy.json');
+      writtenFiles.push('delegation-policy.json');
     }
 
     // Write instructions.md with profile metadata injected
@@ -87,7 +116,7 @@ export async function materialize(
       path.join(outputDir, 'instructions.md'),
       validConfig,
     );
-    generatedFiles.push('instructions.md');
+    writtenFiles.push('instructions.md');
 
     // Compute checksums
     const checksumsContent = await writeChecksumManifest(
@@ -99,7 +128,7 @@ export async function materialize(
       },
       instructionsContent,
     );
-    generatedFiles.push('checksums.sha256');
+    writtenFiles.push('checksums.sha256');
 
     const durationMs = Date.now() - startTime;
     const checksum = computeChecksum(checksumsContent);
@@ -116,7 +145,7 @@ export async function materialize(
       agentId,
       agentName: validConfig.name,
       outputDir,
-      filesGenerated: generatedFiles,
+      filesGenerated: writtenFiles,
       checksum,
       durationMs,
     };
@@ -129,8 +158,8 @@ export async function materialize(
       operation: 'materialize',
     });
 
-    // Remove any files we already wrote
-    for (const file of generatedFiles) {
+    // Remove any files we attempted to write
+    for (const file of allTargets) {
       try {
         await rm(path.join(outputDir, file), { force: true });
       } catch {
@@ -157,7 +186,7 @@ export async function materialize(
  * Removes all materialized files for an agent
  */
 export async function dematerialize(agentId: string, baseDir: string): Promise<void> {
-  const outputDir = path.join(baseDir, agentId);
+  const outputDir = resolveAgentDirectory(baseDir, agentId);
 
   try {
     await rm(outputDir, { recursive: true, force: true });
