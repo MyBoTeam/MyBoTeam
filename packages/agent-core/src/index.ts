@@ -53,6 +53,27 @@ export {
 } from '@myboteam/types';
 export { DEFAULT_AGENTS } from './agent-defaults.js';
 export { AgentRegistry } from './agent-registry.js';
+export {
+  buildProviderConfig,
+  computeChecksum,
+  generateInstructionsTemplate,
+  writeChecksumManifest,
+  writeDelegationPolicy,
+  writeInstructions,
+  writeProviderConfig,
+  writeToolCatalog,
+} from './eve/file-writers.js';
+export { dematerialize, materialize } from './eve/materializer.js';
+export type {
+  AgentProviderConfig,
+  DelegationPolicy,
+  DelegationRule,
+  MaterializedFiles,
+  MaterializeOptions,
+  MaterializeResult,
+  ToolCatalogEntry,
+} from './eve/runtime-files.js';
+export { DEFAULT_INFERENCE_PARAMS } from './eve/runtime-files.js';
 export { AnthropicProvider } from './providers/anthropic-provider.js';
 export { BYOKInjector } from './providers/byok-injector.js';
 export type { ModelRouterDeps } from './providers/model-router.js';
