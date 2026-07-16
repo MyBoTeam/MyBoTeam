@@ -1,0 +1,22 @@
+{
+  "feature": "013-eve-materializer-runtime",
+  "created": "2026-07-15T14:05:40+07:00",
+  "tasks": {
+    "T001": {"status": "completed", "summary": "Created eve/ directory structure with barrel exports in index.ts"},
+    "T002": {"status": "completed", "summary": "Created tests/unit/eve/ directory structure"},
+    "T003": {"status": "completed", "summary": "Implemented file-writers.ts with all five file generation functions"},
+    "T004": {"status": "completed", "summary": "Implemented generateInstructionsTemplate in file-writers.ts"},
+    "T005": {"status": "completed", "summary": "Wrote 10 unit tests for materializer core in materializer.test.ts"},
+    "T006": {"status": "completed", "summary": "Implemented materializer.ts core logic with materialize() and try/catch cleanup"},
+    "T007": {"status": "completed", "summary": "Implemented dematerialize() function in materializer.ts"},
+    "T008": {"status": "completed", "summary": "Wrote 15 profile injection tests in profile-injection.test.ts"},
+    "T009": {"status": "completed", "summary": "Implemented writeInstructions with profile injection in file-writers.ts"},
+    "T010": {"status": "completed", "summary": "Wrote tool catalog filtering tests in materializer.test.ts"},
+    "T011": {"status": "completed", "summary": "Implemented writeToolCatalog with skill-based filtering in file-writers.ts"},
+    "T012": {"status": "completed", "summary": "Wrote 6 delegation policy tests in delegation-policy.test.ts"},
+    "T013": {"status": "completed", "summary": "Implemented writeDelegationPolicy in file-writers.ts"},
+    "T014": {"status": "completed", "summary": "Validated quickstart.md examples match implementation API"},
+    "T015": {"status": "completed", "summary": "Updated barrel exports in eve/index.ts and packages/agent-core/src/index.ts"},
+    "T016": {"status": "completed", "summary": "Ran biome check and tsc --noEmit — all clean"}
+  }
+}
